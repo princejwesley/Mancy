@@ -10,12 +10,12 @@ module.exports = {
           {
             label: 'Undo',
             accelerator: 'CmdOrCtrl+Z',
-            role: 'undo'
+            selector: 'undo:'
           },
           {
             label: 'Redo',
             accelerator: 'Shift+CmdOrCtrl+Z',
-            role: 'redo'
+            selector: 'redo:'
           },
           {
             type: 'separator'
@@ -23,22 +23,22 @@ module.exports = {
           {
             label: 'Cut',
             accelerator: 'CmdOrCtrl+X',
-            role: 'cut'
+            selector: 'cut:'
           },
           {
             label: 'Copy',
             accelerator: 'CmdOrCtrl+C',
-            role: 'copy'
+            selector: 'copy:'
           },
           {
             label: 'Paste',
             accelerator: 'CmdOrCtrl+V',
-            role: 'paste'
+            selector: 'paste:'
           },
           {
             label: 'Select All',
             accelerator: 'CmdOrCtrl+A',
-            role: 'selectall'
+            selector: 'selectAll:'
           },
         ]
       },
@@ -75,12 +75,12 @@ module.exports = {
           {
             label: 'Minimize',
             accelerator: 'CmdOrCtrl+M',
-            role: 'minimize'
+            selector: 'performMiniaturize:'
           },
           {
             label: 'Close',
             accelerator: 'CmdOrCtrl+W',
-            role: 'close'
+            selector: 'performClose:'
           },
         ]
       },
@@ -98,13 +98,13 @@ module.exports = {
     ];
 
     if (process.platform === 'darwin') {
-      var name = app.getName();
+      var name = 'Node REPL+';
       template.unshift({
         label: name,
         submenu: [
           {
             label: 'About ' + name,
-            role: 'about'
+            selector: 'orderFrontStandardAboutPanel:'
           },
           {
             type: 'separator'
@@ -120,16 +120,16 @@ module.exports = {
           {
             label: 'Hide ' + name,
             accelerator: 'Command+H',
-            role: 'hide'
+            selector: 'hide:'
           },
           {
             label: 'Hide Others',
             accelerator: 'Command+Shift+H',
-            role: 'hideothers'
+            selector: 'hideOtherApplications:'
           },
           {
             label: 'Show All',
-            role: 'unhide'
+            selector: 'unhideAllApplications:'
           },
           {
             type: 'separator'
@@ -148,7 +148,7 @@ module.exports = {
         },
         {
           label: 'Bring All to Front',
-          role: 'front'
+          selector: 'arrangeInFront:'
         }
       );
     }

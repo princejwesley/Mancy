@@ -16,7 +16,7 @@ app.on('activate-with-no-open-windows', onReady);
 function onReady() {
 
   mainWindow = new BrowserWindow({
-    width: 600,
+    width: 700,
     height: 500,
     resizable: true,
     'web-preferences': {
@@ -40,5 +40,5 @@ function onReady() {
   menu.setMenu(app, mainWindow);
 
   // testing
-  mainWindow.openDevTools(true);
+  mainWindow.openDevTools({detach: false});
 }
