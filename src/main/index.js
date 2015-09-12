@@ -38,4 +38,7 @@ function onReady() {
   });
 
   menu.setMenu(app, mainWindow);
+
+  // testing
+  mainWindow.openDevTools(true);
 }
