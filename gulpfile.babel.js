@@ -15,8 +15,8 @@ function onError(err) {
 
 const options = {
   react: {
-    source: "src/components/*.js",
-    target: "build/components",
+    source: "src/**/*.js",
+    target: "build",
     config: {
       stage: 0
     }
@@ -24,7 +24,7 @@ const options = {
   sass: {
     source: ["stylesheets/*.scss"],
     target: {
-      path: "build",
+      path: "build/stylesheets/",
       name: "repl.css"
     },
     config: {

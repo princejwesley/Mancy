@@ -4,6 +4,8 @@
   "description": "A node REPL for fun",
   "main": "src/main/index.js",
   "scripts": {
+    "preinstall": "npm prune",
+    "postinstall": "bower prune; bower install; electron-rebuild",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/electron-prebuilt/dist/Electron.app/Contents/MacOS/Electron .",
     "watch": "gulp watch"
@@ -38,10 +40,12 @@
   "dependencies": {
     "font-awesome": "^4.4.0",
     "jquery": "2.1.4",
+    "keymirror": "^0.1.1",
     "lodash": "^3.10.1",
     "node-uuid": "^1.4.3",
     "octicons": "^2.4.1",
     "react": "^0.13.3",
-    "react-json-inspector": "^5.2.1"
+    "react-json-inspector": "^5.2.1",
+    "reflux": "^0.2.12"
   }
 }
