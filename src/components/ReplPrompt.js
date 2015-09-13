@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
-import ReplActiveIcon from './ReplActiveIcon.jsx';
-import ReplActiveInput from './ReplActiveInput.jsx';
+import ReplActiveIcon from './ReplActiveIcon';
+import ReplActiveInput from './ReplActiveInput';
 
 export default class ReplPrompt extends React.Component {
   constructor(props) {

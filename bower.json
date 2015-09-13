@@ -1,0 +1,8 @@
+{
+  "name": "Node REPL+",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "livereload-js": "~2.2.1"
+  }
+}

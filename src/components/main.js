@@ -1,7 +1,5 @@
-import '../../stylesheets/repl.scss';
-
 import React from 'react';
-import Repl from './Repl.jsx';
+import Repl from './build/components/Repl';
 
 // react entry point
 (function() {

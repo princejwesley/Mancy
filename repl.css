@@ -1,0 +1,29 @@
+
+html {
+  height: 100%; }
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background-color: #282828;
+  color: white;
+  font-size: 14pt;
+  font-family: sans-serif;
+  cursor: text; }
+
+::selection {
+  background-color: #FF0044; }
+
+#node-repl-plus {
+  margin: 5px 2px; }
+  #node-repl-plus .repl-prompt {
+    margin: 0px;
+    padding: 5px;
+    background-color: #353535;
+    display: flex;
+    align-items: flex-start; }
+    #node-repl-plus .repl-prompt .repl-active-input {
+      flex: 1;
+      min-height: 14pt;
+      outline: none;
+      padding-left: 5px; }

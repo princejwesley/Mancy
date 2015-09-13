@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
-import ReplEntry from './ReplEntry.jsx'
-import ReplPrompt from './ReplPrompt.jsx'
+import ReplEntry from './ReplEntry'
+import ReplPrompt from './ReplPrompt'
 
 export default class Repl extends React.Component {
   constructor(props) {

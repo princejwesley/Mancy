@@ -1,4 +1,5 @@
 node_modules
+bower_components
+build
 .DS_Store
-*hot-update.*
-node-repl-plus.js
+*.log
