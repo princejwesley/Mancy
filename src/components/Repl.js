@@ -1,7 +1,9 @@
 import React from 'react';
 import _ from 'lodash';
-import ReplEntry from './ReplEntry'
-import ReplPrompt from './ReplPrompt'
+import ReplEntry from './ReplEntry';
+import ReplPrompt from './ReplPrompt';
+import ReplStore from '../stores/ReplStore';
+import Reflux from 'reflux';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -10,6 +12,19 @@ export default class Repl extends React.Component {
       entries: []
     };
   }
+
+  componentDidMount() {
+    this.unsubscribe = ReplStore.listen(this.onStateChange);
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  onStateChange(item) {
+    console.log(item, 'item received @ repl')
+  }
+
   render() {
     return (
       <div className='repl-entries'>
@@ -22,4 +37,8 @@ export default class Repl extends React.Component {
       </div>
     );
   }
+}
+
+Repl.propTypes = {
+  token: React.PropTypes.number.isRequired,
 }

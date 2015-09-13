@@ -3,34 +3,53 @@ import _ from 'lodash';
 import repl from 'repl';
 import {Readable, Writable} from 'stream';
 import {EOL} from 'os';
+import ReplActions from '../actions/ReplActions';
+import ReplConstants from '../constants/ReplConstants';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
     super(props);
   }
   componentDidMount() {
-    const node = React.findDOMNode(this);
-    // set focus
+    this.initFocus();
+    let cli = ReplActiveInput.getRepl();
+    cli.output.write = this.addEntry.bind(this);
+  }
+
+  componentWillUnmount() {
+    let cli = ReplActiveInput.getRepl();
+    cli.output.write = () => {};
+  }
+
+  initFocus() {
+    // focus/selection
+    let node = React.findDOMNode(this);
     node.focus();
-    // set cursor position
-    const selection = window.getSelection();
+    let selection = window.getSelection();
     selection.collapse(node, 0);
   }
+
+  addEntry(buf) {
+    let entry = buf.toString();
+    if(entry.length === 0) return;
+    if(entry === '...') {
+      console.log('continue ...')
+    }
+    console.log(entry)
+  }
+
   onKeyDown(e) {
     console.log(this)
-    const cli = ReplActiveInput.getRepl();
+    let cli = ReplActiveInput.getRepl();
     if(e.key === 'Tab') {
-      console.log('tab clicked - time for auto complete')
+      // cli.complete
     } else if(e.key === 'Enter') {
-      console.log('submit to nodejs')
       const text = React.findDOMNode(this).innerText;
-      console.log(text)
-      console.log(cli)
-      cli.input.emit('data', text)
-      cli.input.emit('data', EOL)
+      cli.input.emit('data', text);
+      cli.input.emit('data', EOL);
     }
-    // e.persist(); // remove after testing
-    // console.log(e)
+    e.persist(); // remove after testing
+    console.log(e)
   }
   render() {
     return (
@@ -43,14 +62,7 @@ export default class ReplActiveInput extends React.Component {
     let readable = new Readable();
     let writable = new Writable();
 
-    readable._read = () => {};
-    writable._write = (data, encoding, next) => {
-      console.log('--write--',data.toString())
-      next();
-    }
-    writable.write = function(data) {
-      console.log("'",data.toString(),"''", 'here')
-    }
+    readable._read = writable.write = () => {};
 
     let nodeRepl = repl.start({
       prompt: '',
@@ -60,13 +72,15 @@ export default class ReplActiveInput extends React.Component {
       useGlobal: false,
       ignoreUndefined: false,
       useColors: false,
+      historySize: ReplConstants.REPL_HISTORY_SIZE,
       // writer: require('util').inspect,
-      replMode: repl.REPL_MODE_SLOPPY,
-      // eval: (cmd, context, filename, cb) => {
-      //   console.log('--eval--')
-      //   cb(null, result);
-      // },
+      replMode: repl[ReplConstants.REPL_MODE],
     });
+    // console.log(nodeRepl)
+
+    // nodeRepl._domain.on('error', (err) => {
+    //   console.log(err);
+    // });
 
     return () => {
       return nodeRepl;

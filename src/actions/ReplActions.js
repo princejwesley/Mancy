@@ -1,6 +1,7 @@
 import ReplConstants from '../constants/ReplConstants';
 import Reflux from 'reflux';
 
-export const ReplActions = Reflux.createActions([
-
+const ReplActions = Reflux.createActions([
+  "addEntry"
 ]);
+export default ReplActions;
