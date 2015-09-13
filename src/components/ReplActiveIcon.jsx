@@ -9,9 +9,6 @@ export default class ReplActiveIcon extends React.Component {
     return (
       <div className='repl-active-icon'>
         <i className="fa fa-terminal"></i>
-        <div className="repl-active-line">
-
-        </div>
       </div>
     );
   }

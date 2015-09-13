@@ -28,9 +28,21 @@ body {
   }
 
   .repl-prompt {
+    margin: 0px;
+    padding: 5px;
+    background-color: lighten($app-background-color, 5%);
     display: flex;
-    .repl-active-line {
+    align-items: flex-start;
 
+    .repl-active-icon {
+
+    }
+
+    .repl-active-input {
+      flex: 1;
+      height: $app-font-size;
+      outline: none;
+      padding-left: 5px;
     }
   }
 }

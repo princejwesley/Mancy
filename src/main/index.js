@@ -40,5 +40,5 @@ function onReady() {
   menu.setMenu(app, mainWindow);
 
   // testing
-  mainWindow.openDevTools({detach: false});
+  mainWindow.openDevTools({detach: true});
 }
