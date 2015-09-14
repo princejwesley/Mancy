@@ -82,6 +82,12 @@ body {
       .repl-prompt-suggestion-text {
         padding: 2px 8px;
         flex: 1;
+        .repl-prompt-suggestion-highlight {
+          color: $app-suggestion-type-hightlight-color;
+        }
+        .repl-prompt-suggestion-expect {
+          color: $app-suggestion-type-expect-color;
+        }
       }
       &:last-child {
         border-bottom: none;

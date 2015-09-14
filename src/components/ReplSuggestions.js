@@ -38,11 +38,14 @@ export default class ReplSuggestions extends React.Component {
     // console.log(suggestions, 'repl suggestions')
     let {suggestions, input} = data;
     suggestions = _.map(suggestions, (suggestion) => {
+      let expect = suggestion.text.replace(input, '');
+      console.log(expect, input)
       return {
         key: md5(suggestion.text),
         type: ReplType.getTypeName(suggestion.type),
         typeHint: ReplType.getTypeNameShort(suggestion.type),
-        text: suggestion.text
+        expect: expect,
+        input: input
       };
     });
 
@@ -59,7 +62,8 @@ export default class ReplSuggestions extends React.Component {
                     {suggestion.typeHint}
                   </span>
                   <span className='repl-prompt-suggestion-text'>
-                    {suggestion.text}
+                    <span className='repl-prompt-suggestion-highlight'>{suggestion.input}</span>
+                    <span className='repl-prompt-suggestion-expect'>{suggestion.expect}</span>
                   </span>
                 </li>
               );
