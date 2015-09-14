@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplSuggestionStore from '../stores/ReplSuggestionStore';
 import Reflux from 'reflux';
 import md5 from 'md5';
+import ReplType from '../common/ReplType';
 
 export default class ReplSuggestions extends React.Component {
   constructor(props) {
@@ -10,6 +11,7 @@ export default class ReplSuggestions extends React.Component {
     this.state = {
       suggestions: []
     };
+    this.onStateChange = this.onStateChange.bind(this);
   }
 
   componentDidMount() {
@@ -20,8 +22,18 @@ export default class ReplSuggestions extends React.Component {
     this.unsubscribe();
   }
 
-  onStateChange(item) {
-    console.log(item, 'item received @ repl suggestions')
+  onStateChange(suggestions) {
+    console.log(suggestions, 'repl suggestions')
+    this.setState({
+      suggestions: _.map(suggestions, (suggestion) => {
+        console.log(suggestion.type)
+        return {
+          key: md5(suggestion.text),
+          type: ReplType.getTypeName(suggestion.type),
+          text: suggestion.text
+        };
+      })
+    });
   }
 
   render() {
@@ -30,7 +42,7 @@ export default class ReplSuggestions extends React.Component {
       {
         _.map(this.state.suggestions, (suggestion) => {
           return (
-            <li className='repl-prompt-suggestion' key='{md5(suggestion.text)}' >
+            <li className='repl-prompt-suggestion' key={suggestion.key} >
               <div className='repl-prompt-suggestion-type'>
                 {suggestion.type}
               </div>

@@ -13,6 +13,8 @@ export default class ReplActiveInput extends React.Component {
     super(props);
     this.onTabCompletion = this.onTabCompletion.bind(this);
     this.autoComplete = this.autoComplete.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
   }
   componentDidMount() {
     this.focus();
@@ -48,6 +50,7 @@ export default class ReplActiveInput extends React.Component {
 
   autoComplete(__, completion) {
     let [list, ] = completion;
+    console.log('autocomplete', list)
     let suggestions = _.map(list, (suggestion) => {
       return {
         type: ReplType.typeOf(suggestion),
@@ -80,15 +83,12 @@ export default class ReplActiveInput extends React.Component {
     this.focus();
   }
 
-  onKeyDown(e) {
+  onKeyUp(e) {
+    if(ReplActiveInput.isTab(e)) { return; }
+
     let cli = ReplActiveInput.getRepl();
     const text = React.findDOMNode(this).innerText.trim();
-
-    if(e.key === 'Tab') {
-      cli.complete(text, this.onTabCompletion);
-      // avoid focus loss
-      e.preventDefault();
-    } else if(e.key === 'Enter') {
+    if(ReplActiveInput.isEnter(e)) {
       // emit last line
       var lines = text.split(EOL);
       var lastLine = lines[lines.length - 1];
@@ -97,14 +97,33 @@ export default class ReplActiveInput extends React.Component {
     } else {
       cli.complete(text, this.autoComplete);
     }
-    // e.persist(); // remove after testing
+    e.persist(); // TODO: remove after testing
     // console.log(e)
+  }
+  onKeyDown(e) {
+    if(!ReplActiveInput.isTab(e)) { return; }
+
+    let cli = ReplActiveInput.getRepl();
+    const text = React.findDOMNode(this).innerText.trim();
+    cli.complete(text, this.onTabCompletion);
+    // avoid focus loss
+    e.preventDefault();
   }
   render() {
     return (
-      <div className='repl-active-input' tabIndex="-1" contentEditable={true} onKeyDown={this.onKeyDown.bind(this)}>
+      <div className='repl-active-input' tabIndex="-1" contentEditable={true}
+        onKeyUp={this.onKeyUp}
+        onKeyDown={this.onKeyDown}>
       </div>
     );
+  }
+
+  static isTab(e) {
+    return e.key === 'Tab';
+  }
+
+  static isEnter(e) {
+    return e.key === 'Enter';
   }
 
   static getRepl = (() => {

@@ -50,13 +50,14 @@ body {
 }
 
 #node-repl-prompt-suggestions {
+  position: absolute;
   .repl-prompt-suggestion-list {
     .repl-prompt-suggestion {
       .repl-prompt-suggestion-type {
 
       }
       .repl-prompt-suggestion-text {
-        
+
       }
     }
   }
