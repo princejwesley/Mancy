@@ -1,18 +1,15 @@
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import Reflux from 'reflux';
 
-let suggestions = [];
 const ReplSuggestionStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplSuggestionActions);
   },
   onAddSuggestion(item) {
-    suggestions = item;
-    this.trigger(suggestions);
+    this.trigger(item);
   },
   onRemoveSuggestion() {
-    suggestions = [];
-    this.trigger(suggestions);
+    this.trigger({suggestions:[], input: ''});
   }
 });
 export default ReplSuggestionStore;

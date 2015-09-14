@@ -67,13 +67,21 @@ body {
       min-height: calc(#{$app-font-size} + 8px);
       padding: 4px 2px;
       border-bottom: 1px solid $app-suggestion-entry-border-color;
+      cursor: pointer;
       .repl-prompt-suggestion-type {
         padding: 2px;
+        font-weight: 900;
+        border-radius: 100%;
+        width: $app-font-size;
+        height: $app-font-size;
+        text-align: center;
+        color: $app-suggestion-type-color;
+        font-family: $app-suggestion-type-font-family;
+        background-color: $app-suggestion-type-background-color;
       }
       .repl-prompt-suggestion-text {
-        padding: 2px;
+        padding: 2px 8px;
         flex: 1;
-        cursor: pointer;
       }
       &:last-child {
         border-bottom: none;

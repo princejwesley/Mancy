@@ -51,15 +51,21 @@ export default class ReplActiveInput extends React.Component {
   autoComplete(__, completion) {
     let [list, ] = completion;
     console.log('autocomplete', list)
-    let suggestions = _.map(list, (suggestion) => {
-      return {
-        type: ReplType.typeOf(suggestion),
-        text: suggestion
-      };
-    });
+    let suggestions = _.chain(list)
+      .filter((suggestion) => {
+        return suggestion && suggestion.length !== 0;
+      })
+      .map((suggestion) => {
+        return {
+          type: ReplType.typeOf(suggestion),
+          text: suggestion
+        };
+      })
+      .value();
     console.log(ReplSuggestionActions)
     if(suggestions.length) {
-      ReplSuggestionActions.addSuggestion(suggestions);
+      const text = React.findDOMNode(this).innerText;
+      ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: text});
     } else {
       ReplSuggestionActions.removeSuggestion();
     }
@@ -84,7 +90,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
-    if(ReplActiveInput.isTab(e)) { return; }
+    if(ReplActiveInput.isTab(e) || ReplActiveInput.isEscape(e)) { return; }
 
     let cli = ReplActiveInput.getRepl();
     const text = React.findDOMNode(this).innerText.trim();
@@ -124,6 +130,10 @@ export default class ReplActiveInput extends React.Component {
 
   static isEnter(e) {
     return e.key === 'Enter';
+  }
+
+  static isEscape(e) {
+    return e.key === 'Escape';
   }
 
   static getRepl = (() => {

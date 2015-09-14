@@ -4,35 +4,49 @@ import ReplSuggestionStore from '../stores/ReplSuggestionStore';
 import Reflux from 'reflux';
 import md5 from 'md5';
 import ReplType from '../common/ReplType';
+import ReplConstants from '../constants/ReplConstants';
 
 export default class ReplSuggestions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      component: <div> {false} </div>
+      component: null
     };
     this.onStateChange = this.onStateChange.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
   }
 
   componentDidMount() {
     this.unsubscribe = ReplSuggestionStore.listen(this.onStateChange);
+    window.addEventListener('keydown', this.onKeyDown, false);
   }
 
   componentWillUnmount() {
     this.unsubscribe();
+    window.removeEventListener('keydown', this.onKeyDown, false);
   }
 
-  onStateChange(suggestions) {
-    console.log(suggestions, 'repl suggestions')
+  onKeyDown(e) {
+    if(e.which === ReplConstants.KEY_ESCAPE) {
+      this.setState({
+        component: null
+      });
+    }
+  }
+
+  onStateChange(data) {
+    // console.log(suggestions, 'repl suggestions')
+    let {suggestions, input} = data;
     suggestions = _.map(suggestions, (suggestion) => {
       return {
         key: md5(suggestion.text),
         type: ReplType.getTypeName(suggestion.type),
+        typeHint: ReplType.getTypeNameShort(suggestion.type),
         text: suggestion.text
       };
     });
 
-    let component = <div> {false} </div>
+    let component = null
 
     if(suggestions.length)
       component =
@@ -41,8 +55,8 @@ export default class ReplSuggestions extends React.Component {
             _.map(suggestions, (suggestion) => {
               return (
                 <li className='repl-prompt-suggestion' key={suggestion.key} >
-                  <span className='repl-prompt-suggestion-type'>
-                    {suggestion.type}
+                  <span className='repl-prompt-suggestion-type' title={suggestion.type}>
+                    {suggestion.typeHint}
                   </span>
                   <span className='repl-prompt-suggestion-text'>
                     {suggestion.text}
@@ -57,8 +71,10 @@ export default class ReplSuggestions extends React.Component {
       component: component
     });
   }
-  //TODO: handle escape key 
+
+  //TODO: fix show/hide dummy span
   render() {
+    console.log(this.state.component)
     return (
       <div className='repl-prompt-suggestion-wrapper'> {this.state.component} </div>
     );
