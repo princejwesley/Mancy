@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplSuggestionStore from '../stores/ReplSuggestionStore';
 import Reflux from 'reflux';
 import md5 from 'md5';
+import {EOL} from 'os';
 import ReplType from '../common/ReplType';
 import ReplConstants from '../constants/ReplConstants';
 
@@ -27,10 +28,13 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onKeyDown(e) {
+    console.log(e)
     if(e.which === ReplConstants.KEY_ESCAPE) {
       this.setState({
         component: null
       });
+    } else if(e.keyIdentifier === 'Down') {
+
     }
   }
 
@@ -38,14 +42,15 @@ export default class ReplSuggestions extends React.Component {
     // console.log(suggestions, 'repl suggestions')
     let {suggestions, input} = data;
     suggestions = _.map(suggestions, (suggestion) => {
-      let expect = suggestion.text.replace(input, '');
-      console.log(expect, input)
+      let lines = input.split(EOL);
+      let lastLine = lines[lines.length - 1];
+      let expect = suggestion.text.replace(lastLine, '');
       return {
         key: md5(suggestion.text),
         type: ReplType.getTypeName(suggestion.type),
         typeHint: ReplType.getTypeNameShort(suggestion.type),
         expect: expect,
-        input: input
+        input: lastLine,
       };
     });
 
@@ -53,11 +58,11 @@ export default class ReplSuggestions extends React.Component {
 
     if(suggestions.length)
       component =
-        <ul className='repl-prompt-suggestion-list'>
+        <ol className='repl-prompt-suggestion-list'>
           {
-            _.map(suggestions, (suggestion) => {
+            _.map(suggestions, (suggestion, idx) => {
               return (
-                <li className='repl-prompt-suggestion' key={suggestion.key} >
+                <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key} >
                   <span className='repl-prompt-suggestion-type' title={suggestion.type}>
                     {suggestion.typeHint}
                   </span>
@@ -69,7 +74,7 @@ export default class ReplSuggestions extends React.Component {
               );
             })
           }
-        </ul>
+        </ol>
 
     this.setState({
       component: component

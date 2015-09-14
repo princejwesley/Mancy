@@ -94,24 +94,26 @@ export default class ReplActiveInput extends React.Component {
 
     let cli = ReplActiveInput.getRepl();
     const text = React.findDOMNode(this).innerText.trim();
+    var lines = text.split(EOL);
     if(ReplActiveInput.isEnter(e)) {
       // emit last line
-      var lines = text.split(EOL);
       var lastLine = lines[lines.length - 1];
       cli.input.emit('data', lastLine);
       cli.input.emit('data', EOL);
-    } else {
+    } else if(lines.length === 1){
       cli.complete(text, this.autoComplete);
     }
-    e.persist(); // TODO: remove after testing
-    // console.log(e)
   }
+
   onKeyDown(e) {
     if(!ReplActiveInput.isTab(e)) { return; }
 
-    let cli = ReplActiveInput.getRepl();
     const text = React.findDOMNode(this).innerText.trim();
-    cli.complete(text, this.onTabCompletion);
+    // single line entry auto completion as in chrome console
+    if(text.split(EOL).length === 1) {
+      let cli = ReplActiveInput.getRepl();
+      cli.complete(text, this.onTabCompletion);
+    }
     // avoid focus loss
     e.preventDefault();
   }
