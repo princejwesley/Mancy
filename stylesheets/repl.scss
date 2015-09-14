@@ -21,28 +21,43 @@ body {
 #node-repl-plus {
   margin: 5px 2px;
 
-  .repl-entries {
-    .repl-entry {
+  .repl-container {
+    .repl-entries {
+      .repl-entry {
 
+      }
+    }
+
+    .repl-prompt {
+      margin: 0px;
+      padding: 5px;
+      background-color: lighten($app-background-color, 5%);
+      display: flex;
+      align-items: flex-start;
+
+      .repl-active-icon {
+
+      }
+
+      .repl-active-input {
+        flex: 1;
+        min-height: $app-font-size;
+        outline: none;
+        padding-left: 5px;
+      }
     }
   }
+}
 
-  .repl-prompt {
-    margin: 0px;
-    padding: 5px;
-    background-color: lighten($app-background-color, 5%);
-    display: flex;
-    align-items: flex-start;
+#node-repl-prompt-suggestions {
+  .repl-prompt-suggestion-list {
+    .repl-prompt-suggestion {
+      .repl-prompt-suggestion-type {
 
-    .repl-active-icon {
-
-    }
-
-    .repl-active-input {
-      flex: 1;
-      min-height: $app-font-size;
-      outline: none;
-      padding-left: 5px;
+      }
+      .repl-prompt-suggestion-text {
+        
+      }
     }
   }
 }

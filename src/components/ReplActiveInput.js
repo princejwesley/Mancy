@@ -4,12 +4,14 @@ import repl from 'repl';
 import {Readable, Writable} from 'stream';
 import {EOL} from 'os';
 import shell from 'shell';
-import ReplActions from '../actions/ReplActions';
+import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import ReplConstants from '../constants/ReplConstants';
+import ReplType from '../common/ReplType';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
     super(props);
+    this.onTabCompletion = this.onTabCompletion.bind(this);
     this.autoComplete = this.autoComplete.bind(this);
   }
   componentDidMount() {
@@ -39,26 +41,43 @@ export default class ReplActiveInput extends React.Component {
 
   addEntry(buf) {
     let entry = buf.toString();
-    if(entry.length === 0) return;
-    if(entry === '...') {
-      console.log('continue ...')
-    }
-    console.log(entry)
+    if(entry.length === 0 || entry === '...') return;
+    console.log(entry);
+
   }
 
   autoComplete(__, completion) {
-    // console.log('auto complete', completion, this);
+    let [list, ] = completion;
+    let suggestions = _.map(list, (suggestion) => {
+      return {
+        type: ReplType.typeOf(suggestion),
+        text: suggestion
+      };
+    });
+    console.log(ReplSuggestionActions)
+    if(suggestions.length) {
+      ReplSuggestionActions.addSuggestion(suggestions);
+    } else {
+      ReplSuggestionActions.removeSuggestion();
+    }
+  }
+
+  onTabCompletion(__, completion) {
     let [list, input] = completion;
     if(list.length === 0) {
       shell.beep();
+      ReplSuggestionActions.removeSuggestion();
     } else if(list.length === 1) {
       const text = React.findDOMNode(this).innerText;
       let lines = text.split(EOL);
       let currentLine = lines.length - 1;
       lines[currentLine] = lines[currentLine].replace(input, '') + list[0];
       React.findDOMNode(this).innerText = lines.join(EOL);
+      ReplSuggestionActions.removeSuggestion();
+    } else {
+      this.autoComplete(__, completion);
     }
-    this.focus()
+    this.focus();
   }
 
   onKeyDown(e) {
@@ -66,7 +85,7 @@ export default class ReplActiveInput extends React.Component {
     const text = React.findDOMNode(this).innerText.trim();
 
     if(e.key === 'Tab') {
-      cli.complete(text, this.autoComplete.bind(this));
+      cli.complete(text, this.onTabCompletion);
       // avoid focus loss
       e.preventDefault();
     } else if(e.key === 'Enter') {
@@ -76,14 +95,14 @@ export default class ReplActiveInput extends React.Component {
       cli.input.emit('data', lastLine);
       cli.input.emit('data', EOL);
     } else {
-      // try autoComplete and show results too
+      cli.complete(text, this.autoComplete);
     }
     // e.persist(); // remove after testing
     // console.log(e)
   }
   render() {
     return (
-      <div autoFocus className='repl-active-input' tabIndex="-1" contentEditable={true} onKeyDown={this.onKeyDown.bind(this)}>
+      <div className='repl-active-input' tabIndex="-1" contentEditable={true} onKeyDown={this.onKeyDown.bind(this)}>
       </div>
     );
   }

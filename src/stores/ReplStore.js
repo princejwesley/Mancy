@@ -1,13 +1,14 @@
 import ReplConstants from '../constants/ReplConstants';
-import RefluxActions from '../actions/ReplActions';
+import ReplActions from '../actions/ReplActions';
 import Reflux from 'reflux';
 
 const ReplStore = Reflux.createStore({
   init() {
-    this.listenTo(RefluxActions.addEntry, this.addEntry);
+    this.listenToMany(ReplActions);
   },
-  addEntry(item) {
+  onAddEntry(item) {
     console.log('add entry', item)
+    this.trigger({entries: item, action: this});
   }
 });
 export default ReplStore;

@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import ReplEntry from './ReplEntry';
+import ReplEntries from './ReplEntries';
 import ReplPrompt from './ReplPrompt';
 import ReplStore from '../stores/ReplStore';
 import Reflux from 'reflux';
@@ -27,18 +27,10 @@ export default class Repl extends React.Component {
 
   render() {
     return (
-      <div className='repl-entries'>
-        {
-          _.map(this.state.entries, (entry) => {
-            return <ReplEntry item='{entry}' />;
-          })
-        }
+      <div className='repl-container'>
+        <ReplEntries entries="{this.state.entries}" />
         <ReplPrompt />
       </div>
     );
   }
-}
-
-Repl.propTypes = {
-  token: React.PropTypes.number.isRequired,
 }
