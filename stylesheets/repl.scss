@@ -52,12 +52,31 @@ body {
 #node-repl-prompt-suggestions {
   position: absolute;
   .repl-prompt-suggestion-list {
-    .repl-prompt-suggestion {
-      .repl-prompt-suggestion-type {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 200px;
+    overflow: auto;
+    border: 2px solid $app-suggestion-border-color;
+    border-radius: 5px;
+    padding: 2px 0px;
 
+    .repl-prompt-suggestion {
+      display:flex;
+      flex:1;
+      min-height: calc(#{$app-font-size} + 8px);
+      padding: 4px 2px;
+      border-bottom: 1px solid $app-suggestion-entry-border-color;
+      .repl-prompt-suggestion-type {
+        padding: 2px;
       }
       .repl-prompt-suggestion-text {
-
+        padding: 2px;
+        flex: 1;
+        cursor: pointer;
+      }
+      &:last-child {
+        border-bottom: none;
       }
     }
   }

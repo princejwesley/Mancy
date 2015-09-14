@@ -9,7 +9,7 @@ export default class ReplSuggestions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      suggestions: []
+      component: <div> {false} </div>
     };
     this.onStateChange = this.onStateChange.bind(this);
   }
@@ -24,36 +24,43 @@ export default class ReplSuggestions extends React.Component {
 
   onStateChange(suggestions) {
     console.log(suggestions, 'repl suggestions')
+    suggestions = _.map(suggestions, (suggestion) => {
+      return {
+        key: md5(suggestion.text),
+        type: ReplType.getTypeName(suggestion.type),
+        text: suggestion.text
+      };
+    });
+
+    let component = <div> {false} </div>
+
+    if(suggestions.length)
+      component =
+        <ul className='repl-prompt-suggestion-list'>
+          {
+            _.map(suggestions, (suggestion) => {
+              return (
+                <li className='repl-prompt-suggestion' key={suggestion.key} >
+                  <span className='repl-prompt-suggestion-type'>
+                    {suggestion.type}
+                  </span>
+                  <span className='repl-prompt-suggestion-text'>
+                    {suggestion.text}
+                  </span>
+                </li>
+              );
+            })
+          }
+        </ul>
+
     this.setState({
-      suggestions: _.map(suggestions, (suggestion) => {
-        console.log(suggestion.type)
-        return {
-          key: md5(suggestion.text),
-          type: ReplType.getTypeName(suggestion.type),
-          text: suggestion.text
-        };
-      })
+      component: component
     });
   }
-
+  //TODO: handle escape key 
   render() {
     return (
-      <ul className='repl-prompt-suggestion-list'>
-      {
-        _.map(this.state.suggestions, (suggestion) => {
-          return (
-            <li className='repl-prompt-suggestion' key={suggestion.key} >
-              <div className='repl-prompt-suggestion-type'>
-                {suggestion.type}
-              </div>
-              <div className='repl-prompt-suggestion-text'>
-                {suggestion.text}
-              </div>
-            </li>
-          );
-        })
-      }
-    </ul>
+      <div className='repl-prompt-suggestion-wrapper'> {this.state.component} </div>
     );
   }
 }
