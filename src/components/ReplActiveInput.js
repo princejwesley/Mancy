@@ -8,6 +8,7 @@ import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import ReplActions from '../actions/ReplActions';
 import ReplConstants from '../constants/ReplConstants';
 import ReplType from '../common/ReplType';
+import ReplUtil from '../common/ReplUtil';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -47,13 +48,12 @@ export default class ReplActiveInput extends React.Component {
   }
 
   addEntry(buf) {
-    let entry = buf.toString();
-    if(entry.length === 0 || entry === '...') return;
-    // console.log(entry);
-    const text = this.element.innerText.trim();
+    let entry = buf.toString() || '';
+    if(entry.length === 0 || entry.match(/^\.+\s*$/)) { return; }
+    const text = this.element.innerText;
+    console.log(entry, entry.length, text)
     ReplActions.addEntry({entry: entry, status: true, command: text});
     ReplSuggestionActions.removeSuggestion();
-    this.element.innerText = '';
   }
 
   autoComplete(__, completion) {
@@ -70,7 +70,7 @@ export default class ReplActiveInput extends React.Component {
         };
       })
       .value();
-    // console.log(ReplSuggestionActions)
+
     if(suggestions.length) {
       const text = this.element.innerText;
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: text});
@@ -98,6 +98,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
+    this.lastKey = e.key;
     if(ReplActiveInput.isTab(e) || ReplActiveInput.isEscape(e)) { return; }
 
     let cli = ReplActiveInput.getRepl();
@@ -116,19 +117,31 @@ export default class ReplActiveInput extends React.Component {
   onKeyDown(e) {
     if(!ReplActiveInput.isTab(e)) { return; }
 
-    const text = this.element.innerText.trim();
+    let text = this.element.innerText || '';
+    const lines = text.split(EOL);
+    const lastLine = lines[lines.length - 1];
+
+    if(!lastLine.trim().length && lines.length > 1) {
+      // TODO: fix tab on new line issue
+      if(this.lastKey === 'Enter' && !lastLine.length) {
+        text = lines.slice(0, lines.length - 1).join(EOL)
+      }
+      this.element.innerText = [text, ReplUtil.times(ReplConstants.TAB_WIDTH, ' ')].join('');
+      this.focus();
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
     let cli = ReplActiveInput.getRepl();
     cli.complete(text, this.onTabCompletion);
-
     // avoid focus loss
     e.preventDefault();
   }
   render() {
     return (
-      <div className='repl-active-input' tabIndex="-1" contentEditable={true}
+      <pre className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
         onKeyDown={this.onKeyDown}>
-      </div>
+      </pre>
     );
   }
 
