@@ -14,21 +14,24 @@ export default class ReplSuggestions extends React.Component {
       suggestions: []
     };
     this.onStateChange = this.onStateChange.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onWindowEvents = this.onWindowEvents.bind(this);
   }
 
   componentDidMount() {
     this.unsubscribe = ReplSuggestionStore.listen(this.onStateChange);
-    window.addEventListener('keydown', this.onKeyDown, false);
+    window.addEventListener('keydown', this.onWindowEvents, false);
+    window.addEventListener('blur', this.onWindowEvents, false);
   }
 
   componentWillUnmount() {
     this.unsubscribe();
-    window.removeEventListener('keydown', this.onKeyDown, false);
+    window.removeEventListener('keydown', this.onWindowEvents, false);
+    window.addEventListener('blur', this.onWindowEvents, false);
   }
 
-  onKeyDown(e) {
-    if(e.which === ReplConstants.KEY_ESCAPE) {
+  onWindowEvents(e) {
+    if(e.which === ReplConstants.KEY_ESCAPE
+      || e.type === 'blur') {
       this.setState({
         suggestions: []
       });
