@@ -5,6 +5,7 @@ import {Readable, Writable} from 'stream';
 import {EOL} from 'os';
 import shell from 'shell';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
+import ReplActions from '../actions/ReplActions';
 import ReplConstants from '../constants/ReplConstants';
 import ReplType from '../common/ReplType';
 
@@ -17,9 +18,12 @@ export default class ReplActiveInput extends React.Component {
     this.onKeyUp = this.onKeyUp.bind(this);
   }
   componentDidMount() {
+    this.element = React.findDOMNode(this);
     this.focus();
     let cli = ReplActiveInput.getRepl();
     cli.output.write = this.addEntry.bind(this);
+    //scroll to bottom
+    window.scrollTo(0, document.body.scrollHeight);
   }
 
   componentWillUnmount() {
@@ -29,12 +33,11 @@ export default class ReplActiveInput extends React.Component {
 
   focus() {
     // focus
-    let node = React.findDOMNode(this);
-    node.focus();
+    this.element.focus();
 
     //set cursor at end
     let range = document.createRange();
-    range.selectNodeContents(node);
+    range.selectNodeContents(this.element);
     range.collapse(false);
     let selection = window.getSelection();
     selection.removeAllRanges();
@@ -44,13 +47,16 @@ export default class ReplActiveInput extends React.Component {
   addEntry(buf) {
     let entry = buf.toString();
     if(entry.length === 0 || entry === '...') return;
-    console.log(entry);
-
+    // console.log(entry);
+    const text = this.element.innerText.trim();
+    ReplActions.addEntry({entry: entry, status: true, command: text});
+    ReplSuggestionActions.removeSuggestion();
+    this.element.innerText = '';
   }
 
   autoComplete(__, completion) {
     let [list, ] = completion;
-    console.log('autocomplete', list)
+    // console.log('autocomplete', list)
     let suggestions = _.chain(list)
       .filter((suggestion) => {
         return suggestion && suggestion.length !== 0;
@@ -62,9 +68,9 @@ export default class ReplActiveInput extends React.Component {
         };
       })
       .value();
-    console.log(ReplSuggestionActions)
+    // console.log(ReplSuggestionActions)
     if(suggestions.length) {
-      const text = React.findDOMNode(this).innerText;
+      const text = this.element.innerText;
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: text});
     } else {
       ReplSuggestionActions.removeSuggestion();
@@ -77,11 +83,11 @@ export default class ReplActiveInput extends React.Component {
       shell.beep();
       ReplSuggestionActions.removeSuggestion();
     } else if(list.length === 1) {
-      const text = React.findDOMNode(this).innerText;
+      const text = this.element.innerText;
       let lines = text.split(EOL);
       let currentLine = lines.length - 1;
       lines[currentLine] = lines[currentLine].replace(input, '') + list[0];
-      React.findDOMNode(this).innerText = lines.join(EOL);
+      this.element.innerText = lines.join(EOL);
       ReplSuggestionActions.removeSuggestion();
     } else {
       this.autoComplete(__, completion);
@@ -93,14 +99,14 @@ export default class ReplActiveInput extends React.Component {
     if(ReplActiveInput.isTab(e) || ReplActiveInput.isEscape(e)) { return; }
 
     let cli = ReplActiveInput.getRepl();
-    const text = React.findDOMNode(this).innerText.trim();
+    const text = this.element.innerText.trim();
     var lines = text.split(EOL);
     if(ReplActiveInput.isEnter(e)) {
       // emit last line
       var lastLine = lines[lines.length - 1];
       cli.input.emit('data', lastLine);
       cli.input.emit('data', EOL);
-    } else if(lines.length === 1){
+    } else {
       cli.complete(text, this.autoComplete);
     }
   }
@@ -108,12 +114,10 @@ export default class ReplActiveInput extends React.Component {
   onKeyDown(e) {
     if(!ReplActiveInput.isTab(e)) { return; }
 
-    const text = React.findDOMNode(this).innerText.trim();
-    // single line entry auto completion as in chrome console
-    if(text.split(EOL).length === 1) {
-      let cli = ReplActiveInput.getRepl();
-      cli.complete(text, this.onTabCompletion);
-    }
+    const text = this.element.innerText.trim();
+    let cli = ReplActiveInput.getRepl();
+    cli.complete(text, this.onTabCompletion);
+
     // avoid focus loss
     e.preventDefault();
   }

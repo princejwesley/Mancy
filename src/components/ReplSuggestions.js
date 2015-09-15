@@ -39,7 +39,6 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onStateChange(data) {
-    // console.log(suggestions, 'repl suggestions')
     let {suggestions, input} = data;
     suggestions = _.map(suggestions, (suggestion) => {
       let lines = input.split(EOL);

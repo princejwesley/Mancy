@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 
 export default class ReplActiveIcon extends React.Component {
   constructor(props) {
@@ -8,7 +7,7 @@ export default class ReplActiveIcon extends React.Component {
   render() {
     return (
       <div className='repl-active-icon'>
-        <i className="fa fa-terminal"></i>
+        <i className="fa fa-angle-right"></i>
       </div>
     );
   }

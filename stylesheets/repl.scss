@@ -11,20 +11,77 @@ body {
   color: $app-color;
   font-size: $app-font-size;
   font-family: $app-font-family;
-  cursor: text;
 }
 
 ::selection {
   background-color: $app-text-selection-color;
 }
 
+@mixin notSelectable() {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@mixin entryLayout() {
+  flex: 1;
+  min-height: $app-font-size;
+  padding-left: 10px;
+}
+
+.hide {
+  display: none !important;
+}
+
+
 #node-repl-plus {
   margin: 5px 2px;
 
   .repl-container {
     .repl-entries {
+      display:flex;
+      flex-direction: column;
+      flex:1;
       .repl-entry {
+        display: flex;
+        margin: 0;
+        padding: 5px;
 
+        .repl-entry-icon, .repl-entry-status {
+          @include notSelectable();
+        }
+
+        .repl-entry-icon {
+          color: $app-entry-icon-color;
+        }
+
+        .repl-entry-status {
+          .repeat, .error, .plus, .minus {
+            padding-left: 6px;
+            cursor: pointer;
+          }
+          .repeat {
+            color: $app-entry-status-redo-color;
+          }
+          .error {
+            color: $app-entry-status-error-color;
+          }
+          .minus {
+            color: $app-entry-status-minus-color;
+          }
+          .plus {
+            color: $app-entry-status-plus-color;
+          }
+        }
+
+        .repl-entry-message {
+          @include entryLayout();
+          .repl-entry-message-command {
+
+          }
+          .repl-entry-message-entry {
+            padding: 5px 0px;
+          }
+        }
       }
     }
 
@@ -36,15 +93,27 @@ body {
       align-items: flex-start;
 
       .repl-active-icon {
-
+        @include notSelectable();
+        color: $app-prompt-active-icon-color;
       }
 
       .repl-active-input {
-        flex: 1;
-        min-height: $app-font-size;
+        @include entryLayout();
         outline: none;
-        padding-left: 5px;
       }
+    }
+
+    .repl-status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      padding: 3px 0px;
+      background-color: $app-status-bar-background-color;
+      width: 100%;
+    }
+
+    .repl-status-bar-cover, .repl-status-bar {
+      height: calc(#{$app-font-size} + 6px);
     }
   }
 }

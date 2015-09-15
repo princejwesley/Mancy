@@ -3,7 +3,7 @@ $app-background-color: #282828;
 $app-color: white;
 $app-font-family: sans-serif;
 $app-font-size: 11pt;
-$app-text-selection-color: #FF0044;
+$app-text-selection-color: #F2058C;
 
 $app-suggestion-background-color: $app-background-color;
 $app-suggestion-border-color: silver;
@@ -13,3 +13,14 @@ $app-suggestion-type-color: #FF0044;
 $app-suggestion-type-font-family: monospace;
 $app-suggestion-type-expect-color: $app-color;
 $app-suggestion-type-hightlight-color: #7DC5EA;
+
+$app-prompt-active-icon-color: silver;
+
+
+$app-entry-icon-color: rgb(255, 0, 87);
+$app-entry-status-redo-color: silver;
+$app-entry-status-plus-color: rgb(78, 184, 78);
+$app-entry-status-error-color: rgb(240, 92, 92);
+$app-entry-status-minus-color: rgb(252, 181, 50);
+
+$app-status-bar-background-color: black;
