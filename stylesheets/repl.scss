@@ -46,6 +46,10 @@ body {
         margin: 0;
         padding: 5px;
 
+        // &:hover {
+        //   background-color: lighten($app-background-color, 5%);
+        // }
+
         .repl-entry-icon, .repl-entry-status {
           @include notSelectable();
         }
@@ -55,6 +59,8 @@ body {
         }
 
         .repl-entry-status {
+          padding-right: 5px;
+
           .repeat, .error, .plus, .minus {
             padding-left: 6px;
             cursor: pointer;
@@ -76,7 +82,6 @@ body {
         .repl-entry-message {
           @include entryLayout();
           .repl-entry-message-command {
-
           }
           .repl-entry-message-entry {
             padding: 5px 0px;

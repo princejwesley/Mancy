@@ -19,7 +19,9 @@ export default class ReplActiveInput extends React.Component {
   }
   componentDidMount() {
     this.element = React.findDOMNode(this);
+    this.element.innerText = this.props.command;
     this.focus();
+
     let cli = ReplActiveInput.getRepl();
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom

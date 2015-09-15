@@ -1,6 +1,7 @@
 import Reflux from 'reflux';
 
 const ReplActions = Reflux.createActions([
-  "addEntry"
+  "addEntry",
+  "reloadPrompt"
 ]);
 export default ReplActions;

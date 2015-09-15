@@ -10,7 +10,8 @@ export default class Repl extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      entries: []
+      entries: [],
+      command: ''
     };
     this.onStateChange = this.onStateChange.bind(this);
   }
@@ -24,16 +25,14 @@ export default class Repl extends React.Component {
   }
 
   onStateChange(item) {
-    this.setState({
-      entries: ReplStore.getEntries()
-    });
+    this.setState(ReplStore.getStore());
   }
 
   render() {
     return (
       <div className='repl-container'>
         <ReplEntries entries={this.state.entries} />
-        <ReplPrompt key={document.body.scrollHeight}/>
+        <ReplPrompt key={Date.now()} command={this.state.command}/>
         <div className="repl-status-bar-cover"> </div>
         <ReplStatus />
       </div>

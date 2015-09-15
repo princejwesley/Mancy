@@ -2,7 +2,7 @@ import React from 'react';
 import ReplEntryIcon from './ReplEntryIcon';
 import ReplEntryMessage from './ReplEntryMessage';
 import ReplEntryStatus from './ReplEntryStatus';
-import _ from 'lodash';
+import ReplActions from '../actions/ReplActions';
 
 export default class ReplEntry extends React.Component {
   constructor(props) {
@@ -10,27 +10,33 @@ export default class ReplEntry extends React.Component {
     this.state = {
       collapse: false
     };
-    this.expand = this.expand.bind(this);
-    this.collapse = this.collapse.bind(this);
+    this.onExpand = this.onExpand.bind(this);
+    this.onCollapse = this.onCollapse.bind(this);
+    this.onReload = this.onReload.bind(this);
   }
   update(collapse) {
     this.setState({
       collapse: collapse
     });
   }
-  expand() {
+  onExpand() {
     this.update(false);
   }
-  collapse() {
+  onCollapse() {
     this.update(true);
   }
+  onReload() {
+    ReplActions.reloadPrompt(this.props.entry.command);
+  }
   render() {
-    console.log('collapse state', this.state.collapse)
     return (
       <div className='repl-entry'>
         <ReplEntryIcon />
         <ReplEntryMessage message={this.props.entry} collapse={this.state.collapse}/>
-        <ReplEntryStatus message={this.props.entry} collapse={this.state.collapse} onCollapse={this.collapse} onExpand={this.expand}/>
+        <ReplEntryStatus message={this.props.entry} collapse={this.state.collapse}
+          onReload={this.onReload}
+          onCollapse={this.onCollapse}
+          onExpand={this.onExpand}/>
       </div>
     );
   }

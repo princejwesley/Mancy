@@ -8,12 +8,11 @@ export default class ReplEntries extends React.Component {
     super(props);
   }
   render() {
-    console.log(this.props.entries)
     return (
       <div className='repl-entries'>
         {
-          _.map(this.props.entries, (entry) => {
-            return <ReplEntry entry={entry}/>;
+          _.map(this.props.entries, (entry, pos) => {
+            return <ReplEntry entry={entry} key={md5(entry.command + pos)}/>;
           })
         }
       </div>

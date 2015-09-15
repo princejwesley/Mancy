@@ -11,7 +11,7 @@ export default class ReplSuggestions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      component: null
+      suggestions: []
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
@@ -28,10 +28,9 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onKeyDown(e) {
-    console.log(e)
     if(e.which === ReplConstants.KEY_ESCAPE) {
       this.setState({
-        component: null
+        suggestions: []
       });
     } else if(e.keyIdentifier === 'Down') {
 
@@ -53,38 +52,37 @@ export default class ReplSuggestions extends React.Component {
       };
     });
 
-    let component = null
-
-    if(suggestions.length)
-      component =
-        <ol className='repl-prompt-suggestion-list'>
-          {
-            _.map(suggestions, (suggestion, idx) => {
-              return (
-                <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key} >
-                  <span className='repl-prompt-suggestion-type' title={suggestion.type}>
-                    {suggestion.typeHint}
-                  </span>
-                  <span className='repl-prompt-suggestion-text'>
-                    <span className='repl-prompt-suggestion-highlight'>{suggestion.input}</span>
-                    <span className='repl-prompt-suggestion-expect'>{suggestion.expect}</span>
-                  </span>
-                </li>
-              );
-            })
-          }
-        </ol>
-
     this.setState({
-      component: component
+      suggestions: suggestions
     });
   }
 
-  //TODO: fix show/hide dummy span
   render() {
-    console.log(this.state.component)
     return (
-      <div className='repl-prompt-suggestion-wrapper'> {this.state.component} </div>
+      <div className='repl-prompt-suggestion-wrapper'>
+      {
+        this.state.suggestions.length
+          ?
+          <ol className='repl-prompt-suggestion-list'>
+            {
+              _.map(this.state.suggestions, (suggestion, idx) => {
+                return (
+                  <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key} >
+                    <span className='repl-prompt-suggestion-type' title={suggestion.type}>
+                      {suggestion.typeHint}
+                    </span>
+                    <span className='repl-prompt-suggestion-text'>
+                      <span className='repl-prompt-suggestion-highlight'>{suggestion.input}</span>
+                      <span className='repl-prompt-suggestion-expect'>{suggestion.expect}</span>
+                    </span>
+                  </li>
+                );
+              })
+            }
+          </ol>
+          : null
+      }
+      </div>
     );
   }
 }
