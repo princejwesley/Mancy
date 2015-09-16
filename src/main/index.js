@@ -16,8 +16,10 @@ app.on('activate-with-no-open-windows', onReady);
 function onReady() {
 
   mainWindow = new BrowserWindow({
-    width: 700,
-    height: 500,
+    width: 800,
+    height: 600,
+    'min-height': 400,
+    'min-width': 600,
     resizable: true,
     'web-preferences': {
 			'overlay-scrollbars': true

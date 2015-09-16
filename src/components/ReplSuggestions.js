@@ -43,15 +43,17 @@ export default class ReplSuggestions extends React.Component {
   onStateChange(data) {
     let {suggestions, input} = data;
     suggestions = _.map(suggestions, (suggestion) => {
-      let lines = input.split(EOL);
-      let lastLine = lines[lines.length - 1];
-      let expect = suggestion.text.replace(lastLine, '');
+      let words = input.trim().split(/\s+/);
+      let lastWord = words[words.length - 1];
+      lastWord = lastWord.replace(/^.*\./, '');
+      let expect = suggestion.text.replace(lastWord, '');
+
       return {
         key: md5(suggestion.text),
         type: ReplType.getTypeName(suggestion.type),
         typeHint: ReplType.getTypeNameShort(suggestion.type),
         expect: expect,
-        input: lastLine,
+        input: suggestion.text.replace(expect, ''),
       };
     });
 

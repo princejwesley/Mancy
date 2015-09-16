@@ -9,6 +9,7 @@ import ReplActions from '../actions/ReplActions';
 import ReplConstants from '../constants/ReplConstants';
 import ReplType from '../common/ReplType';
 import ReplUtil from '../common/ReplUtil';
+import ReplDOMUtil from '../common/ReplDOMUtil';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ export default class ReplActiveInput extends React.Component {
     let cli = ReplActiveInput.getRepl();
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom
-    window.scrollTo(0, document.body.scrollHeight);
+    ReplDOMUtil.scrollToEnd();
   }
 
   componentWillUnmount() {
@@ -36,15 +37,8 @@ export default class ReplActiveInput extends React.Component {
 
   focus() {
     // focus
-    this.element.focus();
-
-    //set cursor at end
-    let range = document.createRange();
-    range.selectNodeContents(this.element);
-    range.collapse(false);
-    let selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
+    ReplDOMUtil.focusOn(this.element);
+    ReplDOMUtil.moveCursorToEndOf(this.element);
   }
 
   addEntry(buf) {
@@ -73,13 +67,14 @@ export default class ReplActiveInput extends React.Component {
       .map((suggestion) => {
         return {
           type: ReplType.typeOf(suggestion),
-          text: suggestion
+          text: suggestion.replace(/^.*\./, '')
         };
       })
       .value();
 
     if(suggestions.length) {
       const text = this.element.innerText;
+      console.log('cursor position', ReplDOMUtil.getAutoCompletePosition());
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: text});
     } else {
       ReplSuggestionActions.removeSuggestion();
@@ -132,11 +127,11 @@ export default class ReplActiveInput extends React.Component {
 
     if(!lastLine.trim().length && lines.length > 1) {
       if(this.lastKey === 'Enter' && !lastLine.length) {
-        text = lines.slice(0, lines.length - 1).join(EOL)
+        text = lines.slice(0, lines.length - 1).join(EOL);
       }
       this.element.innerText = [text, ReplUtil.times(ReplConstants.TAB_WIDTH, ' ')].join('');
       this.focus();
-      window.scrollTo(0, document.body.scrollHeight);
+      ReplDOMUtil.scrollToEnd();
     }
 
     let cli = ReplActiveInput.getRepl();
@@ -152,7 +147,7 @@ export default class ReplActiveInput extends React.Component {
       </pre>
     );
   }
-
+  // TODO: move events in events Util
   static isTab(e) {
     return e.key === 'Tab';
   }

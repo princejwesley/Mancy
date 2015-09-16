@@ -16,6 +16,7 @@ body {
 
 pre {
   margin: 0;
+  word-wrap: break-word;
 }
 ::selection {
   background-color: $app-text-selection-color;
@@ -136,6 +137,7 @@ pre {
     display: flex;
     flex-direction: column;
     max-height: 200px;
+    max-width: 200px;
     overflow: auto;
     border: 2px solid $app-suggestion-border-color;
     border-radius: 5px;
@@ -175,22 +177,3 @@ pre {
     }
   }
 }
-
-
-/*
-
-#node-repl-prompt-suggestions .repl-prompt-suggestion-list:before {
-    content: "..";
-    height: 20px;
-    width: 100%;
-    background-color: rgb(132, 168, 168);
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    top: -2px;
-    left: 0px;
-    position: relative;
-    text-align: center;
-    font-size: 1em;
-}
-
-*/
