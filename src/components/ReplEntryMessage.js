@@ -7,13 +7,13 @@ export default class ReplEntryMessage extends React.Component {
   render() {
     return (
       <div className='repl-entry-message'>
-        <div className='repl-entry-message-command' dangerouslySetInnerHTML={{__html:this.props.message.command}}>
-        </div>
+        <pre className='repl-entry-message-command' dangerouslySetInnerHTML={{__html:this.props.message.command.trim()}}>
+        </pre>
         { this.props.collapse ?
             null :
-            <div className='repl-entry-message-entry'>
-              {this.props.message.entry}
-            </div>
+            <pre className='repl-entry-message-entry'>
+              {this.props.message.entry.trim()}
+            </pre>
         }
       </div>
     );

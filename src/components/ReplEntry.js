@@ -26,7 +26,7 @@ export default class ReplEntry extends React.Component {
     this.update(true);
   }
   onReload() {
-    ReplActions.reloadPrompt(this.props.entry.command);
+    ReplActions.reloadPrompt(this.props.entry.plainCode);
   }
   render() {
     return (

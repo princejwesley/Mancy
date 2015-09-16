@@ -50,9 +50,17 @@ export default class ReplActiveInput extends React.Component {
   addEntry(buf) {
     let entry = buf.toString() || '';
     if(entry.length === 0 || entry.match(/^\.+\s*$/)) { return; }
+    let [exception, ...stackTrace] = entry.split(EOL);
+    let status = (ReplUtil.isExceptionMessage(exception)
+        && ReplUtil.isStackTrace(stackTrace));
+
     const text = this.element.innerText;
-    console.log(entry, entry.length, text, ReplUtil.highlight(text))
-    ReplActions.addEntry({entry: entry, status: true, command: ReplUtil.highlight(text)});
+    ReplActions.addEntry({
+      entry: entry,
+      status: !status,
+      command: ReplUtil.highlight(text),
+      plainCode: text
+    });
     ReplSuggestionActions.removeSuggestion();
   }
 

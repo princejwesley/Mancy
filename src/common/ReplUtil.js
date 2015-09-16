@@ -8,6 +8,14 @@ let ReplUtil = {
   },
   highlight: (code) => {
     return hl.highlight('js', code, true).value;
+  },
+  isExceptionMessage: (msg) => {
+    return /Error|Exception/.test(msg);
+  },
+  isStackTrace: (trace) => {
+    return !!trace && trace.every((t) => {
+      return /^\s+at\s/.test(t) || /^$/.test(t);
+    });
   }
 };
 
