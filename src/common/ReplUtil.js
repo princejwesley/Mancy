@@ -10,7 +10,7 @@ let ReplUtil = {
     return hl.highlight('js', code, true).value;
   },
   isExceptionMessage: (msg) => {
-    return /Error|Exception/.test(msg);
+    return /Error:/.test(msg);
   },
   isStackTrace: (trace) => {
     return !!trace && trace.every((t) => {

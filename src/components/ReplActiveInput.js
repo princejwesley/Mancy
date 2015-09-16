@@ -66,7 +66,6 @@ export default class ReplActiveInput extends React.Component {
 
   autoComplete(__, completion) {
     let [list, ] = completion;
-    // console.log('autocomplete', list)
     let suggestions = _.chain(list)
       .filter((suggestion) => {
         return suggestion && suggestion.length !== 0;
@@ -107,6 +106,7 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyUp(e) {
     this.lastKey = e.key;
+    //TODO: filter navigation keys too.
     if(ReplActiveInput.isTab(e) || ReplActiveInput.isEscape(e)) { return; }
 
     let cli = ReplActiveInput.getRepl();
@@ -176,18 +176,13 @@ export default class ReplActiveInput extends React.Component {
       input: readable,
       output: writable,
       terminal: false,
-      useGlobal: false,
+      // needed for better auto completion
+      useGlobal: true,
       ignoreUndefined: false,
       useColors: false,
       historySize: ReplConstants.REPL_HISTORY_SIZE,
-      // writer: require('util').inspect,
       replMode: repl[ReplConstants.REPL_MODE],
     });
-
-    // console.log(nodeRepl)
-    // nodeRepl._domain.on('error', (err) => {
-    //   console.log(err);
-    // });
 
     return () => {
       return nodeRepl;
