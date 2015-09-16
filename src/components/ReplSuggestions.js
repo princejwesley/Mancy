@@ -6,6 +6,7 @@ import md5 from 'md5';
 import {EOL} from 'os';
 import ReplType from '../common/ReplType';
 import ReplConstants from '../constants/ReplConstants';
+import ReplDOMUtil from '../common/ReplDOMUtil';
 
 export default class ReplSuggestions extends React.Component {
   constructor(props) {
@@ -46,14 +47,14 @@ export default class ReplSuggestions extends React.Component {
       let words = input.trim().split(/\s+/);
       let lastWord = words[words.length - 1];
       lastWord = lastWord.replace(/^.*\./, '');
-      let expect = suggestion.text.replace(lastWord, '');
+      let expect = suggestion.text.substring(lastWord.length);
 
       return {
         key: md5(suggestion.text),
         type: ReplType.getTypeName(suggestion.type),
         typeHint: ReplType.getTypeNameShort(suggestion.type),
         expect: expect,
-        input: suggestion.text.replace(expect, ''),
+        input: suggestion.text.substring(0, lastWord.length)
       };
     });
 
@@ -64,7 +65,7 @@ export default class ReplSuggestions extends React.Component {
 
   render() {
     return (
-      <div className='repl-prompt-suggestion-wrapper'>
+      <div className='repl-prompt-suggestion-wrapper' style={ReplDOMUtil.getAutoCompletePosition()}>
       {
         this.state.suggestions.length
           ?

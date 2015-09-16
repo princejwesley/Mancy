@@ -29,13 +29,46 @@ let ReplDOMUtil = {
     let selection = window.getSelection();
     let range = selection.getRangeAt(0).cloneRange();
 
+    if(range.startOffset > 0) {
+      let data = range.startContainer.data;
+      let left = data.substring(0, range.startOffset);
+      let words = left.split(/\s/);
+      let lastWord = words[words.length - 1];
+      let last = lastWord.length - lastWord.replace(/^.*\./,'').length;
+      let rest = words.slice(0, words.length - 1).join(' ').length;
+      range.setStart(range.startContainer, rest + last);
+    }
+
     let area = range.getClientRects()[0];
+
     // consider parent node height -- repl prompt
-    let node = range.startContainer.parentNode;
-    console.log('area', range.getClientRects(), area, node.clientHeight, range, ReplDOMUtil.getViewportSize())
+    let node = range.startContainer.parentNode.parentNode;
+    let viewport = ReplDOMUtil.getViewportSize();
+    let prompt = document.getElementsByClassName(node.className)[0];
+    let nodeStyle = window.getComputedStyle(prompt);
+    let offsetTop = parseInt(nodeStyle.marginTop) + parseInt(nodeStyle.borderTopWidth)
+      + parseInt(nodeStyle.paddingTop);
+    let offsetBottom = parseInt(nodeStyle.marginBottom) + parseInt(nodeStyle.borderBottomWidth)
+      + parseInt(nodeStyle.paddingBottom);
+    let y = area.bottom + offsetTop + 5;
+    let x = area.left;
+    let topBottom = 'top';
+    let leftRight = 'left';
+
+    // max height/ width for suggestion component is 200
+    if(y + 200 > viewport.height) {
+      console.log(viewport.height, document.body.clientHeight, area.top)
+      y =  2 * viewport.height - document.body.clientHeight - area.top
+            + offsetBottom;
+      topBottom = 'bottom';
+    }
+    if(x + 200 > viewport.width) {
+      x = (viewport.width - x) / 2;
+      leftRight = 'right';
+    }
     return {
-      top: area.bottom + node.offsetTop,
-      left: area.left
+      [topBottom]: y + 'px',
+      [leftRight]: x + 'px'
     };
   }
 }
