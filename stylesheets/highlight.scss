@@ -1,0 +1,47 @@
+@import 'default-theme';
+
+@mixin highlight() {
+  .number {
+    color: red;
+  }
+
+  .built_in {
+
+  }
+
+  .keyword {
+    color: yellow;
+  }
+
+  .comment {
+    color: silver;
+  }
+
+  .literal {
+    color: cyan;
+  }
+
+  .string {
+    color: orange;
+  }
+
+  .regexp {
+    color: green;
+  }
+
+  .function {
+    color: lightskyblue;
+  }
+
+  .title {
+    color: tomato;
+  }
+
+  .params {
+    color: pink;
+  }
+
+  .pi {
+    color: yellowgreen;
+  }
+}

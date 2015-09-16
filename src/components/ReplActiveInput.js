@@ -51,8 +51,8 @@ export default class ReplActiveInput extends React.Component {
     let entry = buf.toString() || '';
     if(entry.length === 0 || entry.match(/^\.+\s*$/)) { return; }
     const text = this.element.innerText;
-    console.log(entry, entry.length, text)
-    ReplActions.addEntry({entry: entry, status: true, command: text});
+    console.log(entry, entry.length, text, ReplUtil.highlight(text))
+    ReplActions.addEntry({entry: entry, status: true, command: ReplUtil.highlight(text)});
     ReplSuggestionActions.removeSuggestion();
   }
 
@@ -122,7 +122,6 @@ export default class ReplActiveInput extends React.Component {
     const lastLine = lines[lines.length - 1];
 
     if(!lastLine.trim().length && lines.length > 1) {
-      // TODO: fix tab on new line issue
       if(this.lastKey === 'Enter' && !lastLine.length) {
         text = lines.slice(0, lines.length - 1).join(EOL)
       }

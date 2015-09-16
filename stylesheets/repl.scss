@@ -1,4 +1,5 @@
 @import 'default-theme';
+@import 'highlight';
 
 html{
   height: 100%;
@@ -83,6 +84,7 @@ body {
         .repl-entry-message {
           @include entryLayout();
           .repl-entry-message-command {
+            @include highlight();
           }
           .repl-entry-message-entry {
             padding: 5px 0px;
