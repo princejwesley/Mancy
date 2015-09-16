@@ -111,11 +111,12 @@ export default class ReplActiveInput extends React.Component {
 
     let cli = ReplActiveInput.getRepl();
     const text = this.element.innerText.trim();
-    var lines = text.split(EOL);
     if(ReplActiveInput.isEnter(e)) {
-      // emit last line
-      var lastLine = lines[lines.length - 1];
-      cli.input.emit('data', lastLine);
+      if(text.split(EOL).length > 1) {
+        cli.input.emit('data', '.break');
+        cli.input.emit('data', EOL);
+      }
+      cli.input.emit('data', text);
       cli.input.emit('data', EOL);
     } else {
       cli.complete(text, this.autoComplete);
