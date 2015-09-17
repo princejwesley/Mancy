@@ -9,11 +9,15 @@ const ReplStore = Reflux.createStore({
   onAddEntry(entry) {
     entries.push(entry);
     command = '';
-    this.trigger(entry);
+    this.trigger();
   },
   onReloadPrompt(cmd) {
     command = cmd.trim();
-    this.trigger(command);
+    this.trigger();
+  },
+  onRemoveEntry(idx, entry) {
+    entries.splice(idx, 1);
+    this.trigger();
   },
   getStore() {
     return {

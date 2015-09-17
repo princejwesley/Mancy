@@ -24,7 +24,7 @@ export default class Repl extends React.Component {
     this.unsubscribe();
   }
 
-  onStateChange(item) {
+  onStateChange() {
     this.setState(ReplStore.getStore());
   }
 

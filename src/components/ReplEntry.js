@@ -13,6 +13,7 @@ export default class ReplEntry extends React.Component {
     this.onExpand = this.onExpand.bind(this);
     this.onCollapse = this.onCollapse.bind(this);
     this.onReload = this.onReload.bind(this);
+    this.onRemove = this.onRemove.bind(this);
   }
   update(collapse) {
     this.setState({
@@ -28,6 +29,9 @@ export default class ReplEntry extends React.Component {
   onReload() {
     ReplActions.reloadPrompt(this.props.entry.plainCode);
   }
+  onRemove() {
+    ReplActions.removeEntry(this.props.index, this.props.entry);
+  }
   render() {
     return (
       <div className='repl-entry'>
@@ -35,6 +39,7 @@ export default class ReplEntry extends React.Component {
         <ReplEntryMessage message={this.props.entry} collapse={this.state.collapse}/>
         <ReplEntryStatus message={this.props.entry} collapse={this.state.collapse}
           onReload={this.onReload}
+          onRemove={this.onRemove}
           onCollapse={this.onCollapse}
           onExpand={this.onExpand}/>
       </div>
