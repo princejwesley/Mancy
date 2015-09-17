@@ -12,7 +12,8 @@ export default class ReplSuggestions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      suggestions: []
+      suggestions: [],
+      selected: 0
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onWindowEvents = this.onWindowEvents.bind(this);
@@ -31,13 +32,24 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onWindowEvents(e) {
+    console.log(e, e.type, e.which, e.keyIdentifier)
     if(e.which === ReplConstants.KEY_ESCAPE
       || e.type === 'blur') {
       this.setState({
         suggestions: []
       });
-    } else if(e.keyIdentifier === 'Down') {
+    } else if((e.keyIdentifier === 'Down' || e.keyIdentifier === 'Up') && this.state.suggestions.length) {
+      console.log('up/down')
+      let direction = e.keyIdentifier === 'Down' ? 1 : -1;
+      let noOfSuggestions = this.state.suggestions.length;
+      let next = this.state.selected + direction;
 
+      if(next < 0) { next = noOfSuggestions - 1; }
+      else if(next >= noOfSuggestions) { next = 0; }
+      console.log(next, ' is next')
+      this.setState({
+        selected: next
+      });
     }
   }
 
@@ -59,7 +71,8 @@ export default class ReplSuggestions extends React.Component {
     });
 
     this.setState({
-      suggestions: suggestions
+      suggestions: suggestions,
+      selected: 0
     });
   }
 
@@ -73,7 +86,7 @@ export default class ReplSuggestions extends React.Component {
             {
               _.map(this.state.suggestions, (suggestion, idx) => {
                 return (
-                  <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key} >
+                  <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key} data-selected={this.state.selected === idx}>
                     <span className='repl-prompt-suggestion-type' title={suggestion.type}>
                       {suggestion.typeHint}
                     </span>

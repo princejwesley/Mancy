@@ -138,6 +138,9 @@ pre {
     position: absolute;
     background-color: $app-suggestion-background-color;
     .repl-prompt-suggestion-list {
+      [data-selected='true'] {
+        background-color: lighten($app-background-color, 10%);
+      }
       margin: 0;
       display: flex;
       flex-direction: column;

@@ -102,7 +102,18 @@ export default class ReplActiveInput extends React.Component {
   onKeyUp(e) {
     this.lastKey = e.key;
     //TODO: filter navigation keys too.
-    if(ReplActiveInput.isTab(e) || ReplActiveInput.isEscape(e)) { return; }
+    if(ReplActiveInput.isTab(e)
+      || ReplActiveInput.isEscape(e)
+      || ReplActiveInput.isKeyup(e)
+      || ReplActiveInput.isKeydown(e)
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    // console.log('key up', e)
+    // e.persist()
 
     let cli = ReplActiveInput.getRepl();
     const text = this.element.innerText.trim();
@@ -158,6 +169,14 @@ export default class ReplActiveInput extends React.Component {
 
   static isEscape(e) {
     return e.key === 'Escape';
+  }
+
+  static isKeyup(e) {
+    return e.key === 'Up' || e.key === 'ArrowDown' || e.which === 38
+  }
+
+  static isKeydown(e) {
+    return e.key === 'Down' || e.key === 'ArrowDown' || e.which === 40
   }
 
   static getRepl = (() => {
