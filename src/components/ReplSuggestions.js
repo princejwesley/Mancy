@@ -33,7 +33,7 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onWindowEvents(e) {
-    console.log(e.which, e.keyIdentifier, e)
+    // console.log(e.which, e.keyIdentifier, e)
     if(ReplDOMEvents.isEscape(e) || ReplDOMEvents.isBlurEvent(e)) {
       this.setState({
         suggestions: []
@@ -48,6 +48,7 @@ export default class ReplSuggestions extends React.Component {
       this.setState({
         selected: next
       });
+
     }
   }
 
@@ -70,7 +71,7 @@ export default class ReplSuggestions extends React.Component {
 
     this.setState({
       suggestions: suggestions,
-      selected: 0
+      selected: -1
     });
   }
 

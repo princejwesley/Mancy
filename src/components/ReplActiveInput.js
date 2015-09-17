@@ -22,7 +22,6 @@ export default class ReplActiveInput extends React.Component {
   }
   componentDidMount() {
     this.element = React.findDOMNode(this);
-    this.element.innerText = this.props.command;
     this.focus();
 
     let cli = ReplActiveInput.getRepl();
@@ -39,7 +38,7 @@ export default class ReplActiveInput extends React.Component {
   focus() {
     // focus
     ReplDOM.focusOn(this.element);
-    ReplDOM.moveCursorToEndOf(this.element);
+    ReplDOM.setCursorPosition(this.props.cursor || 0, this.element);
   }
 
   addEntry(buf) {
@@ -89,14 +88,21 @@ export default class ReplActiveInput extends React.Component {
     } else if(list.length === 1) {
       const text = this.element.innerText;
       let lines = text.split(EOL);
-      let currentLine = lines.length - 1;
-      lines[currentLine] = lines[currentLine].replace(input, '') + list[0];
-      this.element.innerText = lines.join(EOL);
+      let currentLine = lines.pop();
+      let cursorPosition = ReplDOM.getCursorPosition();
+      let left = currentLine.substring(0, cursorPosition);
+      let right = currentLine.substring(cursorPosition);
+      let words = ReplCommon.toWords(left);
+      let replaceWord = words.pop();
+      left = words.join('') + list[0];
+      lines.push(left + right);
+      // console.log('left', left, 'right', right, 'words', words, 'replaceWord', replaceWord, 'lines', lines, 'list', list)
+
       ReplSuggestionActions.removeSuggestion();
+      ReplActions.reloadPrompt({ command: lines.join(EOL), cursor: left.trim().length });
     } else {
       this.autoComplete(__, completion);
     }
-    this.focus();
   }
 
   onKeyUp(e) {
@@ -104,12 +110,9 @@ export default class ReplActiveInput extends React.Component {
 
     if(ReplDOMEvents.isTab(e)
       || ReplDOMEvents.isEscape(e)
-      || ReplDOMEvents.isKeyup(e)
-      || ReplDOMEvents.isKeydown(e)
+      || ReplDOMEvents.isNavigation(e)
     ) {
-      console.log('preventDefault')
       e.preventDefault();
-      // e.stopPropagation();
       return;
     }
 
@@ -138,6 +141,7 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
     if(!ReplDOMEvents.isTab(e)) { return; }
+    e.preventDefault();
 
     let text = this.element.innerText || '';
     const lines = text.split(EOL);
@@ -147,21 +151,24 @@ export default class ReplActiveInput extends React.Component {
       if(this.lastKey === 'Enter' && !lastLine.length) {
         text = lines.slice(0, lines.length - 1).join(EOL);
       }
-      this.element.innerText = [text, ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')].join('');
-      this.focus();
-      ReplDOM.scrollToEnd();
+      let command = [text, ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')].join('');
+      ReplSuggestionActions.removeSuggestion();
+      ReplActions.reloadPrompt({
+        command: command.length,
+        cursor: command.trim().length
+      });
+    } else {
+      let cli = ReplActiveInput.getRepl();
+      cli.complete(text, this.onTabCompletion);
     }
 
-    let cli = ReplActiveInput.getRepl();
-    cli.complete(text, this.onTabCompletion);
-    // avoid focus loss
-    e.preventDefault();
   }
   render() {
     return (
       <pre className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
         onKeyDown={this.onKeyDown}>
+        {this.props.command}
       </pre>
     );
   }

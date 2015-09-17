@@ -25,6 +25,25 @@ let ReplDOM = {
     selection.removeAllRanges();
     selection.addRange(range);
   },
+  setCursorPosition: (pos, dom) => {
+    let range = document.createRange();
+    dom = dom || document.activeElement;
+    range.selectNodeContents(dom);
+    if(dom.innerText.length <= pos && dom.childNodes.length) {
+      range.setStart(dom.childNodes[0], pos);
+    }
+
+    range.collapse(true);
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  },
+  getCursorPosition: () => {
+    let selection = window.getSelection();
+    let range = selection.getRangeAt(0).cloneRange();
+    console.log('cursor position', range, range.endOffset);
+    return range.endOffset;
+  },
   // for auto complete
   getAutoCompletePosition: () => {
     let selection = window.getSelection();
@@ -41,6 +60,8 @@ let ReplDOM = {
     }
 
     let area = range.getClientRects()[0];
+
+    if(!area) { return; }
 
     // consider parent node height -- repl prompt
     let node = range.startContainer.parentNode.parentNode;

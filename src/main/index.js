@@ -22,10 +22,11 @@ function onReady() {
     'min-width': 600,
     resizable: true,
     'web-preferences': {
-			'overlay-scrollbars': true
+			'overlay-scrollbars': true,
+      'plugins': true
 		},
     show: false,
-    title: 'Node REPL+'
+    title: 'Mancy',
   });
 
   mainWindow.loadUrl('file://' + __dirname + '/../../index.html');
@@ -42,5 +43,8 @@ function onReady() {
   menu.setMenu(app, mainWindow);
 
   // testing
+  //TODO: configure for dev only environment
   mainWindow.openDevTools({detach: true});
+  var name = BrowserWindow.addDevToolsExtension('devtools/react-devtools/shells/chrome');
+  console.log('extension ', name)
 }

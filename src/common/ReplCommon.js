@@ -16,6 +16,12 @@ let ReplCommon = {
     return !!trace && trace.every((t) => {
       return /^\s+at\s/.test(t) || /^$/.test(t);
     });
+  },
+  toWords: (str) => {
+    return str.split(/\s/);
+  },
+  isObjectString: (str) => {
+    return /^.*\./.test(str);
   }
 };
 

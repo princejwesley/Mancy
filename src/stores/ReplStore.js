@@ -1,7 +1,7 @@
 import ReplActions from '../actions/ReplActions';
 import Reflux from 'reflux';
 
-let entries = [], command = '';
+let entries = [], command = '', cursor = 0;
 const ReplStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplActions);
@@ -9,10 +9,12 @@ const ReplStore = Reflux.createStore({
   onAddEntry(entry) {
     entries.push(entry);
     command = '';
+    cursor = 0;
     this.trigger();
   },
   onReloadPrompt(cmd) {
-    command = cmd.trim();
+    command = cmd.command.trim();
+    cursor = cmd.cursor;
     this.trigger();
   },
   onRemoveEntry(idx, entry) {
@@ -22,7 +24,8 @@ const ReplStore = Reflux.createStore({
   getStore() {
     return {
       entries: entries,
-      command: command
+      command: command,
+      cursor: cursor,
     };
   }
 

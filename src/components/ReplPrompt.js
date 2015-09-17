@@ -7,10 +7,11 @@ export default class ReplPrompt extends React.Component {
     super(props);
   }
   render() {
+    console.log('cursor', this.props)
     return (
       <div className='repl-prompt'>
         <ReplActiveIcon />
-        <ReplActiveInput command={this.props.command} />
+        <ReplActiveInput command={this.props.command} cursor={this.props.cursor}/>
       </div>
     );
   }

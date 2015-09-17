@@ -11,7 +11,8 @@ export default class Repl extends React.Component {
     super(props);
     this.state = {
       entries: [],
-      command: ''
+      command: '',
+      cursor: 0
     };
     this.onStateChange = this.onStateChange.bind(this);
   }
@@ -29,10 +30,11 @@ export default class Repl extends React.Component {
   }
 
   render() {
+    // force to recreate ReplPrompt
     return (
       <div className='repl-container'>
         <ReplEntries entries={this.state.entries} />
-        <ReplPrompt key={Date.now()} command={this.state.command}/>
+        <ReplPrompt key={Date.now()} command={this.state.command} cursor= {this.state.cursor}/>
         <div className="repl-status-bar-cover"> </div>
         <ReplStatus />
       </div>
