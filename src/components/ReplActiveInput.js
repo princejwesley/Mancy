@@ -8,8 +8,9 @@ import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import ReplActions from '../actions/ReplActions';
 import ReplConstants from '../constants/ReplConstants';
 import ReplType from '../common/ReplType';
-import ReplUtil from '../common/ReplUtil';
-import ReplDOMUtil from '../common/ReplDOMUtil';
+import ReplCommon from '../common/ReplCommon';
+import ReplDOMEvents from '../common/ReplDOMEvents';
+import ReplDOM from '../common/ReplDOM';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -27,7 +28,7 @@ export default class ReplActiveInput extends React.Component {
     let cli = ReplActiveInput.getRepl();
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom
-    ReplDOMUtil.scrollToEnd();
+    ReplDOM.scrollToEnd();
   }
 
   componentWillUnmount() {
@@ -37,22 +38,22 @@ export default class ReplActiveInput extends React.Component {
 
   focus() {
     // focus
-    ReplDOMUtil.focusOn(this.element);
-    ReplDOMUtil.moveCursorToEndOf(this.element);
+    ReplDOM.focusOn(this.element);
+    ReplDOM.moveCursorToEndOf(this.element);
   }
 
   addEntry(buf) {
     let entry = buf.toString() || '';
     if(entry.length === 0 || entry.match(/^\.+\s*$/)) { return; }
     let [exception, ...stackTrace] = entry.split(EOL);
-    let status = (ReplUtil.isExceptionMessage(exception)
-        && ReplUtil.isStackTrace(stackTrace));
+    let status = (ReplCommon.isExceptionMessage(exception)
+        && ReplCommon.isStackTrace(stackTrace));
 
     const text = this.element.innerText;
     ReplActions.addEntry({
       entry: entry,
       status: !status,
-      command: ReplUtil.highlight(text),
+      command: ReplCommon.highlight(text),
       plainCode: text
     });
     ReplSuggestionActions.removeSuggestion();
@@ -74,7 +75,6 @@ export default class ReplActiveInput extends React.Component {
 
     if(suggestions.length) {
       const text = this.element.innerText;
-      console.log('cursor position', ReplDOMUtil.getAutoCompletePosition());
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: text});
     } else {
       ReplSuggestionActions.removeSuggestion();
@@ -101,23 +101,24 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyUp(e) {
     this.lastKey = e.key;
-    //TODO: filter navigation keys too.
-    if(ReplActiveInput.isTab(e)
-      || ReplActiveInput.isEscape(e)
-      || ReplActiveInput.isKeyup(e)
-      || ReplActiveInput.isKeydown(e)
+
+    if(ReplDOMEvents.isTab(e)
+      || ReplDOMEvents.isEscape(e)
+      || ReplDOMEvents.isKeyup(e)
+      || ReplDOMEvents.isKeydown(e)
     ) {
+      console.log('preventDefault')
       e.preventDefault();
-      e.stopPropagation();
+      // e.stopPropagation();
       return;
     }
 
-    // console.log('key up', e)
-    // e.persist()
+    console.log('key up', e)
+    e.persist()
 
     let cli = ReplActiveInput.getRepl();
     const text = this.element.innerText.trim();
-    if(ReplActiveInput.isEnter(e)) {
+    if(ReplDOMEvents.isEnter(e)) {
       if(text.split(EOL).length > 1) {
         cli.input.emit('data', '.break');
         cli.input.emit('data', EOL);
@@ -130,7 +131,13 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyDown(e) {
-    if(!ReplActiveInput.isTab(e)) { return; }
+    if( ReplDOMEvents.isKeyup(e)
+      || ReplDOMEvents.isKeydown(e)
+    ) {
+      e.preventDefault();
+      return;
+    }
+    if(!ReplDOMEvents.isTab(e)) { return; }
 
     let text = this.element.innerText || '';
     const lines = text.split(EOL);
@@ -140,9 +147,9 @@ export default class ReplActiveInput extends React.Component {
       if(this.lastKey === 'Enter' && !lastLine.length) {
         text = lines.slice(0, lines.length - 1).join(EOL);
       }
-      this.element.innerText = [text, ReplUtil.times(ReplConstants.TAB_WIDTH, ' ')].join('');
+      this.element.innerText = [text, ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')].join('');
       this.focus();
-      ReplDOMUtil.scrollToEnd();
+      ReplDOM.scrollToEnd();
     }
 
     let cli = ReplActiveInput.getRepl();
@@ -157,26 +164,6 @@ export default class ReplActiveInput extends React.Component {
         onKeyDown={this.onKeyDown}>
       </pre>
     );
-  }
-  // TODO: move events in events Util
-  static isTab(e) {
-    return e.key === 'Tab';
-  }
-
-  static isEnter(e) {
-    return e.key === 'Enter';
-  }
-
-  static isEscape(e) {
-    return e.key === 'Escape';
-  }
-
-  static isKeyup(e) {
-    return e.key === 'Up' || e.key === 'ArrowDown' || e.which === 38
-  }
-
-  static isKeydown(e) {
-    return e.key === 'Down' || e.key === 'ArrowDown' || e.which === 40
   }
 
   static getRepl = (() => {

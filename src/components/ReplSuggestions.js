@@ -6,7 +6,8 @@ import md5 from 'md5';
 import {EOL} from 'os';
 import ReplType from '../common/ReplType';
 import ReplConstants from '../constants/ReplConstants';
-import ReplDOMUtil from '../common/ReplDOMUtil';
+import ReplDOM from '../common/ReplDOM';
+import ReplDOMEvents from '../common/ReplDOMEvents';
 
 export default class ReplSuggestions extends React.Component {
   constructor(props) {
@@ -32,21 +33,18 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onWindowEvents(e) {
-    console.log(e, e.type, e.which, e.keyIdentifier)
-    if(e.which === ReplConstants.KEY_ESCAPE
-      || e.type === 'blur') {
+    console.log(e.which, e.keyIdentifier, e)
+    if(ReplDOMEvents.isEscape(e) || ReplDOMEvents.isBlurEvent(e)) {
       this.setState({
         suggestions: []
       });
-    } else if((e.keyIdentifier === 'Down' || e.keyIdentifier === 'Up') && this.state.suggestions.length) {
-      console.log('up/down')
-      let direction = e.keyIdentifier === 'Down' ? 1 : -1;
+    } else if((ReplDOMEvents.isKeyup(e) || ReplDOMEvents.isKeydown(e)) && this.state.suggestions.length) {
+      let direction = ReplDOMEvents.isKeydown(e) ? 1 : -1;
       let noOfSuggestions = this.state.suggestions.length;
       let next = this.state.selected + direction;
 
       if(next < 0) { next = noOfSuggestions - 1; }
       else if(next >= noOfSuggestions) { next = 0; }
-      console.log(next, ' is next')
       this.setState({
         selected: next
       });
@@ -78,7 +76,7 @@ export default class ReplSuggestions extends React.Component {
 
   render() {
     return (
-      <div className='repl-prompt-suggestion-wrapper' style={ReplDOMUtil.getAutoCompletePosition()}>
+      <div className='repl-prompt-suggestion-wrapper' style={ReplDOM.getAutoCompletePosition()}>
       {
         this.state.suggestions.length
           ?

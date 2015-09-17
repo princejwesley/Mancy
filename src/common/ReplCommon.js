@@ -2,7 +2,7 @@ import _ from 'lodash';
 import hl from 'highlight.js';
 import ReplConstants from '../constants/ReplConstants';
 
-let ReplUtil = {
+let ReplCommon = {
   times: (num, str) => {
     return new Array(num + 1).join(str);
   },
@@ -20,8 +20,8 @@ let ReplUtil = {
 };
 
 hl.configure({
-  tabReplace: ReplUtil.times(ReplConstants.TAB_WIDTH, ' '),
+  tabReplace: ReplCommon.times(ReplConstants.TAB_WIDTH, ' '),
   classPrefix: ''
 });
 
-export default ReplUtil;
+export default ReplCommon;

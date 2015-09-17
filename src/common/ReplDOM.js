@@ -2,7 +2,7 @@ import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
 
 // Not very generic but sufficient to handle our usecase
-let ReplDOMUtil = {
+let ReplDOM = {
   scrollToEnd: () => {
     window.scrollTo(0, document.body.scrollHeight);
   },
@@ -19,6 +19,7 @@ let ReplDOMUtil = {
   moveCursorToEndOf: (dom) => {
     let range = document.createRange();
     range.selectNodeContents(dom);
+    console.log(range, 'moveCursorToEndOf')
     range.collapse(true);
     let selection = window.getSelection();
     selection.removeAllRanges();
@@ -43,7 +44,7 @@ let ReplDOMUtil = {
 
     // consider parent node height -- repl prompt
     let node = range.startContainer.parentNode.parentNode;
-    let viewport = ReplDOMUtil.getViewportSize();
+    let viewport = ReplDOM.getViewportSize();
     let prompt = document.getElementsByClassName(node.className)[0];
     let nodeStyle = window.getComputedStyle(prompt);
     let offsetTop = parseInt(nodeStyle.marginTop) + parseInt(nodeStyle.borderTopWidth)
@@ -75,4 +76,4 @@ let ReplDOMUtil = {
 
 
 
-export default ReplDOMUtil;
+export default ReplDOM;
