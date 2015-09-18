@@ -35,28 +35,33 @@ const options = {
 
 gulp.task("sass", () =>
   gulp.src(options.sass.source)
-  .pipe($.cached("sass"))
-  .pipe($.sass(options.sass.config).on("error", onError))
-  .pipe($.concat(options.sass.target.name))
-  .pipe(gulp.dest(options.sass.target.path))
-  .pipe($.livereload())
+    .pipe($.cached("sass"))
+    .pipe($.sass(options.sass.config).on("error", onError))
+    .pipe($.concat(options.sass.target.name))
+    .pipe(gulp.dest(options.sass.target.path))
+    .pipe($.livereload())
 );
 
 gulp.task("react", () =>
   gulp.src(options.react.source)
-  .pipe($.babel(options.react.config).on("error", onError))
-  .pipe($.react().on("error", onError))
-  .pipe(gulp.dest(options.react.target))
+    .pipe($.babel(options.react.config).on("error", onError))
+    .pipe($.react().on("error", onError))
+    .pipe(gulp.dest(options.react.target))
 );
 
 gulp.task("clean", () => {
   require("del").sync(["build/**"]);
 });
 
+gulp.task("copy", () => {
+  gulp.src(['fonts/*'])
+    .pipe(gulp.dest('build/fonts'));
+});
+
 gulp.task("watch", cb => {
   $.livereload.listen();
   runSequence(
-    "clean", ["sass", "react"], () => {
+    "clean", ["sass", "react", "copy"], () => {
       gulp.watch(options.sass.source, ["sass"]);
       gulp.watch(options.react.source, ["react"]);
       cb();
@@ -65,4 +70,4 @@ gulp.task("watch", cb => {
 });
 
 gulp.task("default", ["watch"]);
-gulp.task("build", ["clean", "sass", "react"]);
+gulp.task("build", ["clean", "sass", "react", "copy"]);
