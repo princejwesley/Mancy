@@ -8,13 +8,14 @@ import ReplType from '../common/ReplType';
 import ReplConstants from '../constants/ReplConstants';
 import ReplDOM from '../common/ReplDOM';
 import ReplDOMEvents from '../common/ReplDOMEvents';
+import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 
 export default class ReplSuggestions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       suggestions: [],
-      selected: 0
+      selected: -1
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onWindowEvents = this.onWindowEvents.bind(this);
@@ -36,8 +37,10 @@ export default class ReplSuggestions extends React.Component {
     // console.log(e.which, e.keyIdentifier, e)
     if(ReplDOMEvents.isEscape(e) || ReplDOMEvents.isBlurEvent(e)) {
       this.setState({
-        suggestions: []
+        suggestions: [],
+        selected: -1
       });
+      ReplActiveInputActions.resetTabCompleteSuggestion();      
     } else if((ReplDOMEvents.isKeyup(e) || ReplDOMEvents.isKeydown(e)) && this.state.suggestions.length) {
       let direction = ReplDOMEvents.isKeydown(e) ? 1 : -1;
       let noOfSuggestions = this.state.suggestions.length;
@@ -54,6 +57,7 @@ export default class ReplSuggestions extends React.Component {
       if(suggestionList) {
         suggestionList.scrollTop = (suggestionList.scrollHeight / this.state.suggestions.length) * next;
       }
+      ReplActiveInputActions.tabCompleteSuggestion(this.state.suggestions[next]);
     }
   }
 
@@ -78,6 +82,8 @@ export default class ReplSuggestions extends React.Component {
       suggestions: suggestions,
       selected: -1
     });
+
+    ReplActiveInputActions.resetTabCompleteSuggestion();
   }
 
   render() {

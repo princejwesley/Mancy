@@ -10,7 +10,7 @@ let ReplCommon = {
     return hl.highlight('js', code, true).value;
   },
   isExceptionMessage: (msg) => {
-    return /^Error:?/.test(msg);
+    return /Error:?/.test(msg);
   },
   isStackTrace: (trace) => {
     return !!trace && trace.every((t) => {

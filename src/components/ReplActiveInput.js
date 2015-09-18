@@ -11,6 +11,7 @@ import ReplType from '../common/ReplType';
 import ReplCommon from '../common/ReplCommon';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
+import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -19,9 +20,12 @@ export default class ReplActiveInput extends React.Component {
     this.autoComplete = this.autoComplete.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
+    this.onTabCompleteSuggestion = this.onTabCompleteSuggestion.bind(this);
     this.waitingForOutput = false;
+
   }
   componentDidMount() {
+    this.unsubscribe = ReplActiveInputStore.listen(this.onTabCompleteSuggestion);
     this.element = React.findDOMNode(this);
     this.focus();
 
@@ -32,6 +36,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   componentWillUnmount() {
+    this.unsubscribe();
     let cli = ReplActiveInput.getRepl();
     cli.output.write = () => {};
   }
@@ -41,6 +46,8 @@ export default class ReplActiveInput extends React.Component {
     ReplDOM.focusOn(this.element);
     ReplDOM.setCursorPosition(this.props.cursor || 0, this.element);
   }
+
+  onTabCompleteSuggestion(suggestion) {}
 
   addEntry(buf) {
     if(!this.waitingForOutput) { return; }
@@ -87,14 +94,6 @@ export default class ReplActiveInput extends React.Component {
 
     let [list, input] = completion;
 
-    let breakReplaceWord = (word) => {
-      let length = word.length;
-      let rword = ReplCommon.reverseString(word);
-      //extract prefix
-      let prefix = ReplCommon.reverseString(rword.replace(/^\w+/, ''));
-      return { prefix: prefix, suffix: word.substring(prefix.length) };
-    }
-
     if(list.length === 0) {
       // no beep, only tab width spaces
       //shell.beep();
@@ -107,29 +106,35 @@ export default class ReplActiveInput extends React.Component {
       });
 
     } else if(list.length === 1) {
-      const text = this.element.innerText;
-      let lines = text.split(EOL);
-      let currentLine = lines.pop();
-
-      let cursorPosition = ReplDOM.getCursorPosition();
-      let left = currentLine.substring(0, cursorPosition);
-      let right = currentLine.substring(cursorPosition);
-      let words = ReplCommon.toWords(left);
-      let replaceWord = words.pop();
-      let {prefix, suffix} = breakReplaceWord(replaceWord);
-      let linesLength = ReplCommon.linesLength(lines);
-
-      words.push(prefix + list[0].substring(list[0].indexOf(suffix)));
-      left = words.join(' ');
-      lines.push(left + right);
-
-      // console.log('left', left, 'right', right, 'words', words, 'replaceWord', replaceWord, 'lines', lines, 'list', list)
-      // console.log([linesLength, left.length])
-      ReplSuggestionActions.removeSuggestion();
-      ReplActions.reloadPrompt({ command: lines.join(EOL), cursor: linesLength + left.length});
+      this.onSelectTabCompletion(list[0]);
     } else {
       this.autoComplete(__, completion);
     }
+  }
+
+  onSelectTabCompletion(suggestion) {
+
+    let breakReplaceWord = (word) => {
+      let length = word.length;
+      let rword = ReplCommon.reverseString(word);
+      //extract prefix
+      let prefix = ReplCommon.reverseString(rword.replace(/^\w+/, ''));
+      return { prefix: prefix, suffix: word.substring(prefix.length) };
+    }
+
+    const text = this.element.innerText.replace(/\s*$/, '');
+
+    let cursorPosition = ReplDOM.getCursorPosition();
+    let left = text.substring(0, cursorPosition);
+    let right = text.substring(cursorPosition);
+    let {prefix, suffix} = breakReplaceWord(left);
+    left = prefix + suggestion.substring(suggestion.indexOf(suffix));
+
+    // console.log('left', left, 'right', right)
+    // console.log([right.length, left.length])
+
+    ReplSuggestionActions.removeSuggestion();
+    ReplActions.reloadPrompt({ command: left + right, cursor: left.length});
   }
 
   onKeyUp(e) {
@@ -149,10 +154,8 @@ export default class ReplActiveInput extends React.Component {
     const text = this.element.innerText.replace(/\s{1,2}$/, '');
     if(ReplDOMEvents.isEnter(e)) {
       this.waitingForOutput = true;
-      if(text.split(EOL).length > 1) {
-        cli.input.emit('data', '.break');
-        cli.input.emit('data', EOL);
-      }
+      cli.input.emit('data', '.break');
+      cli.input.emit('data', EOL);
 
       cli.input.emit('data', text);
       cli.input.emit('data', EOL);
@@ -167,25 +170,32 @@ export default class ReplActiveInput extends React.Component {
     ) {
       // avoid system behavior
       e.preventDefault();
-      // change cursor position manually
-      // if it is a empty div, traverse history up
+
+      // TODO: change cursor position manually
+      // TODO: if it is a empty div, traverse history up
       return;
     }
     if(!ReplDOMEvents.isTab(e)) { return; }
     e.preventDefault();
 
-    let text = this.element.innerText || '';
-    let cursor = ReplDOM.getCursorPosition();
-    let words = ReplCommon.toWords(text.substring(0, cursor));
-    this.complete(words.pop(), this.onTabCompletion);
-
+    let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
+    if(activeSuggestion) {
+      this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+    } else {
+      let text = this.element.innerText || '';
+      let cursor = ReplDOM.getCursorPosition();
+      let words = ReplCommon.toWords(text.substring(0, cursor));
+      this.complete(words.pop(), this.onTabCompletion);
+    }
   }
+
   complete(code, callback) {
     let cli = ReplActiveInput.getRepl();
     this.waitingForOutput = false;
     ReplSuggestionActions.removeSuggestion();
     cli.complete(code, callback);
   }
+
   render() {
     return (
       <pre className='repl-active-input' tabIndex="-1" contentEditable={true}

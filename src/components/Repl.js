@@ -40,11 +40,12 @@ export default class Repl extends React.Component {
 
   render() {
     // force to recreate ReplPrompt
-
     return (
       <div className='repl-container'>
         <ReplEntries entries={this.state.entries} />
-        <ReplPrompt key={Date.now()} command={this.state.command} cursor= {this.state.cursor}/>
+        <ReplPrompt key={Date.now()}
+          command={this.state.command}
+          cursor= {this.state.cursor} />
         <div className="repl-status-bar-cover"> </div>
         <ReplStatus />
       </div>
