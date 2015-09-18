@@ -49,6 +49,11 @@ export default class ReplSuggestions extends React.Component {
         selected: next
       });
 
+      // scroll to selected element
+      let suggestionList = document.getElementsByClassName('repl-prompt-suggestion-list')[0];
+      if(suggestionList) {
+        suggestionList.scrollTop = (suggestionList.scrollHeight / this.state.suggestions.length) * next;
+      }
     }
   }
 

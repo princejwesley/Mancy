@@ -19,7 +19,6 @@ let ReplDOM = {
   moveCursorToEndOf: (dom) => {
     let range = document.createRange();
     range.selectNodeContents(dom);
-    console.log(range, 'moveCursorToEndOf')
     range.collapse(true);
     let selection = window.getSelection();
     selection.removeAllRanges();
@@ -76,13 +75,13 @@ let ReplDOM = {
     let topBottom = 'top';
     let leftRight = 'left';
 
-    // max height/ width for suggestion component is 200
+    // max height/ width for suggestion component is 200/300
     if(y + 200 > viewport.height) {
       y =  2 * viewport.height - document.body.clientHeight - area.top
             + offsetBottom;
       topBottom = 'bottom';
     }
-    if(x + 200 > viewport.width) {
+    if(x + 300 > viewport.width) {
       x = (viewport.width - x) / 2;
       leftRight = 'right';
     }
