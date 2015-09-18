@@ -24,10 +24,19 @@ body {
   &:before {
     content: "JS>";
     position: fixed;
-    top: 40vh;
+    top: 30vh;
     left: 40vw;
     font-size: 20vh;
     color: $app-water-mark-color;
+    font-family: 'Fenix', sans-serif;
+  }
+  &:after {
+    content: "REPL for fun 🙈";
+    position: fixed;
+    top: 50vh;
+    left: 43vw;
+    font-size: 2vh;
+    color: rgba(192, 192, 192, 0.14);
     font-family: 'Fenix', sans-serif;
   }
 }
