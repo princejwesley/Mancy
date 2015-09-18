@@ -96,8 +96,16 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(list.length === 0) {
-      shell.beep();
+      // no beep, only tab width spaces
+      //shell.beep();
+      let command = this.element.innerText + ReplCommon.times(ReplConstants.TAB_WIDTH, ' ');
+
       ReplSuggestionActions.removeSuggestion();
+      ReplActions.reloadPrompt({
+        command: command,
+        cursor: command.length
+      });
+
     } else if(list.length === 1) {
       const text = this.element.innerText;
       let lines = text.split(EOL);
@@ -116,7 +124,7 @@ export default class ReplActiveInput extends React.Component {
       lines.push(left + right);
 
       // console.log('left', left, 'right', right, 'words', words, 'replaceWord', replaceWord, 'lines', lines, 'list', list)
-      console.log([linesLength, left.length])
+      // console.log([linesLength, left.length])
       ReplSuggestionActions.removeSuggestion();
       ReplActions.reloadPrompt({ command: lines.join(EOL), cursor: linesLength + left.length});
     } else {
@@ -156,33 +164,20 @@ export default class ReplActiveInput extends React.Component {
     if( ReplDOMEvents.isKeyup(e)
       || ReplDOMEvents.isKeydown(e)
     ) {
+      // avoid system behavior
       e.preventDefault();
+      // change cursor position manually
+
       return;
     }
     if(!ReplDOMEvents.isTab(e)) { return; }
     e.preventDefault();
 
     let text = this.element.innerText || '';
-//     const lines = text.split(EOL);
-//     const lastLine = lines[lines.length - 1];
-
-//     if(!lastLine.trim().length && lines.length > 1) {
-//       if(this.lastKey === 'Enter' && !lastLine.length) {
-//         text = lines.slice(0, lines.length - 1).join(EOL);
-//       }
-//       let command = [text, ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')].join('');
-//       ReplSuggestionActions.removeSuggestion();
-//       ReplActions.reloadPrompt({
-//         command: command,
-//         cursor: command.length
-//       });
-//     } else {
-
-      let cursor = ReplDOM.getCursorPosition();
-      let words = ReplCommon.toWords(text.substring(0, cursor));
-      let cli = ReplActiveInput.getRepl();
-      cli.complete(words.pop(), this.onTabCompletion);
-    // }
+    let cursor = ReplDOM.getCursorPosition();
+    let words = ReplCommon.toWords(text.substring(0, cursor));
+    let cli = ReplActiveInput.getRepl();
+    cli.complete(words.pop(), this.onTabCompletion);
 
   }
   render() {
