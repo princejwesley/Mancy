@@ -7,7 +7,6 @@ export default class ReplPrompt extends React.Component {
     super(props);
   }
   render() {
-    console.log('cursor', this.props)
     return (
       <div className='repl-prompt'>
         <ReplActiveIcon />

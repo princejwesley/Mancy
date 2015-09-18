@@ -19,6 +19,7 @@ export default class ReplActiveInput extends React.Component {
     this.autoComplete = this.autoComplete.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
+    this.waitingForOutput = false;
   }
   componentDidMount() {
     this.element = React.findDOMNode(this);
@@ -42,6 +43,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   addEntry(buf) {
+    if(!this.waitingForOutput) { return; }
     let entry = buf.toString() || '';
     if(entry.length === 0 || entry.match(/^\.+\s*$/)) { return; }
     let [exception, ...stackTrace] = entry.split(EOL);
@@ -142,13 +144,13 @@ export default class ReplActiveInput extends React.Component {
       e.preventDefault();
       return;
     }
-
-    console.log('key up', e)
-    e.persist()
+    // console.log('key up', e)
+    // e.persist()
 
     let cli = ReplActiveInput.getRepl();
     const text = this.element.innerText.trim();
     if(ReplDOMEvents.isEnter(e)) {
+      this.waitingForOutput = true;
       if(text.split(EOL).length > 1) {
         cli.input.emit('data', '.break');
         cli.input.emit('data', EOL);
@@ -156,7 +158,7 @@ export default class ReplActiveInput extends React.Component {
       cli.input.emit('data', text);
       cli.input.emit('data', EOL);
     } else {
-      cli.complete(text, this.autoComplete);
+      this.complete(text, this.autoComplete);
     }
   }
 
@@ -176,9 +178,14 @@ export default class ReplActiveInput extends React.Component {
     let text = this.element.innerText || '';
     let cursor = ReplDOM.getCursorPosition();
     let words = ReplCommon.toWords(text.substring(0, cursor));
-    let cli = ReplActiveInput.getRepl();
-    cli.complete(words.pop(), this.onTabCompletion);
+    this.complete(words.pop(), this.onTabCompletion);
 
+  }
+  complete(code, callback) {
+    let cli = ReplActiveInput.getRepl();
+    this.waitingForOutput = false;
+    ReplSuggestionActions.removeSuggestion();
+    cli.complete(code, callback);
   }
   render() {
     return (

@@ -78,7 +78,6 @@ let ReplDOM = {
 
     // max height/ width for suggestion component is 200
     if(y + 200 > viewport.height) {
-      console.log(viewport.height, document.body.clientHeight, area.top)
       y =  2 * viewport.height - document.body.clientHeight - area.top
             + offsetBottom;
       topBottom = 'bottom';
