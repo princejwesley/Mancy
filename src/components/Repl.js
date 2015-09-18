@@ -40,6 +40,7 @@ export default class Repl extends React.Component {
 
   render() {
     // force to recreate ReplPrompt
+
     return (
       <div className='repl-container'>
         <ReplEntries entries={this.state.entries} />

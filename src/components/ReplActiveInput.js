@@ -57,6 +57,7 @@ export default class ReplActiveInput extends React.Component {
       command: ReplCommon.highlight(text),
       plainCode: text
     });
+
     ReplSuggestionActions.removeSuggestion();
   }
 
@@ -84,8 +85,6 @@ export default class ReplActiveInput extends React.Component {
 
   onTabCompletion(__, completion) {
 
-    console.log('inside tab completion')
-
     let [list, input] = completion;
 
     let breakReplaceWord = (word) => {
@@ -93,7 +92,6 @@ export default class ReplActiveInput extends React.Component {
       let rword = ReplCommon.reverseString(word);
       //extract prefix
       let prefix = ReplCommon.reverseString(rword.replace(/^\w+/, ''));
-      console.log('rword', rword, 'o', prefix, word);
       return { prefix: prefix, suffix: word.substring(prefix.length) };
     }
 
@@ -148,13 +146,14 @@ export default class ReplActiveInput extends React.Component {
     // e.persist()
 
     let cli = ReplActiveInput.getRepl();
-    const text = this.element.innerText.trim();
+    const text = this.element.innerText.replace(/\s{1,2}$/, '');
     if(ReplDOMEvents.isEnter(e)) {
       this.waitingForOutput = true;
       if(text.split(EOL).length > 1) {
         cli.input.emit('data', '.break');
         cli.input.emit('data', EOL);
       }
+
       cli.input.emit('data', text);
       cli.input.emit('data', EOL);
     } else {
@@ -169,7 +168,7 @@ export default class ReplActiveInput extends React.Component {
       // avoid system behavior
       e.preventDefault();
       // change cursor position manually
-
+      // if it is a empty div, traverse history up
       return;
     }
     if(!ReplDOMEvents.isTab(e)) { return; }
