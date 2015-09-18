@@ -29,10 +29,10 @@ let ReplDOM = {
     let range = document.createRange();
     dom = dom || document.activeElement;
     range.selectNodeContents(dom);
-    if(dom.innerText.length <= pos && dom.childNodes.length) {
+
+    if(dom.innerText.length >= pos && dom.childNodes.length) {
       range.setStart(dom.childNodes[0], pos);
     }
-
     range.collapse(true);
     let selection = window.getSelection();
     selection.removeAllRanges();
@@ -41,7 +41,6 @@ let ReplDOM = {
   getCursorPosition: () => {
     let selection = window.getSelection();
     let range = selection.getRangeAt(0).cloneRange();
-    console.log('cursor position', range, range.endOffset);
     return range.endOffset;
   },
   // for auto complete
@@ -49,7 +48,7 @@ let ReplDOM = {
     let selection = window.getSelection();
     let range = selection.getRangeAt(0).cloneRange();
 
-    if(range.startOffset > 0) {
+    if(range.startOffset > 0 && range.startContainer.data) {
       let data = range.startContainer.data;
       let left = data.substring(0, range.startOffset);
       let words = left.split(/\s/);

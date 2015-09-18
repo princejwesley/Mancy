@@ -15,14 +15,23 @@ export default class Repl extends React.Component {
       cursor: 0
     };
     this.onStateChange = this.onStateChange.bind(this);
+    this.onPaste = this.onPaste.bind(this);
   }
 
   componentDidMount() {
     this.unsubscribe = ReplStore.listen(this.onStateChange);
+    window.addEventListener('paste', this.onPaste, false);
+  }
+
+  onPaste(e) {
+    e.preventDefault();
+    var text = e.clipboardData.getData("text/plain");
+    document.execCommand("insertHTML", false, text);
   }
 
   componentWillUnmount() {
     this.unsubscribe();
+    window.removeEventListener('paste', this.onPaste, false);
   }
 
   onStateChange() {

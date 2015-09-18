@@ -28,7 +28,7 @@ export default class ReplEntry extends React.Component {
   }
   onReload() {
     let command = this.props.entry.plainCode;
-    ReplActions.reloadPrompt({ command: command, cursor: command.trim().length });
+    ReplActions.reloadPrompt({ command: command, cursor: command.length });
   }
   onRemove() {
     ReplActions.removeEntry(this.props.index, this.props.entry);

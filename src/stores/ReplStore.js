@@ -13,7 +13,7 @@ const ReplStore = Reflux.createStore({
     this.trigger();
   },
   onReloadPrompt(cmd) {
-    command = cmd.command.trim();
+    command = cmd.command;
     cursor = cmd.cursor;
     this.trigger();
   },

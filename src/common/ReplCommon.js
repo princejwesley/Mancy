@@ -22,6 +22,14 @@ let ReplCommon = {
   },
   isObjectString: (str) => {
     return /^.*\./.test(str);
+  },
+  reverseString: (str) => {
+    return str.split('').reverse().join('');
+  },
+  linesLength: (arr) => {
+    return _.reduce(arr, (result, line) => {
+      return result + line.length;
+    }, 0) + arr.length;
   }
 };
 

@@ -81,7 +81,20 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onTabCompletion(__, completion) {
+
+    console.log('inside tab completion')
+
     let [list, input] = completion;
+
+    let breakReplaceWord = (word) => {
+      let length = word.length;
+      let rword = ReplCommon.reverseString(word);
+      //extract prefix
+      let prefix = ReplCommon.reverseString(rword.replace(/^\w+/, ''));
+      console.log('rword', rword, 'o', prefix, word);
+      return { prefix: prefix, suffix: word.substring(prefix.length) };
+    }
+
     if(list.length === 0) {
       shell.beep();
       ReplSuggestionActions.removeSuggestion();
@@ -89,17 +102,23 @@ export default class ReplActiveInput extends React.Component {
       const text = this.element.innerText;
       let lines = text.split(EOL);
       let currentLine = lines.pop();
+
       let cursorPosition = ReplDOM.getCursorPosition();
       let left = currentLine.substring(0, cursorPosition);
       let right = currentLine.substring(cursorPosition);
       let words = ReplCommon.toWords(left);
       let replaceWord = words.pop();
-      left = words.join('') + list[0];
-      lines.push(left + right);
-      // console.log('left', left, 'right', right, 'words', words, 'replaceWord', replaceWord, 'lines', lines, 'list', list)
+      let {prefix, suffix} = breakReplaceWord(replaceWord);
+      let linesLength = ReplCommon.linesLength(lines);
 
+      words.push(prefix + list[0].substring(list[0].indexOf(suffix)));
+      left = words.join(' ');
+      lines.push(left + right);
+
+      // console.log('left', left, 'right', right, 'words', words, 'replaceWord', replaceWord, 'lines', lines, 'list', list)
+      console.log([linesLength, left.length])
       ReplSuggestionActions.removeSuggestion();
-      ReplActions.reloadPrompt({ command: lines.join(EOL), cursor: left.trim().length });
+      ReplActions.reloadPrompt({ command: lines.join(EOL), cursor: linesLength + left.length});
     } else {
       this.autoComplete(__, completion);
     }
@@ -144,23 +163,26 @@ export default class ReplActiveInput extends React.Component {
     e.preventDefault();
 
     let text = this.element.innerText || '';
-    const lines = text.split(EOL);
-    const lastLine = lines[lines.length - 1];
+//     const lines = text.split(EOL);
+//     const lastLine = lines[lines.length - 1];
 
-    if(!lastLine.trim().length && lines.length > 1) {
-      if(this.lastKey === 'Enter' && !lastLine.length) {
-        text = lines.slice(0, lines.length - 1).join(EOL);
-      }
-      let command = [text, ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')].join('');
-      ReplSuggestionActions.removeSuggestion();
-      ReplActions.reloadPrompt({
-        command: command.length,
-        cursor: command.trim().length
-      });
-    } else {
+//     if(!lastLine.trim().length && lines.length > 1) {
+//       if(this.lastKey === 'Enter' && !lastLine.length) {
+//         text = lines.slice(0, lines.length - 1).join(EOL);
+//       }
+//       let command = [text, ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')].join('');
+//       ReplSuggestionActions.removeSuggestion();
+//       ReplActions.reloadPrompt({
+//         command: command,
+//         cursor: command.length
+//       });
+//     } else {
+
+      let cursor = ReplDOM.getCursorPosition();
+      let words = ReplCommon.toWords(text.substring(0, cursor));
       let cli = ReplActiveInput.getRepl();
-      cli.complete(text, this.onTabCompletion);
-    }
+      cli.complete(words.pop(), this.onTabCompletion);
+    // }
 
   }
   render() {
