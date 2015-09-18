@@ -10,11 +10,11 @@ let ReplCommon = {
     return hl.highlight('js', code, true).value;
   },
   isExceptionMessage: (msg) => {
-    return /Error:/.test(msg);
+    return /^Error:?/.test(msg);
   },
   isStackTrace: (trace) => {
     return !!trace && trace.every((t) => {
-      return /^\s+at\s/.test(t) || /^$/.test(t);
+      return /^\s+at\s/.test(t) || (/^$/.test(t) && trace.length > 1);
     });
   },
   toWords: (str) => {
