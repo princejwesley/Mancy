@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
+import ReplCommon from '../common/ReplCommon';
+import {EOL} from 'os';
 
 // Not very generic but sufficient to handle our usecase
 let ReplDOM = {
@@ -24,7 +26,25 @@ let ReplDOM = {
     selection.removeAllRanges();
     selection.addRange(range);
   },
+  getCursorUp: (up, dom) => {
+    let position = ReplDOM.getCursorPositionRelativeTo(dom);
+    let element = dom || document.activeElement;
+    let text = element.innerText;
+    // console.log('text', text, position, text.substring(0, position).split('\n'))
+    let lines = text.substring(0, position).split(EOL);
+    let downLines = text.substring(position).split(EOL);
+    let maxMoveDistance = lines[lines.length - 1].length;
+    // console.log(text, up, lines, downLines, maxMoveDistance, position)
+    if(up && lines.length === 1) { return -1; }
+    if(!up && downLines.length === 1) { return -1; }
+
+    let newCurrentLine = up ? lines.pop() : downLines.pop();
+    let lineCursor = newCurrentLine.length < maxMoveDistance ? newCurrentLine.length : maxMoveDistance;
+    let lengthPrefix = ReplCommon.linesLength(up ? lines : downLines) - 1;
+    return lineCursor + lengthPrefix;
+  },
   setCursorPosition: (pos, dom) => {
+    // handled for single child node
     let range = document.createRange();
     dom = dom || document.activeElement;
     range.selectNodeContents(dom);
@@ -37,8 +57,21 @@ let ReplDOM = {
     selection.removeAllRanges();
     selection.addRange(range);
   },
+  getCursorPositionRelativeTo: (dom) => {
+    let selection = window.getSelection();
+    if (selection.rangeCount <= 0) { return 0; }
+    let range = selection.getRangeAt(0);
+
+    let children = _.takeWhile(dom.childNodes, (child) => {
+      return !range.endContainer.isEqualNode(child);
+    });
+    return _.reduce(children, (offset, child) => {
+      return offset + child.toString().length;
+    }, range.endOffset);
+  },
   getCursorPosition: () => {
     let selection = window.getSelection();
+    if (selection.rangeCount <= 0) { return 0; }
     let range = selection.getRangeAt(0).cloneRange();
     return range.endOffset;
   },

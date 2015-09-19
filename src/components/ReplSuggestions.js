@@ -19,6 +19,7 @@ export default class ReplSuggestions extends React.Component {
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onWindowEvents = this.onWindowEvents.bind(this);
+    this.onClickSuggestion = this.onClickSuggestion.bind(this);
   }
 
   componentDidMount() {
@@ -40,7 +41,7 @@ export default class ReplSuggestions extends React.Component {
         suggestions: [],
         selected: -1
       });
-      ReplActiveInputActions.resetTabCompleteSuggestion();      
+      ReplActiveInputActions.resetTabCompleteSuggestion();
     } else if((ReplDOMEvents.isKeyup(e) || ReplDOMEvents.isKeydown(e)) && this.state.suggestions.length) {
       let direction = ReplDOMEvents.isKeydown(e) ? 1 : -1;
       let noOfSuggestions = this.state.suggestions.length;
@@ -77,13 +78,26 @@ export default class ReplSuggestions extends React.Component {
         input: suggestion.text.substring(0, lastWord.length)
       };
     });
-
+    let selected = suggestions.length ? 0 : -1;
     this.setState({
       suggestions: suggestions,
-      selected: -1
+      selected: selected
     });
+    if(selected !== -1) {
+      ReplActiveInputActions.tabCompleteSuggestion(suggestions[selected]);
+    }
+  }
 
-    ReplActiveInputActions.resetTabCompleteSuggestion();
+  onClickSuggestion(idx) {
+    let clickAction = () => {
+      console.log('--clicked--')
+      this.setState({
+        suggestions: this.state.suggestions,
+        selected: idx
+      });
+      ReplActiveInputActions.fillTabCompleteSuggestion(this.state.suggestions[idx]);
+    }
+    return clickAction;
   }
 
   render() {
@@ -96,7 +110,9 @@ export default class ReplSuggestions extends React.Component {
             {
               _.map(this.state.suggestions, (suggestion, idx) => {
                 return (
-                  <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key} data-selected={this.state.selected === idx}>
+                  <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key}
+                    data-selected={this.state.selected === idx}
+                    onClick={this.onClickSuggestion(idx)}>
                     <span className='repl-prompt-suggestion-type' title={suggestion.type}>
                       {suggestion.typeHint}
                     </span>

@@ -45,6 +45,7 @@ body {
 pre {
   margin: 0;
   word-wrap: break-word;
+  white-space: pre-wrap;
 }
 ::selection {
   background-color: $app-text-selection-color;

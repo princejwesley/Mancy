@@ -47,7 +47,12 @@ export default class ReplActiveInput extends React.Component {
     ReplDOM.setCursorPosition(this.props.cursor || 0, this.element);
   }
 
-  onTabCompleteSuggestion(suggestion) {}
+  onTabCompleteSuggestion() {
+    let {now, activeSuggestion} = ReplActiveInputStore.getStore();
+    if(now && activeSuggestion) {
+      this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+    }
+  }
 
   addEntry(buf) {
     if(!this.waitingForOutput) { return; }
@@ -124,7 +129,7 @@ export default class ReplActiveInput extends React.Component {
 
     const text = this.element.innerText.replace(/\s*$/, '');
 
-    let cursorPosition = ReplDOM.getCursorPosition();
+    let cursorPosition = this.lastSelectedRange.endOffset;//ReplDOM.getCursorPosition();
     let left = text.substring(0, cursorPosition);
     let right = text.substring(cursorPosition);
     let {prefix, suffix} = breakReplaceWord(left);
@@ -139,6 +144,7 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyUp(e) {
     this.lastKey = e.key;
+    this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
     if(ReplDOMEvents.isTab(e)
       || ReplDOMEvents.isEscape(e)
@@ -147,6 +153,7 @@ export default class ReplActiveInput extends React.Component {
       e.preventDefault();
       return;
     }
+
     // console.log('key up', e)
     // e.persist()
 
@@ -165,19 +172,21 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyDown(e) {
+    this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
     if( ReplDOMEvents.isKeyup(e)
       || ReplDOMEvents.isKeydown(e)
     ) {
       // avoid system behavior
       e.preventDefault();
 
+      // let newCursorPosition = ReplDOM.getCursorUp(ReplDOMEvents.isKeyup(e), this.element);
+      // console.log(newCursorPosition);
       // TODO: change cursor position manually
       // TODO: if it is a empty div, traverse history up
       return;
     }
     if(!ReplDOMEvents.isTab(e)) { return; }
     e.preventDefault();
-
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     if(activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
@@ -198,11 +207,11 @@ export default class ReplActiveInput extends React.Component {
 
   render() {
     return (
-      <pre className='repl-active-input' tabIndex="-1" contentEditable={true}
+      <div className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
         onKeyDown={this.onKeyDown}>
         {this.props.command}
-      </pre>
+      </div>
     );
   }
 

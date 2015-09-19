@@ -2,6 +2,7 @@ import Reflux from 'reflux';
 
 const ReplActiveInputActions = Reflux.createActions([
   "tabCompleteSuggestion",
-  "resetTabCompleteSuggestion"
+  "resetTabCompleteSuggestion",
+  "fillTabCompleteSuggestion"
 ]);
 export default ReplActiveInputActions;
