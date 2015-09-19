@@ -2,7 +2,7 @@
   "name": "mancy",
   "version": "0.0.1",
   "description": "A GUI REPL for Javascript",
-  "main": "src/main/index.js",
+  "main": "build/main/index.js",
   "scripts": {
     "preinstall": "npm prune",
     "postinstall": "bower prune; bower install; electron-rebuild",

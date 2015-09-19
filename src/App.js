@@ -1,5 +1,5 @@
 import React from 'react';
-import Repl from './build/components/Repl';
+import Repl from './components/Repl';
 import ReplSuggestions from './build/components/ReplSuggestions';
 
 // react entry point

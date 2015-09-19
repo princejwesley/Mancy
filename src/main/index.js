@@ -29,7 +29,7 @@ function onReady() {
     title: 'Mancy',
   });
 
-  mainWindow.loadUrl('file://' + __dirname + '/../../index.html');
+  mainWindow.loadUrl('file://' + __dirname + '/../index.html');
 
   mainWindow.on('closed', function() {
     mainWindow = null;
@@ -39,12 +39,11 @@ function onReady() {
     mainWindow.show();
     mainWindow.focus();
   });
-
+console.log(menu)
   menu.setMenu(app, mainWindow);
 
   // testing
   //TODO: configure for dev only environment
   mainWindow.openDevTools({detach: true});
-  var name = BrowserWindow.addDevToolsExtension('devtools/react-devtools/shells/chrome');
-  console.log('extension ', name)
+  // var name = BrowserWindow.addDevToolsExtension('devtools/react-devtools/shells/chrome');
 }

@@ -90,7 +90,6 @@ export default class ReplSuggestions extends React.Component {
 
   onClickSuggestion(idx) {
     let clickAction = () => {
-      console.log('--clicked--')
       this.setState({
         suggestions: this.state.suggestions,
         selected: idx

@@ -98,7 +98,7 @@ module.exports = {
     ];
 
     if (process.platform === 'darwin') {
-      var name = 'Node REPL+';
+      var name = 'Mancy';
       template.unshift({
         label: name,
         submenu: [
@@ -153,7 +153,7 @@ module.exports = {
       );
     }
 
-    menu = Menu.buildFromTemplate(template);
+    var menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
   }
 };
