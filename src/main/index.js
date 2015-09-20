@@ -39,7 +39,7 @@ function onReady() {
     mainWindow.show();
     mainWindow.focus();
   });
-console.log(menu)
+
   menu.setMenu(app, mainWindow);
 
   // testing
