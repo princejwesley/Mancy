@@ -7,7 +7,11 @@ export default class ReplEntryIcon extends React.Component {
   render() {
     return (
       <div className='repl-entry-icon'>
-        <i className="fa fa-angle-left"></i>
+        {
+          this.props.collapse
+            ? <i className="fa fa-angle-left" onClick={this.props.onCollapse}></i>
+          : <i className="fa fa-angle-down" onClick={this.props.onCollapse}></i>
+        }
       </div>
     );
   }

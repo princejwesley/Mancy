@@ -63,6 +63,11 @@ pre {
   margin: 0px;
 }
 
+@mixin arrowIcon() {
+  width: 10px;
+  text-align: center;
+}
+
 .hide {
   display: none !important;
 }
@@ -91,6 +96,7 @@ pre {
 
         .repl-entry-icon {
           color: $app-entry-icon-color;
+          @include arrowIcon();
         }
 
         .repl-entry-status {
@@ -123,6 +129,12 @@ pre {
             @include highlight();
             min-height: $app-font-size;
           }
+          .ellipsis {
+            &:after {
+              content: '\2026';
+              color: $app-entry-ellipsis-color;
+            }
+          }
           .repl-entry-message-entry {
             padding: 5px 0px;
           }
@@ -140,6 +152,7 @@ pre {
       .repl-active-icon {
         @include notSelectable();
         color: $app-prompt-active-icon-color;
+        @include arrowIcon();
       }
 
       .repl-active-input {
@@ -157,7 +170,7 @@ pre {
       width: 100%;
     }
 
-    .repl-status-bar-cover, .repl-status-bar {
+    .repl-status-bar {
       height: calc(#{$app-font-size} + 6px);
     }
     .repl-status-bar-cover {
