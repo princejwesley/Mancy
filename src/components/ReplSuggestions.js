@@ -59,8 +59,6 @@ export default class ReplSuggestions extends React.Component {
         suggestionList.scrollTop = (suggestionList.scrollHeight / this.state.suggestions.length) * next;
       }
       ReplActiveInputActions.tabCompleteSuggestion(this.state.suggestions[next]);
-    } else if(ReplDOMEvents.isEnter(e)) {
-      ReplDOM.scrollToEnd();
     }
   }
 
