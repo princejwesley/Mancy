@@ -25,6 +25,18 @@ export default class Repl extends React.Component {
     this.onBreakPrompt = this.onBreakPrompt.bind(this);
     this.onClearCommands = this.onClearCommands.bind(this);
 
+
+  }
+
+  componentDidMount() {
+    this.setupMenu();
+    this.unsubscribe = ReplStore.listen(this.onStateChange);
+    window.addEventListener('paste', this.onPaste, false);
+    window.addEventListener('contextmenu', this.onContextMenu, false);
+    window.addEventListener('keydown', this.onKeydown, false);
+  }
+
+  setupMenu() {
     let Menu = remote.require('menu');
     Repl.contextMenuTemplate.push({
       label: 'Clear All',
@@ -37,13 +49,6 @@ export default class Repl extends React.Component {
       click: this.onBreakPrompt
     });
     this.menu = Menu.buildFromTemplate(Repl.contextMenuTemplate);
-  }
-
-  componentDidMount() {
-    this.unsubscribe = ReplStore.listen(this.onStateChange);
-    window.addEventListener('paste', this.onPaste, false);
-    window.addEventListener('contextmenu', this.onContextMenu, false);
-    window.addEventListener('keydown', this.onKeydown, false);
   }
 
   componentWillUnmount() {
