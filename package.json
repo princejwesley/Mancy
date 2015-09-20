@@ -21,7 +21,7 @@
     "bower": "^1.5.2",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "0.31.2",
+    "electron-prebuilt": "^0.33.0",
     "electron-rebuild": "^1.0.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",

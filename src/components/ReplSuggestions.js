@@ -78,14 +78,12 @@ export default class ReplSuggestions extends React.Component {
         input: suggestion.text.substring(0, lastWord.length)
       };
     });
-    let selected = suggestions.length ? 0 : -1;
+
     this.setState({
       suggestions: suggestions,
-      selected: selected
+      selected: -1
     });
-    if(selected !== -1) {
-      ReplActiveInputActions.tabCompleteSuggestion(suggestions[selected]);
-    }
+    ReplActiveInputActions.resetTabCompleteSuggestion();
   }
 
   onClickSuggestion(idx) {

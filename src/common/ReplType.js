@@ -137,14 +137,14 @@ const es5Keywords = [
   "yield",
 ];
 
+const isES2015Keyword = (x) => es2015Keywords.indexOf(x) !== -1;
 const isES5Keyword = (x) => es5Keywords.indexOf(x) !== -1;
 
 const typeOf = (x) => {
-  if(isES5Keyword(x)) { return KEYWORD; }
+  if(isES2015Keyword(x)) { return KEYWORD; }
   var type = typeEval(x);
   var typeIdentifier = typeof type;
   var symbol = Symbol.for(typeIdentifier);
-  // console.log(typeIdentifier, x, symbol, typeNames[symbol], STRING)
   return typeNames[symbol] ? symbol : OBJECT;
 };
 

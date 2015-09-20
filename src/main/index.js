@@ -45,5 +45,4 @@ function onReady() {
   // testing
   //TODO: configure for dev only environment
   mainWindow.openDevTools({detach: true});
-  // var name = BrowserWindow.addDevToolsExtension('devtools/react-devtools/shells/chrome');
 }
