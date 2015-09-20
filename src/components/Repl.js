@@ -6,59 +6,9 @@ import ReplStatus from './ReplStatus';
 import ReplStore from '../stores/ReplStore';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
+import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import Reflux from 'reflux';
 import remote from 'remote';
-
-let Menu = remote.require('menu');
-let MenuItem = remote.require('menu-item');
-
-let template = [{
-    label: 'Undo',
-    accelerator: 'CmdOrCtrl+Z',
-    selector: 'undo:'
-  },
-  {
-    label: 'Redo',
-    accelerator: 'Shift+CmdOrCtrl+Z',
-    selector: 'redo:'
-  },
-  {
-    type: 'separator'
-  },
-  {
-    label: 'Cut',
-    accelerator: 'CmdOrCtrl+X',
-    selector: 'cut:'
-  },
-  {
-    label: 'Copy',
-    accelerator: 'CmdOrCtrl+C',
-    selector: 'copy:'
-  },
-  {
-    label: 'Paste',
-    accelerator: 'CmdOrCtrl+V',
-    selector: 'paste:'
-  },
-  {
-    label: 'Select All',
-    accelerator: 'CmdOrCtrl+A',
-    selector: 'selectAll:'
-  },
-  {
-    type: 'separator'
-  },
-  {
-    label: 'Clear All',
-    accelerator: 'CmdOrCtrl+K'
-  },
-  {
-    label: 'Break Prompt',
-    accelerator: 'Ctrl+C'
-  },
-];
-
-let menu = Menu.buildFromTemplate(template);
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -72,6 +22,21 @@ export default class Repl extends React.Component {
     this.onPaste = this.onPaste.bind(this);
     this.onContextMenu = this.onContextMenu.bind(this);
     this.onKeydown = this.onKeydown.bind(this);
+    this.onBreakPrompt = this.onBreakPrompt.bind(this);
+    this.onClearCommands = this.onClearCommands.bind(this);
+
+    let Menu = remote.require('menu');
+    Repl.contextMenuTemplate.push({
+      label: 'Clear All',
+      accelerator: 'CmdOrCtrl+K',
+      click: this.onClearCommands
+    });
+    Repl.contextMenuTemplate.push({
+      label: 'Break Prompt',
+      accelerator: 'Ctrl+C',
+      click: this.onBreakPrompt
+    });
+    this.menu = Menu.buildFromTemplate(Repl.contextMenuTemplate);
   }
 
   componentDidMount() {
@@ -90,7 +55,7 @@ export default class Repl extends React.Component {
 
   onContextMenu(e) {
     e.preventDefault();
-    menu.popup(remote.getCurrentWindow());
+    this.menu.popup(remote.getCurrentWindow());
   }
 
   onPaste(e) {
@@ -102,7 +67,31 @@ export default class Repl extends React.Component {
   onKeydown(e) {
     if(ReplDOMEvents.isEnter(e)) {
       ReplDOM.scrollToEnd();
+      return;
     }
+
+    let { ctrlKey, shiftKey, metaKey, altKey, which } = e;
+
+    // TODO: compose predicates
+    // ctrl + c
+    let C = "C".codePointAt(0);
+    if( ctrlKey && !shiftKey && !metaKey && !altKey && which === C) {
+      return this.onBreakPrompt();
+    }
+
+    // cmd + k or ctrl + k
+    let K = "K".codePointAt(0);
+    if(!shiftKey && !altKey && which === K && (ctrlKey ^ metaKey)) {
+      return this.onClearCommands();
+    }
+  }
+
+  onBreakPrompt() {
+    ReplActiveInputActions.breakPrompt();
+  }
+
+  onClearCommands() {
+    ReplStore.clearStore();
   }
 
   onStateChange() {
@@ -122,4 +111,43 @@ export default class Repl extends React.Component {
       </div>
     );
   }
+
+  static contextMenuTemplate = [{
+      label: 'Undo',
+      accelerator: 'CmdOrCtrl+Z',
+      selector: 'undo:'
+    },
+    {
+      label: 'Redo',
+      accelerator: 'Shift+CmdOrCtrl+Z',
+      selector: 'redo:'
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Cut',
+      accelerator: 'CmdOrCtrl+X',
+      selector: 'cut:'
+    },
+    {
+      label: 'Copy',
+      accelerator: 'CmdOrCtrl+C',
+      selector: 'copy:'
+    },
+    {
+      label: 'Paste',
+      accelerator: 'CmdOrCtrl+V',
+      selector: 'paste:'
+    },
+    {
+      label: 'Select All',
+      accelerator: 'CmdOrCtrl+A',
+      selector: 'selectAll:'
+    },
+    {
+      type: 'separator'
+    },
+  ];
+
 }

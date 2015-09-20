@@ -20,12 +20,12 @@ export default class ReplActiveInput extends React.Component {
     this.autoComplete = this.autoComplete.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
-    this.onTabCompleteSuggestion = this.onTabCompleteSuggestion.bind(this);
+    this.onStoreChange = this.onStoreChange.bind(this);
     this.waitingForOutput = false;
 
   }
   componentDidMount() {
-    this.unsubscribe = ReplActiveInputStore.listen(this.onTabCompleteSuggestion);
+    this.unsubscribe = ReplActiveInputStore.listen(this.onStoreChange);
     this.element = React.findDOMNode(this);
     this.focus();
 
@@ -47,9 +47,19 @@ export default class ReplActiveInput extends React.Component {
     ReplDOM.setCursorPosition(this.props.cursor || 0, this.element);
   }
 
-  onTabCompleteSuggestion() {
-    let {now, activeSuggestion} = ReplActiveInputStore.getStore();
-    if(now && activeSuggestion) {
+  onStoreChange() {
+    let {now, activeSuggestion, breakPrompt} = ReplActiveInputStore.getStore();
+    if(breakPrompt) {
+      let cli = ReplActiveInput.getRepl();
+      this.waitingForOutput = false;
+      cli.input.emit('data', '.break');
+      cli.input.emit('data', EOL);
+      ReplActions.reloadPrompt({
+        command: '',
+        cursor: 0
+      });
+    }
+    else if(now && activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
     }
   }

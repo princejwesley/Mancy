@@ -27,6 +27,12 @@ const ReplStore = Reflux.createStore({
       command: command,
       cursor: cursor,
     };
+  },
+  clearStore() {
+    entries = [];
+    command: '';
+    cursor: 0;
+    this.trigger();
   }
 
 });
