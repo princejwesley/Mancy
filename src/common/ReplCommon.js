@@ -20,6 +20,9 @@ let ReplCommon = {
   toWords: (str) => {
     return str.split(/\s/);
   },
+  toArray: (arrayLike) => {
+    return Array.prototype.slice.call(arrayLike);
+  },
   isObjectString: (str) => {
     return /^.*\./.test(str);
   },

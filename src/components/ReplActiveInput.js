@@ -179,8 +179,7 @@ export default class ReplActiveInput extends React.Component {
       // avoid system behavior
       e.preventDefault();
 
-      // let newCursorPosition = ReplDOM.getCursorUp(ReplDOMEvents.isKeyup(e), this.element);
-      // console.log(newCursorPosition);
+      ReplDOM.moveCursorUp(ReplDOMEvents.isKeyup(e), this.element);
       // TODO: change cursor position manually
       // TODO: if it is a empty div, traverse history up
       return;
@@ -207,11 +206,11 @@ export default class ReplActiveInput extends React.Component {
 
   render() {
     return (
-      <div className='repl-active-input' tabIndex="-1" contentEditable={true}
+      <pre className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
         onKeyDown={this.onKeyDown}>
         {this.props.command}
-      </div>
+      </pre>
     );
   }
 

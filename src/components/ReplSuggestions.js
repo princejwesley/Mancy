@@ -100,8 +100,9 @@ export default class ReplSuggestions extends React.Component {
   }
 
   render() {
+    let style = this.state.suggestions.length ? ReplDOM.getAutoCompletePosition() : null;
     return (
-      <div className='repl-prompt-suggestion-wrapper' style={ReplDOM.getAutoCompletePosition()}>
+      <div className='repl-prompt-suggestion-wrapper' style={style}>
       {
         this.state.suggestions.length
           ?
