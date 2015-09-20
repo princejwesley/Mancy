@@ -1,8 +1,9 @@
 @import 'default-theme';
 
+// TODO: add suitable color values
 @mixin highlight() {
   .number {
-    color: red;
+    color: #799FF3;
   }
 
   .built_in {
@@ -18,7 +19,7 @@
   }
 
   .literal {
-    color: cyan;
+    color: greenyellow;
   }
 
   .string {
@@ -43,5 +44,33 @@
 
   .pi {
     color: yellowgreen;
+  }
+}
+
+@mixin stackTraceHighlight() {
+  .stack-error-at {
+    color: yellowgreen;
+  }
+  .stack-error-function {
+    color: lightblue;
+  }
+
+  .stack-error-file {
+    color: chocolate;
+  }
+
+  .stack-error-row {
+    color: deepskyblue;
+  }
+  .stack-error-column {
+    color: deepskyblue;
+  }
+
+  .error-name {
+    color: #F75D5D;
+  }
+
+  .error-description {
+    color: tan;
   }
 }

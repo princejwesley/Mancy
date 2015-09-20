@@ -144,8 +144,12 @@ pre {
               color: $app-entry-ellipsis-color;
             }
           }
-          .repl-entry-message-entry {
+          .repl-entry-message-output {
             padding: 5px 0px;
+            @include highlight();
+            .repl-entry-output-error {
+              @include stackTraceHighlight();
+            }
           }
         }
       }

@@ -1,11 +1,17 @@
 import React from 'react';
 import {EOL} from 'os';
 import ReplCommon from '../common/ReplCommon';
+import ReplOutput from '../common/ReplOutput';
 
 export default class ReplEntryMessage extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  transformOutput() {
+    return ReplOutput.highlightOutput(this.props.message.entry);
+  }
+
   render() {
     let shortEntry;
     if(this.props.commandCollapse) {
@@ -14,7 +20,6 @@ export default class ReplEntryMessage extends React.Component {
         shortEntry = ReplCommon.highlight(lines[0]);
       }
     }
-    
     return (
       <div className='repl-entry-message'>
         {
@@ -28,7 +33,7 @@ export default class ReplEntryMessage extends React.Component {
         }
         { this.props.collapse ?
             null :
-            <pre className='repl-entry-message-entry'>
+            <pre className='repl-entry-message-output'>
               {this.props.message.entry}
             </pre>
         }
