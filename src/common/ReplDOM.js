@@ -6,7 +6,7 @@ import {EOL} from 'os';
 // Not very generic but sufficient to handle our usecase
 let ReplDOM = {
   scrollToEnd: () => {
-    window.scrollTo(0, document.body.scrollHeight);
+    window.setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
   },
   getViewportSize: () => {
     //refer http://stackoverflow.com/a/8876069/571189

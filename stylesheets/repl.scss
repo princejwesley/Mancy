@@ -160,6 +160,9 @@ pre {
     .repl-status-bar-cover, .repl-status-bar {
       height: calc(#{$app-font-size} + 6px);
     }
+    .repl-status-bar-cover {
+      height: calc(#{$app-font-size} + 11px);
+    }
   }
 }
 
