@@ -79,11 +79,17 @@ export default class ReplSuggestions extends React.Component {
       };
     });
 
+    let selected = suggestions.length ? 0 : -1;
     this.setState({
       suggestions: suggestions,
-      selected: -1
+      selected: selected
     });
-    ReplActiveInputActions.resetTabCompleteSuggestion();
+    
+    if(selected !== -1) {
+      ReplActiveInputActions.tabCompleteSuggestion(suggestions[selected]);
+    } else {
+      ReplActiveInputActions.resetTabCompleteSuggestion();
+    }
   }
 
   onClickSuggestion(idx) {
