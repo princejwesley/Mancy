@@ -9,7 +9,8 @@ export default class ReplEntry extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapse: false
+      collapse: this.props.log.collapsed,
+      commandCollapse: this.props.log.collapsed
     };
     this.onExpand = this.onExpand.bind(this);
     this.onCollapse = this.onCollapse.bind(this);
@@ -18,10 +19,15 @@ export default class ReplEntry extends React.Component {
     this.onCommandCollapse = this.onCommandCollapse.bind(this);
     this.onCopyOutput = this.onCopyOutput.bind(this);
   }
+  componentWillReceiveProps(nextProps) {
+    this.state = {
+      collapse: nextProps.log.collapsed,
+      commandCollapse: nextProps.log.collapsed
+    };
+  }
   update(collapse) {
     this.setState({
-      collapse: collapse,
-      commandCollapse: false
+      collapse: collapse
     });
   }
   onExpand() {

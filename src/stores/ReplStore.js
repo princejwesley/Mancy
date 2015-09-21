@@ -14,6 +14,12 @@ let resetEntry = () => {
   historyStaged = '';
 }
 
+let collapseOrExpandEntries = (collapsed) => {
+  entries.forEach((e) => {
+    e.collapsed = collapsed;
+  });
+};
+
 const ReplStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplActions);
@@ -46,6 +52,14 @@ const ReplStore = Reflux.createStore({
   clearStore() {
     entries = [];
     resetEntry();
+    this.trigger();
+  },
+  expandAll() {
+    collapseOrExpandEntries(false);
+    this.trigger();
+  },
+  collapseAll() {
+    collapseOrExpandEntries(true);
     this.trigger();
   }
 

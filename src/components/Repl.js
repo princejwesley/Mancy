@@ -20,12 +20,14 @@ export default class Repl extends React.Component {
       historyIndex: -1,
       historyStaged: '',
     };
-    this.onStateChange = this.onStateChange.bind(this);
-    this.onPaste = this.onPaste.bind(this);
-    this.onContextMenu = this.onContextMenu.bind(this);
-    this.onKeydown = this.onKeydown.bind(this);
-    this.onBreakPrompt = this.onBreakPrompt.bind(this);
-    this.onClearCommands = this.onClearCommands.bind(this);
+
+    _.each([
+      'onStateChange', 'onPaste', 'onContextMenu',
+      'onKeydown', 'onBreakPrompt', 'onClearCommands',
+      'onCollapseAll', 'onExpandAll'
+    ], (field) => {
+      this[field] = this[field].bind(this);
+    });
   }
 
   componentDidMount() {
@@ -42,6 +44,16 @@ export default class Repl extends React.Component {
       label: 'Clear All',
       accelerator: 'CmdOrCtrl+K',
       click: this.onClearCommands
+    });
+    Repl.contextMenuTemplate.push({
+      label: 'Collapse All',
+      accelerator: 'CmdOrCtrl+L',
+      click: this.onCollapseAll
+    });
+    Repl.contextMenuTemplate.push({
+      label: 'Expand All',
+      accelerator: 'CmdOrCtrl+E',
+      click: this.onExpandAll
     });
     Repl.contextMenuTemplate.push({
       label: 'Break Prompt',
@@ -89,6 +101,26 @@ export default class Repl extends React.Component {
     if(!shiftKey && !altKey && which === K && (ctrlKey ^ metaKey)) {
       return this.onClearCommands();
     }
+
+    // cmd + e or ctrl + e
+    let E = "E".codePointAt(0);
+    if(!shiftKey && !altKey && which === E && (ctrlKey ^ metaKey)) {
+      return this.onExpandAll();
+    }
+
+    // cmd + l or ctrl + l
+    let L = "L".codePointAt(0);
+    if(!shiftKey && !altKey && which === L && (ctrlKey ^ metaKey)) {
+      return this.onCollapseAll();
+    }
+  }
+
+  onCollapseAll() {
+    ReplStore.collapseAll();
+  }
+
+  onExpandAll() {
+    ReplStore.expandAll();
   }
 
   onBreakPrompt() {
