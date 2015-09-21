@@ -34,7 +34,7 @@ export default class ReplEntry extends React.Component {
     clipboard.writeText(this.props.entry.entry);
   }
   onReload() {
-    let command = this.props.entry.plainCode;
+    let command = this.props.entry.plainCode.trim();
     ReplActions.reloadPrompt({ command: command, cursor: command.length });
   }
   onRemove() {

@@ -153,7 +153,6 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
-    this.lastKey = e.key;
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
     if(ReplDOMEvents.isTab(e)
@@ -171,6 +170,8 @@ export default class ReplActiveInput extends React.Component {
     const text = this.element.innerText.replace(/\s{1,2}$/, '');
     if(ReplDOMEvents.isEnter(e)) {
       this.waitingForOutput = true;
+      // allow user to code some more
+      if(e.shiftKey) { return; }
       cli.input.emit('data', '.break');
       cli.input.emit('data', EOL);
 
@@ -190,10 +191,19 @@ export default class ReplActiveInput extends React.Component {
       e.preventDefault();
 
       ReplDOM.moveCursorUp(ReplDOMEvents.isKeyup(e), this.element);
-      // TODO: change cursor position manually
       // TODO: if it is a empty div, traverse history up
       return;
     }
+    
+    if(ReplDOMEvents.isEnter(e) && !e.shiftKey) {
+      const text = this.element.innerText.replace(/\s{1,2}$/, '');
+      if(text.indexOf(EOL) === -1) {
+        // move cursor to end before talk to REPL
+        ReplDOM.setCursorPosition(text.length);
+      }
+      return;
+    }
+
     if(!ReplDOMEvents.isTab(e)) { return; }
     e.preventDefault();
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
