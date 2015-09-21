@@ -35,16 +35,17 @@ let ReplDOM = {
     let upLines = left.split(EOL);
     let currentLine = upLines.pop();
     if(up) {
-      if(!upLines.length) { return; }
+      if(!upLines.length) { return false; }
       let previousLine = upLines.pop().substring(0, currentLine.length);
       ReplDOM.setCursorPositionRelativeTo(ReplCommon.linesLength(upLines) + previousLine.length, dom);
     } else {
       let downLines = right.split(EOL);
       let [ rstr, ...lines ] = downLines;
-      if(!lines.length) { return; }
+      if(!lines.length) { return false; }
       let nextLine = lines[0].substring(0, currentLine.length);
       ReplDOM.setCursorPositionRelativeTo(rstr.length + left.length + nextLine.length + 1, dom);
     }
+    return true;
   },
   setCursorPosition: (pos, dom) => {
     // handled for single child node

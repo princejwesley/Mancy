@@ -31,14 +31,14 @@ export default class ReplEntry extends React.Component {
     this.update(true);
   }
   onCopyOutput() {
-    clipboard.writeText(this.props.entry.entry);
+    clipboard.writeText(this.props.log.output);
   }
   onReload() {
-    let command = this.props.entry.plainCode.trim();
+    let command = this.props.log.plainCode.trim();
     ReplActions.reloadPrompt({ command: command, cursor: command.length });
   }
   onRemove() {
-    ReplActions.removeEntry(this.props.index, this.props.entry);
+    ReplActions.removeEntry(this.props.index, this.props.log);
   }
   onCommandCollapse() {
     this.setState({
@@ -50,10 +50,10 @@ export default class ReplEntry extends React.Component {
       <div className='repl-entry'>
         <ReplEntryIcon collapse={this.state.commandCollapse}
           onCollapse={this.onCommandCollapse}/>
-        <ReplEntryMessage message={this.props.entry} collapse={this.state.collapse}
+        <ReplEntryMessage message={this.props.log} collapse={this.state.collapse}
           onCopyOutput={this.onCopyOutput}
           commandCollapse={this.state.commandCollapse}/>
-        <ReplEntryStatus message={this.props.entry} collapse={this.state.collapse}
+        <ReplEntryStatus message={this.props.log} collapse={this.state.collapse}
           onReload={this.onReload}
           onRemove={this.onRemove}
           onCollapse={this.onCollapse}

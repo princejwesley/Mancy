@@ -16,6 +16,14 @@ import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
     super(props);
+
+    this.history = {
+      // read-only
+      log: this.props.history,
+      idx: this.props.historyIndex,
+      staged: this.props.historyStaged
+    };
+
     this.onTabCompletion = this.onTabCompletion.bind(this);
     this.autoComplete = this.autoComplete.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
@@ -54,10 +62,7 @@ export default class ReplActiveInput extends React.Component {
       this.waitingForOutput = false;
       cli.input.emit('data', '.break');
       cli.input.emit('data', EOL);
-      ReplActions.reloadPrompt({
-        command: '',
-        cursor: 0
-      });
+      this.reloadPrompt('', 0);
     }
     else if(now && activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
@@ -66,15 +71,15 @@ export default class ReplActiveInput extends React.Component {
 
   addEntry(buf) {
     if(!this.waitingForOutput) { return; }
-    let entry = buf.toString() || '';
-    if(entry.length === 0 || entry.match(/^\.+\s*$/)) { return; }
-    let [exception, ...stackTrace] = entry.split(EOL);
+    let output = buf.toString() || '';
+    if(output.length === 0 || output.match(/^\.+\s*$/)) { return; }
+    let [exception, ...stackTrace] = output.split(EOL);
     let status = (ReplCommon.isExceptionMessage(exception)
         && ReplCommon.isStackTrace(stackTrace));
 
     const text = this.element.innerText;
     ReplActions.addEntry({
-      entry: entry,
+      output: output,
       status: !status,
       command: ReplCommon.highlight(text),
       plainCode: text
@@ -105,21 +110,23 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  reloadPrompt(cmd, cursor, idx = -1, staged = '') {
+    ReplSuggestionActions.removeSuggestion();
+    ReplActions.reloadPrompt({
+      command: cmd,
+      cursor: cursor,
+      historyIndex: idx,
+      historyStaged: (idx === -1 ? cmd : staged)
+    });
+  }
+
   onTabCompletion(__, completion) {
-
     let [list, input] = completion;
-
     if(list.length === 0) {
       // no beep, only tab width spaces
       //shell.beep();
       let command = this.element.innerText + ReplCommon.times(ReplConstants.TAB_WIDTH, ' ');
-
-      ReplSuggestionActions.removeSuggestion();
-      ReplActions.reloadPrompt({
-        command: command,
-        cursor: command.length
-      });
-
+      this.reloadPrompt(command, command.length);
     } else if(list.length === 1) {
       this.onSelectTabCompletion(list[0]);
     } else {
@@ -139,17 +146,13 @@ export default class ReplActiveInput extends React.Component {
 
     const text = this.element.innerText.replace(/\s*$/, '');
 
-    let cursorPosition = this.lastSelectedRange.endOffset;//ReplDOM.getCursorPosition();
+    let cursorPosition = this.lastSelectedRange.endOffset;
     let left = text.substring(0, cursorPosition);
     let right = text.substring(cursorPosition);
     let {prefix, suffix} = breakReplaceWord(left);
     left = prefix + suggestion.substring(suggestion.indexOf(suffix));
 
-    // console.log('left', left, 'right', right)
-    // console.log([right.length, left.length])
-
-    ReplSuggestionActions.removeSuggestion();
-    ReplActions.reloadPrompt({ command: left + right, cursor: left.length});
+    this.reloadPrompt(left + right, left.length);
   }
 
   onKeyUp(e) {
@@ -162,9 +165,6 @@ export default class ReplActiveInput extends React.Component {
       e.preventDefault();
       return;
     }
-
-    // console.log('key up', e)
-    // e.persist()
 
     let cli = ReplActiveInput.getRepl();
     const text = this.element.innerText.replace(/\s{1,2}$/, '');
@@ -189,14 +189,14 @@ export default class ReplActiveInput extends React.Component {
     ) {
       // avoid system behavior
       e.preventDefault();
-
-      ReplDOM.moveCursorUp(ReplDOMEvents.isKeyup(e), this.element);
-      // TODO: if it is a empty div, traverse history up
+      let up = ReplDOMEvents.isKeyup(e);
+      let success = ReplDOM.moveCursorUp(up, this.element);
+      if(!success) { this.traverseHistory(up); }
       return;
     }
-    
+
     if(ReplDOMEvents.isEnter(e) && !e.shiftKey) {
-      const text = this.element.innerText.replace(/\s{1,2}$/, '');
+      const text = this.element.innerText;
       if(text.indexOf(EOL) === -1) {
         // move cursor to end before talk to REPL
         ReplDOM.setCursorPosition(text.length);
@@ -215,6 +215,28 @@ export default class ReplActiveInput extends React.Component {
       let words = ReplCommon.toWords(text.substring(0, cursor));
       this.complete(words.pop(), this.onTabCompletion);
     }
+  }
+
+  traverseHistory(up) {
+    let len = this.history.log.length;
+    if(!len) { return; }
+    let idx = this.history.idx;
+    if(idx === -1) {
+      this.history.staged = this.element.innerText;
+      idx = len;
+    }
+    idx = idx + (up ? -1 : 1);
+
+    let navigateHistory = (up, cmd, pos) => {
+      let code = cmd.trim();
+      let cursorPosition = up ? cmd.indexOf(EOL) : code.length;
+      if(cursorPosition < 0) { cursorPosition = 0; }
+      this.reloadPrompt(code, cursorPosition, pos,(pos === -1 ? '' : this.history.staged));
+    };
+
+    (len <= idx || idx < 0)
+      ? navigateHistory(up, this.history.staged, -1)
+      : navigateHistory(up, this.history.log[idx].plainCode, idx);
   }
 
   complete(code, callback) {

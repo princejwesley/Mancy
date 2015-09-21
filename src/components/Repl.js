@@ -16,7 +16,9 @@ export default class Repl extends React.Component {
     this.state = {
       entries: [],
       command: '',
-      cursor: 0
+      cursor: 0,
+      historyIndex: -1,
+      historyStaged: '',
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onPaste = this.onPaste.bind(this);
@@ -24,8 +26,6 @@ export default class Repl extends React.Component {
     this.onKeydown = this.onKeydown.bind(this);
     this.onBreakPrompt = this.onBreakPrompt.bind(this);
     this.onClearCommands = this.onClearCommands.bind(this);
-
-
   }
 
   componentDidMount() {
@@ -109,6 +109,9 @@ export default class Repl extends React.Component {
       <div className='repl-container'>
         <ReplEntries entries={this.state.entries} />
         <ReplPrompt key={Date.now()}
+          history={this.state.entries}
+          historyIndex={this.state.historyIndex}
+          historyStaged={this.state.historyStaged}
           command={this.state.command}
           cursor= {this.state.cursor} />
         <div className="repl-status-bar-cover"> </div>

@@ -9,7 +9,7 @@ export default class ReplEntryMessage extends React.Component {
   }
 
   transformOutput() {
-    return ReplOutput.highlightOutput(this.props.message.entry);
+    return ReplOutput.highlightOutput(this.props.message.output);
   }
 
   render() {
@@ -35,7 +35,7 @@ export default class ReplEntryMessage extends React.Component {
             null :
             <pre className='repl-entry-message-output'>
               <i className="fa fa-clone" title="copy output" onClick={this.props.onCopyOutput}></i>
-              {this.props.message.entry}
+              {this.props.message.output}
             </pre>
         }
       </div>
