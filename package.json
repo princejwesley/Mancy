@@ -8,6 +8,7 @@
     "postinstall": "bower prune; bower install; electron-rebuild",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/electron-prebuilt/dist/Electron.app/Contents/MacOS/Electron .",
+    "package": "electron-packager . 'Mancy' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --app-version='Version 0.0.1' --build-version='' --version-string.ProductVersion='0.0.1' --version-string.FileDescription='Javascript REPL for fun🙈' --version-string.CompanyName='toolitup.com' --version-string.ProductName='Mancy' --ignore=node_modules/electron-* --out='/Applications' --icon='./icon.icns'",
     "watch": "gulp watch"
   },
   "keywords": [
@@ -49,5 +50,13 @@
     "react": "^0.13.3",
     "react-json-inspector": "^5.2.1",
     "reflux": "^0.2.12"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/princejwesley/Mancy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/princejwesley/Mancy/issues"
+  },
+  "homepage": "https://github.com/princejwesley/Mancy"
 }

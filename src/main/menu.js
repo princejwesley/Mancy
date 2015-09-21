@@ -46,7 +46,7 @@ module.exports = {
         label: 'View',
         submenu: [
           {
-            label: 'Reload',
+            label: 'Reload Mancy',
             accelerator: 'CmdOrCtrl+R',
             click: function(item, focusedWindow) {
               if (focusedWindow)

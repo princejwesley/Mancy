@@ -1,6 +1,6 @@
 import React from 'react';
+import ReplSuggestions from './components/ReplSuggestions';
 import Repl from './components/Repl';
-import ReplSuggestions from './build/components/ReplSuggestions';
 
 // react entry point
 (function() {
