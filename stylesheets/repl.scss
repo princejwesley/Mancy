@@ -106,6 +106,7 @@ pre {
         .repl-entry-icon {
           color: $app-entry-icon-color;
           @include arrowIcon();
+          cursor: pointer;
         }
 
         .repl-entry-status {
@@ -147,6 +148,23 @@ pre {
           .repl-entry-message-output {
             padding: 5px 0px;
             @include highlight();
+            position: relative;
+            left: -10px;
+            .fa-clone {
+              @include notSelectable();
+              position: absolute;
+              color: $app-entry-icon-copy-color;
+              font-size: 0.7em;
+              padding: 7px 0px;
+              position: relative;
+              font-weight: 900;
+              left: -10px;
+              top: 0px;
+              cursor: pointer;
+              &:active {
+                top: 3px;
+              }
+            }
             .repl-entry-output-error {
               @include stackTraceHighlight();
             }
