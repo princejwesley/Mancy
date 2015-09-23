@@ -8,7 +8,7 @@
     "postinstall": "bower prune; bower install; electron-rebuild",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/electron-prebuilt/dist/Electron.app/Contents/MacOS/Electron .",
-    "package": "electron-packager . 'Mancy' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --app-version='Version 0.0.1' --build-version='' --version-string.ProductVersion='0.0.1' --version-string.FileDescription='Javascript REPL for fun🙈' --version-string.CompanyName='toolitup.com' --version-string.ProductName='Mancy' --ignore=node_modules/electron-* --out='/Applications' --icon='./icon.icns'",
+    "package": "electron-packager . 'Mancy' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --app-version='Version 0.0.1' --build-version=' ' --version-string.ProductVersion='0.0.1' --version-string.FileDescription='Javascript REPL for fun🙈' --version-string.CompanyName='toolitup.com' --version-string.ProductName='Mancy' --out='./dist' --icon='./icon.icns'",
     "watch": "gulp watch"
   },
   "keywords": [
@@ -19,11 +19,9 @@
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-core": "^5.8.24",
-    "bower": "^1.5.2",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
     "electron-prebuilt": "^0.33.0",
-    "electron-rebuild": "^1.0.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-cached": "^1.1.0",

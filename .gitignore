@@ -1,5 +1,6 @@
 node_modules
 bower_components
+dist
 devtools
 build
 .DS_Store

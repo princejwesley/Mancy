@@ -272,7 +272,9 @@ export default class ReplActiveInput extends React.Component {
       ignoreUndefined: false,
       useColors: false,
       writer: (obj, opt) => {
-        return util.inspect(obj, {depth: null});
+        // depth: null is dangerous
+        // return util.inspect(obj, {depth: null});
+        return util.inspect(obj, opt);
       },
       historySize: ReplConstants.REPL_HISTORY_SIZE,
       replMode: repl[ReplConstants.REPL_MODE],
