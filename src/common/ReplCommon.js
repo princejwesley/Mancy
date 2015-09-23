@@ -33,6 +33,11 @@ let ReplCommon = {
     return _.reduce(arr, (result, line) => {
       return result + line.length;
     }, 0) + arr.length;
+  },
+  getUsername: () => {
+    return (process.platform === 'win32')
+      ? process.env.USERNAME
+      : process.env.USER;
   }
 };
 
