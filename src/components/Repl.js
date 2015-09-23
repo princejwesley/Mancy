@@ -19,6 +19,7 @@ export default class Repl extends React.Component {
       cursor: 0,
       historyIndex: -1,
       historyStaged: '',
+      mode: 'REPL_MODE_MAGIC'
     };
 
     _.each([
@@ -60,6 +61,27 @@ export default class Repl extends React.Component {
       accelerator: 'Ctrl+C',
       click: this.onBreakPrompt
     });
+    Repl.contextMenuTemplate.push({
+      type: 'separator'
+    });
+    Repl.contextMenuTemplate.push({
+      label: 'Mode',
+      submenu: [{
+        label: 'Sloppy',
+        type: 'radio',
+        click: () => { ReplStore.setReplMode('REPL_MODE_SLOPPY'); }
+      },{
+        label: 'Magic',
+        type: 'radio',
+        checked: true,
+        click: () => { ReplStore.setReplMode('REPL_MODE_MAGIC'); }
+      },{
+        label: 'Strict',
+        type: 'radio',
+        click: () => { ReplStore.setReplMode('REPL_MODE_STRICT'); }
+      }]
+    });
+
     this.menu = Menu.buildFromTemplate(Repl.contextMenuTemplate);
   }
 
@@ -145,9 +167,10 @@ export default class Repl extends React.Component {
           historyIndex={this.state.historyIndex}
           historyStaged={this.state.historyStaged}
           command={this.state.command}
+          mode={this.state.mode}
           cursor= {this.state.cursor} />
         <div className="repl-status-bar-cover"> </div>
-        <ReplStatus />
+        <ReplStatus history={this.state.entries} mode={this.state.mode}/>
       </div>
     );
   }

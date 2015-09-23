@@ -1,21 +1,27 @@
 import ReplActions from '../actions/ReplActions';
 import Reflux from 'reflux';
+import _ from 'lodash';
 
-let entries = [],
-  command = '',
-  cursor = 0,
-  historyIndex = -1,
-  historyStaged = '';
+let cache = {
+  entries: [],
+  command: '',
+  cursor: 0,
+  historyIndex: -1,
+  historyStaged: '',
+  mode: 'REPL_MODE_MAGIC'
+};
 
-let resetEntry = () => {
-  command = '';
-  cursor = 0;
-  historyIndex = -1;
-  historyStaged = '';
+let resetButEntry = (cmd) => {
+  cache = _.extend(cache, cmd || {
+    command: '',
+    cursor: 0,
+    historyIndex: -1,
+    historyStaged: ''
+  });
 }
 
 let collapseOrExpandEntries = (collapsed) => {
-  entries.forEach((e) => {
+  cache.entries.forEach((e) => {
     e.collapsed = collapsed;
   });
 };
@@ -25,33 +31,24 @@ const ReplStore = Reflux.createStore({
     this.listenToMany(ReplActions);
   },
   onAddEntry(entry) {
-    entries.push(entry);
-    resetEntry();
+    cache.entries.push(entry);
+    resetButEntry();
     this.trigger();
   },
   onReloadPrompt(cmd) {
-    command = cmd.command;
-    cursor = cmd.cursor;
-    historyIndex = cmd.historyIndex;
-    historyStaged = cmd.historyStaged;
+    resetButEntry(cmd);
     this.trigger();
   },
   onRemoveEntry(idx, entry) {
-    entries.splice(idx, 1);
+    cache.entries.splice(idx, 1);
     this.trigger();
   },
   getStore() {
-    return {
-      entries: entries,
-      command: command,
-      cursor: cursor,
-      historyIndex: historyIndex,
-      historyStaged: historyStaged
-    };
+    return cache;
   },
   clearStore() {
-    entries = [];
-    resetEntry();
+    cache.entries = [];
+    resetButEntry();
     this.trigger();
   },
   expandAll() {
@@ -60,6 +57,10 @@ const ReplStore = Reflux.createStore({
   },
   collapseAll() {
     collapseOrExpandEntries(true);
+    this.trigger();
+  },
+  setReplMode(type) {
+    cache.mode = type;
     this.trigger();
   }
 

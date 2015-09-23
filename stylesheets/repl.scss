@@ -196,9 +196,32 @@ pre {
       position: fixed;
       bottom: 0;
       left: 0;
-      padding: 3px 0px;
+      padding: 3px 10px;
       background-color: $app-status-bar-background-color;
       width: 100%;
+
+      .repl-status-bar-commands {
+        color: $app-status-bar-command-color;
+        padding: 0px 5px;
+      }
+      .repl-status-bar-errors {
+        color: $app-status-bar-error-color;
+        padding: 0px 5px;
+      }
+
+      .repl-status-bar-count, .repl-status-bar-message {
+        color: $app-status-bar-message-color;
+        padding: 0px 5px;
+      }
+
+      .repl-status-bar-mode {
+        color: $app-status-bar-mode-color;
+        padding: 0px 5px;
+        .fa {
+          padding: 0px 3px;
+        }
+      }
+
     }
 
     .repl-status-bar {

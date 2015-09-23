@@ -38,6 +38,9 @@ export default class ReplActiveInput extends React.Component {
     this.focus();
 
     let cli = ReplActiveInput.getRepl();
+    //set desired repl mode
+    cli.replMode = repl[this.props.mode];
+    //bind write handle
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom
     ReplDOM.scrollToEnd();
@@ -277,7 +280,7 @@ export default class ReplActiveInput extends React.Component {
         return util.inspect(obj, opt);
       },
       historySize: ReplConstants.REPL_HISTORY_SIZE,
-      replMode: repl[ReplConstants.REPL_MODE],
+      replMode: repl['REPL_MODE_MAGIC'],
     });
 
     return () => {
