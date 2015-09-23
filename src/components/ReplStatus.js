@@ -30,6 +30,10 @@ export default class ReplStatus extends React.Component {
           <i className="fa fa-check"></i>
           <span className='repl-status-bar-message'>{mode}</span>
         </span>
+        <span style={{flex: 1}}/>
+        <span className='repl-status-bar-console'>
+          <i className="fa fa-terminal"></i>
+        </span>
       </div>
     );
   }

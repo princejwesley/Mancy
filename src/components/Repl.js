@@ -161,6 +161,7 @@ export default class Repl extends React.Component {
     // force to recreate ReplPrompt
     return (
       <div className='repl-container'>
+        <div className='repl-header' key='header'/>
         <ReplEntries entries={this.state.entries} />
         <ReplPrompt key={Date.now()}
           history={this.state.entries}
@@ -169,7 +170,7 @@ export default class Repl extends React.Component {
           command={this.state.command}
           mode={this.state.mode}
           cursor= {this.state.cursor} />
-        <div className="repl-status-bar-cover"> </div>
+        <div className="repl-status-bar-cover" key='cover'/>
         <ReplStatus history={this.state.entries} mode={this.state.mode}/>
       </div>
     );

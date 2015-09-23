@@ -86,6 +86,9 @@ pre {
   @include selectable();
 
   .repl-container {
+    .repl-header {
+      height: 5px;
+    }
     .repl-entries {
       display:flex;
       flex-direction: column;
@@ -199,6 +202,8 @@ pre {
       padding: 3px 10px;
       background-color: $app-status-bar-background-color;
       width: 100%;
+      display: flex;
+      align-items: center;
 
       .repl-status-bar-commands {
         color: $app-status-bar-command-color;
@@ -212,6 +217,12 @@ pre {
       .repl-status-bar-count, .repl-status-bar-message {
         color: $app-status-bar-message-color;
         padding: 0px 5px;
+      }
+
+      .repl-status-bar-console {
+        color: $app-status-bar-console-color;
+        padding-right: 25px;
+        cursor: pointer;
       }
 
       .repl-status-bar-mode {
