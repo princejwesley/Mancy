@@ -29,8 +29,11 @@ export default class ReplActiveInput extends React.Component {
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
     this.onStoreChange = this.onStoreChange.bind(this);
+    this.prompt = this.prompt.bind(this);
+    this.addEntry = this.addEntry.bind(this);
     this.waitingForOutput = false;
-
+    this.commandOutput = [];
+    this.commandReady = false;
   }
   componentDidMount() {
     this.unsubscribe = ReplActiveInputStore.listen(this.onStoreChange);
@@ -44,12 +47,17 @@ export default class ReplActiveInput extends React.Component {
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom
     ReplDOM.scrollToEnd();
+
+    //Hack: override display prompt
+    this.displayPrompt = cli.displayPrompt;
+    cli.displayPrompt = this.prompt;
   }
 
   componentWillUnmount() {
     this.unsubscribe();
     let cli = ReplActiveInput.getRepl();
     cli.output.write = () => {};
+    cli.displayPrompt = this.displayPrompt;
   }
 
   focus() {
@@ -72,23 +80,34 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  prompt(preserveCursor) {
+    if(this.commandReady) {
+      let output = this.commandOutput.join('');
+      let [exception, ...stackTrace] = this.commandOutput;
+      let status = (ReplCommon.isExceptionMessage(exception)
+          && ReplCommon.isStackTrace(stackTrace));
+
+      const text = this.element.innerText;
+      ReplActions.addEntry({
+        output: output,
+        status: !status,
+        command: ReplCommon.highlight(text),
+        plainCode: text
+      });
+
+      ReplSuggestionActions.removeSuggestion();
+      this.commandOutput = [];
+      this.commandReady = false;
+    }
+  }
+
   addEntry(buf) {
     if(!this.waitingForOutput) { return; }
     let output = buf.toString() || '';
-    if(output.length === 0 || output.match(/^\.+\s*$/)) { return; }
-    let [exception, ...stackTrace] = output.split(EOL);
-    let status = (ReplCommon.isExceptionMessage(exception)
-        && ReplCommon.isStackTrace(stackTrace));
+    if(output.length === 0) { return; }
 
-    const text = this.element.innerText;
-    ReplActions.addEntry({
-      output: output,
-      status: !status,
-      command: ReplCommon.highlight(text),
-      plainCode: text
-    });
-
-    ReplSuggestionActions.removeSuggestion();
+    this.commandReady = true;
+    this.commandOutput.push(output)
   }
 
   autoComplete(__, completion) {
