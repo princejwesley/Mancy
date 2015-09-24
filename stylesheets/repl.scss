@@ -225,12 +225,14 @@ pre {
           border-top-left-radius: 5px;
           border-bottom-left-radius: 5px;
           cursor: ew-resize;
-          .fa {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: $app-console-hide-color;
-            cursor: pointer;
+          align-items: center;
+          .repl-console-drag-lines{
+            &:before {
+              content: 'ǁ';
+              text-align: center;
+              margin: 1px;
+              color: $app-console-drag-lines-color;
+            }
           }
         }
         .repl-console-message {
@@ -268,6 +270,12 @@ pre {
         color: $app-status-bar-console-color;
         padding-right: 25px;
         cursor: pointer;
+        .fa-stack {
+          font-size: 0.7em;
+          .text-danger {
+            color: $app-entry-status-error-color;
+          }
+        }
       }
 
       .repl-status-bar-mode {
@@ -284,7 +292,8 @@ pre {
       height: calc(#{$app-font-size} + 6px);
     }
     .repl-status-bar-cover {
-      height: calc(#{$app-font-size} + 11px);
+      height: calc(#{$app-font-size} + 12px);
+      min-height: calc(#{$app-font-size} + 12px);
     }
   }
 }

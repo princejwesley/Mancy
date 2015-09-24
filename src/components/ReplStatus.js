@@ -18,21 +18,29 @@ export default class ReplStatus extends React.Component {
     let {commands, errors, mode} = this.extractStatusInfo();
     return (
       <div className='repl-status-bar'>
-        <span className='repl-status-bar-commands'>
+        <span className='repl-status-bar-commands' title='success commands'>
           <i className="fa fa-thumbs-o-up"></i>
           <span className='repl-status-bar-count'>{commands}</span>
         </span>
-        <span className='repl-status-bar-errors'>
+        <span className='repl-status-bar-errors' title='error outputs'>
           <i className="fa fa-thumbs-o-down"></i>
           <span className='repl-status-bar-count'>{errors}</span>
         </span>
-        <span className='repl-status-bar-mode'>
+        <span className='repl-status-bar-mode' title='REPL mode'>
           <i className="fa fa-check"></i>
           <span className='repl-status-bar-message'>{mode}</span>
         </span>
         <span style={{flex: 1}}/>
-        <span className='repl-status-bar-console'>
-          <i className="fa fa-terminal"></i>
+        <span className='repl-status-bar-console' onClick={this.props.onToggleConsole} title='toggle console'>
+          <span className="fa-stack">
+            <i className="fa fa-terminal fa-stack-1x"></i>
+            {
+              this.props.showConsole
+                ? <i className="fa fa-ban fa-stack-2x text-danger"></i>
+                : null
+            }
+
+          </span>
         </span>
       </div>
     );

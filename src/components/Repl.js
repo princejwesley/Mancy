@@ -13,19 +13,12 @@ import remote from 'remote';
 export default class Repl extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      entries: [],
-      command: '',
-      cursor: 0,
-      historyIndex: -1,
-      historyStaged: '',
-      mode: 'REPL_MODE_MAGIC'
-    };
+    this.state = _.cloneDeep(ReplStore.getStore());
 
     _.each([
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
-      'onCollapseAll', 'onExpandAll', 'onDrag'
+      'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -166,7 +159,7 @@ export default class Repl extends React.Component {
     let initWidth = parseInt(width, 10);
 
     let startDrag = (e) => {
-      let adj = (e.clientX - clientX);
+      let adj = e.clientX - clientX;
       replContainerRight.style.flex = '0 0  ' + (initWidth - adj) + 'px';
     }
 
@@ -177,6 +170,10 @@ export default class Repl extends React.Component {
 
     document.documentElement.addEventListener('mousemove', startDrag, false);
     document.documentElement.addEventListener('mouseup', stopDrag, false);
+  }
+
+  onToggleConsole() {
+    ReplStore.toggleConsole();
   }
 
   render() {
@@ -195,17 +192,25 @@ export default class Repl extends React.Component {
             cursor= {this.state.cursor} />
           <div className="repl-status-bar-cover" key='cover'></div>
         </div>
-        <div className='repl-container-right'>
-          <div className='repl-header' key='header-right'></div>
-          <div className="repl-console">
-            <div className="repl-console-resizeable" onMouseDown={this.onDrag}>
-              <i className='fa fa-minus-circle'> </i>
-            </div>
-            <div className='repl-console-message'>
-            </div>
-          </div>
-        </div>
-        <ReplStatus history={this.state.entries} mode={this.state.mode}/>
+        {
+          this.state.showConsole
+            ? <div className='repl-container-right'>
+                <div className='repl-header' key='header-right'></div>
+                <div className="repl-console">
+                  <div className="repl-console-resizeable" onMouseDown={this.onDrag}>
+                    <span className='repl-console-drag-lines'> </span>
+                  </div>
+                  <div className='repl-console-message'>
+                  </div>
+                </div>
+              </div>
+            : null
+        }
+
+        <ReplStatus history={this.state.entries}
+          mode={this.state.mode}
+          showConsole={this.state.showConsole}
+          onToggleConsole={this.onToggleConsole}/>
       </div>
     );
   }

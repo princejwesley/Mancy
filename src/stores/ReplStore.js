@@ -8,6 +8,7 @@ let cache = {
   cursor: 0,
   historyIndex: -1,
   historyStaged: '',
+  showConsole: false,
   mode: 'REPL_MODE_MAGIC'
 };
 
@@ -61,6 +62,10 @@ const ReplStore = Reflux.createStore({
   },
   setReplMode(type) {
     cache.mode = type;
+    this.trigger();
+  },
+  toggleConsole() {
+    cache.showConsole = !cache.showConsole;
     this.trigger();
   }
 
