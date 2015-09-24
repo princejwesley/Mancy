@@ -87,11 +87,12 @@ pre {
 
   .repl-container {
     display: flex;
-    min-height: 100vh;
 
     .repl-container-left {
       flex: 1;
       display: flex;
+      height: 100vh;
+      overflow: auto;
       flex-direction: column;
       .repl-header {
         height: 5px;
@@ -200,6 +201,8 @@ pre {
       max-width: 40vw;
       flex: 0 0 30vw;
       min-width: 8px;
+      height: 100vh;
+      overflow: auto;
       flex-direction: column;
       .repl-header {
         height: 5px;
