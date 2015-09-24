@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import repl from 'repl';
+import util from 'util';
 import {Readable, Writable} from 'stream';
 import {EOL} from 'os';
 import shell from 'shell';
@@ -24,15 +25,17 @@ export default class ReplActiveInput extends React.Component {
       staged: this.props.historyStaged
     };
 
-    this.onTabCompletion = this.onTabCompletion.bind(this);
-    this.autoComplete = this.autoComplete.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.onKeyUp = this.onKeyUp.bind(this);
-    this.onStoreChange = this.onStoreChange.bind(this);
-    this.prompt = this.prompt.bind(this);
-    this.addEntry = this.addEntry.bind(this);
+    _.each([
+      'onTabCompletion', 'autoComplete', 'onKeyDown',
+      'onKeyUp', 'onStoreChange', 'prompt',
+      'addEntry', 'removeSuggestion'
+    ], (field) => {
+      this[field] = this[field].bind(this);
+    });
+
     this.waitingForOutput = false;
     this.commandOutput = [];
+    this.activeSuggestion = null;
     this.commandReady = false;
   }
   componentDidMount() {
@@ -68,6 +71,7 @@ export default class ReplActiveInput extends React.Component {
 
   onStoreChange() {
     let {now, activeSuggestion, breakPrompt} = ReplActiveInputStore.getStore();
+    this.activeSuggestion = activeSuggestion
     if(breakPrompt) {
       let cli = ReplActiveInput.getRepl();
       this.waitingForOutput = false;
@@ -82,6 +86,7 @@ export default class ReplActiveInput extends React.Component {
 
   prompt(preserveCursor) {
     if(this.commandReady) {
+      let cli = ReplActiveInput.getRepl();
       let output = this.commandOutput.join('');
       let [exception, ...stackTrace] = this.commandOutput;
       let status = (ReplCommon.isExceptionMessage(exception)
@@ -95,7 +100,7 @@ export default class ReplActiveInput extends React.Component {
         plainCode: text
       });
 
-      ReplSuggestionActions.removeSuggestion();
+      this.removeSuggestion();
       this.commandOutput = [];
       this.commandReady = false;
     }
@@ -111,6 +116,9 @@ export default class ReplActiveInput extends React.Component {
   }
 
   autoComplete(__, completion) {
+    let completeEntry = (suggestions, text) => {
+      return suggestions.length != 1 || text.replace(/^.*\./,'') !== suggestions[0].text;
+    };
     let [list, ] = completion;
     let suggestions = _.chain(list)
       .filter((suggestion) => {
@@ -124,16 +132,22 @@ export default class ReplActiveInput extends React.Component {
       })
       .value();
 
-    if(suggestions.length) {
-      const text = this.element.innerText;
+    const text = this.element.innerText;
+    if(suggestions.length && completeEntry(suggestions, text)) {
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: text});
     } else {
-      ReplSuggestionActions.removeSuggestion();
+      this.removeSuggestion();
     }
   }
 
-  reloadPrompt(cmd, cursor, idx = -1, staged = '') {
+  removeSuggestion() {
+    // if(!this.suggestions.length) { return;}
+    this.activeSuggestion = null;
     ReplSuggestionActions.removeSuggestion();
+  }
+
+  reloadPrompt(cmd, cursor, idx = -1, staged = '') {
+    this.removeSuggestion();
     ReplActions.reloadPrompt({
       command: cmd,
       cursor: cursor,
@@ -191,12 +205,14 @@ export default class ReplActiveInput extends React.Component {
     let cli = ReplActiveInput.getRepl();
     const text = this.element.innerText.replace(/\s{1,2}$/, '');
     if(ReplDOMEvents.isEnter(e)) {
+      this.removeSuggestion();
       this.waitingForOutput = true;
       // allow user to code some more
       if(e.shiftKey) { return; }
-      cli.input.emit('data', '.break');
-      cli.input.emit('data', EOL);
-
+      if(cli.bufferedCommand.length) {
+        cli.input.emit('data', '.break');
+        cli.input.emit('data', EOL);
+      }
       cli.input.emit('data', text);
       cli.input.emit('data', EOL);
     } else {
@@ -211,6 +227,7 @@ export default class ReplActiveInput extends React.Component {
     ) {
       // avoid system behavior
       e.preventDefault();
+      if(this.activeSuggestion) return;
       let up = ReplDOMEvents.isKeyup(e);
       let success = ReplDOM.moveCursorUp(up, this.element);
       if(!success) { this.traverseHistory(up); }
@@ -264,7 +281,7 @@ export default class ReplActiveInput extends React.Component {
   complete(code, callback) {
     let cli = ReplActiveInput.getRepl();
     this.waitingForOutput = false;
-    ReplSuggestionActions.removeSuggestion();
+    this.removeSuggestion();
     cli.complete(code, callback);
   }
 
@@ -289,7 +306,7 @@ export default class ReplActiveInput extends React.Component {
       input: readable,
       output: writable,
       terminal: false,
-      // needed for better auto completion
+      // needed to handle console separately and to avoid security policy error
       useGlobal: true,
       ignoreUndefined: false,
       useColors: false,
