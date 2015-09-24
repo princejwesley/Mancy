@@ -86,115 +86,157 @@ pre {
   @include selectable();
 
   .repl-container {
-    .repl-header {
-      height: 5px;
-    }
-    .repl-entries {
-      display:flex;
+    display: flex;
+    min-height: 100vh;
+
+    .repl-container-left {
+      flex: 1;
+      display: flex;
       flex-direction: column;
-      flex:1;
-      .repl-entry {
-        display: flex;
-        margin: 0;
-        padding: 5px;
+      .repl-header {
+        height: 5px;
+      }
+      .repl-entries {
+        .repl-entry {
+          display: flex;
+          margin: 0;
+          padding: 5px;
+          .repl-entry-icon, .repl-entry-status {
+            @include notSelectable();
+          }
 
-        // &:hover {
-        //   background-color: lighten($app-background-color, 5%);
-        // }
-
-        .repl-entry-icon, .repl-entry-status {
-          @include notSelectable();
-        }
-
-        .repl-entry-icon {
-          color: $app-entry-icon-color;
-          @include arrowIcon();
-          cursor: pointer;
-        }
-
-        .repl-entry-status {
-          padding-right: 8px;
-
-          .repeat, .error, .plus, .minus, .remove {
-            padding-left: 6px;
+          .repl-entry-icon {
+            color: $app-entry-icon-color;
+            @include arrowIcon();
             cursor: pointer;
           }
-          .repeat {
-            color: $app-entry-status-redo-color;
-          }
-          .error {
-            color: $app-entry-status-error-color;
-          }
-          .minus {
-            color: $app-entry-status-minus-color;
-          }
-          .plus {
-            color: $app-entry-status-plus-color;
-          }
-          .remove {
-            color: $app-entry-status-remove-color;
-          }
-        }
 
-        .repl-entry-message {
-          @include entryLayout();
-          .repl-entry-message-command {
-            @include highlight();
-            min-height: $app-font-size;
-          }
-          .ellipsis {
-            &:after {
-              content: '\2026';
-              color: $app-entry-ellipsis-color;
+          .repl-entry-status {
+            padding-right: 8px;
+
+            .repeat, .error, .plus, .minus, .remove {
+              padding-left: 6px;
+              cursor: pointer;
+            }
+            .repeat {
+              color: $app-entry-status-redo-color;
+            }
+            .error {
+              color: $app-entry-status-error-color;
+            }
+            .minus {
+              color: $app-entry-status-minus-color;
+            }
+            .plus {
+              color: $app-entry-status-plus-color;
+            }
+            .remove {
+              color: $app-entry-status-remove-color;
             }
           }
-          .repl-entry-message-output {
-            padding: 5px 0px;
-            @include highlight();
-            position: relative;
-            left: -10px;
-            .fa-clone {
-              @include notSelectable();
-              position: absolute;
-              color: $app-entry-icon-copy-color;
-              font-size: 0.7em;
-              padding: 7px 0px;
-              position: relative;
-              font-weight: 900;
-              left: -10px;
-              top: 0px;
-              cursor: pointer;
-              &:active {
-                top: 3px;
+
+          .repl-entry-message {
+            @include entryLayout();
+            .repl-entry-message-command {
+              @include highlight();
+              min-height: $app-font-size;
+            }
+            .ellipsis {
+              &:after {
+                content: '\2026';
+                color: $app-entry-ellipsis-color;
               }
             }
-            .repl-entry-output-error {
-              @include stackTraceHighlight();
+            .repl-entry-message-output {
+              padding: 5px 0px;
+              @include highlight();
+              position: relative;
+              left: -10px;
+              .fa-clone {
+                @include notSelectable();
+                position: absolute;
+                color: $app-entry-icon-copy-color;
+                font-size: 0.7em;
+                padding: 7px 0px;
+                position: relative;
+                font-weight: 900;
+                left: -10px;
+                top: 0px;
+                cursor: pointer;
+                &:active {
+                  top: 3px;
+                }
+              }
+              .repl-entry-output-error {
+                @include stackTraceHighlight();
+              }
             }
           }
         }
       }
+
+      .repl-prompt {
+        margin: 0px;
+        padding: 5px;
+        background-color: lighten($app-background-color, 5%);
+        display: flex;
+        align-items: flex-start;
+
+        .repl-active-icon {
+          @include notSelectable();
+          color: $app-prompt-active-icon-color;
+          @include arrowIcon();
+        }
+
+        .repl-active-input {
+          @include entryLayout();
+          outline: none;
+        }
+      }
     }
 
-    .repl-prompt {
-      margin: 0px;
-      padding: 5px;
-      background-color: lighten($app-background-color, 5%);
+    .repl-container-right {
       display: flex;
-      align-items: flex-start;
-
-      .repl-active-icon {
-        @include notSelectable();
-        color: $app-prompt-active-icon-color;
-        @include arrowIcon();
+      max-width: 40vw;
+      flex: 0 0 30vw;
+      min-width: 8px;
+      flex-direction: column;
+      .repl-header {
+        height: 5px;
       }
-
-      .repl-active-input {
-        @include entryLayout();
-        outline: none;
+      .repl-console {
+        position: relative;
+        top: 0;
+        background-color: $app-console-background-color;
+        color: $app-console-color;
+        overflow: auto;
+        flex: 1;
+        display: flex;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        .repl-console-resizeable {
+          display: flex;
+          width: 8px;
+          position: relative;
+          background-color: $app-console-resize-handle-color;
+          border-top-left-radius: 5px;
+          border-bottom-left-radius: 5px;
+          cursor: ew-resize;
+          .fa {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: $app-console-hide-color;
+            cursor: pointer;
+          }
+        }
+        .repl-console-message {
+          flex: 1;
+          word-wrap: break-word;
+          white-space: pre-wrap;
+        }
       }
     }
-
     .repl-status-bar {
       position: fixed;
       bottom: 0;

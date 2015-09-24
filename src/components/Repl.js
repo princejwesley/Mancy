@@ -25,7 +25,7 @@ export default class Repl extends React.Component {
     _.each([
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
-      'onCollapseAll', 'onExpandAll'
+      'onCollapseAll', 'onExpandAll', 'onDrag'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -157,20 +157,54 @@ export default class Repl extends React.Component {
     this.setState(ReplStore.getStore());
   }
 
+  onDrag(e) {
+    let replConsole = document.getElementsByClassName('repl-console')[0];
+    let replContainerRight = document.getElementsByClassName('repl-container-right')[0];
+
+    let {clientX} = e;
+    let {width} = document.defaultView.getComputedStyle(replConsole);
+    let initWidth = parseInt(width, 10);
+
+    let startDrag = (e) => {
+      let adj = (e.clientX - clientX);
+      replContainerRight.style.flex = '0 0  ' + (initWidth - adj) + 'px';
+    }
+
+    let stopDrag = (e) => {
+      document.documentElement.removeEventListener('mousemove', startDrag, false);
+      document.documentElement.removeEventListener('mouseup', stopDrag, false);
+    }
+
+    document.documentElement.addEventListener('mousemove', startDrag, false);
+    document.documentElement.addEventListener('mouseup', stopDrag, false);
+  }
+
   render() {
     // force to recreate ReplPrompt
     return (
       <div className='repl-container'>
-        <div className='repl-header' key='header'/>
-        <ReplEntries entries={this.state.entries} />
-        <ReplPrompt key={Date.now()}
-          history={this.state.entries}
-          historyIndex={this.state.historyIndex}
-          historyStaged={this.state.historyStaged}
-          command={this.state.command}
-          mode={this.state.mode}
-          cursor= {this.state.cursor} />
-        <div className="repl-status-bar-cover" key='cover'/>
+        <div className='repl-container-left'>
+          <div className='repl-header' key='header-left'></div>
+          <ReplEntries entries={this.state.entries} />
+          <ReplPrompt key={Date.now()}
+            history={this.state.entries}
+            historyIndex={this.state.historyIndex}
+            historyStaged={this.state.historyStaged}
+            command={this.state.command}
+            mode={this.state.mode}
+            cursor= {this.state.cursor} />
+          <div className="repl-status-bar-cover" key='cover'></div>
+        </div>
+        <div className='repl-container-right'>
+          <div className='repl-header' key='header-right'></div>
+          <div className="repl-console">
+            <div className="repl-console-resizeable" onMouseDown={this.onDrag}>
+              <i className='fa fa-minus-circle'> </i>
+            </div>
+            <div className='repl-console-message'>
+            </div>
+          </div>
+        </div>
         <ReplStatus history={this.state.entries} mode={this.state.mode}/>
       </div>
     );
