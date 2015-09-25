@@ -1,0 +1,62 @@
+@import 'default-theme';
+@import 'repl-common';
+
+@mixin containerRight() {
+  .repl-container-right {
+    display: flex;
+    max-width: 40vw;
+    flex: 0 0 30vw;
+    min-width: 8px;
+    height: 100vh;
+    overflow: auto;
+    flex-direction: column;
+
+    .repl-header {
+      height: 5px;
+    }
+
+    .repl-console {
+      position: relative;
+      top: 0;
+      background-color: $app-console-background-color;
+      color: $app-console-color;
+      overflow: auto;
+      flex: 1;
+      display: flex;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+
+      .repl-console-resizeable {
+        display: flex;
+        width: 8px;
+        position: relative;
+        background-color: $app-console-resize-handle-color;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        cursor: ew-resize;
+        align-items: center;
+
+        .repl-console-drag-lines {
+          @include notSelectable();
+
+          &:before {
+            content: 'ǁ';
+            text-align: center;
+            margin: 1px;
+            color: $app-console-drag-lines-color;
+          }
+        }
+      }
+
+      .repl-console-message {
+        flex: 1;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+
+        .repl-console-message-entry {
+
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+@import 'default-theme';
+@import 'repl-common';
+
+@mixin replStatus() {
+  .repl-entry-status {
+    padding-right: 8px;
+
+    .repeat,
+    .error,
+    .plus,
+    .minus,
+    .remove {
+      padding-left: 6px;
+      cursor: pointer;
+    }
+
+    .repeat {
+      color: $app-entry-status-redo-color;
+    }
+
+    .error {
+      color: $app-entry-status-error-color;
+    }
+
+    .minus {
+      color: $app-entry-status-minus-color;
+    }
+
+    .plus {
+      color: $app-entry-status-plus-color;
+    }
+
+    .remove {
+      color: $app-entry-status-remove-color;
+    }
+  }
+}

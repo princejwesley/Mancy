@@ -1,0 +1,65 @@
+@import 'default-theme';
+
+@mixin suggestions() {
+  .repl-prompt-suggestion-wrapper {
+    position: absolute;
+    background-color: $app-suggestion-background-color;
+
+    .repl-prompt-suggestion-list {
+      [data-selected='true'] {
+        background-color: lighten($app-background-color, 10%);
+      }
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+
+      // dont change this
+      max-height: 200px;
+
+      // dont change this
+      max-width: 300px;
+      overflow: auto;
+      border: 2px solid $app-suggestion-border-color;
+      border-radius: 5px;
+      padding: 2px 0;
+
+      .repl-prompt-suggestion {
+        display: flex;
+        flex: 1;
+        min-height: calc(#{$app-font-size} + 8px);
+        padding: 4px 2px;
+        border-bottom: 1px solid $app-suggestion-entry-border-color;
+        cursor: pointer;
+
+        .repl-prompt-suggestion-type {
+          padding: 2px;
+          font-weight: 900;
+          border-radius: 100%;
+          width: $app-font-size;
+          height: $app-font-size;
+          text-align: center;
+          color: $app-suggestion-type-color;
+          font-family: $app-suggestion-type-font-family;
+          background-color: $app-suggestion-type-background-color;
+        }
+
+        .repl-prompt-suggestion-text {
+          padding: 2px 8px;
+          flex: 1;
+
+          .repl-prompt-suggestion-highlight {
+            color: $app-suggestion-type-hightlight-color;
+          }
+
+          .repl-prompt-suggestion-expect {
+            color: $app-suggestion-type-expect-color;
+          }
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}

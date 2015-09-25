@@ -1,0 +1,66 @@
+@import 'default-theme';
+
+@mixin statusBar() {
+  .repl-status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 3px 10px;
+    background-color: $app-status-bar-background-color;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .repl-status-bar-commands {
+      color: $app-status-bar-command-color;
+      padding: 0 5px;
+    }
+
+    .repl-status-bar-errors {
+      color: $app-status-bar-error-color;
+      padding: 0 5px;
+    }
+
+    .repl-status-bar-count,
+    .repl-status-bar-message {
+      color: $app-status-bar-message-color;
+      padding: 0 5px;
+    }
+
+    .repl-status-bar-console {
+      color: $app-status-bar-console-color;
+      padding-right: 25px;
+      cursor: pointer;
+
+      .fa-stack {
+        font-size: 0.7em;
+
+        .text-danger {
+          color: $app-entry-status-error-color;
+        }
+
+        .fa-terminal {
+          font-weight: 900;
+        }
+      }
+    }
+
+    .repl-status-bar-mode {
+      color: $app-status-bar-mode-color;
+      padding: 0 5px;
+
+      .fa {
+        padding: 0 3px;
+      }
+    }
+  }
+
+  .repl-status-bar {
+    height: calc(#{$app-font-size} + 6px);
+  }
+  
+  .repl-status-bar-cover {
+    height: calc(#{$app-font-size} + 12px);
+    min-height: calc(#{$app-font-size} + 12px);
+  }
+}

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import EventEmitter from 'events';
 
-class ReplConsole extends EventEmitter {
+class ReplConsoleHook extends EventEmitter {
   constructor() {
     super();
     this.enabled = false;
@@ -12,9 +12,9 @@ class ReplConsole extends EventEmitter {
       this[fun] = (...rest) => {
         if(!this.enabled) {
           handle.apply(console, rest);
+        } else {
+          this.emit('console', {type: fun, data: rest});          
         }
-        this.emit(fun, rest);
-        this.emit('any', {type: fun, data: rest});
       };
       console[fun] = this[fun];
     });
@@ -48,4 +48,4 @@ class ReplConsole extends EventEmitter {
     this.enabled = true;
   }
 }
-export default new ReplConsole();
+export default new ReplConsoleHook();

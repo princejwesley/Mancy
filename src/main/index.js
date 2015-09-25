@@ -4,6 +4,10 @@ var menu = require('./menu');
 
 var mainWindow = null;
 
+// set node env as production to avoid react warnings leaking in our console window
+// comment below code to test react warnings
+process.env.NODE_ENV = 'production';
+
 app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -14,7 +18,6 @@ app.on('ready', onReady);
 app.on('activate-with-no-open-windows', onReady);
 
 function onReady() {
-
   mainWindow = new BrowserWindow({
     width: 900,
     height: 600,

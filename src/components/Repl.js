@@ -7,10 +7,12 @@ import ReplStore from '../stores/ReplStore';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputActions from '../actions/ReplActiveInputActions';
+import ReplConsoleActions from '../actions/ReplConsoleActions';
 import Reflux from 'reflux';
 import remote from 'remote';
-import ReplStreamHooks from '../common/ReplStreamHooks';
-import ReplConsole from '../common/ReplConsole';
+import ReplStreamHook from '../common/ReplStreamHook';
+import ReplConsoleHook from '../common/ReplConsoleHook';
+import ReplConsole from './ReplConsole';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -35,12 +37,12 @@ export default class Repl extends React.Component {
     window.addEventListener('keydown', this.onKeydown, false);
 
     // hooks
-    ReplStreamHooks.on('stdout', this.onStdout);
-    ReplStreamHooks.on('stderr', this.onStderr);
-    ReplStreamHooks.enable();
+    ReplStreamHook.on('stdout', this.onStdout);
+    ReplStreamHook.on('stderr', this.onStderr);
+    ReplStreamHook.enable();
 
-    ReplConsole.on('any', this.onConsole);
-    ReplConsole.enable();
+    ReplConsoleHook.on('console', this.onConsole);
+    ReplConsoleHook.enable();
   }
 
   setupMenu() {
@@ -94,11 +96,13 @@ export default class Repl extends React.Component {
     window.removeEventListener('paste', this.onPaste, false);
     window.removeEventListener('contextmenu', this.onContextMenu, false);
     window.removeEventListener('keydown', this.onKeydown, false);
-    ReplStreamHooks.removeListener('stdout', this.onStdout);
-    ReplStreamHooks.removeListener('stderr', this.onStderr);
-    ReplStreamHooks.disable();
-    ReplConsole.removeListener('any', this.onConsole);
-    ReplConsole.disable();
+
+    ReplStreamHook.removeListener('stdout', this.onStdout);
+    ReplStreamHook.removeListener('stderr', this.onStderr);
+    ReplStreamHook.disable();
+
+    ReplConsoleHook.removeListener('console', this.onConsole);
+    ReplConsoleHook.disable();
   }
 
   onContextMenu(e) {
@@ -193,13 +197,15 @@ export default class Repl extends React.Component {
   }
 
   onStdout({data, encoding, fd}) {
+    ReplConsoleActions.addEntry({type: 'log', data: data});
   }
 
   onStderr({data, encoding, fd}) {
-
+    ReplConsoleActions.addEntry({type: 'error', data: data});
   }
 
-  onConsole({type, data}) {
+  onConsole(msg) {
+    ReplConsoleActions.addEntry(msg);
   }
 
   render() {
@@ -226,8 +232,7 @@ export default class Repl extends React.Component {
                   <div className="repl-console-resizeable" onMouseDown={this.onDrag}>
                     <span className='repl-console-drag-lines'> </span>
                   </div>
-                  <div className='repl-console-message'>
-                  </div>
+                  <ReplConsole />
                 </div>
               </div>
             : null

@@ -1,0 +1,49 @@
+@import 'default-theme';
+@import 'repl-common';
+@import 'highlight';
+
+@mixin replEntryMessage() {
+  .repl-entry-message {
+    @include entryLayout();
+
+    .repl-entry-message-command {
+      @include highlight();
+      min-height: $app-font-size;
+    }
+
+    .ellipsis {
+      &:after {
+        content: '\2026';
+        color: $app-entry-ellipsis-color;
+      }
+    }
+
+    .repl-entry-message-output {
+      padding: 5px 0;
+      @include highlight();
+      position: relative;
+      left: -10px;
+
+      .fa-clone {
+        @include notSelectable();
+        position: absolute;
+        color: $app-entry-icon-copy-color;
+        font-size: 0.7em;
+        padding: 7px 0;
+        position: relative;
+        font-weight: 900;
+        left: -10px;
+        top: 0;
+        cursor: pointer;
+
+        &:active {
+          top: 3px;
+        }
+      }
+
+      .repl-entry-output-error {
+        @include stackTraceHighlight();
+      }
+    }
+  }
+}

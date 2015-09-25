@@ -1,0 +1,28 @@
+@import 'default-theme';
+@import 'repl-common';
+@import 'repl-status';
+@import 'repl-entry-message';
+
+@mixin replEntries() {
+  .repl-entries {
+    .repl-entry {
+      display: flex;
+      margin: 0;
+      padding: 5px;
+
+      .repl-entry-icon,
+      .repl-entry-status {
+        @include notSelectable();
+      }
+
+      .repl-entry-icon {
+        color: $app-entry-icon-color;
+        @include arrowIcon();
+        cursor: pointer;
+      }
+
+      @include replStatus();
+      @include replEntryMessage();
+    }
+  }
+}

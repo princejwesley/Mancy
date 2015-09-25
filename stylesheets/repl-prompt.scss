@@ -1,0 +1,23 @@
+@import 'default-theme';
+@import 'repl-common';
+
+@mixin replPrompt() {
+  .repl-prompt {
+    margin: 0;
+    padding: 5px;
+    background-color: lighten($app-background-color, 5%);
+    display: flex;
+    align-items: flex-start;
+
+    .repl-active-icon {
+      @include notSelectable();
+      color: $app-prompt-active-icon-color;
+      @include arrowIcon();
+    }
+
+    .repl-active-input {
+      @include entryLayout();
+      outline: none;
+    }
+  }
+}

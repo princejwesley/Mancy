@@ -1,4 +1,3 @@
-
 const ReplConstants = {
   REPL_HISTORY_SIZE: 1000,
   REPL_ENCODING: 'utf8',

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import EventEmitter from 'events';
 
 // only stdout and stderr
-class ReplStreamHooks extends EventEmitter {
+class ReplStreamHook extends EventEmitter {
   constructor() {
     super();
     this.enabled = false;
@@ -13,8 +13,9 @@ class ReplStreamHooks extends EventEmitter {
         return (chunk, encoding, fd) => {
           if(!this.enabled) {
             write.apply(stream, [chunk, encoding, fd]);
+          } else {
+            this.emit(name, { data: chunk, encoding: encoding, fd: fd });            
           }
-          this.emit(name, { data: chunk, encoding: encoding, fd: fd });
         };
       })(stream);
     });
@@ -28,4 +29,4 @@ class ReplStreamHooks extends EventEmitter {
     this.enabled = true;
   }
 }
-export default new ReplStreamHooks();
+export default new ReplStreamHook();
