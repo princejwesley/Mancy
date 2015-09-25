@@ -9,6 +9,8 @@ import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import Reflux from 'reflux';
 import remote from 'remote';
+import ReplStreamHooks from '../common/ReplStreamHooks';
+import ReplConsole from '../common/ReplConsole';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -18,7 +20,8 @@ export default class Repl extends React.Component {
     _.each([
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
-      'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole'
+      'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole',
+      'onStdout', 'onStderr', 'onConsole'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -30,6 +33,14 @@ export default class Repl extends React.Component {
     window.addEventListener('paste', this.onPaste, false);
     window.addEventListener('contextmenu', this.onContextMenu, false);
     window.addEventListener('keydown', this.onKeydown, false);
+
+    // hooks
+    ReplStreamHooks.on('stdout', this.onStdout);
+    ReplStreamHooks.on('stderr', this.onStderr);
+    ReplStreamHooks.enable();
+
+    ReplConsole.on('any', this.onConsole);
+    ReplConsole.enable();
   }
 
   setupMenu() {
@@ -83,6 +94,11 @@ export default class Repl extends React.Component {
     window.removeEventListener('paste', this.onPaste, false);
     window.removeEventListener('contextmenu', this.onContextMenu, false);
     window.removeEventListener('keydown', this.onKeydown, false);
+    ReplStreamHooks.removeListener('stdout', this.onStdout);
+    ReplStreamHooks.removeListener('stderr', this.onStderr);
+    ReplStreamHooks.disable();
+    ReplConsole.removeListener('any', this.onConsole);
+    ReplConsole.disable();
   }
 
   onContextMenu(e) {
@@ -174,6 +190,16 @@ export default class Repl extends React.Component {
 
   onToggleConsole() {
     ReplStore.toggleConsole();
+  }
+
+  onStdout({data, encoding, fd}) {
+  }
+
+  onStderr({data, encoding, fd}) {
+
+  }
+
+  onConsole({type, data}) {
   }
 
   render() {

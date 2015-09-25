@@ -227,6 +227,7 @@ pre {
           cursor: ew-resize;
           align-items: center;
           .repl-console-drag-lines{
+            @include notSelectable();
             &:before {
               content: 'ǁ';
               text-align: center;
@@ -274,6 +275,9 @@ pre {
           font-size: 0.7em;
           .text-danger {
             color: $app-entry-status-error-color;
+          }
+          .fa-terminal {
+            font-weight: 900;
           }
         }
       }
