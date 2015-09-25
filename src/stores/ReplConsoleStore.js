@@ -8,6 +8,7 @@ const ReplConsoleStore = Reflux.createStore({
   },
   onAddEntry(item) {
     //set limit
+    item.time = Date.now();
     cache.push(item);
     this.trigger();
   },

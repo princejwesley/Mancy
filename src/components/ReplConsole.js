@@ -2,14 +2,33 @@ import React from 'react';
 import _ from 'lodash';
 import ReplConsoleStore from '../stores/ReplConsoleStore';
 import ReplDOM from '../common/ReplDOM';
+import ReplConsoleMessageFilters from './ReplConsoleMessageFilters';
+import ReplConsoleHook from '../common/ReplConsoleHook';
 
 export default class ReplConsole extends React.Component {
   constructor(props) {
     super(props);
-    this.state = ReplConsoleStore.getStore();
+    this.state = _.extend({}, ReplConsoleStore.getStore(), {
+      debug: true,
+      log: true,
+      info: true,
+      warn: true,
+      error: true,
+      all: true
+    });
 
-    this.onConsoleChange = this.onConsoleChange.bind(this);
-    this.getTypedClassName = this.getTypedClassName.bind(this);
+    _.each([
+      'onConsoleChange', 'getTypedClassName',
+      'onAll', 'onFilter'
+    ], (field) => {
+      this[field] = this[field].bind(this);
+    });
+
+    _.each(['debug', 'log', 'info', 'warn', 'error'], (msg) => {
+      let key = 'on' + _.capitalize(msg);
+      this[key] = () => this.onFilter(msg);
+      this[key] = this[key].bind(this);
+    });
   }
 
   componentDidMount() {
@@ -19,6 +38,33 @@ export default class ReplConsole extends React.Component {
 
   componentWillUnmount() {
     this.unsubscribe();
+  }
+
+  onFilter(type) {
+    let flag = !this.state[type];
+    let newState = _.extend({}, this.state);
+    newState[type] = flag;
+    newState.entries = _.filter(ReplConsoleStore.getStore().entries, (entry) => {
+      return newState[entry.type];
+    });
+    this.setState(newState);
+  }
+
+  onAll() {
+    let newState;
+    if(!this.state.all) {
+      newState = _.extend({}, ReplConsoleStore.getStore(), {
+        debug: true,
+        log: true,
+        info: true,
+        warn: true,
+        error: true,
+        all: true
+      });
+    } else {
+      newState = { all: false }
+    }
+    this.setState(newState);
   }
 
   onConsoleChange() {
@@ -34,13 +80,18 @@ export default class ReplConsole extends React.Component {
     ReplDOM.scrollToEnd(this.element);
     return (
       <div className='repl-console-message'>
-        <div className='repl-console-message-filters'>
-          
-        </div>
+        <ReplConsoleMessageFilters
+          filter={this.state}
+          onAll={this.onAll}
+          onError={this.onError}
+          onWarn={this.onWarn}
+          onInfo={this.onInfo}
+          onLog={this.onLog}
+          onDebug={this.onDebug}/>
         {
-          _.map(this.state.entries, ({type, data}) => {
+          _.map(this.state.entries, ({type, data, time}) => {
             return (
-              <div className={this.getTypedClassName('repl-console-message-entry', type)}>
+              <div className={this.getTypedClassName('repl-console-message-entry', type)} key={time}>
                 {ReplConsole.getTypeIcon[type]}
                 <span className={this.getTypedClassName('repl-console-message-entry-content', type)}> {data.toString()} </span>
               </div>

@@ -8,7 +8,17 @@
     white-space: pre-wrap;
     height: 100vh;
     overflow: auto;
-    
+
+    .repl-console-message-filters {
+      font-family: monospace;
+      display: flex;
+      padding: 5px 2px;
+      border-bottom: 1px solid $app-console-message-filter-border-color;
+      .label {
+      }
+
+    }
+
     .repl-console-message-entry {
       padding: 5px;
       border-bottom: 1px solid $app-console-message-entry-border-color;
