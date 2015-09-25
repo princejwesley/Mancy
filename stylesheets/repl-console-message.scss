@@ -1,0 +1,45 @@
+@import 'default-theme';
+@import 'repl-common';
+
+@mixin replConsoleMessage() {
+  .repl-console-message {
+    flex: 1;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    height: 100vh;
+    overflow: auto;
+    
+    .repl-console-message-entry {
+      padding: 5px;
+      border-bottom: 1px solid $app-console-message-entry-border-color;
+
+      .fa {
+        padding: 0px 4px 0px 2px;
+      }
+
+      .repl-console-message-info {
+        color: $app-console-message-entry-info-color;
+      }
+
+      .repl-console-message-warning {
+        color: $app-console-message-entry-warn-color;
+      }
+
+      .repl-console-message-error {
+        color: $app-console-message-entry-error-color;
+      }
+    }
+
+    .repl-console-message-entry.error {
+
+    }
+
+    .repl-console-message-entry.warn {
+      background-color: lighten($app-console-message-entry-warn-color, 30%);
+    }
+
+    .repl-console-message-entry.info {
+
+    }
+  }
+}

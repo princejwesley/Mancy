@@ -37,5 +37,10 @@ $app-entry-ellipsis-color: rgb(58, 176, 162);
 
 $app-console-resize-handle-color: rgb(68, 66, 67);
 $app-console-background-color: whitesmoke;
-$app-console-color: darkgrey;
+$app-console-color: rgb(75, 76, 78);
 $app-console-drag-lines-color: #B5B3B0;
+
+$app-console-message-entry-border-color: #E0DDDD;
+$app-console-message-entry-info-color: #216FEC;
+$app-console-message-entry-warn-color: #E4BF29;
+$app-console-message-entry-error-color: #F54A4A;

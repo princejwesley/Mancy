@@ -13,8 +13,8 @@ let ReplCommon = {
     return /Error:?/.test(msg);
   },
   isStackTrace: (trace) => {
-    return !!trace && trace.every((t) => {
-      return /^\s+at\s/.test(t) || (/^$/.test(t) && trace.length > 1);
+    return !!trace && trace.length > 0 && trace.every((t, idx) => {
+      return /^\s+at\s/.test(t) || (/^$/.test(t) && trace.length === idx - 1);
     });
   },
   toWords: (str) => {

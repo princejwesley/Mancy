@@ -1,5 +1,6 @@
 @import 'default-theme';
 @import 'repl-common';
+@import 'repl-console-message';
 
 @mixin containerRight() {
   .repl-container-right {
@@ -47,16 +48,7 @@
           }
         }
       }
-
-      .repl-console-message {
-        flex: 1;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-
-        .repl-console-message-entry {
-
-        }
-      }
+      @include replConsoleMessage();
     }
   }
 }

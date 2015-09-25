@@ -13,7 +13,7 @@ class ReplConsoleHook extends EventEmitter {
         if(!this.enabled) {
           handle.apply(console, rest);
         } else {
-          this.emit('console', {type: fun, data: rest});          
+          this.emit('console', {type: fun, data: rest});
         }
       };
       console[fun] = this[fun];
