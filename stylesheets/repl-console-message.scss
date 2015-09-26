@@ -20,12 +20,11 @@
       border-bottom: 1px solid $app-console-message-filter-border-color;
       .label {
       }
-      .fa-ban {
-        cursor: pointer;
+      .message-filter.clear {
         display: flex;
         align-self: center;
+        cursor: pointer;
       }
-
     }
 
     .repl-console-message-entry {

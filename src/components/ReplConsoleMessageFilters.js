@@ -57,7 +57,7 @@ export default class ReplConsoleMessageFilters extends React.Component {
           </input>
           <span className='label'> D </span>
         </span>
-        <span className='message-filter' title='Clear'>
+        <span className='message-filter clear' title='Clear'>
           <i className='fa fa-ban' onClick={this.props.onClear}> </i>
         </span>
         <span style={{flex:1}}> </span>
