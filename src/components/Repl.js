@@ -225,7 +225,7 @@ export default class Repl extends React.Component {
           <div className='repl-header' key='header-left'></div>
           <ReplEntries entries={this.state.entries} />
           <ReplPrompt key={Date.now()}
-            history={this.state.entries}
+            history={this.state.history}
             historyIndex={this.state.historyIndex}
             historyStaged={this.state.historyStaged}
             command={this.state.command}

@@ -5,6 +5,7 @@ import ReplCommon from '../common/ReplCommon';
 
 let cache = {
   entries: [],
+  history: [],
   command: '',
   cursor: 0,
   historyIndex: -1,
@@ -35,6 +36,7 @@ const ReplStore = Reflux.createStore({
   },
   onAddEntry(entry) {
     cache.entries.push(entry);
+    cache.history.push({'plainCode': entry.plainCode})
     resetButEntry();
     this.trigger();
   },

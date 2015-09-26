@@ -4,6 +4,7 @@ import ReplEntryMessage from './ReplEntryMessage';
 import ReplEntryStatus from './ReplEntryStatus';
 import ReplActions from '../actions/ReplActions';
 import clipboard from 'clipboard';
+import _ from 'lodash';
 
 export default class ReplEntry extends React.Component {
   constructor(props) {
@@ -12,12 +13,13 @@ export default class ReplEntry extends React.Component {
       collapse: this.props.log.collapsed,
       commandCollapse: this.props.log.collapsed
     };
-    this.onExpand = this.onExpand.bind(this);
-    this.onCollapse = this.onCollapse.bind(this);
-    this.onReload = this.onReload.bind(this);
-    this.onRemove = this.onRemove.bind(this);
-    this.onCommandCollapse = this.onCommandCollapse.bind(this);
-    this.onCopyOutput = this.onCopyOutput.bind(this);
+
+    _.each([
+      'onExpand', 'onCollapse', 'onReload',
+      'onCommandCollapse', 'onRemove', 'onCopyOutput',
+    ], (field) => {
+      this[field] = this[field].bind(this);
+    });
   }
   componentWillReceiveProps(nextProps) {
     this.state = {
