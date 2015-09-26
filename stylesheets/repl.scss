@@ -44,6 +44,7 @@ pre {
   margin: 0;
   word-wrap: break-word;
   white-space: pre-wrap;
+  font-family: 'Droid Sans Mono', monospace;
 }
 ::selection {
   background-color: $app-text-selection-color;
@@ -54,6 +55,7 @@ pre {
 }
 
 #node-repl-plus {
+  font-size: 0.9em;
   margin: 5px 0px;
   @include selectable();
 
