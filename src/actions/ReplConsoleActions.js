@@ -2,6 +2,6 @@ import Reflux from 'reflux';
 
 const ReplConsoleActions = Reflux.createActions([
   "addEntry",
-  "clearAll"
+  "clear"
 ]);
 export default ReplConsoleActions;

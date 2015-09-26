@@ -164,6 +164,7 @@ export default class Repl extends React.Component {
 
   onClearCommands() {
     ReplStore.clearStore();
+    ReplConsoleActions.clear();
   }
 
   onStateChange() {

@@ -12,7 +12,10 @@ const ReplConsoleStore = Reflux.createStore({
     cache.push(item);
     this.trigger();
   },
-  clearAll() {
+  onClear() {
+    this.clear();
+  },
+  clear() {
     cache = [];
     this.trigger();
   },

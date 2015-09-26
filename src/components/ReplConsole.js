@@ -19,7 +19,7 @@ export default class ReplConsole extends React.Component {
 
     _.each([
       'onConsoleChange', 'getTypedClassName',
-      'onAll', 'onFilter'
+      'onAll', 'onFilter', 'onClear'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -48,6 +48,10 @@ export default class ReplConsole extends React.Component {
       return newState[entry.type];
     });
     this.setState(newState);
+  }
+
+  onClear() {
+    ReplConsoleStore.clear();
   }
 
   onAll() {
@@ -87,6 +91,7 @@ export default class ReplConsole extends React.Component {
           onWarn={this.onWarn}
           onInfo={this.onInfo}
           onLog={this.onLog}
+          onClear={this.onClear}
           onDebug={this.onDebug}/>
         {
           _.map(this.state.entries, ({type, data, time}) => {

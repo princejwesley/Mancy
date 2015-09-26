@@ -9,12 +9,19 @@
     height: 100vh;
     overflow: auto;
 
+    .repl-status-bar-cover, .repl-console-message-filters {
+      @include notSelectable();
+    }
+
     .repl-console-message-filters {
       font-family: monospace;
       display: flex;
       padding: 5px 2px;
       border-bottom: 1px solid $app-console-message-filter-border-color;
       .label {
+      }
+      .fa-ban {
+        cursor: pointer;
       }
 
     }

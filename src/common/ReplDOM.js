@@ -5,11 +5,11 @@ import {EOL} from 'os';
 
 // Not very generic but sufficient to handle our usecase
 let ReplDOM = {
-  scrollToEnd: (dom) => {
+  scrollToEnd: (dom, timeout = 50) => {
     let fun = dom
       ? () => { dom.scrollTop = dom.scrollHeight; }
       : () => window.scrollTo(0, document.body.scrollHeight);
-    window.setTimeout(fun, 50);
+    window.setTimeout(fun, timeout);
   },
   getViewportSize: () => {
     //refer http://stackoverflow.com/a/8876069/571189

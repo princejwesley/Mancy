@@ -19,7 +19,7 @@ app.on('activate-with-no-open-windows', onReady);
 
 function onReady() {
   mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1000,
     height: 600,
     'min-height': 400,
     'min-width': 600,

@@ -27,7 +27,7 @@ export default class ReplStatus extends React.Component {
           <span className='repl-status-bar-count'>{errors}</span>
         </span>
         <span className='repl-status-bar-mode' title='REPL mode'>
-          <i className="fa fa-check"></i>
+          <i className="fa fa-tag"></i>
           <span className='repl-status-bar-message'>{mode}</span>
         </span>
         <span style={{flex: 1}}/>
