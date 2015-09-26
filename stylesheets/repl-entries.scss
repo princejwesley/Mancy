@@ -1,6 +1,6 @@
 @import 'default-theme';
 @import 'repl-common';
-@import 'repl-status';
+@import 'repl-entry-status';
 @import 'repl-entry-message';
 
 @mixin replEntries() {
@@ -21,7 +21,7 @@
         cursor: pointer;
       }
 
-      @include replStatus();
+      @include replEntryStatus();
       @include replEntryMessage();
     }
   }

@@ -1,6 +1,7 @@
 import ReplActions from '../actions/ReplActions';
 import Reflux from 'reflux';
 import _ from 'lodash';
+import ReplCommon from '../common/ReplCommon';
 
 let cache = {
   entries: [],
@@ -9,6 +10,7 @@ let cache = {
   historyIndex: -1,
   historyStaged: '',
   showConsole: false,
+  showBell: false,
   mode: 'REPL_MODE_MAGIC'
 };
 
@@ -50,6 +52,7 @@ const ReplStore = Reflux.createStore({
   clearStore() {
     cache.entries = [];
     resetButEntry();
+    cache.showBell = false;
     this.trigger();
   },
   expandAll() {
@@ -66,6 +69,12 @@ const ReplStore = Reflux.createStore({
   },
   toggleConsole() {
     cache.showConsole = !cache.showConsole;
+    cache.showBell = false;
+    this.trigger();
+  },
+  showBell() {
+    cache.showBell = true;
+    ReplCommon.beep();
     this.trigger();
   }
 

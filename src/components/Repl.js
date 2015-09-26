@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import ReplEntries from './ReplEntries';
 import ReplPrompt from './ReplPrompt';
-import ReplStatus from './ReplStatus';
+import ReplStatusBar from './ReplStatusBar';
 import ReplStore from '../stores/ReplStore';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
@@ -23,7 +23,7 @@ export default class Repl extends React.Component {
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole',
-      'onStdout', 'onStderr', 'onConsole'
+      'onStdout', 'onStderr', 'onConsole', 'onConsoleChange'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -199,14 +199,22 @@ export default class Repl extends React.Component {
 
   onStdout({data, encoding, fd}) {
     ReplConsoleActions.addEntry({type: 'log', data: data});
+    this.onConsoleChange();
   }
 
   onStderr({data, encoding, fd}) {
     ReplConsoleActions.addEntry({type: 'error', data: data});
+    this.onConsoleChange();
   }
 
   onConsole(msg) {
     ReplConsoleActions.addEntry(msg);
+    this.onConsoleChange();
+  }
+
+  onConsoleChange() {
+    if(this.state.showConsole) { return; }
+    ReplStore.showBell();
   }
 
   render() {
@@ -239,9 +247,10 @@ export default class Repl extends React.Component {
             : null
         }
 
-        <ReplStatus history={this.state.entries}
+        <ReplStatusBar history={this.state.entries}
           mode={this.state.mode}
           showConsole={this.state.showConsole}
+          showBell={this.state.showBell}
           onToggleConsole={this.onToggleConsole}/>
       </div>
     );

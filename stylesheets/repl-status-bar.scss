@@ -1,4 +1,15 @@
 @import 'default-theme';
+@keyframes spin {
+  0% {
+    -webkit-transform: rotate(-30deg);
+    transform: rotate(-30deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(30deg);
+    transform: rotate(30deg);
+  }
+}
 
 @mixin statusBar() {
   .repl-status-bar {
@@ -25,6 +36,15 @@
     .repl-status-bar-message {
       color: $app-status-bar-message-color;
       padding: 0 5px;
+    }
+
+    .console-notification {
+      font-size: 0.8em;
+      color: $app-status-bar-console-notification-color;
+      -webkit-animation:spin 0.5s linear infinite;
+      animation:spin 0.5s linear infinite;
+      -webkit-animation-direction: alternate;
+      animation-direction: alternate;
     }
 
     .repl-status-bar-console {
@@ -58,7 +78,7 @@
   .repl-status-bar {
     height: calc(#{$app-font-size} + 6px);
   }
-  
+
   .repl-status-bar-cover {
     height: calc(#{$app-font-size} + 12px);
     min-height: calc(#{$app-font-size} + 12px);

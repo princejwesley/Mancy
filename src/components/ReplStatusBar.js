@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class ReplStatus extends React.Component {
+export default class ReplStatusBar extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -31,6 +31,11 @@ export default class ReplStatus extends React.Component {
           <span className='repl-status-bar-message'>{mode}</span>
         </span>
         <span style={{flex: 1}}/>
+        {
+          this.props.showBell
+            ? <i className="fa fa-bell console-notification"></i>
+            : null      
+        }
         <span className='repl-status-bar-console' onClick={this.props.onToggleConsole} title='toggle console'>
           <span className="fa-stack">
             <i className="fa fa-terminal fa-stack-1x"></i>

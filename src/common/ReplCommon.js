@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import hl from 'highlight.js';
 import ReplConstants from '../constants/ReplConstants';
+import shell from 'shell';
 
 let ReplCommon = {
   times: (num, str) => {
@@ -38,7 +39,8 @@ let ReplCommon = {
     return (process.platform === 'win32')
       ? process.env.USERNAME
       : process.env.USER;
-  }
+  },
+  beep: () => { shell.beep(); }
 };
 
 hl.configure({

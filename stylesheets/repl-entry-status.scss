@@ -1,7 +1,7 @@
 @import 'default-theme';
 @import 'repl-common';
 
-@mixin replStatus() {
+@mixin replEntryStatus() {
   .repl-entry-status {
     padding-right: 8px;
 
