@@ -1,12 +1,13 @@
+// set node env as production to avoid react warnings leaking in our console window
+// comment below code to test react warnings
+process.env.NODE_ENV = 'production';
+
+
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var menu = require('./menu');
 
 var mainWindow = null;
-
-// set node env as production to avoid react warnings leaking in our console window
-// comment below code to test react warnings
-process.env.NODE_ENV = 'production';
 
 app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -47,5 +48,5 @@ function onReady() {
 
   // testing
   //TODO: configure for dev only environment
-  mainWindow.openDevTools({detach: true});
+  //mainWindow.openDevTools({detach: true});
 }

@@ -51,7 +51,7 @@ export default class ReplActiveInput extends React.Component {
     //bind write handle
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom
-    ReplDOM.scrollToEnd();
+    ReplDOM.scrollToEnd(this.element);
 
     //Hack: override display prompt
     this.displayPrompt = cli.displayPrompt;
@@ -210,6 +210,8 @@ export default class ReplActiveInput extends React.Component {
       this.removeSuggestion();
       this.waitingForOutput = true;
       // allow user to code some more
+      ReplConsoleHook.$log('scroll down', document.body.scrollHeight)
+      ReplDOM.scrollToEnd();
       if(e.shiftKey) { return; }
       if(cli.bufferedCommand.length) {
         cli.input.emit('data', '.break');

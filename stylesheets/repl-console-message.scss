@@ -6,7 +6,7 @@
     flex: 1;
     word-wrap: break-word;
     white-space: pre-wrap;
-    height: 100vh;
+    @include fullHeight();
     overflow: auto;
 
     .repl-status-bar-cover, .repl-console-message-filters {

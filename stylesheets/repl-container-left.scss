@@ -9,7 +9,7 @@
   .repl-container-left {
     flex: 1;
     display: flex;
-    height: 100vh;
+    @include fullHeight();
     overflow: auto;
     flex-direction: column;
 

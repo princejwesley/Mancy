@@ -231,7 +231,6 @@ export default class Repl extends React.Component {
             command={this.state.command}
             mode={this.state.mode}
             cursor= {this.state.cursor} />
-          <div className="repl-status-bar-cover" key='cover'></div>
         </div>
         {
           this.state.showConsole

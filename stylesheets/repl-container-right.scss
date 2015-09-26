@@ -8,7 +8,7 @@
     max-width: 40vw;
     flex: 0 0 30vw;
     min-width: 8px;
-    height: 100vh;
+    @include fullHeight();
     overflow: auto;
     flex-direction: column;
 
@@ -31,6 +31,7 @@
         display: flex;
         width: 8px;
         position: relative;
+        @include fullHeight();
         background-color: $app-console-resize-handle-color;
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
