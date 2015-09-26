@@ -15,7 +15,7 @@ let ReplCommon = {
   },
   isStackTrace: (trace) => {
     return !!trace && trace.length > 0 && trace.every((t, idx) => {
-      return /^\s+at\s/.test(t) || (/^$/.test(t) && trace.length === idx - 1);
+      return /^\s+at\s/.test(t) || (/^$/.test(t) && trace.length === idx + 1);
     });
   },
   toWords: (str) => {

@@ -13,6 +13,8 @@ import ReplCommon from '../common/ReplCommon';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputStore from '../stores/ReplActiveInputStore';
+import ReplOutput from '../common/ReplOutput';
+import ReplConsoleHook from '../common/ReplConsoleHook';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -88,14 +90,14 @@ export default class ReplActiveInput extends React.Component {
     if(this.commandReady) {
       let cli = ReplActiveInput.getRepl();
       let output = this.commandOutput.join('');
-      let [exception, ...stackTrace] = this.commandOutput;
-      let status = (ReplCommon.isExceptionMessage(exception)
-          && ReplCommon.isStackTrace(stackTrace));
 
       const text = this.element.innerText;
+      let {formattedOutput, error} = cli.$lastExpression.highlight(output);
+
       ReplActions.addEntry({
         output: output,
-        status: !status,
+        formattedOutput: formattedOutput,
+        status: !error,
         command: ReplCommon.highlight(text),
         plainCode: text
       });
@@ -213,6 +215,7 @@ export default class ReplActiveInput extends React.Component {
         cli.input.emit('data', '.break');
         cli.input.emit('data', EOL);
       }
+      cli.$lastExpression = ReplOutput.none();
       cli.input.emit('data', text);
       cli.input.emit('data', EOL);
     } else {
@@ -313,6 +316,7 @@ export default class ReplActiveInput extends React.Component {
       writer: (obj, opt) => {
         // depth: null is dangerous
         // return util.inspect(obj, {depth: null});
+        nodeRepl.$lastExpression = ReplOutput.some(obj);
         return util.inspect(obj, opt);
       },
       historySize: ReplConstants.REPL_HISTORY_SIZE,

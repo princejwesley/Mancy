@@ -1,15 +1,10 @@
 import React from 'react';
 import {EOL} from 'os';
 import ReplCommon from '../common/ReplCommon';
-import ReplOutput from '../common/ReplOutput';
 
 export default class ReplEntryMessage extends React.Component {
   constructor(props) {
     super(props);
-  }
-
-  transformOutput() {
-    return ReplOutput.highlightOutput(this.props.message.output);
   }
 
   render() {
@@ -35,7 +30,7 @@ export default class ReplEntryMessage extends React.Component {
             null :
             <pre className='repl-entry-message-output'>
               <i className="fa fa-clone" title="copy output" onClick={this.props.onCopyOutput}></i>
-              {this.props.message.output}
+              {this.props.message.formattedOutput}
             </pre>
         }
       </div>
