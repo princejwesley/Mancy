@@ -23,7 +23,7 @@ export default class Repl extends React.Component {
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole',
-      'onStdout', 'onStderr', 'onConsole', 'onConsoleChange'
+      'onStdout', 'onStderr', 'onConsole', 'onConsoleChange', 'getPromptKey'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -31,7 +31,12 @@ export default class Repl extends React.Component {
 
   componentDidMount() {
     this.setupMenu();
+    this.reloadPrompt = true;
+    this.activePromptKey = Date.now();
+
+    //register events
     this.unsubscribe = ReplStore.listen(this.onStateChange);
+
     window.addEventListener('paste', this.onPaste, false);
     window.addEventListener('contextmenu', this.onContextMenu, false);
     window.addEventListener('keydown', this.onKeydown, false);
@@ -194,6 +199,7 @@ export default class Repl extends React.Component {
   }
 
   onToggleConsole() {
+    this.reloadPrompt = false;
     ReplStore.toggleConsole();
   }
 
@@ -217,6 +223,15 @@ export default class Repl extends React.Component {
     ReplStore.showBell();
   }
 
+  getPromptKey() {
+    if(!this.reloadPrompt) {
+      this.reloadPrompt = true;
+      return this.activePromptKey;
+    }
+    this.activePromptKey = Date.now();
+    return this.activePromptKey;
+  }
+
   render() {
     // force to recreate ReplPrompt
     return (
@@ -224,7 +239,7 @@ export default class Repl extends React.Component {
         <div className='repl-container-left'>
           <div className='repl-header' key='header-left'></div>
           <ReplEntries entries={this.state.entries} />
-          <ReplPrompt key={Date.now()}
+          <ReplPrompt key={this.getPromptKey()}
             history={this.state.history}
             historyIndex={this.state.historyIndex}
             historyStaged={this.state.historyStaged}

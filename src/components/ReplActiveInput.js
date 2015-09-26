@@ -19,7 +19,6 @@ import ReplConsoleHook from '../common/ReplConsoleHook';
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
     super(props);
-
     this.history = {
       // read-only
       log: this.props.history,
