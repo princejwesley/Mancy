@@ -14,7 +14,7 @@ import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 import ReplOutput from '../common/ReplOutput';
-import ReplConsoleHook from '../common/ReplConsoleHook';
+import ReplContext from '../common/ReplContext';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -309,7 +309,7 @@ export default class ReplActiveInput extends React.Component {
       input: readable,
       output: writable,
       terminal: false,
-      // needed to handle console separately and to avoid security policy error
+      // Just to by-pass the security errors
       useGlobal: true,
       ignoreUndefined: false,
       useColors: false,
@@ -322,6 +322,9 @@ export default class ReplActiveInput extends React.Component {
       historySize: ReplConstants.REPL_HISTORY_SIZE,
       replMode: repl['REPL_MODE_MAGIC'],
     });
+
+    // here is our sandbox environment
+    nodeRepl.context = ReplContext.createContext();
 
     return () => {
       return nodeRepl;

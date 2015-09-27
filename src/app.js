@@ -2,9 +2,6 @@ import React from 'react';
 import ReplSuggestions from './components/ReplSuggestions';
 import Repl from './components/Repl';
 
-// disable hindering funs
-global.alert = () => {};
-
 // react entry point
 (function() {
   const repl = document.getElementById('node-repl-plus');
