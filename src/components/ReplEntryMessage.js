@@ -29,7 +29,6 @@ export default class ReplEntryMessage extends React.Component {
         { this.props.collapse ?
             null :
             <pre className='repl-entry-message-output'>
-              <i className="fa fa-clone" title="copy output" onClick={this.props.onCopyOutput}></i>
               {this.props.message.formattedOutput}
             </pre>
         }

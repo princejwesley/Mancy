@@ -16,7 +16,7 @@ export default class ReplEntry extends React.Component {
 
     _.each([
       'onExpand', 'onCollapse', 'onReload',
-      'onCommandCollapse', 'onRemove', 'onCopyOutput',
+      'onCommandCollapse', 'onRemove',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -38,9 +38,6 @@ export default class ReplEntry extends React.Component {
   onCollapse() {
     this.update(true);
   }
-  onCopyOutput() {
-    clipboard.writeText(this.props.log.output);
-  }
   onReload() {
     let command = this.props.log.plainCode.trim();
     ReplActions.reloadPrompt({ command: command, cursor: command.length });
@@ -59,7 +56,6 @@ export default class ReplEntry extends React.Component {
         <ReplEntryIcon collapse={this.state.commandCollapse}
           onCollapse={this.onCommandCollapse}/>
         <ReplEntryMessage message={this.props.log} collapse={this.state.collapse}
-          onCopyOutput={this.onCopyOutput}
           commandCollapse={this.state.commandCollapse}/>
         <ReplEntryStatus message={this.props.log} collapse={this.state.collapse}
           onReload={this.onReload}
