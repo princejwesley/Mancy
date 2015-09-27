@@ -99,11 +99,7 @@ export default class ReplConsole extends React.Component {
               <div className={this.getTypedClassName('repl-console-message-entry', type)} key={time}>
                 {ReplConsole.getTypeIcon[type]}
                 <span className={this.getTypedClassName('repl-console-message-entry-content', type)}>
-                  {
-                    _.map(data, (datum) => {
-                      return datum;
-                    })
-                  }
+                  {data}
                 </span>
               </div>
             );

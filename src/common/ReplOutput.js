@@ -12,7 +12,7 @@ let ReplOutputType = {
     return <span className='number'>{n}</span>;
   },
   boolean: (b) => {
-    return <span className='literal'>{b}</span>;
+    return <span className='literal'>{b.toString()}</span>;
   },
   array: (a) => {
     let tokenize = (arr, result) => {
