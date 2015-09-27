@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
-import ReplCommon from '../common/ReplCommon';
+import ReplCommon from './ReplCommon';
 import ReplEntryOutputError from '../components/ReplEntryOutputError';
 import {EOL} from 'os';
-import hl from 'highlight.js';
 import React from 'react';
 import ReplConsoleHook from '../common/ReplConsoleHook';
+import ReplOutputFunction from '../components/ReplOutputFunction';
 
 let ReplOutputType = {
   number: (n) => {
@@ -47,7 +47,15 @@ let ReplOutputType = {
     return <span class='literal'>undefined</span>;
   },
   'function': (f) => {
-    // TODO not implemented
+    let code = f.toString();
+    let funElement = ReplCommon.highlight(code);
+    let expandable = false, shortElement = '';
+    let idx = code.indexOf(EOL);
+    if(idx !== -1) {
+      shortElement = ReplCommon.highlight(code.slice(0, idx));
+      expandable = true;
+    }
+    return <ReplOutputFunction html={funElement} expandable={expandable} short={shortElement}/>
   },
   string: (s) => {
     return <span className='string'>{s}</span>;

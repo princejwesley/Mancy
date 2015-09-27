@@ -209,7 +209,6 @@ export default class ReplActiveInput extends React.Component {
       this.removeSuggestion();
       this.waitingForOutput = true;
       // allow user to code some more
-      ReplConsoleHook.$log('scroll down', document.body.scrollHeight)
       ReplDOM.scrollToEnd();
       if(e.shiftKey) { return; }
       if(cli.bufferedCommand.length) {
