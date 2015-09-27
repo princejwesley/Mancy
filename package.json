@@ -7,7 +7,7 @@
     "preinstall": "npm prune",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/Electron .",
-    "package": "electron-packager . 'Mancy' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --app-version='Version 0.0.1' --build-version=' ' --version-string.ProductVersion='0.0.1' --version-string.FileDescription='Javascript REPL for fun🙈' --version-string.CompanyName='toolitup.com' --version-string.ProductName='Mancy' --out='./dist' --icon='./icon.icns'",
+    "package": "electron-packager . 'Mancy' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --app-version='Version 0.0.1' --build-version=' ' --version-string.ProductVersion='0.0.1' --version-string.FileDescription='Javascript REPL for fun🙈' --version-string.CompanyName='toolitup.com' --version-string.ProductName='Mancy' --out='/Applications' --icon='./icon.icns'",
     "watch": "gulp watch"
   },
   "keywords": [

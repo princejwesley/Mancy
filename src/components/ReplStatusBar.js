@@ -19,11 +19,11 @@ export default class ReplStatusBar extends React.Component {
     return (
       <div className='repl-status-bar'>
         <span className='repl-status-bar-commands' title='success commands'>
-          <i className="fa fa-thumbs-o-up"></i>
+          <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{commands}</span>
         </span>
         <span className='repl-status-bar-errors' title='error outputs'>
-          <i className="fa fa-thumbs-o-down"></i>
+          <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{errors}</span>
         </span>
         <span className='repl-status-bar-mode' title='REPL mode'>
@@ -34,7 +34,7 @@ export default class ReplStatusBar extends React.Component {
         {
           this.props.showBell
             ? <i className="fa fa-bell console-notification"></i>
-            : null      
+            : null
         }
         <span className='repl-status-bar-console' onClick={this.props.onToggleConsole} title='toggle console'>
           <span className="fa-stack">

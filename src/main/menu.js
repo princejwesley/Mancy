@@ -90,8 +90,7 @@ module.exports = {
         submenu: [
           {
             label: 'Learn More',
-            // TODO: add github project url
-            click: function() { require('shell').openExternal('http://electron.atom.io') }
+            click: function() { require('shell').openExternal('https://github.com/princejwesley/Mancy') }
           },
         ]
       },
