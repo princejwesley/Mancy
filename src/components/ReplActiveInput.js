@@ -94,7 +94,6 @@ export default class ReplActiveInput extends React.Component {
       let {formattedOutput, error} = cli.$lastExpression.highlight(output);
 
       ReplActions.addEntry({
-        output: output,
         formattedOutput: formattedOutput,
         status: !error,
         command: ReplCommon.highlight(text),
@@ -317,7 +316,7 @@ export default class ReplActiveInput extends React.Component {
         // depth: null is dangerous
         // return util.inspect(obj, {depth: null});
         nodeRepl.$lastExpression = ReplOutput.some(obj);
-        return util.inspect(obj, opt);
+        return '<<response>>';
       },
       historySize: ReplConstants.REPL_HISTORY_SIZE,
       replMode: repl['REPL_MODE_MAGIC'],

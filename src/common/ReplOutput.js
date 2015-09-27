@@ -27,6 +27,7 @@ let ReplOutputType = {
     tokenize(_.clone(a), arrays);
 
     // TODO not implemented
+    return a;
   },
   object: (o) => {
     if(Array.isArray(o)) {
@@ -42,6 +43,7 @@ let ReplOutputType = {
     }
 
     // TODO not implemented
+    return util.inspect(o);
   },
   'undefined': (u) => {
     return <span class='literal'>undefined</span>;

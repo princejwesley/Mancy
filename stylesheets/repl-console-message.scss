@@ -1,5 +1,6 @@
 @import 'default-theme';
 @import 'repl-common';
+@import 'highlight';
 
 @mixin replConsoleMessage() {
   .repl-console-message {
@@ -45,6 +46,15 @@
 
       .repl-console-message-error {
         color: $app-console-message-entry-error-color;
+      }
+
+      .repl-console-message-entry-content.log > * {
+        padding: 0px 2px;
+      }
+
+      .repl-console-message-entry-content {
+        @include highlight();
+        @include stackTraceHighlight();  
       }
     }
 

@@ -13,6 +13,7 @@ import remote from 'remote';
 import ReplStreamHook from '../common/ReplStreamHook';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplConsole from './ReplConsole';
+import ReplOutput from '../common/ReplOutput';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -23,7 +24,7 @@ export default class Repl extends React.Component {
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole',
-      'onStdout', 'onStderr', 'onConsole', 'onConsoleChange', 'getPromptKey'
+      'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -203,18 +204,34 @@ export default class Repl extends React.Component {
     ReplStore.toggleConsole();
   }
 
-  onStdout({data, encoding, fd}) {
-    ReplConsoleActions.addEntry({type: 'log', data: data});
+  onStdMessage({data, encoding, fd}, type) {
+    let {formattedOutput} = ReplOutput.some(data).highlight(data);
+    ReplConsoleActions.addEntry({
+      type: type,
+      data: [formattedOutput]
+    });
     this.onConsoleChange();
   }
 
-  onStderr({data, encoding, fd}) {
-    ReplConsoleActions.addEntry({type: 'error', data: data});
-    this.onConsoleChange();
+  onStdout(msg) {
+    this.onStdMessage(msg, 'log');
   }
 
-  onConsole(msg) {
-    ReplConsoleActions.addEntry(msg);
+  onStderr(msg) {
+    this.onStdMessage(msg, 'error');
+  }
+
+  onConsole({type, data}) {
+    let results = _.reduce(data, function(result, datum) {
+      let {formattedOutput} = ReplOutput.some(datum).highlight(datum);
+      result.push(formattedOutput);
+      return result;
+    }, []);
+
+    ReplConsoleActions.addEntry({
+      type: type,
+      data: results
+    });
     this.onConsoleChange();
   }
 
