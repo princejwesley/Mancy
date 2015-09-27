@@ -48,4 +48,14 @@ class ReplConsoleHook extends EventEmitter {
     this.enabled = true;
   }
 }
-export default new ReplConsoleHook();
+let hook = new ReplConsoleHook();
+export default hook;
+
+// make life easier
+global.$console = {
+  log: hook.$log.bind(hook),
+  debug: hook.$debug.bind(hook),
+  warn: hook.$warn.bind(hook),
+  error: hook.$error.bind(hook),
+  info: hook.$info.bind(hook)
+};

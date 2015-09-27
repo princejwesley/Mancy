@@ -15,11 +15,12 @@ export default class ReplSuggestions extends React.Component {
     super(props);
     this.state = {
       suggestions: [],
-      selected: -1
+      selected: -1,
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onWindowEvents = this.onWindowEvents.bind(this);
     this.onClickSuggestion = this.onClickSuggestion.bind(this);
+    this.style = null;
   }
 
   componentDidMount() {
@@ -107,7 +108,7 @@ export default class ReplSuggestions extends React.Component {
     return (
       <div className='repl-prompt-suggestion-wrapper' style={style}>
       {
-        this.state.suggestions.length
+        this.state.suggestions.length && style
           ?
           <ol className='repl-prompt-suggestion-list'>
             {
