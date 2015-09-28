@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import vm from 'vm';
+import timers from 'timers';
 
 let createContext = () => {
   // sandbox
@@ -13,15 +14,9 @@ let createContext = () => {
     'DTRACE_HTTP_CLIENT_RESPONSE',
     'process',
     'Buffer',
-    'clearImmediate',
-    'clearInterval',
-    'clearTimeout',
-    'setImmediate',
-    'setInterval',
-    'setTimeout',
     'console',
     'module',
-    'require'];
+    'require' ];
 
   let circulars = [ '_', 'global', 'GLOBAL', 'root'];
 
@@ -33,8 +28,15 @@ let createContext = () => {
     context[g] = context;
   });
 
-  _.each('error', 'warn', 'info', 'log', 'debug', (fun) => {
+  _.each(['error', 'warn', 'info', 'log', 'debug'], (fun) => {
     context.console[fun] = ReplConsoleHook[fun];
+  });
+
+  let timerFuns = [ 'clearImmediate', 'clearInterval', 'clearTimeout',
+    'setImmediate', 'setInterval', 'setTimeout' ];
+
+  _.each(timerFuns, (fun) => {
+    context[fun] = timers[fun];
   });
 
   return context;

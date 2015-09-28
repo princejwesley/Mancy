@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
 import ReplCommon from './ReplCommon';
+import util from 'util';
 import ReplEntryOutputError from '../components/ReplEntryOutputError';
 import {EOL} from 'os';
 import React from 'react';

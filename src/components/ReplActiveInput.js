@@ -308,13 +308,10 @@ export default class ReplActiveInput extends React.Component {
       input: readable,
       output: writable,
       terminal: false,
-      // Just to by-pass the security errors
-      useGlobal: true,
+      useGlobal: false,
       ignoreUndefined: false,
       useColors: false,
       writer: (obj, opt) => {
-        // depth: null is dangerous
-        // return util.inspect(obj, {depth: null});
         nodeRepl.$lastExpression = ReplOutput.some(obj);
         return '<<response>>';
       },
