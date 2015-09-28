@@ -29,7 +29,7 @@ export default class ReplActiveInput extends React.Component {
     _.each([
       'onTabCompletion', 'autoComplete', 'onKeyDown',
       'onKeyUp', 'onStoreChange', 'prompt',
-      'addEntry', 'removeSuggestion'
+      'addEntry', 'removeSuggestion', 'onBlur'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -68,6 +68,10 @@ export default class ReplActiveInput extends React.Component {
     // focus
     ReplDOM.focusOn(this.element);
     ReplDOM.setCursorPosition(this.props.cursor || 0, this.element);
+  }
+
+  onBlur() {
+    this.removeSuggestion();    
   }
 
   onStoreChange() {
@@ -224,8 +228,8 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyDown(e) {
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
-    if( ReplDOMEvents.isKeyup(e)
-      || ReplDOMEvents.isKeydown(e)
+    if( (ReplDOMEvents.isKeyup(e)
+      || ReplDOMEvents.isKeydown(e)) && !e.shiftKey
     ) {
       // avoid system behavior
       e.preventDefault();
@@ -291,7 +295,8 @@ export default class ReplActiveInput extends React.Component {
     return (
       <pre className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
-        onKeyDown={this.onKeyDown}>
+        onKeyDown={this.onKeyDown}
+        onBlur={this.onBlur}>
         {this.props.command}
       </pre>
     );
