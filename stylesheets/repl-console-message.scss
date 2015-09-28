@@ -1,6 +1,7 @@
 @import 'default-theme';
 @import 'repl-common';
 @import 'highlight';
+@import 'repl-output-array';
 
 @mixin replConsoleMessage() {
   .repl-console-message {
@@ -54,7 +55,8 @@
 
       .repl-console-message-entry-content {
         @include highlight();
-        @include stackTraceHighlight();  
+        @include stackTraceHighlight();
+        @include replOutputArrayFold();
       }
     }
 

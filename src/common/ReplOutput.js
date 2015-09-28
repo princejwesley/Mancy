@@ -7,6 +7,7 @@ import {EOL} from 'os';
 import React from 'react';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplOutputFunction from '../components/ReplOutputFunction';
+import ReplOutputArray from '../components/ReplOutputArray';
 
 let ReplOutputType = {
   number: (n) => {
@@ -16,19 +17,37 @@ let ReplOutputType = {
     return <span className='literal'>{b.toString()}</span>;
   },
   array: (a) => {
-    let tokenize = (arr, result) => {
-      if(arr.length < 100) {
-        result.push(arr);
+    let tokenize = (arr, result, range, mul=1) => {
+      let len = result.length;
+      if(arr.length < range) {
+        let label = result.length
+          ? ['[',len * range * mul, ' … ', (len * range * mul) - 1 + arr.length % range,']'].join('')
+          : ['Array[',arr.length,']'].join('');
+        result.push(<ReplOutputArray array={arr} label={label} start={len * range * mul} noIndex={false}/>);
       } else {
-        result.push(arr.splice(0, 100));
-        tokenize(arr, result);
+        let label = ['[', len * range * mul, ' … ', (len + 1) * range * mul - 1, ']'].join('');
+        result.push(<ReplOutputArray array={arr.splice(0, range)} label={label} start={len * range * mul} noIndex={false}/>);
+        tokenize(arr, result, range, mul);
       }
     };
-    let arrays = [];
-    tokenize(_.clone(a), arrays);
 
-    // TODO not implemented
-    return a;
+    let arr = _.map(a, (e) => ReplOutput.transformObject(e));
+    let arrays = [];
+    tokenize(arr, arrays, 100);
+
+    if(arrays.length > 100) {
+      let arr1000 = [];
+      tokenize(arrays, arr1000, 100, 100);
+      arrays = arr1000;
+    }
+
+    if(arrays.length > 1) {
+      return <ReplOutputArray array={arrays}
+        label={['Array[',a.length,']'].join('')}
+        start={0} noIndex={true}/>
+    } else {
+      return arrays;
+    }
   },
   object: (o) => {
     if(Array.isArray(o)) {
@@ -106,7 +125,7 @@ class Some {
     }
 
     return {
-      formattedOutput: ReplOutput.transformObject(this.value) || output,
+      formattedOutput: ReplOutput.transformObject(this.value) || this.value,
       error: false
     };
   }

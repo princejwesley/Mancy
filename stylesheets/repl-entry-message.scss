@@ -1,6 +1,7 @@
 @import 'default-theme';
 @import 'repl-common';
 @import 'highlight';
+@import 'repl-output-array';
 
 @mixin replEntryMessage() {
   .repl-entry-message {
@@ -42,14 +43,14 @@
       }
 
       .repl-entry-message-output-function {
-        display: flex;
         .fa {
-          padding-left: 4px;
+          padding-right: 10px;
           padding-top: 4px;
           color: $app-entry-message-output-expand-collapse-color;
         }
       }
 
+      @include replOutputArrayFold();
       .repl-entry-output-error {
         @include stackTraceHighlight();
       }
