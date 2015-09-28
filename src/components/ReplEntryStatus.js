@@ -17,8 +17,8 @@ export default class ReplEntryStatus extends React.Component {
         {
           this.props.collapse
             ? <i className="fa fa-plus-circle plus" title='maximize'
-                onClick={this.props.onExpand}></i>
-              : <i className="fa fa-minus-circle minus" title='minimize' onClick={this.props.onCollapse}></i>
+                onClick={this.props.onToggle}></i>
+              : <i className="fa fa-minus-circle minus" title='minimize' onClick={this.props.onToggle}></i>
         }
         <i className="fa fa-repeat repeat" title='reload' onClick={this.props.onReload}></i>
       </div>

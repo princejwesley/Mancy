@@ -32,7 +32,6 @@ export default class Repl extends React.Component {
 
   componentDidMount() {
     this.setupMenu();
-    this.reloadPrompt = true;
     this.activePromptKey = Date.now();
 
     //register events
@@ -241,8 +240,7 @@ export default class Repl extends React.Component {
   }
 
   getPromptKey() {
-    if(!this.reloadPrompt) {
-      this.reloadPrompt = true;
+    if(!this.state.reloadPrompt) {
       return this.activePromptKey;
     }
     this.activePromptKey = Date.now();

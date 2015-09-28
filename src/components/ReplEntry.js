@@ -9,34 +9,15 @@ import _ from 'lodash';
 export default class ReplEntry extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      collapse: this.props.log.collapsed,
-      commandCollapse: this.props.log.collapsed
-    };
-
     _.each([
-      'onExpand', 'onCollapse', 'onReload',
+      'onToggle', 'onReload',
       'onCommandCollapse', 'onRemove',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
   }
-  componentWillReceiveProps(nextProps) {
-    this.state = {
-      collapse: nextProps.log.collapsed,
-      commandCollapse: nextProps.log.collapsed
-    };
-  }
-  update(collapse) {
-    this.setState({
-      collapse: collapse
-    });
-  }
-  onExpand() {
-    this.update(false);
-  }
-  onCollapse() {
-    this.update(true);
+  onToggle() {
+    ReplActions.toggleEntryView(this.props.index);
   }
   onReload() {
     let command = this.props.log.plainCode.trim();
@@ -46,22 +27,19 @@ export default class ReplEntry extends React.Component {
     ReplActions.removeEntry(this.props.index, this.props.log);
   }
   onCommandCollapse() {
-    this.setState({
-      commandCollapse: !this.state.commandCollapse
-    });
+    ReplActions.toggleCommandEntryView(this.props.index);
   }
   render() {
     return (
       <div className='repl-entry'>
-        <ReplEntryIcon collapse={this.state.commandCollapse}
+        <ReplEntryIcon collapse={this.props.log.commandCollapsed}
           onCollapse={this.onCommandCollapse}/>
-        <ReplEntryMessage message={this.props.log} collapse={this.state.collapse}
-          commandCollapse={this.state.commandCollapse}/>
-        <ReplEntryStatus message={this.props.log} collapse={this.state.collapse}
+        <ReplEntryMessage message={this.props.log} collapse={this.props.log.collapsed}
+          commandCollapse={this.props.log.commandCollapsed}/>
+        <ReplEntryStatus message={this.props.log} collapse={this.props.log.collapsed}
           onReload={this.onReload}
           onRemove={this.onRemove}
-          onCollapse={this.onCollapse}
-          onExpand={this.onExpand}/>
+          onToggle={this.onToggle}/>
       </div>
     );
   }

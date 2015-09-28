@@ -3,6 +3,8 @@ import Reflux from 'reflux';
 const ReplActions = Reflux.createActions([
   "addEntry",
   "removeEntry",
-  "reloadPrompt"
+  "reloadPrompt",
+  "toggleCommandEntryView",
+  "toggleEntryView"
 ]);
 export default ReplActions;
