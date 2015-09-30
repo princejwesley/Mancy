@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import ReplOutput from '../common/ReplOutput';
 
 export default class ReplOutputArray extends React.Component {
   constructor(props) {
@@ -32,7 +33,7 @@ export default class ReplOutputArray extends React.Component {
               <span className='array-desc'>{this.props.label}</span>
               <span className='array-rec'>
               {
-                _.map(this.props.array, (e, idx) => {
+                _.map(this.props.array, (value, idx) => {
                   return (
                     <div className='array-entry'>
                       {
@@ -43,7 +44,11 @@ export default class ReplOutputArray extends React.Component {
                               <span className='array-colon'>: </span>
                             </span>
                       }
-                      {e}
+                      {
+                        value._isReactElement
+                          ? {value}
+                          : ReplOutput.transformObject(value)
+                      }
                     </div>
                   )
                 })

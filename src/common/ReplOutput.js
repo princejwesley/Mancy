@@ -10,116 +10,6 @@ import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
 
-let cycle = Symbol('cycle');
-
-let buildObject = (o) => {
-  // 1 arg
-  let not = (v) => !v;
-  let criteria =  [_.compose(not, _.isRegExp), _.compose(not, _.isFunction), _.isObject];
-  let isObject = (o) => _.every(criteria, (c) => {
-    return c(o);
-  });
-
-  if(!isObject(o)) { return o; }
-
-  // queue ops
-  let empty = (q) => q.length === 0;
-  let enqueue = (q, o) => q.push(o);
-  let dequeue = (q) => q.shift();
-
-  let mark = Symbol('mark');
-  let keyMark = Symbol('key-mark');
-  let newMarker = (o) => {
-    return { [mark]: o };
-  };
-
-  let newKeyMarker = (o) => {
-    return { [keyMark]: o };
-  };
-
-  let isMarker = (m) => mark in m;
-  let isKeyMarker = (m) => keyMark in m;
-  let getMarkerValue = (m) => m[mark];
-  let getKeyMarkerValue = (m) => m[keyMark];
-
-
-  let visited = new Set();
-  let cache = new Map();
-  let base = Array.isArray(o) ? [] : {}, original = o;
-  let queue = [];
-  let notEmpty = _.compose(not, empty);
-
-  enqueue(queue, [o, base, 0]);
-  while(notEmpty(queue)) {
-    let [obj, objTree, level] = dequeue(queue);
-    if(!obj) debugger;
-    if(visited.has(obj)) { continue; }
-    let keys = _.keys(obj);
-
-    visited.add(o);
-    _.each(keys, (k) => {
-      let value = obj[k];
-      if(visited.has(value)) {
-        objTree[k] = newMarker(value);
-      } else {
-        if(isObject(value)) {
-          $console.log('level', level)
-          if(level < 3 ) {
-            objTree[k] = Array.isArray(value) ? [] : {};
-            enqueue(queue, [value, objTree[k], level + 1]);
-          }
-          objTree[k] = newKeyMarker(value);
-        } else {
-          let cached = cache.has(value);
-          if(cached) { objTree[k] = cache.get(value); }
-          else {
-            objTree[k] = ReplOutput.transformObject(value);
-            cache.set(value, objTree[k]);
-          }
-        }
-      }
-    });
-  }
-
-  _.each(_.keys(base), (k) => {
-    // if(isObject(base[k])) {
-      enqueue(queue, [k, base[k], base]);
-    // }
-  });
-
-  cache.set(base, Array.isArray(base)
-    ? ReplOutputType.array(base)
-    : <ReplOutputObject object={base}/>);
-
-  while(notEmpty(queue)) {
-    let [key, value, objTree] = dequeue(queue);
-    if(typeof value !== 'object' || !value) {
-      $console.log('why?', key, typeof value, cache.has(value), objTree, typeof objTree)
-      objTree[key] = (cache.has(value) ? cache.get(value) : ReplOutput.transformObject(value));
-    }
-    else if(isMarker(value)) {
-      let dups = getMarkerValue(value);
-      objTree[key] = (cache.has(dups) ? cache.get(dups) : cache.get(base));
-    }
-    else {
-      let markedObject = _.clone(isKeyMarker(value) ? getKeyMarkerValue(value) : value);
-      let replObject = Array.isArray(markedObject)
-        ? ReplOutputType.array(markedObject)
-        : <ReplOutputObject object={markedObject}/>;
-      cache.set(markedObject, replObject);
-      objTree[key] = replObject;
-      _.each(_.keys(markedObject), (k) => {
-        // if(isObject(markedObject[k])) {
-        $console.log(k, markedObject)
-          enqueue(queue, [k, markedObject[k], markedObject]);
-        // }
-      });
-    }
-  }
-
-  return cache.get(base);
-}
-
 let ReplOutputType = {
   number: (n) => {
     return <span className='number'>{n}</span>;
@@ -161,9 +51,9 @@ let ReplOutputType = {
     }
   },
   object: (o) => {
-    // if(Array.isArray(o)) {
-    //   return ReplOutputType.array(o);
-    // }
+    if(Array.isArray(o)) {
+      return ReplOutputType.array(o);
+    }
 
     if(_.isRegExp(o)) {
       return ReplOutputType.regexp(o);
@@ -173,10 +63,7 @@ let ReplOutputType = {
       return ReplOutputType['null'](o);
     }
 
-    // TODO not implemented
-    $console.log('object', o, util.inspect(o))
-    // return util.inspect(o);
-    return buildObject(o);
+    return <ReplOutputObject object={o} />
   },
   'undefined': (u) => {
     return <span class='literal'>undefined</span>;

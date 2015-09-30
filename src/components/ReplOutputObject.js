@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import ReplOutput from '../common/ReplOutput';
 
 export default class ReplOutputObject extends React.Component {
   constructor(props) {
@@ -41,7 +42,11 @@ export default class ReplOutputObject extends React.Component {
                           <span className='object-colon'>: </span>
                         </span>
                       }
-                      {value}
+                      {
+                        value && value._isReactElement
+                          ? {value}
+                          : ReplOutput.transformObject(value)
+                      }
                     </div>
                   )
                 })
