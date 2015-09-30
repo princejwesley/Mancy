@@ -8,6 +8,105 @@ import React from 'react';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
+import ReplOutputObject from '../components/ReplOutputObject';
+
+let cycle = Symbol('cycle');
+
+let buildObject = (o) => {
+  // 1 arg
+  let not = (fn) => (v) => !fn(v);
+  let criteria =  [_.compose(not, _.isRegExp), _.compose(not, _.isFunction), _.isObject];
+  let isObject = (o) => _.every(criteria, (c) => {
+    return c(o);
+  });
+
+  if(!isObject(o)) { return o; }
+
+  // queue ops
+  let empty = (q) => q.length === 0;
+  let enqueue = (q, o) => q.push(o);
+  let dequeue = (q) => q.shift();
+
+  let mark = Symbol('mark');
+  let keyMark = Symbol('key-mark');
+  let valueMark = Symbol('value-mark');
+  let newMarker = (o) => {
+    return { [mark] = o; };
+  };
+
+  let newKeyMarker = () => {
+    return { [keyMark]: true };
+  };
+
+  let isMarker = (m) => mark in m;
+  let isKeyMarker = (m) => keyMark in m;
+  let isValueMarker = (m) => valueMark in m;
+  let getMarkerValue = (m) => m[mark];
+  let notEmpty = _.compose(not, empty);
+
+
+  let visited = new Set();
+  let cache = new Map();
+  let base = Array.isArray(o) ? [] : {}, tree;
+  let queue = [];
+
+
+  enqueue(queue, ['', o]);
+
+  while(notEmpty(queue)) {
+    let [key, obj] = dequeue(queue);
+    if(visited.has(o)) { continue; }
+    let objTree = tree ? tree[key] : (tree = base);
+    let keys = _.keys(obj);
+
+    visited.add(o);
+    _.each(keys, (k) => {
+      let value = obj[k];
+      if(visited.has(value)) {
+        objTree[k] = newMarker(o);
+      } else {
+        if(isObject(value)) {
+          enqueue([k, value]);
+          objTree[key] = newKeyMarker();
+        } else {
+          let cached = cache.has(value);
+          if(cached) { objTree[k] = cache.get(value); }
+          else {
+            objTree[k] = ReplOutput.transformObject(value);
+            cache.put(value, objTree[k]);
+          }
+        }
+      }
+    });
+  }
+
+  cache.put(base, Array.isArray(base)
+    ? ReplOutputType.array(base)
+    : <ReplOutputObject obj={base}/>);
+
+  _.each(_.keys(base), (k) => {
+    enqueue(queue, [k, base[k], base]);
+  });
+  tree = base;
+  while(notEmpty(queue)) {
+    let [key, value, objTree] = dequeue(queue);
+    if(isMarker(value)) {
+      objTree[key] = cache.get(getMarkerValue(value));
+    }
+    else if(isKeyMarker(value)) {
+      let replObject = Array.isArray(value)
+        ? ReplOutputType.array(value)
+        : <ReplOutputObject obj={value}/>;
+      cache.put(value, replObject);
+      objTree[key] = replObject;
+      _.each(_.keys(value), (k) => {
+        enqueue(queue, [k, value[k], value]);
+      });
+    }
+  }
+
+  return cache.get(base);
+}
 
 let ReplOutputType = {
   number: (n) => {
@@ -31,7 +130,7 @@ let ReplOutputType = {
       }
     };
 
-    let arr = _.map(a, (e) => ReplOutput.transformObject(e));
+    let arr = a;//_.map(a, (e) => ReplOutput.transformObject(e));
     let arrays = [];
     tokenize(arr, arrays, 100);
 
@@ -50,20 +149,21 @@ let ReplOutputType = {
     }
   },
   object: (o) => {
-    if(Array.isArray(o)) {
-      return ReplOutputType.array(o);
-    }
+    // if(Array.isArray(o)) {
+    //   return ReplOutputType.array(o);
+    // }
 
     if(_.isRegExp(o)) {
       return ReplOutputType.regexp(o);
     }
 
-    if(_.isNull(0)) {
+    if(_.isNull(o)) {
       return ReplOutputType['null'](o);
     }
 
     // TODO not implemented
-    return util.inspect(o);
+    // return util.inspect(o);
+    return buildObject(o);
   },
   'undefined': (u) => {
     return <span class='literal'>undefined</span>;
