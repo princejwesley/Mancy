@@ -19,7 +19,6 @@ export default class ReplOutputArray extends React.Component {
   }
 
   render() {
-    $console.log('render', this.props.array)
     return (
       <span className='repl-entry-message-output-array-folds'>
         {

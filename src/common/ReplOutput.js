@@ -77,10 +77,10 @@ let ReplOutputType = {
       shortElement = ReplCommon.highlight(code.slice(0, idx));
       expandable = true;
     }
-    return <ReplOutputFunction html={funElement} expandable={expandable} short={shortElement}/>
+    return <ReplOutputFunction html={funElement} fun={f} expandable={expandable} short={shortElement}/>
   },
   string: (s) => {
-    return <span className='string'>{s}</span>;
+    return <span className='string'>'{s}'</span>;
   },
   symbol: (sy) => {
     return <span className='literal'>{sy.toString()}</span>;
