@@ -45,7 +45,7 @@ export default class ReplOutputArray extends React.Component {
                             </span>
                       }
                       {
-                        value._isReactElement
+                        value && value._isReactElement
                           ? {value}
                           : ReplOutput.transformObject(value)
                       }
