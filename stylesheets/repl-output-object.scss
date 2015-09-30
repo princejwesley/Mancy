@@ -1,0 +1,32 @@
+@import 'default-theme';
+@import 'repl-common';
+@import 'highlight';
+
+@mixin replOutputObjectFold() {
+  .repl-entry-message-output-object-folds {
+    .repl-entry-message-output-object {
+      .fa-play {
+        font-size: 0.8em;
+        color: $app-entry-message-output-arr-fold-color;
+      }
+
+      .object-desc {
+        padding-left: 5px;
+      }
+
+      .object-rec {
+        display: flex;
+        flex-direction: column;
+
+        .object-entry {
+          display: flex;
+          padding-left: 10px;
+
+          .object-key {
+            color: $app-entry-message-output-arr-idx-color;
+          }
+        }
+      }
+    }
+  }
+}

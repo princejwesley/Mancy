@@ -48,5 +48,5 @@ function onReady() {
 
   // testing
   //TODO: configure for dev only environment
-  //mainWindow.openDevTools({detach: true});
+  mainWindow.openDevTools({detach: true});
 }

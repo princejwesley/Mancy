@@ -14,7 +14,7 @@ let cycle = Symbol('cycle');
 
 let buildObject = (o) => {
   // 1 arg
-  let not = (fn) => (v) => !fn(v);
+  let not = (v) => !v;
   let criteria =  [_.compose(not, _.isRegExp), _.compose(not, _.isFunction), _.isObject];
   let isObject = (o) => _.every(criteria, (c) => {
     return c(o);
@@ -29,78 +29,90 @@ let buildObject = (o) => {
 
   let mark = Symbol('mark');
   let keyMark = Symbol('key-mark');
-  let valueMark = Symbol('value-mark');
   let newMarker = (o) => {
-    return { [mark] = o; };
+    return { [mark]: o };
   };
 
-  let newKeyMarker = () => {
-    return { [keyMark]: true };
+  let newKeyMarker = (o) => {
+    return { [keyMark]: o };
   };
 
   let isMarker = (m) => mark in m;
   let isKeyMarker = (m) => keyMark in m;
-  let isValueMarker = (m) => valueMark in m;
   let getMarkerValue = (m) => m[mark];
-  let notEmpty = _.compose(not, empty);
+  let getKeyMarkerValue = (m) => m[keyMark];
 
 
   let visited = new Set();
   let cache = new Map();
-  let base = Array.isArray(o) ? [] : {}, tree;
+  let base = Array.isArray(o) ? [] : {}, original = o;
   let queue = [];
+  let notEmpty = _.compose(not, empty);
 
-
-  enqueue(queue, ['', o]);
-
+  enqueue(queue, [o, base, 0]);
   while(notEmpty(queue)) {
-    let [key, obj] = dequeue(queue);
-    if(visited.has(o)) { continue; }
-    let objTree = tree ? tree[key] : (tree = base);
+    let [obj, objTree, level] = dequeue(queue);
+    if(!obj) debugger;
+    if(visited.has(obj)) { continue; }
     let keys = _.keys(obj);
 
     visited.add(o);
     _.each(keys, (k) => {
       let value = obj[k];
       if(visited.has(value)) {
-        objTree[k] = newMarker(o);
+        objTree[k] = newMarker(value);
       } else {
         if(isObject(value)) {
-          enqueue([k, value]);
-          objTree[key] = newKeyMarker();
+          $console.log('level', level)
+          if(level < 3 ) {
+            objTree[k] = Array.isArray(value) ? [] : {};
+            enqueue(queue, [value, objTree[k], level + 1]);
+          }
+          objTree[k] = newKeyMarker(value);
         } else {
           let cached = cache.has(value);
           if(cached) { objTree[k] = cache.get(value); }
           else {
             objTree[k] = ReplOutput.transformObject(value);
-            cache.put(value, objTree[k]);
+            cache.set(value, objTree[k]);
           }
         }
       }
     });
   }
 
-  cache.put(base, Array.isArray(base)
-    ? ReplOutputType.array(base)
-    : <ReplOutputObject obj={base}/>);
-
   _.each(_.keys(base), (k) => {
-    enqueue(queue, [k, base[k], base]);
+    // if(isObject(base[k])) {
+      enqueue(queue, [k, base[k], base]);
+    // }
   });
-  tree = base;
+
+  cache.set(base, Array.isArray(base)
+    ? ReplOutputType.array(base)
+    : <ReplOutputObject object={base}/>);
+
   while(notEmpty(queue)) {
     let [key, value, objTree] = dequeue(queue);
-    if(isMarker(value)) {
-      objTree[key] = cache.get(getMarkerValue(value));
+    if(typeof value !== 'object' || !value) {
+      $console.log('why?', key, typeof value, cache.has(value), objTree, typeof objTree)
+      objTree[key] = (cache.has(value) ? cache.get(value) : ReplOutput.transformObject(value));
     }
-    else if(isKeyMarker(value)) {
-      let replObject = Array.isArray(value)
-        ? ReplOutputType.array(value)
-        : <ReplOutputObject obj={value}/>;
-      cache.put(value, replObject);
+    else if(isMarker(value)) {
+      let dups = getMarkerValue(value);
+      objTree[key] = (cache.has(dups) ? cache.get(dups) : cache.get(base));
+    }
+    else {
+      let markedObject = _.clone(isKeyMarker(value) ? getKeyMarkerValue(value) : value);
+      let replObject = Array.isArray(markedObject)
+        ? ReplOutputType.array(markedObject)
+        : <ReplOutputObject object={markedObject}/>;
+      cache.set(markedObject, replObject);
       objTree[key] = replObject;
-      _.each(_.keys(value), (k) => {
-        enqueue(queue, [k, value[k], value]);
+      _.each(_.keys(markedObject), (k) => {
+        // if(isObject(markedObject[k])) {
+        $console.log(k, markedObject)
+          enqueue(queue, [k, markedObject[k], markedObject]);
+        // }
       });
     }
   }
@@ -130,7 +142,7 @@ let ReplOutputType = {
       }
     };
 
-    let arr = a;//_.map(a, (e) => ReplOutput.transformObject(e));
+    let arr = _.clone(a);
     let arrays = [];
     tokenize(arr, arrays, 100);
 
@@ -162,6 +174,7 @@ let ReplOutputType = {
     }
 
     // TODO not implemented
+    $console.log('object', o, util.inspect(o))
     // return util.inspect(o);
     return buildObject(o);
   },

@@ -2,6 +2,7 @@
 @import 'repl-common';
 @import 'highlight';
 @import 'repl-output-array';
+@import 'repl-output-object';
 
 @mixin replEntryMessage() {
   .repl-entry-message {
@@ -51,6 +52,7 @@
       }
 
       @include replOutputArrayFold();
+      @include replOutputObjectFold();
       .repl-entry-output-error {
         @include stackTraceHighlight();
       }
