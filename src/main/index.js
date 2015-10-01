@@ -45,9 +45,10 @@ function onReady() {
   mainWindow.webContents.on('did-finish-load', function() {
     mainWindow.show();
     mainWindow.focus();
-    // Mac only
-    mainWindow.showDefinitionForSelection(true);
-    //mainWindow.setVisibleOnAllWorkspaces(true);
+    if (process.platform === 'darwin') {
+      mainWindow.showDefinitionForSelection(true);
+      //mainWindow.setVisibleOnAllWorkspaces(true);
+    }
   });
 
   menu.setMenu(app, mainWindow);

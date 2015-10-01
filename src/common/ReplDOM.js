@@ -68,7 +68,8 @@ let ReplDOM = {
     let selection = window.getSelection();
     if (selection.rangeCount <= 0) { return 0; }
     let range = selection.getRangeAt(0);
-    const endNode = range.endContainer.nodeType === 3 ? range.endContainer.parentNode : range.endContainer;
+    const endNode = (range.endContainer.nodeType === 3 &&
+      !range.endContainer.textContent.length) ? range.endContainer.parentNode : range.endContainer;
 
     let getCaretPosition = (nodes, endNode, range, pos) => {
       if(!nodes.length) { return pos; }

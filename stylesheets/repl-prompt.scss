@@ -17,7 +17,7 @@
 
     .repl-active-input {
       @include entryLayout();
-      outline: none;
+      @include editor();
     }
   }
 }

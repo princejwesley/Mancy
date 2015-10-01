@@ -193,8 +193,24 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
-    this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
+    if( ReplDOMEvents.isKeyup(e)
+      || (ReplDOMEvents.isKeydown(e) && !e.shiftKey)
+    ) {
+      let range = this.lastSelectedRange;
+      let newRange = window.getSelection().getRangeAt(0).cloneRange();
+      let up = ReplDOMEvents.isKeyup(e);
+      let offset = up ? range.startOffset : range.endOffset;
+      let elementText = this.element.innerText;
+      let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
+      if((up && pos === 0 && offset === 0)
+        || (!up && pos === elementText.length && offset === newRange.endOffset)) {
+        this.traverseHistory(up);
+        e.preventDefault();
+      }
+      return;
+    }
 
+    this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
     if(ReplDOMEvents.isTab(e)
       || ReplDOMEvents.isEscape(e)
       || ReplDOMEvents.isNavigation(e)
@@ -225,15 +241,12 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyDown(e) {
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
-    if( (ReplDOMEvents.isKeyup(e)
-      || ReplDOMEvents.isKeydown(e)) && !e.shiftKey
+    if( ReplDOMEvents.isKeyup(e)
+      || (ReplDOMEvents.isKeydown(e))
     ) {
-      // avoid system behavior
-      e.preventDefault();
-      if(this.activeSuggestion) return;
-      let up = ReplDOMEvents.isKeyup(e);
-      let success = ReplDOM.moveCursorUp(up, this.element);
-      if(!success) { this.traverseHistory(up); }
+      if(this.activeSuggestion) {
+        e.preventDefault();
+      };
       return;
     }
 
@@ -271,7 +284,7 @@ export default class ReplActiveInput extends React.Component {
 
     let navigateHistory = (up, cmd, pos) => {
       let code = cmd.trim();
-      let cursorPosition = up ? cmd.indexOf(EOL) : code.length;
+      let cursorPosition = !up ? cmd.indexOf(EOL) : code.length;
       if(cursorPosition < 0) { cursorPosition = 0; }
       this.reloadPrompt(code, cursorPosition, pos,(pos === -1 ? '' : this.history.staged));
     };
@@ -290,12 +303,12 @@ export default class ReplActiveInput extends React.Component {
 
   render() {
     return (
-      <pre className='repl-active-input' tabIndex="-1" contentEditable={true}
+      <div className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
         onKeyDown={this.onKeyDown}
         onBlur={this.onBlur}>
         {this.props.command}
-      </pre>
+      </div>
     );
   }
 
