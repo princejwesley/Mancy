@@ -71,7 +71,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onBlur() {
-    this.removeSuggestion();    
+    this.removeSuggestion();
   }
 
   onStoreChange() {
@@ -145,7 +145,6 @@ export default class ReplActiveInput extends React.Component {
   }
 
   removeSuggestion() {
-    // if(!this.suggestions.length) { return;}
     this.activeSuggestion = null;
     ReplSuggestionActions.removeSuggestion();
   }
@@ -163,8 +162,6 @@ export default class ReplActiveInput extends React.Component {
   onTabCompletion(__, completion) {
     let [list, input] = completion;
     if(list.length === 0) {
-      // no beep, only tab width spaces
-      //shell.beep();
       let command = this.element.innerText + ReplCommon.times(ReplConstants.TAB_WIDTH, ' ');
       this.reloadPrompt(command, command.length);
     } else if(list.length === 1) {

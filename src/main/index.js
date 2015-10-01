@@ -19,11 +19,13 @@ app.on('ready', onReady);
 app.on('activate-with-no-open-windows', onReady);
 
 function onReady() {
+  var {width, height} = require('screen').getPrimaryDisplay().workAreaSize;
+
   mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 600,
-    'min-height': 400,
-    'min-width': 600,
+    width: width * 0.75,
+    height: height * 0.75,
+    'min-height': width * 0.5,
+    'min-width': height * 0.5,
     resizable: true,
     'web-preferences': {
 			'overlay-scrollbars': true,
@@ -34,6 +36,7 @@ function onReady() {
   });
 
   mainWindow.loadUrl('file://' + __dirname + '/../index.html');
+  mainWindow.flashFrame(true);
 
   mainWindow.on('closed', function() {
     mainWindow = null;
@@ -42,11 +45,14 @@ function onReady() {
   mainWindow.webContents.on('did-finish-load', function() {
     mainWindow.show();
     mainWindow.focus();
+    // Mac only
+    mainWindow.showDefinitionForSelection(true);
+    //mainWindow.setVisibleOnAllWorkspaces(true);
   });
 
   menu.setMenu(app, mainWindow);
 
-  // testing
-  //TODO: configure for dev only environment
-  mainWindow.openDevTools({detach: true});
+  if(process.env.NODE_MANCY_DEV_MODE && process.env.NODE_MANCY_DEV_MODE === 'true') {
+    mainWindow.openDevTools({detach: true});
+  }
 }
