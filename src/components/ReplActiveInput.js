@@ -75,9 +75,16 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onStoreChange() {
-    let {now, activeSuggestion, breakPrompt} = ReplActiveInputStore.getStore();
+    let {now, activeSuggestion, breakPrompt, format} = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
-    if(breakPrompt) {
+    if(format) {
+      const text = this.element.innerText;
+      if(text.length) {
+        const formattedCode =  ReplCommon.format(this.element.innerText);
+        this.reloadPrompt(formattedCode, formattedCode.length);
+      }
+    }
+    else if(breakPrompt) {
       let cli = ReplActiveInput.getRepl();
       this.waitingForOutput = false;
       cli.input.emit('data', '.break');
@@ -101,7 +108,7 @@ export default class ReplActiveInput extends React.Component {
         formattedOutput: formattedOutput,
         status: !error,
         command: ReplCommon.highlight(text),
-        plainCode: text
+        plainCode: text,
       });
 
       this.removeSuggestion();

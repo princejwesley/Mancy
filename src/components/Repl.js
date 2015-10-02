@@ -23,7 +23,7 @@ export default class Repl extends React.Component {
     _.each([
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
-      'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole',
+      'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -52,46 +52,55 @@ export default class Repl extends React.Component {
 
   setupMenu() {
     let Menu = remote.require('menu');
-    Repl.contextMenuTemplate.push({
-      label: 'Clear All',
-      accelerator: 'CmdOrCtrl+K',
-      click: this.onClearCommands
-    });
-    Repl.contextMenuTemplate.push({
-      label: 'Collapse All',
-      accelerator: 'CmdOrCtrl+L',
-      click: this.onCollapseAll
-    });
-    Repl.contextMenuTemplate.push({
-      label: 'Expand All',
-      accelerator: 'CmdOrCtrl+E',
-      click: this.onExpandAll
-    });
-    Repl.contextMenuTemplate.push({
-      label: 'Break Prompt',
-      accelerator: 'Ctrl+C',
-      click: this.onBreakPrompt
-    });
-    Repl.contextMenuTemplate.push({
-      type: 'separator'
-    });
-    Repl.contextMenuTemplate.push({
-      label: 'Mode',
-      submenu: [{
-        label: 'Sloppy',
-        type: 'radio',
-        click: () => { ReplStore.setReplMode('REPL_MODE_SLOPPY'); }
-      },{
-        label: 'Magic',
-        type: 'radio',
-        checked: true,
-        click: () => { ReplStore.setReplMode('REPL_MODE_MAGIC'); }
-      },{
-        label: 'Strict',
-        type: 'radio',
-        click: () => { ReplStore.setReplMode('REPL_MODE_STRICT'); }
-      }]
-    });
+    let actionTemplates = [
+      {
+        label: 'Clear All',
+        accelerator: 'CmdOrCtrl+K',
+        click: this.onClearCommands
+      },
+      {
+        label: 'Collapse All',
+        accelerator: 'CmdOrCtrl+L',
+        click: this.onCollapseAll
+      },
+      {
+        label: 'Expand All',
+        accelerator: 'CmdOrCtrl+E',
+        click: this.onExpandAll
+      },
+      {
+        label: 'Break Prompt',
+        accelerator: 'Ctrl+C',
+        click: this.onBreakPrompt
+      },
+      {
+        label: 'Format',
+        accelerator: 'CmdOrCtrl+F',
+        click: this.onFormatPromptCode
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Mode',
+        submenu: [{
+          label: 'Sloppy',
+          type: 'radio',
+          click: () => { ReplStore.setReplMode('REPL_MODE_SLOPPY'); }
+        },{
+          label: 'Magic',
+          type: 'radio',
+          checked: true,
+          click: () => { ReplStore.setReplMode('REPL_MODE_MAGIC'); }
+        },{
+          label: 'Strict',
+          type: 'radio',
+          click: () => { ReplStore.setReplMode('REPL_MODE_STRICT'); }
+        }]
+      },
+    ];
+
+    _.each(actionTemplates, (template) => Repl.contextMenuTemplate.push(template));
 
     this.menu = Menu.buildFromTemplate(Repl.contextMenuTemplate);
   }
@@ -129,7 +138,6 @@ export default class Repl extends React.Component {
 
     let { ctrlKey, shiftKey, metaKey, altKey, which } = e;
 
-    // TODO: compose predicates
     // ctrl + c
     let C = "C".codePointAt(0);
     if( ctrlKey && !shiftKey && !metaKey && !altKey && which === C) {
@@ -153,6 +161,17 @@ export default class Repl extends React.Component {
     if(!shiftKey && !altKey && which === L && (ctrlKey ^ metaKey)) {
       return this.onCollapseAll();
     }
+
+    // cmd + F or ctrl + F
+    let F = "F".codePointAt(0);
+    if(!shiftKey && !altKey && which === F && (ctrlKey ^ metaKey)) {
+      return this.onFormatPromptCode();
+    }
+
+  }
+
+  onFormatPromptCode() {
+    ReplActiveInputActions.formatCode();
   }
 
   onCollapseAll() {

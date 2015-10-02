@@ -2,6 +2,8 @@ import _ from 'lodash';
 import hl from 'highlight.js';
 import ReplConstants from '../constants/ReplConstants';
 import shell from 'shell';
+import esprima from 'esprima';
+import escodegen from 'escodegen';
 
 let ReplCommon = {
   times: (num, str) => {
@@ -40,7 +42,26 @@ let ReplCommon = {
       ? process.env.USERNAME
       : process.env.USER;
   },
-  beep: () => { shell.beep(); }
+  beep: () => { shell.beep(); },
+  format: (code) => {
+    try {
+      // comments?
+      let syntax = esprima.parse(code, { comment: true, raw: true, tokens: true, range: true });
+      syntax = escodegen.attachComments(syntax, syntax.comments, syntax.tokens);
+      return escodegen.generate(syntax, esCodeGenOptions);
+    } catch(e) {}
+    return code;
+  },
+};
+
+let esCodeGenOptions = {
+  comment: true,
+  format: {
+    indent: {
+      style: ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')
+    },
+    quotes: 'auto'
+  }
 };
 
 hl.configure({

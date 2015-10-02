@@ -4,37 +4,43 @@ import Reflux from 'reflux';
 let activeSuggestion = null;
 let now = false;
 let breakPrompt = false;
+let format = false;
 const ReplActiveInputStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplActiveInputActions);
   },
   onTabCompleteSuggestion(suggestion) {
     activeSuggestion = suggestion;
-    now = breakPrompt = false;
+    now = breakPrompt = format = false;
     this.trigger();
   },
   onResetTabCompleteSuggestion() {
     activeSuggestion = null;
-    now = breakPrompt = false;
+    now = breakPrompt = format = false;
     this.trigger();
   },
   onFillTabCompleteSuggestion(suggestion) {
     activeSuggestion = suggestion;
-    breakPrompt = false;
+    breakPrompt = format = false;
     now = true;
     this.trigger();
   },
   onBreakPrompt() {
     activeSuggestion = null;
-    now = false;
+    now = format = false;
     breakPrompt = true;
+    this.trigger();
+  },
+  onFormatCode() {
+    format = true;
     this.trigger();
   },
   getStore() {
     return {
       activeSuggestion: activeSuggestion,
       now: now,
-      breakPrompt: breakPrompt
+      breakPrompt: breakPrompt,
+      format: format
     }
   }
 });
