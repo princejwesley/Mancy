@@ -144,9 +144,9 @@ export default class ReplActiveInput extends React.Component {
       .value();
 
     const text = this.element.innerText;
-    if(suggestions.length && completeEntry(suggestions, text)) {
-      let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
-      let code = text.substring(0, cursor);
+    let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
+    let code = text.substring(0, cursor);
+    if(suggestions.length && completeEntry(suggestions, code)) {
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code});
     } else {
       this.removeSuggestion();
