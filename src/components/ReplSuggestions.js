@@ -93,13 +93,13 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onClickSuggestion(idx) {
-    let clickAction = () => {
+    let clickAction = (e) => {
       this.setState({
         suggestions: this.state.suggestions,
         selected: idx
       });
       ReplActiveInputActions.fillTabCompleteSuggestion(this.state.suggestions[idx]);
-    }
+    };
     return clickAction;
   }
 

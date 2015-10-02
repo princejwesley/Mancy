@@ -71,12 +71,12 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onBlur() {
-    this.removeSuggestion();
+    setTimeout(() => this.removeSuggestion(), 200);
   }
 
   onStoreChange() {
     let {now, activeSuggestion, breakPrompt} = ReplActiveInputStore.getStore();
-    this.activeSuggestion = activeSuggestion
+    this.activeSuggestion = activeSuggestion;
     if(breakPrompt) {
       let cli = ReplActiveInput.getRepl();
       this.waitingForOutput = false;
@@ -138,7 +138,9 @@ export default class ReplActiveInput extends React.Component {
 
     const text = this.element.innerText;
     if(suggestions.length && completeEntry(suggestions, text)) {
-      ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: text});
+      let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
+      let code = text.substring(0, cursor);
+      ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code});
     } else {
       this.removeSuggestion();
     }
@@ -162,8 +164,12 @@ export default class ReplActiveInput extends React.Component {
   onTabCompletion(__, completion) {
     let [list, input] = completion;
     if(list.length === 0) {
-      let command = this.element.innerText + ReplCommon.times(ReplConstants.TAB_WIDTH, ' ');
-      this.reloadPrompt(command, command.length);
+      const text = this.element.innerText;
+      let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
+      let lcode = text.substring(0, cursor);
+      let rcode = text.substring(cursor);
+      let command = lcode + ReplCommon.times(ReplConstants.TAB_WIDTH, ' ') + rcode;
+      this.reloadPrompt(command, cursor + ReplConstants.TAB_WIDTH);
     } else if(list.length === 1) {
       this.onSelectTabCompletion(list[0]);
     } else {
@@ -215,6 +221,7 @@ export default class ReplActiveInput extends React.Component {
       || ReplDOMEvents.isEscape(e)
       || ReplDOMEvents.isNavigation(e)
     ) {
+      this.removeSuggestion();
       e.preventDefault();
       return;
     }
@@ -235,7 +242,7 @@ export default class ReplActiveInput extends React.Component {
       cli.input.emit('data', text);
       cli.input.emit('data', EOL);
     } else {
-      this.complete(text, this.autoComplete);
+      this.complete(this.autoComplete);
     }
   }
 
@@ -264,11 +271,8 @@ export default class ReplActiveInput extends React.Component {
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     if(activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
-    } else {
-      let text = this.element.innerText || '';
-      let cursor = ReplDOM.getCursorPosition();
-      let words = ReplCommon.toWords(text.substring(0, cursor));
-      this.complete(words.pop(), this.onTabCompletion);
+    } else if(this.element.innerText.length){
+      this.complete(this.onTabCompletion);
     }
   }
 
@@ -294,7 +298,10 @@ export default class ReplActiveInput extends React.Component {
       : navigateHistory(up, this.history.log[idx].plainCode, idx);
   }
 
-  complete(code, callback) {
+  complete(callback) {
+    let text = this.element.innerText || '';
+    let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
+    let code = text.substring(0, cursor);
     let cli = ReplActiveInput.getRepl();
     this.waitingForOutput = false;
     this.removeSuggestion();
