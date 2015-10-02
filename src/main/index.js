@@ -1,5 +1,4 @@
-// set node env as production to avoid react warnings leaking in our console window
-// comment below code to test react warnings
+// set node env as production to avoid react warnings leaking in our console window & explode
 process.env.NODE_ENV = 'production';
 
 

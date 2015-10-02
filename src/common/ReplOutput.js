@@ -66,7 +66,7 @@ let ReplOutputType = {
     return <ReplOutputObject object={o} />
   },
   'undefined': (u) => {
-    return <span class='literal'>undefined</span>;
+    return <span className='literal'>undefined</span>;
   },
   'function': (f) => {
     let code = f.toString();
@@ -89,7 +89,7 @@ let ReplOutputType = {
     return <span className='regexp'>{re.toString()}</span>;
   },
   'null': () => {
-    return <span class='literal'>null</span>;
+    return <span className='literal'>null</span>;
   }
 };
 

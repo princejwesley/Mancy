@@ -4,6 +4,7 @@ import ReplConstants from '../constants/ReplConstants';
 import shell from 'shell';
 import esprima from 'esprima';
 import escodegen from 'escodegen';
+import module from 'module';
 
 let ReplCommon = {
   times: (num, str) => {
@@ -52,6 +53,10 @@ let ReplCommon = {
     } catch(e) {}
     return code;
   },
+  addToPath: (paths) => {
+    let newPaths = Array.isArray(paths) ? paths : [paths];
+    module.globalPaths = newPaths.concat(module.globalPaths);
+  }
 };
 
 let esCodeGenOptions = {
