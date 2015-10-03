@@ -15,7 +15,7 @@ import ReplStreamHook from '../common/ReplStreamHook';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplConsole from './ReplConsole';
 import ReplOutput from '../common/ReplOutput';
-import ContextMenu from '../menu/context-menu.json';
+import ContextMenu from '../menus/context-menu.json';
 
 export default class Repl extends React.Component {
   constructor(props) {
