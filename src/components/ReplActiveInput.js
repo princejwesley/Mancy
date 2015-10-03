@@ -190,7 +190,7 @@ export default class ReplActiveInput extends React.Component {
       let length = word.length;
       let rword = ReplCommon.reverseString(word);
       //extract prefix
-      let prefix = ReplCommon.reverseString(rword.replace(/^\w+/, ''));
+      let prefix = ReplCommon.reverseString(rword.replace(/^[^.]*/, ''));
       return { prefix: prefix, suffix: word.substring(prefix.length) };
     }
 
@@ -201,7 +201,6 @@ export default class ReplActiveInput extends React.Component {
     let right = text.substring(cursorPosition);
     let {prefix, suffix} = breakReplaceWord(left);
     left = prefix + suggestion.substring(suggestion.indexOf(suffix));
-
     this.reloadPrompt(left + right, left.length);
   }
 

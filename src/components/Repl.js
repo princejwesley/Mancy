@@ -8,6 +8,7 @@ import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import ReplConsoleActions from '../actions/ReplConsoleActions';
+import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import Reflux from 'reflux';
 import remote from 'remote';
 import ReplStreamHook from '../common/ReplStreamHook';
@@ -128,6 +129,7 @@ export default class Repl extends React.Component {
     e.preventDefault();
     var text = e.clipboardData.getData("text/plain");
     document.execCommand("insertHTML", false, text);
+    ReplSuggestionActions.removeSuggestion();
   }
 
   onKeydown(e) {
