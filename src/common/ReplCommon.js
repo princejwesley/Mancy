@@ -56,6 +56,9 @@ let ReplCommon = {
   addToPath: (paths) => {
     let newPaths = Array.isArray(paths) ? paths : [paths];
     module.globalPaths = newPaths.concat(module.globalPaths);
+  },
+  escapseRegExp: (str) => {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 };
 

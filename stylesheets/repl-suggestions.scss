@@ -24,6 +24,8 @@
         display: flex;
         flex: 1;
         min-height: calc(#{$app-font-size} + 8px);
+        max-height: calc(#{$app-font-size} + 8px);
+        overflow: auto;
         padding: 4px 2px;
         border-bottom: 1px solid $app-suggestion-entry-border-color;
         cursor: pointer;

@@ -66,6 +66,7 @@ let ReplDOM = {
   },
   getCursorPositionRelativeTo: (dom) => {
     let selection = window.getSelection();
+    let sameNode = (l, r) => l.isSameNode(r);
     if (selection.rangeCount <= 0) { return 0; }
     let range = selection.getRangeAt(0);
     const endNode = (range.endContainer.nodeType === 3 &&
@@ -74,8 +75,12 @@ let ReplDOM = {
     let getCaretPosition = (nodes, endNode, range, pos) => {
       if(!nodes.length) { return pos; }
       let [first, ...rest] = nodes;
-      if(first.isSameNode(endNode)) { return pos + range.endOffset; }
-      return getCaretPosition(rest, endNode, range, pos + first.textContent.length + 1)
+      if(sameNode(endNode, first) ||
+        sameNode(endNode, first.firstChild) ||
+        sameNode(endNode, first.lastChild)) {
+        return pos + range.endOffset;
+      }
+      return getCaretPosition(rest, endNode, range, pos + first.textContent.length)
     };
     return endNode.isSameNode(dom)
       ? range.endOffset

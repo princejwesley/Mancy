@@ -190,13 +190,14 @@ export default class ReplActiveInput extends React.Component {
       let length = word.length;
       let rword = ReplCommon.reverseString(word);
       //extract prefix
-      let prefix = ReplCommon.reverseString(rword.replace(/^[^.]*/, ''));
+      let escapedKeys = ReplCommon.escapseRegExp(suggestion.replace(/[\w\s]+/g, ''));
+      let pattern = new RegExp(`^[\\w${escapedKeys}]+`);
+      let prefix = ReplCommon.reverseString(rword.replace(pattern, ''));
       return { prefix: prefix, suffix: word.substring(prefix.length) };
     }
 
     const text = this.element.innerText.replace(/\s*$/, '');
-
-    let cursorPosition = this.lastSelectedRange.endOffset;
+    let cursorPosition = ReplDOM.getCursorPositionRelativeTo(this.element);
     let left = text.substring(0, cursorPosition);
     let right = text.substring(cursorPosition);
     let {prefix, suffix} = breakReplaceWord(left);
@@ -206,8 +207,17 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyUp(e) {
     if( ReplDOMEvents.isKeyup(e)
-      || (ReplDOMEvents.isKeydown(e) && !e.shiftKey)
+      || ReplDOMEvents.isKeydown(e)
     ) {
+      if(this.activeSuggestion) {
+        e.preventDefault();
+        return;
+      };
+
+      if(ReplDOMEvents.isKeydown(e) && !e.shiftKey) {
+        return;
+      }
+
       let range = this.lastSelectedRange;
       let newRange = window.getSelection().getRangeAt(0).cloneRange();
       let up = ReplDOMEvents.isKeyup(e);
@@ -232,14 +242,15 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    let cli = ReplActiveInput.getRepl();
-    const text = this.element.innerText.replace(/\s{1,2}$/, '');
     if(ReplDOMEvents.isEnter(e)) {
       this.removeSuggestion();
       this.waitingForOutput = true;
       // allow user to code some more
       ReplDOM.scrollToEnd();
       if(e.shiftKey) { return; }
+
+      let cli = ReplActiveInput.getRepl();
+      const text = this.element.innerText.replace(/\s{1,2}$/, '');
       if(cli.bufferedCommand.length) {
         cli.input.emit('data', '.break');
         cli.input.emit('data', EOL);
