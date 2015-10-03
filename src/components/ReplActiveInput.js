@@ -128,7 +128,7 @@ export default class ReplActiveInput extends React.Component {
 
   autoComplete(__, completion) {
     let completeEntry = (suggestions, text) => {
-      return suggestions.length != 1 || text.replace(/^.*\./,'') !== suggestions[0].text;
+      return suggestions.length != 1 || !text.endsWith(suggestions[0].text);
     };
     let [list, ] = completion;
     let suggestions = _.chain(list)
@@ -173,8 +173,7 @@ export default class ReplActiveInput extends React.Component {
     if(list.length === 0) {
       const text = this.element.innerText;
       let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
-      let lcode = text.substring(0, cursor);
-      let rcode = text.substring(cursor);
+      let [lcode, rcode] = ReplCommon.divide(text, cursor);
       let command = lcode + ReplCommon.times(ReplConstants.TAB_WIDTH, ' ') + rcode;
       this.reloadPrompt(command, cursor + ReplConstants.TAB_WIDTH);
     } else if(list.length === 1) {
@@ -198,8 +197,7 @@ export default class ReplActiveInput extends React.Component {
 
     const text = this.element.innerText.replace(/\s*$/, '');
     let cursorPosition = ReplDOM.getCursorPositionRelativeTo(this.element);
-    let left = text.substring(0, cursorPosition);
-    let right = text.substring(cursorPosition);
+    let [left, right] = ReplCommon.divide(text, cursorPosition);
     let {prefix, suffix} = breakReplaceWord(left);
     left = prefix + suggestion.substring(suggestion.indexOf(suffix));
     this.reloadPrompt(left + right, left.length);
@@ -213,23 +211,6 @@ export default class ReplActiveInput extends React.Component {
         e.preventDefault();
         return;
       };
-
-      if(ReplDOMEvents.isKeydown(e) && !e.shiftKey) {
-        return;
-      }
-
-      let range = this.lastSelectedRange;
-      let newRange = window.getSelection().getRangeAt(0).cloneRange();
-      let up = ReplDOMEvents.isKeyup(e);
-      let offset = up ? range.startOffset : range.endOffset;
-      let elementText = this.element.innerText;
-      let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
-      if((up && pos === 0 && offset === 0)
-        || (!up && pos === elementText.length && offset === newRange.endOffset)) {
-        this.traverseHistory(up);
-        e.preventDefault();
-      }
-      return;
     }
 
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
@@ -270,7 +251,18 @@ export default class ReplActiveInput extends React.Component {
     ) {
       if(this.activeSuggestion) {
         e.preventDefault();
+        return;
       };
+
+      let up = ReplDOMEvents.isKeyup(e);
+      let elementText = this.element.innerText;
+      let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
+      let [left, right] = ReplCommon.divide(elementText, pos);
+      let str = up ? left : right;
+      if(str.indexOf(EOL) === -1) {
+        this.traverseHistory(up);
+        e.preventDefault();
+      }
       return;
     }
 

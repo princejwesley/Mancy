@@ -80,7 +80,7 @@ let ReplDOM = {
         sameNode(endNode, first.lastChild)) {
         return pos + range.endOffset;
       }
-      return getCaretPosition(rest, endNode, range, pos + first.textContent.length)
+      return getCaretPosition(rest, endNode, range, pos + first.textContent.length + 1)
     };
     return endNode.isSameNode(dom)
       ? range.endOffset
@@ -98,7 +98,7 @@ let ReplDOM = {
           : findNodeWithPos(rest, pos - len);
       }
     };
-    let [node, idx] = findNodeWithPos(ReplCommon.toArray(dom.childNodes), pos)
+    let [node, idx] = findNodeWithPos(ReplCommon.toArray(dom.childNodes), pos);
     if(node) {
       let range = document.createRange();
       range.selectNodeContents(dom);

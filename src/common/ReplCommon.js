@@ -59,6 +59,9 @@ let ReplCommon = {
   },
   escapseRegExp: (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  },
+  divide: (str, pos) => {
+    return [str.substring(0, pos), str.substring(pos)];
   }
 };
 
