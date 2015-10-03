@@ -15,6 +15,7 @@ import ReplStreamHook from '../common/ReplStreamHook';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplConsole from './ReplConsole';
 import ReplOutput from '../common/ReplOutput';
+import ContextMenu from '../menu/context-menu.json';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -32,7 +33,7 @@ export default class Repl extends React.Component {
   }
 
   componentDidMount() {
-    this.setupMenu();
+    this.setupContextMenu();
     this.activePromptKey = Date.now();
 
     //register events
@@ -51,8 +52,9 @@ export default class Repl extends React.Component {
     ReplConsoleHook.enable();
   }
 
-  setupMenu() {
+  setupContextMenu() {
     let Menu = remote.require('menu');
+    let contextMenu = _.cloneDeep(ContextMenu);
     let actionTemplates = [
       {
         label: 'Clear All',
@@ -101,9 +103,9 @@ export default class Repl extends React.Component {
       },
     ];
 
-    _.each(actionTemplates, (template) => Repl.contextMenuTemplate.push(template));
+    _.each(actionTemplates, (template) => contextMenu.push(template));
 
-    this.menu = Menu.buildFromTemplate(Repl.contextMenuTemplate);
+    this.menu = Menu.buildFromTemplate(contextMenu);
   }
 
   componentWillUnmount() {
@@ -305,43 +307,4 @@ export default class Repl extends React.Component {
       </div>
     );
   }
-
-  static contextMenuTemplate = [{
-      label: 'Undo',
-      accelerator: 'CmdOrCtrl+Z',
-      selector: 'undo:'
-    },
-    {
-      label: 'Redo',
-      accelerator: 'Shift+CmdOrCtrl+Z',
-      selector: 'redo:'
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: 'Cut',
-      accelerator: 'CmdOrCtrl+X',
-      selector: 'cut:'
-    },
-    {
-      label: 'Copy',
-      accelerator: 'CmdOrCtrl+C',
-      selector: 'copy:'
-    },
-    {
-      label: 'Paste',
-      accelerator: 'CmdOrCtrl+V',
-      selector: 'paste:'
-    },
-    {
-      label: 'Select All',
-      accelerator: 'CmdOrCtrl+A',
-      selector: 'selectAll:'
-    },
-    {
-      type: 'separator'
-    },
-  ];
-
 }

@@ -56,6 +56,8 @@ gulp.task("clean", () => {
 gulp.task("copy", () => {
   gulp.src(['fonts/**/*'])
     .pipe(gulp.dest('build/fonts'));
+  gulp.src(['menu/**/*'])
+    .pipe(gulp.dest('build/menu'));
   gulp.src(['index.html'])
     .pipe(gulp.dest('build/'));
 });
