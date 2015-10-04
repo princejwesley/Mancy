@@ -1,6 +1,3 @@
-// set node env as production to avoid react warnings leaking in our console window & explode
-process.env.NODE_ENV = 'production';
-
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var {MenuManager} = require('./MenuManager');
