@@ -1,0 +1,81 @@
+'menu': [
+  {
+    label: '&File',
+    submenu: [
+      { label: 'New &Window', command: 'application:new-window' }
+      { label: '&Open File…', command: 'application:open-file' }
+      { type: 'separator' }
+      { label: '&Save', command: 'core:save' }
+      { type: 'separator' }
+      { label: 'E&xit', command: 'application:quit' }
+    ]
+  }
+
+  {
+    label: '&Edit'
+    submenu: [
+      { label: '&Undo', command: 'core:undo' }
+      { label: '&Redo', command: 'core:redo' }
+      { type: 'separator' }
+      { label: 'Cu&t', command: 'core:cut' }
+      { label: '&Copy', command: 'core:copy' }
+      { label: '&Paste', command: 'core:paste' }
+      { label: 'Select &All', command: 'core:select-all' }
+      { type: 'separator' }
+    ]
+  }
+
+  {
+    label: '&View'
+    submenu: [
+      { label: '&Reload', command: 'window:reload' }
+      { label: 'Toggle &Full Screen', command: 'window:toggle-full-screen' }
+    ]
+  }
+
+  {
+    label: '&Window'
+    submenu: [
+      { label: '&Minimize', command: 'application:minimize' }
+      { label: 'Close', command: 'application:quit' }
+    ]
+  }
+
+  {
+    label: '&Help'
+    submenu: [
+      { label: 'View &Terms of Use', command: 'application:open-terms-of-use' }
+      { label: 'View &License', command: 'application:open-license' }
+      { label: 'VERSION', enabled: false }
+      { label: 'Check for Update', command: 'application:check-for-update', visible: false}
+      { type: 'separator' }
+      { label: '&Documentation', command: 'application:open-documentation' }
+      { type: 'separator' }
+      { label: 'Report Issue', command: 'application:report-issue' }
+      { label: 'Search Issues', command: 'application:search-issues' }
+      { type: 'separator' }
+      { label: 'About Mancy', command: 'application:about' }
+      { type: 'separator' }
+    ]
+  }
+]
+
+// After check with Prince we need to add
+// 'context-menu':
+//   'atom-text-editor, .overlayer': [
+//     {label: 'Undo', command: 'core:undo'}
+//     {label: 'Redo', command: 'core:redo'}
+//     {type: 'separator'}
+//     {label: 'Cut', command: 'core:cut'}
+//     {label: 'Copy', command: 'core:copy'}
+//     {label: 'Paste', command: 'core:paste'}
+//     {label: 'Delete', command: 'core:delete'}
+//     {label: 'Select All', command: 'core:select-all'}
+//     {type: 'separator'}
+//     {label: 'Split Up', command: 'pane:split-up'}
+//     {label: 'Split Down', command: 'pane:split-down'}
+//     {label: 'Split Left', command: 'pane:split-left'}
+//     {label: 'Split Right', command: 'pane:split-right'}
+//     {label: 'Close Pane', command: 'pane:close'}
+//     {type: 'separator'}
+//   ]
