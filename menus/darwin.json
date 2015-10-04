@@ -1,0 +1,68 @@
+[
+  {
+    "label": "Mancy",
+    "submenu": [
+      { "label": "About Mancy", "command": "application:about" },
+      { "label": "View License", "command": "application:open-license" },
+      { "label": "Documentation", "command": "application:open-documentation" },
+      { "type": "separator" },
+      { "label": "Hide", "command": "application:hide" },
+      { "label": "Hide Others", "command": "application:hide-others" },
+      { "label": "Show All", "command": "application:show-all" },
+      { "type": "separator" },
+      { "label": "Quit", "command": "application:quit" }
+    ]
+  },
+
+  {
+    "label": "File",
+    "submenu": [
+      { "label": "New Window", "command": "application:new-window" },
+      { "type": "separator" },
+      { "label": "Export to File…", "command": "application:export-file" },
+      { "label": "Import from File…", "command": "application:import-file" },
+      { "type": "separator" },
+      { "label": "Exit", "command": "application:quit" }
+    ]
+  },
+
+  {
+    "label": "Edit",
+    "submenu": [
+      { "label": "Undo",  "accelerator": "CmdOrCtrl+Z", "role": "undo"},
+      { "label": "Redo",  "accelerator": "Shift+CmdOrCtrl+Z", "role": "redo" },
+      { "type": "separator" },
+      { "label": "Cut",   "accelerator": "CmdOrCtrl+X", "role": "cut" },
+      { "label": "Copy", "accelerator": "CmdOrCtrl+C", "role": "copy" },
+      { "label": "Paste", "accelerator": "CmdOrCtrl+V", "role": "paste"},
+      { "label": "Select All", "accelerator": "CmdOrCtrl+A", "role": "selectall" },
+      { "type": "separator" }
+    ]
+  },
+
+  {
+    "label": "View",
+    "submenu": [
+      { "label": "Reload Mancy", "command": "window:reload" },
+      { "label": "Toggle Full Screen", "command": "window:toggle-full-screen" }
+    ]
+  },
+
+  {
+    "label": "Window",
+    "submenu": [
+      { "label": "Minimize", "command": "application:minimize" },
+      { "label": "Maximize", "command": "application:maximize" },
+      { "label": "Close", "command": "application:quit" }
+    ]
+  },
+
+  {
+    "label": "Help",
+    "submenu": [
+      { "label": "Documentation", "command": "application:open-documentation" },
+      { "type": "separator" },
+      { "label": "Report Issue", "command": "application:report-issue" }
+    ]
+  }
+]
