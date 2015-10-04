@@ -13,7 +13,7 @@ export default class MancyApplication extends EventEmitter {
   }
 
   openNewWindow() {
-    console.log('Open New Window');
+    app.emit('ready');
   }
 
   exportToFile() {

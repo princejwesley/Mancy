@@ -4,9 +4,11 @@ process.env.NODE_ENV = 'production';
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var {MenuManager} = require('./MenuManager');
+var Config = require('../package.json');
+var _ = require('lodash');
 
-var mainWindow = null;
-var menuManager = new MenuManager(this);
+var windowCache = {};
+var menuManagerCache = {};
 
 app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -20,7 +22,7 @@ app.on('activate-with-no-open-windows', onReady);
 function onReady() {
   var {width, height} = require('screen').getPrimaryDisplay().workAreaSize;
 
-  mainWindow = new BrowserWindow({
+  let mainWindow = new BrowserWindow({
     width: width * 0.75,
     height: height * 0.75,
     'min-height': width * 0.5,
@@ -31,14 +33,18 @@ function onReady() {
       'plugins': true
 		},
     show: false,
-    title: 'Mancy',
   });
+
+  windowCache[mainWindow.id] = mainWindow;
+  let menuManager = menuManagerCache[mainWindow.id] = new MenuManager();
 
   mainWindow.loadUrl('file://' + __dirname + '/../index.html');
   mainWindow.flashFrame(true);
+  mainWindow.setTitle(`${_.capitalize(Config.name)} - REPL(${_.keys(windowCache).length - 1})`);
 
   mainWindow.on('closed', function() {
-    mainWindow = null;
+    delete windowCache[mainWindow.id];
+    delete menuManagerCache[mainWindow.id];
   });
 
   mainWindow.webContents.on('did-finish-load', function() {

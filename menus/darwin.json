@@ -18,12 +18,12 @@
   {
     "label": "File",
     "submenu": [
-      { "label": "New Window", "command": "application:new-window" },
+      { "label": "New Window", "accelerator": "CmdOrCtrl+N", "command": "application:new-window" },
       { "type": "separator" },
       { "label": "Export to File…", "command": "application:export-file" },
       { "label": "Import from File…", "command": "application:import-file" },
       { "type": "separator" },
-      { "label": "Close Window", "accelerator": "Command+W", "command": "window:close" }
+      { "label": "Close Window", "accelerator": "Command+W", "role": "close"}
     ]
   },
 
@@ -54,7 +54,7 @@
     "role": "window",
     "submenu": [
       { "label": "Minimize", "accelerator": "CmdOrCtrl+M", "role": "minimize" },
-      { "label": "Maximize", "command": "maximize" },
+      { "label": "Maximize", "role": "maximize" },
       { "label": "Close", "accelerator": "CmdOrCtrl+W", "role": "close" },
       { "type": "separator" },
       { "label": "Bring All to Front", "selector": "arrangeInFront:" }

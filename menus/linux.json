@@ -2,7 +2,7 @@
   {
     "label": "File",
     "submenu": [
-      { "label": "New Window", "command": "application:new-window" },
+      { "label": "New Window", "accelerator": "CmdOrCtrl+N", "command": "application:new-window" },
       { "type": "separator" },
       { "label": "Export to File…", "command": "application:export-file" },
       { "label": "Import from File…", "command": "application:import-file" },

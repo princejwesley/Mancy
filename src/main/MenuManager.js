@@ -9,12 +9,11 @@ import MancyApplication from './MancyApplication';
 import Config from '../package.json';
 
 let platformMenu = require(`../../menus/${process.platform}.json`);
-let mancyApplication = null;
 let noop = () => {};
 
 export class MenuManager extends EventEmitter {
 
-  constructor(application) {
+  constructor() {
     super();
     _.each(['bindMenuItems', 'systemMenuItems',
       'buildMenuSelectorActions', 'unhandledMenuItem'], (fun) => {
@@ -25,9 +24,10 @@ export class MenuManager extends EventEmitter {
   attachToWindow() {
     this.mancyApplication = new MancyApplication();
     this.menuSelectorActions = this.buildMenuSelectorActions(this.mancyApplication);
-    this.bindMenuItems(platformMenu);
-    this.systemMenuItems(platformMenu);
-    this.menu = Menu.buildFromTemplate(platformMenu);
+    let menuTemplate = _.cloneDeep(platformMenu);
+    this.bindMenuItems(menuTemplate);
+    this.systemMenuItems(menuTemplate);
+    this.menu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(this.menu);
   }
 
@@ -69,7 +69,7 @@ export class MenuManager extends EventEmitter {
     console.error('UnHandled Menu Item', menuItem);
     return noop;
   }
-  systemMenuItems() {
+  systemMenuItems(menuItems) {
 
   }
 }
