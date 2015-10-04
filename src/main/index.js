@@ -9,6 +9,7 @@ var _ = require('lodash');
 
 var windowCache = {};
 var menuManagerCache = {};
+var windowCount = 0;
 
 app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -40,7 +41,8 @@ function onReady() {
 
   mainWindow.loadUrl('file://' + __dirname + '/../index.html');
   mainWindow.flashFrame(true);
-  mainWindow.setTitle(`${_.capitalize(Config.name)} - REPL(${_.keys(windowCache).length - 1})`);
+  mainWindow.setTitle(`${_.capitalize(Config.name)} - REPL(${windowCount})`);
+  windowCount += 1;
 
   mainWindow.on('closed', function() {
     delete windowCache[mainWindow.id];
@@ -48,6 +50,17 @@ function onReady() {
   });
 
   mainWindow.webContents.on('did-finish-load', function() {
+    let totalActiveWindows = _.keys(windowCache).length;
+    if(totalActiveWindows > 1) {
+      let fixPos = (axis, adj) => {
+        let naxis = axis + adj;
+        return naxis <= 0 ? axis : naxis;
+      };
+      let [x,y] = mainWindow.getPosition();
+      let adj = parseInt(Math.random() * 50) * (Math.random() > 0.3 ? -1: 1);
+      let [nx, ny] = [fixPos(x, adj), fixPos(y, adj)];
+      mainWindow.setPosition(nx, ny);
+    }
     mainWindow.show();
     mainWindow.focus();
     // Mac only
