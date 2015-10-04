@@ -7,7 +7,7 @@
       { "label": "Export to File…", "command": "application:export-file" },
       { "label": "Import from File…", "command": "application:import-file" },
       { "type": "separator" },
-      { "label": "Exit", "command": "application:quit" }
+      { "label": "Exit", "command": "window:close" }
     ]
   },
 
@@ -38,7 +38,7 @@
     "submenu": [
       { "label": "Minimize", "command": "application:minimize" },
       { "label": "Maximize", "command": "application:maximize" },
-      { "label": "Close", "command": "application:quit" }
+      { "label": "Close", "command": "window:close" }
     ]
   },
 
