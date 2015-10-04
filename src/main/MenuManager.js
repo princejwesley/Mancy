@@ -1,84 +1,75 @@
 
-const ipc = require('ipc');
-const Menu = require('menu');
-const MenuItem = require('menu-item');
-const app = require('app');
-const path = require('path');
+import app from 'app';
+import ipc from 'ipc';
+import Menu from 'menu';
+import MenuItem from 'menu-item';
+import _ from 'lodash';
 import EventEmitter from 'events';
 import MancyApplication from './MancyApplication';
-let platformMenu = require(`../../menus/${process.platform}.json`);
+import Config from '../package.json';
 
+let platformMenu = require(`../../menus/${process.platform}.json`);
 let mancyApplication = null;
+let noop = () => {};
+
 export class MenuManager extends EventEmitter {
 
-	constructor(application) {
-		super();
-		this.bindMenuItems = this.bindMenuItems.bind(this);
-		
-	}
+  constructor(application) {
+    super();
+    _.each(['bindMenuItems', 'systemMenuItems',
+      'buildMenuSelectorActions', 'unhandledMenuItem'], (fun) => {
+      this[fun] = this[fun].bind(this);
+    });
+  }
 
   attachToWindow() {
-  	this.mancyApplication = new MancyApplication();
-  	this.bindMenuItems(platformMenu);
+    this.mancyApplication = new MancyApplication();
+    this.menuSelectorActions = this.buildMenuSelectorActions(this.mancyApplication);
+    this.bindMenuItems(platformMenu);
+    this.systemMenuItems(platformMenu);
     this.menu = Menu.buildFromTemplate(platformMenu);
     Menu.setApplicationMenu(this.menu);
   }
 
-	bindMenuItems(menuItems) {
-  	console.log('Inside bindMenuItems');
-  	for (let menuItem of menuItems) {
-
-  		if (menuItem.role !== undefined)
-  			continue;
-
-  		if (menuItem.type === 'separator') 
-  			continue;
-
-  		if (menuItem.submenu) {
-  			this.bindMenuItems(menuItem.submenu);
-  			continue;
-  		}
-
-  		let cmd = menuItem.command;
-  		console.log('Command: ', cmd);
-  		if (cmd === 'application:new-window') {
-  			menuItem.click = this.mancyApplication.openNewWindow;
-  		}
-  		else if (cmd === 'application:export-file') {
-  			menuItem.click = this.mancyApplication.exportToFile;
-  		}
-  		else if (cmd === 'application:import-file') {
-  			menuItem.click = this.mancyApplication.importFromFile;
-  		}
-  		else if (cmd === 'application:quit') {
-  			menuItem.click = this.mancyApplication.quitApplication;
-  		}
-  	 	else if (cmd === 'window:reload') {
-  			menuItem.click = this.mancyApplication.windowReload;
-  		}
-  		else if (cmd === 'window:toggle-full-screen') {
-  			menuItem.click = this.mancyApplication.toggleFullScreen;
-  		}
-  		else if (cmd === 'application:minimize') {
-  			menuItem.click = this.mancyApplication.minimizeWindow;
-  		}
-      else if (cmd === 'application:maximize') {
-        menuItem.click = this.mancyApplication.maximizeWindow;
-      }
-  		else if (cmd === 'application:open-license') {
-  			menuItem.click = this.mancyApplication.showLicense;
-  		}
-  	 	else if (cmd === 'application:open-documentation') {
-  			menuItem.click = this.mancyApplication.openDocumentation;
-  		}
-  		else if (cmd === 'application:report-issue') {
-  			menuItem.click = this.mancyApplication.reportIssue;
-  		}
-  		else if (cmd === 'application:about') {
-  			menuItem.click = this.mancyApplication.aboutMancy;
-  		}
-  	}
+  buildMenuSelectorActions(app) {
+    return {
+      'application:new-window': app.openNewWindow,
+      'application:export-file': app.exportToFile,
+      'application:import-file': app.importFromFile,
+      'application:quit': app.quitApplication,
+      'window:close': app.closeWindow,
+      'window:reload': app.windowReload,
+      'window:toggle-full-screen': app.toggleFullScreen,
+      'application:minimize': app.minimizeWindow,
+      'application:maximize': app.maximizeWindow,
+      'application:open-license': app.showLicense,
+      'application:open-documentation': app.openDocumentation,
+      'application:report-issue': app.reportIssue,
+      'application:about': app.aboutMancy
+    };
   }
 
+  bindMenuItems(menuItems) {
+    for(let menuItem of menuItems) {
 
+      if((menuItem.role && !menuItem.submenu)||
+        menuItem.type === 'separator' ||
+        menuItem.selector) {
+        continue;
+      }
+
+      if(menuItem.submenu) {
+        this.bindMenuItems(menuItem.submenu);
+        continue;
+      }
+      menuItem.click = this.menuSelectorActions[menuItem.command] || this.unhandledMenuItem(menuItem);
+    }
+  }
+  unhandledMenuItem(menuItem) {
+    console.error('UnHandled Menu Item', menuItem);
+    return noop;
+  }
+  systemMenuItems() {
+
+  }
 }

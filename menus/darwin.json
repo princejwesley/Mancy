@@ -4,13 +4,14 @@
     "submenu": [
       { "label": "About Mancy", "command": "application:about" },
       { "label": "View License", "command": "application:open-license" },
-      { "label": "Documentation", "command": "application:open-documentation" },
       { "type": "separator" },
-      { "label": "Hide", "command": "application:hide" },
-      { "label": "Hide Others", "command": "application:hide-others" },
-      { "label": "Show All", "command": "application:show-all" },
+      { "label": "Services", "role": "services", "submenu": [] },
       { "type": "separator" },
-      { "label": "Quit", "command": "application:quit" }
+      { "label": "Hide Mancy", "accelerator": "Command+H", "selector": "hide:" },
+      { "label": "Hide Others", "accelerator": "Command+Shift+H", "selector": "hideOtherApplications:" },
+      { "label": "Show All", "selector": "unhideAllApplications:" },
+      { "type": "separator" },
+      { "label": "Quit", "accelerator": "Command+Q", "command": "application:quit" }
     ]
   },
 
@@ -22,7 +23,7 @@
       { "label": "Export to File…", "command": "application:export-file" },
       { "label": "Import from File…", "command": "application:import-file" },
       { "type": "separator" },
-      { "label": "Exit", "command": "application:quit" }
+      { "label": "Close Window", "accelerator": "Command+W", "command": "window:close" }
     ]
   },
 
@@ -43,24 +44,28 @@
   {
     "label": "View",
     "submenu": [
-      { "label": "Reload Mancy", "command": "window:reload" },
+      { "label": "Reload Mancy", "accelerator": "CmdOrCtrl+R", "command": "window:reload" },
       { "label": "Toggle Full Screen", "command": "window:toggle-full-screen" }
     ]
   },
 
   {
     "label": "Window",
+    "role": "window",
     "submenu": [
-      { "label": "Minimize", "command": "application:minimize" },
-      { "label": "Maximize", "command": "application:maximize" },
-      { "label": "Close", "command": "application:quit" }
+      { "label": "Minimize", "accelerator": "CmdOrCtrl+M", "role": "minimize" },
+      { "label": "Maximize", "command": "maximize" },
+      { "label": "Close", "accelerator": "CmdOrCtrl+W", "role": "close" },
+      { "type": "separator" },
+      { "label": "Bring All to Front", "selector": "arrangeInFront:" }
     ]
   },
 
   {
     "label": "Help",
+    "role": "help",
     "submenu": [
-      { "label": "Documentation", "command": "application:open-documentation" },
+      { "label": "Learn More", "command": "application:open-documentation" },
       { "type": "separator" },
       { "label": "Report Issue", "command": "application:report-issue" }
     ]

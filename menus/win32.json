@@ -28,7 +28,7 @@
   {
     "label": "&View",
     "submenu": [
-      { "label": "&Reload Mancy", "command": "window:reload" },
+      { "label": "&Reload Mancy", "accelerator": "CmdOrCtrl+R", "command": "window:reload" },
       { "label": "Toggle &Full Screen", "command": "window:toggle-full-screen" }
     ]
   },

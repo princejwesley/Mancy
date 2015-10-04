@@ -27,7 +27,7 @@ const resources = [
   'index.html',
   'package.json',
   'README.md',
-  'LICSENSE',
+  'LICENSE',
   'icons/*',
 ].concat(nodeDevResources);
 

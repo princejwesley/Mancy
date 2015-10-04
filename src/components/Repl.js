@@ -73,7 +73,7 @@ export default class Repl extends React.Component {
       },
       {
         label: 'Break Prompt',
-        accelerator: 'Ctrl+C',
+        accelerator: 'Ctrl+D',
         click: this.onBreakPrompt
       },
       {
@@ -142,9 +142,9 @@ export default class Repl extends React.Component {
 
     let { ctrlKey, shiftKey, metaKey, altKey, which } = e;
 
-    // ctrl + c
-    let C = "C".codePointAt(0);
-    if( ctrlKey && !shiftKey && !metaKey && !altKey && which === C) {
+    // ctrl + d
+    let D = "D".codePointAt(0);
+    if( ctrlKey && !shiftKey && !metaKey && !altKey && which === D) {
       return this.onBreakPrompt();
     }
 

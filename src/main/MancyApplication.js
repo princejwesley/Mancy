@@ -1,86 +1,83 @@
-
-const app = require('app');
-const BrowserWindow = require('browser-window');
-const fs = require('fs');
-const dialog = require('dialog');
-const shell = require('shell');
+import app from 'app';
+import BrowserWindow from 'browser-window';
+import {readFileSync} from 'fs';
+import dialog from 'dialog';
+import shell from 'shell';
 import MenuManager from './MenuManager';
 import EventEmitter from 'events';
+import Config from '../package.json';
 
 export default class MancyApplication extends EventEmitter {
-	constructor() {
-		super();
-	}
+  constructor() {
+    super();
+  }
 
-	openNewWindow() {
-		console.log('Open New Window');
-	}
-	
-	exportToFile() {
-		console.log('Open New Window');
-	}
-	
-	importFromFile() {
-		console.log('Open New Window');
-	}
-	
-	windowReload(item, focus) {
-		focus.reload();
-	}
-	
-	toggleFullScreen(item, focusedWindow) {
-		console.log('Open toggleFullScreen Window');
-		let isFullScreen = focusedWindow.isFullScreen();
-		console.log('isFullScreen: ', isFullScreen);
-		focusedWindow.setFullScreen(!isFullScreen);
-	}
+  openNewWindow() {
+    console.log('Open New Window');
+  }
 
-	quitApplication() {
-		console.log('Quitting app');
-		app.quit();
-	}
-	
-	minimizeWindow(item, window) {
-		window.minimize();
-		console.log('Open minimizeWindow Window');
-	}
+  exportToFile() {
+    console.log('Open New Window');
+  }
 
-	maximizeWindow(item, window) {
-		console.log('minimizeWindow app');
-		window.maximize();
-	}
+  importFromFile() {
+    console.log('Open New Window');
+  }
+
+  windowReload(item, focus) {
+    focus.reload();
+  }
+
+  toggleFullScreen(item, focusedWindow) {
+    let isFullScreen = focusedWindow.isFullScreen();
+    focusedWindow.setFullScreen(!isFullScreen);
+  }
+
+  quitApplication() {
+    app.quit();
+  }
+
+  closeWindow(item, window) {
+    window.close();
+  }
+
+  minimizeWindow(item, window) {
+    window.minimize();
+  }
+
+  maximizeWindow(item, window) {
+    window.maximize();
+  }
 
   showLicense(item, focusedWindow) {
     let options = {
       title: 'About License',
       buttons: ['Close'],
       type: 'info',
-      message: 'MIT License',
-      detail: 'The MIT License (MIT) Copyright (c) 2015 Emmanouil Konstantinidis'
+      message: `${Config.license} License`,
+      detail: readFileSync(`${__dirname}/../LICENSE`).toString('utf8')
     };
 
     dialog.showMessageBox(focusedWindow, options);
   }
 
   openDocumentation() {
-  	console.log('openDocumentation app');
-  	shell.openExternal('https://github.com');
+    shell.openExternal(`${Config.homepage}`);
   }
 
   reportIssue() {
-  	console.log('reportIssue app');
-  	shell.openExternal('https://github.com');
+    shell.openExternal(`${Config.bugs.url}`);
   }
 
   aboutMancy(item, focusedWindow) {
-  	let options = {
+    let options = {
       title: 'About Mancy',
       buttons: ['Close'],
       type: 'info',
-      message: 'Javascript REPL',
-      detail: 'The MIT License (MIT) Copyright (c) 2015 Emmanouil Konstantinidis'
+      message: `${Config.description} (v${Config.version})`,
+      detail: `${Config.license} Copyright (c) 2015 ${Config.author}`
     };
-    
+
     dialog.showMessageBox(focusedWindow, options);
 
   }

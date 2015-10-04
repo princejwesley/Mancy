@@ -16,7 +16,8 @@
     "watch": "gulp watch"
   },
   "keywords": [
-    "REPL"
+    "REPL",
+    "Javascript"
   ],
   "author": "Prince John Wesley <princejohnwesley@gmail.com>",
   "license": "MIT",

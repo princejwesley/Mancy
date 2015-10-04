@@ -1,7 +1,6 @@
 // set node env as production to avoid react warnings leaking in our console window & explode
 process.env.NODE_ENV = 'production';
 
-
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var {MenuManager} = require('./MenuManager');
@@ -48,8 +47,8 @@ function onReady() {
     // Mac only
     if (process.platform === 'darwin') {
       mainWindow.showDefinitionForSelection(true);
+      //mainWindow.setVisibleOnAllWorkspaces(true);
     }
-    //mainWindow.setVisibleOnAllWorkspaces(true);
   });
 
   if(process.env.NODE_MANCY_DEV_MODE && process.env.NODE_MANCY_DEV_MODE === 'true') {
