@@ -8,7 +8,7 @@ import EventEmitter from 'events';
 import MancyApplication from './MancyApplication';
 import Config from '../package.json';
 
-let platformMenu = require(`../../menus/${process.platform}.json`);
+let platformMenu = require(`../menus/${process.platform}.json`);
 let noop = () => {};
 
 export class MenuManager extends EventEmitter {
