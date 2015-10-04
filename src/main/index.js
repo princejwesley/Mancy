@@ -4,9 +4,10 @@ process.env.NODE_ENV = 'production';
 
 var app = require('app');
 var BrowserWindow = require('browser-window');
-var menu = require('./menu');
+var {MenuManager} = require('./MenuManager');
 
 var mainWindow = null;
+var menuManager = new MenuManager(this);
 
 app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -44,15 +45,16 @@ function onReady() {
   mainWindow.webContents.on('did-finish-load', function() {
     mainWindow.show();
     mainWindow.focus();
+    // Mac only
     if (process.platform === 'darwin') {
       mainWindow.showDefinitionForSelection(true);
-      //mainWindow.setVisibleOnAllWorkspaces(true);
     }
+    //mainWindow.setVisibleOnAllWorkspaces(true);
   });
-
-  menu.setMenu(app, mainWindow);
 
   if(process.env.NODE_MANCY_DEV_MODE && process.env.NODE_MANCY_DEV_MODE === 'true') {
     mainWindow.openDevTools({detach: true});
   }
+
+  menuManager.attachToWindow();
 }
