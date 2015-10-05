@@ -6,14 +6,21 @@
   "main": "main/index.js",
   "scripts": {
     "preinstall": "npm prune",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "BABEL_JEST_STAGE=0 ./node_modules/.bin/jest",
     "start": "NODE_MANCY_DEV_MODE=false ./node_modules/.bin/electron ./build",
     "dev": "NODE_MANCY_DEV_MODE=true ./node_modules/.bin/electron ./build",
     "package": "./node_modules/.bin/gulp package",
     "install": "./node_modules/.bin/gulp package",
     "package-all": "./node_modules/.bin/gulp packageAll",
     "release": "./node_modules/.bin/gulp release",
-    "watch": "./node_modules/.bin/gulp watch"
+    "watch": "./node_modules/.bin/gulp watch",
+    "build": "./node_modules/.bin/gulp build"
+  },
+  "jest": {
+    "scriptPreprocessor": "../node_modules/babel-jest",
+    "unmockedModulePathPatterns": ["./node_modules/react", "./node_modules/reflux", "./node_modules/lodash"],
+    "verbose": true,
+    "rootDir": "./src"
   },
   "keywords": [
     "REPL",
@@ -24,6 +31,7 @@
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-core": "^5.8.24",
+    "babel-jest": "^5.3.0",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
     "electron-prebuilt": "^0.33.5",
@@ -38,6 +46,7 @@
     "gulp-react": "^3.0.1",
     "gulp-sass": "^2.0.4",
     "gulp-util": "^3.0.6",
+    "jest-cli": "^0.5.8",
     "mkdirp": "^0.5.1",
     "node-sass": "^3.3.2",
     "react-tools": "0.13.3",
