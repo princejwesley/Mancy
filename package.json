@@ -26,7 +26,7 @@
     "babel-core": "^5.8.24",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "^0.33.0",
+    "electron-prebuilt": "^0.33.5",
     "github": "^0.2.4",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",

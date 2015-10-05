@@ -14,6 +14,8 @@ import {writeFileSync} from 'fs';
 import {basename, extname, dirname, join} from 'path';
 
 const $ = plugins();
+const electronVersion = require('./node_modules/electron-prebuilt/package.json').version;
+const electronLinuxVersion = '0.30.0';
 
 const nodeDevResources = _.chain(Config.dependencies)
   .keys()
@@ -84,13 +86,13 @@ let spawn = async (command, args, options) => {
   return new Promise(cb);
 }
 
-let executable = async (platform = 'all', arch = 'all') => {
+let executable = async (platform = 'all', arch = 'all', version = electronVersion) => {
   let cb = (resolve, reject) => {
     Electron({
       name: `${_.capitalize(Config.name)}`,
       platform,
       arch,
-      version: '0.33.0',
+      version: electronVersion,
       'app-version': `v${Config.version}`,
       'version-string': {
         'ProductVersion': `v${Config.version}`,
@@ -238,7 +240,8 @@ gulp.task('package', ['build'], (cb) => {
   (async () => {
     try {
       let {platform, arch} = process;
-      await executable(platform, arch);
+      let version = platform === 'linux' ? electronLinuxVersion : electronVersion;
+      await executable(platform, arch, version);
       cb();
     } catch (err) {
       onError(err);
@@ -250,7 +253,9 @@ gulp.task('package', ['build'], (cb) => {
 gulp.task('packageAll', ['build'], (cb) => {
   (async function() {
     try {
-      await executable();
+      await executable('darwin', 'all', electronVersion);
+      await executable('win32', 'all', electronVersion);
+      await executable('linux', 'all', electronLinuxVersion);
       cb();
     } catch (err) {
       onError(err);

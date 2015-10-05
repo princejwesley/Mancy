@@ -47,7 +47,7 @@
     "submenu": [
       { "label": "View &License", "command": "application:open-license" },
       { "type": "separator" },
-      { "label": "&Documentation", "command": "application:open-documentation" },
+      { "label": "Learn &More", "command": "application:open-documentation" },
       { "type": "separator" },
       { "label": "Report Issue", "command": "application:report-issue" },
       { "type": "separator" },
