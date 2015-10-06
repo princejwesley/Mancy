@@ -26,7 +26,7 @@ export default class ReplOutputObject extends React.Component {
           this.state.collapse
           ? <span className='repl-entry-message-output-object'>
               <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
-              <span className='array-desc'>{label}</span>
+              <span className='object-desc'>{label}</span>
             </span>
           : <span className='repl-entry-message-output-object'>
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
@@ -35,7 +35,7 @@ export default class ReplOutputObject extends React.Component {
               {
                 _.map(this.props.object, (value, key) => {
                   return (
-                    <div className='object-entry'>
+                    <div className='object-entry' key={key}>
                       {
                         <span className='object-key'>
                           {key}

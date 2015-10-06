@@ -36,8 +36,10 @@ const resources = [
 const PATHS = {
   APP: 'build',
   DIST: 'dist',
+  SRC: 'src',
   TMP: 'tmp',
-  ICON: 'icons'
+  ICON: 'icons',
+  STYLES: 'stylesheets'
 };
 
 let onError = (err) => {
@@ -46,7 +48,6 @@ let onError = (err) => {
   if (err.stack) {
     $.util.log('Stack trace', err.stack.toString());
   }
-  this.emit('end');
 };
 
 async function authenticate(api) {
@@ -67,7 +68,7 @@ let zipExe = async (dists) => {
 let spawn = async (command, args, options) => {
   let cb = (resolve, reject) => {
     let exe = ChildProcess.spawn(command, args, options);
-    exe.stdout.on('data', (data) => onError(data.toString('utf8')));
+    exe.stdout.on('data', (data) => console.log(data.toString('utf8').trim()));
     exe.stderr.on('data', (err) => onError(err.toString('utf8')));
     exe.on('close', resolve);
     exe.on('error', reject);
@@ -204,15 +205,15 @@ gulp.task('react', () =>
 );
 
 gulp.task('clean', () => {
-  require('del').sync([PATHS.APP, PATHS.DIST]);
+  return require('del').sync([PATHS.APP, PATHS.DIST]);
 });
 
 gulp.task('copy', () => {
-  gulp.src(resources, { base: '.' })
+  return gulp.src(resources, { base: '.' })
     .pipe(gulp.dest(PATHS.APP));
 });
 
-gulp.task('watch', (cb) => {
+gulp.task('watch',['build'], (cb) => {
   $.livereload.listen();
   gulp.watch(options.sass.source, ['sass']);
   gulp.watch(options.react.source, ['react']);
@@ -239,7 +240,7 @@ gulp.task('dev-env', () => {
 });
 
 gulp.task('build', (cb) => {
-  runSequence('user-env', ['clean', 'sass', 'react', 'copy'], () => cb());
+  return runSequence('clean', 'copy', ['sass', 'react'], cb);
 });
 
 gulp.task('package', ['build'], (cb) => {
@@ -270,7 +271,7 @@ gulp.task('packageAll', ['build'], (cb) => {
   })();
 });
 
-gulp.task('run',[], (cb) => {
+gulp.task('run', (cb) => {
   (async () => {
     try {
       await spawn('./node_modules/.bin/electron', [PATHS.APP]);
@@ -282,13 +283,9 @@ gulp.task('run',[], (cb) => {
   })();
 });
 
-gulp.task('start', (cb) => {
-  runSequence('run',['build'], () => cb());
-});
+gulp.task('start',['user-env'], (cb) => runSequence('build', 'run', cb));
 
-gulp.task('dev', (cb) => {
-  runSequence('run',['build', 'dev-env'], () => cb());
-});
+gulp.task('debug', ['build'], (cb) => runSequence('dev-env', 'run', cb));
 
 gulp.task('release',['build'], (cb) => {
   (async () => {

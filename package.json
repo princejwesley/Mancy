@@ -6,11 +6,10 @@
   "main": "main/index.js",
   "scripts": {
     "preinstall": "npm prune",
-    "test": "BABEL_JEST_STAGE=0 ./node_modules/.bin/jest",
+    "test": "./node_modules/.bin/jest",
     "start": "./node_modules/.bin/gulp start",
-    "dev": "./node_modules/.bin/gulp dev",
+    "debug": "./node_modules/.bin/gulp debug",
     "package": "./node_modules/.bin/gulp package",
-    "install": "./node_modules/.bin/gulp package",
     "package-all": "./node_modules/.bin/gulp packageAll",
     "release": "./node_modules/.bin/gulp release",
     "watch": "./node_modules/.bin/gulp watch",

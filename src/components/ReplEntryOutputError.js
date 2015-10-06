@@ -29,7 +29,7 @@ export default class ReplEntryOutputError extends React.Component {
         closeBrace = ')';
       }
       output.push(
-        <div className='repl-entry-output-error-stack-lines'>
+        <div className='repl-entry-output-error-stack-lines' key={output.length}>
           <span className='stack-error-at'>&nbsp;&nbsp;at</span>
           <span className='stack-error-function'>{p1}</span>
           {openBrace}

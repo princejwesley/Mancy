@@ -34,7 +34,7 @@ export default class ReplOutputArray extends React.Component {
               {
                 _.map(this.props.array, (value, idx) => {
                   return (
-                    <div className='array-entry'>
+                    <div className='array-entry' key={idx}>
                       {
                         this.props.noIndex
                           ? null
