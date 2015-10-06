@@ -68,7 +68,7 @@ let zipExe = async (dists) => {
 let spawn = async (command, args, options) => {
   let cb = (resolve, reject) => {
     let exe = ChildProcess.spawn(command, args, options);
-    exe.stdout.on('data', (data) => console.log(data.toString('utf8').trim()));
+    exe.stdout.on('data', (data) => $.util.log(data.toString('utf8').trim()));
     exe.stderr.on('data', (err) => onError(err.toString('utf8')));
     exe.on('close', resolve);
     exe.on('error', reject);

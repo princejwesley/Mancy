@@ -27,7 +27,6 @@ describe('ReplOutputObject', () => {
 
     let icon = TestUtils.findRenderedDOMComponentWithClass(component, 'fa-play');
     TestUtils.Simulate.click(icon);
-    jest.runAllTicks();
 
     let entries = TestUtils.scryRenderedDOMComponentsWithClass(component, 'object-entry');
     expect(entries.length).toBe(Object.keys(o).length);

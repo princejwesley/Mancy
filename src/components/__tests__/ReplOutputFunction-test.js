@@ -40,7 +40,6 @@ describe('ReplOutputFunction', () => {
 
     let icon = TestUtils.findRenderedDOMComponentWithClass(component, 'fa-play');
     TestUtils.Simulate.click(icon);
-    jest.runAllTicks();
 
     let entries = TestUtils.scryRenderedDOMComponentsWithClass(component, 'object-entry');
     expect(entries.length).toBe(Object.keys(f).length);
@@ -53,10 +52,10 @@ describe('ReplOutputFunction', () => {
 
     let icon = TestUtils.findRenderedDOMComponentWithClass(component, 'fa-play');
     TestUtils.Simulate.click(icon);
-    jest.runAllTicks();
+
     let source = TestUtils.findRenderedDOMComponentWithClass(component, 'fa-plus-square-o');
     TestUtils.Simulate.click(source);
-    jest.runAllTicks();
+
     TestUtils.scryRenderedDOMComponentsWithClass(component, 'fa-minus-square-o');
   });
 
