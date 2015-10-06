@@ -3,7 +3,6 @@ import plugins from 'gulp-load-plugins';
 import runSequence from 'run-sequence';
 import path from 'path';
 import _ from 'lodash';
-import mkdirp from 'mkdirp';
 import {argv} from 'yargs';
 import GitHubApi from 'github';
 import Electron from 'electron-packager';
@@ -12,6 +11,7 @@ import semver from 'semver';
 import ChildProcess from 'child_process';
 import {writeFileSync} from 'fs';
 import {basename, extname, dirname, join} from 'path';
+import env from 'gulp-env';
 
 const $ = plugins();
 const electronVersion = require('./node_modules/electron-prebuilt/package.json').version;
@@ -48,17 +48,6 @@ let onError = (err) => {
   }
   this.emit('end');
 };
-
-async function mkdir(dir) {
-  return new Promise((resolve, reject) => {
-    mkdirp(dir, (err) => {
-      if(err) {
-        return reject(err);
-      }
-      resolve();
-    });
-  });
-}
 
 async function authenticate(api) {
   github.authenticate({
@@ -225,16 +214,33 @@ gulp.task('copy', () => {
 
 gulp.task('watch', (cb) => {
   $.livereload.listen();
-  runSequence(
-    'clean', ['sass', 'react', 'copy'], () => {
-      gulp.watch(options.sass.source, ['sass']);
-      gulp.watch(options.react.source, ['react']);
-      cb();
-    }
-  );
+  gulp.watch(options.sass.source, ['sass']);
+  gulp.watch(options.react.source, ['react']);
+  gulp.watch('package.json', ['copy']);
+  gulp.watch('README.md', ['copy']);
+  gulp.watch('index.html', ['copy']);
+  cb();
 });
 
-gulp.task('build', ['clean', 'sass', 'react', 'copy']);
+gulp.task('user-env', () => {
+  env({
+    vars: {
+      NODE_MANCY_DEV_MODE: false
+    }
+  });
+});
+
+gulp.task('dev-env', () => {
+  env({
+    vars: {
+      NODE_MANCY_DEV_MODE: true
+    }
+  });
+});
+
+gulp.task('build', (cb) => {
+  runSequence('user-env', ['clean', 'sass', 'react', 'copy'], () => cb());
+});
 
 gulp.task('package', ['build'], (cb) => {
   (async () => {
@@ -264,6 +270,25 @@ gulp.task('packageAll', ['build'], (cb) => {
   })();
 });
 
+gulp.task('run',[], (cb) => {
+  (async () => {
+    try {
+      await spawn('./node_modules/.bin/electron', [PATHS.APP]);
+      cb();
+    } catch(err) {
+      onError(err);
+      cb(err);
+    }
+  })();
+});
+
+gulp.task('start', (cb) => {
+  runSequence('run',['build'], () => cb());
+});
+
+gulp.task('dev', (cb) => {
+  runSequence('run',['build', 'dev-env'], () => cb());
+});
 
 gulp.task('release',['build'], (cb) => {
   (async () => {
