@@ -3,6 +3,7 @@ bower_components
 dist
 tmp
 devtools
+coverage
 build
 .DS_Store
 *.log

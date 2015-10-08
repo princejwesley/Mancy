@@ -67,9 +67,5 @@ function onReady() {
     }
   });
 
-  if(process.env.NODE_MANCY_DEV_MODE && process.env.NODE_MANCY_DEV_MODE === 'true') {
-    mainWindow.openDevTools({detach: true});
-  }
-
   menuManager.attachToWindow();
 }

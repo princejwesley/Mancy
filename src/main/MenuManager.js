@@ -65,11 +65,27 @@ export class MenuManager extends EventEmitter {
       menuItem.click = this.menuSelectorActions[menuItem.command] || this.unhandledMenuItem(menuItem);
     }
   }
+
   unhandledMenuItem(menuItem) {
     console.error('UnHandled Menu Item', menuItem);
     return noop;
   }
-  systemMenuItems(menuItems) {
 
+  systemMenuItems(menuItems) {
+    if(process.env.NODE_MANCY_DEV_MODE && process.env.NODE_MANCY_DEV_MODE === 'true') {
+      let devTools = {
+        label: 'Toggle Developer Tools',
+        accelerator: (() => process.platform == 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I')(),
+        click: function(item, window) {
+          if (window) {
+            window.toggleDevTools();
+          }
+        }
+      };
+      // view menu
+      let pos = process.platform == 'darwin' ? 3 : 2;
+      let {submenu} = menuItems[pos];
+      submenu.push(devTools);
+    }
   }
 }
