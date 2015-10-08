@@ -3,7 +3,10 @@ import ReplConsoleHook from '../common/ReplConsoleHook';
 import vm from 'vm';
 import timers from 'timers';
 
+let cxt = null;
+
 let createContext = () => {
+  if(cxt) { return cxt; }
   // sandbox
   let context = vm.createContext();
   let defaults = [
@@ -37,7 +40,11 @@ let createContext = () => {
     context[fun] = timers[fun];
   });
 
-  return context;
+  return (cxt = context);
 };
 
-export default { createContext: createContext };
+let getContext = () => {
+  return cxt ? cxt : createContext();
+};
+
+export default { createContext: createContext, getContext: getContext };

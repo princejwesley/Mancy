@@ -19,6 +19,8 @@ import ReplConsole from './ReplConsole';
 import ReplOutput from '../common/ReplOutput';
 import ContextMenu from '../menus/context-menu.json';
 import ReplConstants from '../constants/ReplConstants';
+import ReplContext from '../common/ReplContext';
+import ReplCommon from '../common/ReplCommon';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -30,7 +32,7 @@ export default class Repl extends React.Component {
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
-      'onImport', 'onExport'
+      'onImport', 'onExport', 'onAddPath'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -56,8 +58,8 @@ export default class Repl extends React.Component {
     ReplConsoleHook.enable();
 
     ipc.on('application:import', this.onImport);
-
     ipc.on('application:export', this.onExport);
+    ipc.on('application:add-path', this.onAddPath);
   }
 
   setupContextMenu() {
@@ -175,6 +177,10 @@ export default class Repl extends React.Component {
       }
       ipc.send('application:message-box', options);
     });
+  }
+
+  onAddPath(paths) {
+    ReplCommon.addToPath(paths, ReplContext.getContext());
   }
 
   onContextMenu(e) {

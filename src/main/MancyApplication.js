@@ -16,6 +16,20 @@ export default class MancyApplication extends EventEmitter {
     app.emit('ready');
   }
 
+  addPath(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    let path = dialog.showOpenDialog(focusedWindow, {
+      title: 'Add module path…',
+      properties: [
+        'openDirectory'
+      ]
+    });
+
+    if(path) {
+      focusedWindow.webContents.send('application:add-path', path);
+    }
+  }
+
   exportToFile(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let filename = dialog.showSaveDialog(focusedWindow, {

@@ -56,9 +56,9 @@ let ReplCommon = {
     } catch(e) {}
     return code;
   },
-  addToPath: (paths) => {
+  addToPath: (paths, context = this) => {
     let newPaths = Array.isArray(paths) ? paths : [paths];
-    module.globalPaths = newPaths.concat(module.globalPaths);
+    context.module.paths = newPaths.concat(context.module.paths);
   },
   escapseRegExp: (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

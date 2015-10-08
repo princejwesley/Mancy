@@ -4,6 +4,8 @@
     "submenu": [
       { "label": "New &Window", "accelerator": "CmdOrCtrl+N", "command": "application:new-window" },
       { "type": "separator" },
+      { "label": "Add module path…", "command": "application:add-path" },
+      { "type": "separator" },
       { "label": "Export to File…", "command": "application:export-file" },
       { "label": "Import from File…", "command": "application:import-file" },
       { "type": "separator" },

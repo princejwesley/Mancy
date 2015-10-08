@@ -34,6 +34,7 @@ export class MenuManager extends EventEmitter {
   buildMenuSelectorActions(app) {
     return {
       'application:new-window': app.openNewWindow,
+      'application:add-path': app.addPath,
       'application:export-file': app.exportToFile,
       'application:import-file': app.importFromFile,
       'application:quit': app.quitApplication,
