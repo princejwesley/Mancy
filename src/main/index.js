@@ -3,6 +3,8 @@ var BrowserWindow = require('browser-window');
 var {MenuManager} = require('./MenuManager');
 var Config = require('../package.json');
 var _ = require('lodash');
+var ipc = require('ipc');
+var dialog = require('dialog');
 
 var windowCache = {};
 var menuManagerCache = {};
@@ -16,6 +18,10 @@ app.on('window-all-closed', function() {
 
 app.on('ready', onReady);
 app.on('activate-with-no-open-windows', onReady);
+
+ipc.on('application:message-box', function(sender, options) {
+  dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
+});
 
 function onReady() {
   var {width, height} = require('screen').getPrimaryDisplay().workAreaSize;

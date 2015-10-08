@@ -16,12 +16,37 @@ export default class MancyApplication extends EventEmitter {
     app.emit('ready');
   }
 
-  exportToFile() {
-    console.log('Open New Window');
+  exportToFile(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    let filename = dialog.showSaveDialog(focusedWindow, {
+      title: 'Export to File…',
+      filters: [
+        { name: 'Json Files', extensions: ['json'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+
+    if(filename) {
+      focusedWindow.webContents.send('application:export', filename);
+    }
   }
 
-  importFromFile() {
-    console.log('Open New Window');
+  importFromFile(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    let filename = dialog.showOpenDialog(focusedWindow, {
+      title: 'Import from File…',
+      filters: [
+        { name: 'Json Files', extensions: ['json'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      properties: [
+        'openFile'
+      ]
+    });
+
+    if(filename) {
+      focusedWindow.webContents.send('application:import', filename[0]);
+    }
   }
 
   windowReload(item, focus) {

@@ -27,6 +27,9 @@ let ReplCommon = {
   toArray: (arrayLike) => {
     return Array.prototype.slice.call(arrayLike);
   },
+  trimRight: (str) => {
+    return str.replace(/\s+$/, '');
+  },
   isObjectString: (str) => {
     return /^.*\./.test(str);
   },

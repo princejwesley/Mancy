@@ -10,12 +10,15 @@ import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import ReplConsoleActions from '../actions/ReplConsoleActions';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import Reflux from 'reflux';
+import ipc from 'ipc';
+import {writeFile, readFile} from 'fs';
 import remote from 'remote';
 import ReplStreamHook from '../common/ReplStreamHook';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplConsole from './ReplConsole';
 import ReplOutput from '../common/ReplOutput';
 import ContextMenu from '../menus/context-menu.json';
+import ReplConstants from '../constants/ReplConstants';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -26,7 +29,8 @@ export default class Repl extends React.Component {
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
-      'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey'
+      'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
+      'onImport', 'onExport'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -50,6 +54,10 @@ export default class Repl extends React.Component {
 
     ReplConsoleHook.on('console', this.onConsole);
     ReplConsoleHook.enable();
+
+    ipc.on('application:import', this.onImport);
+
+    ipc.on('application:export', this.onExport);
   }
 
   setupContextMenu() {
@@ -120,6 +128,53 @@ export default class Repl extends React.Component {
 
     ReplConsoleHook.removeListener('console', this.onConsole);
     ReplConsoleHook.disable();
+  }
+
+  onImport(filename) {
+    readFile(filename, (err, data) => {
+      if(!err) {
+        try {
+          let history = JSON.parse(data);
+          if(!Array.isArray(history) || !_.every(history, (h) => typeof h === 'string')) {
+            throw Error(`Invalid import file ${filename}`);
+          }
+          ReplStore.importHistory(history);
+          return;
+        } catch(e) {
+          err = e;
+        }
+      }
+
+      ipc.send('application:message-box', {
+        title: 'Export Error',
+        buttons: ['Close'],
+        type: 'error',
+        message: err.toString()
+      });
+    });
+  }
+
+  onExport(filename) {
+    let {history} = ReplStore.getStore();
+    let data = JSON.stringify(history);
+    writeFile(filename, data, { encoding: ReplConstants.REPL_ENCODING }, (err) => {
+      let options = { buttons: ['Close'] };
+      if(err) {
+        options = _.extend(options, {
+          title: 'Export Error',
+          type: 'error',
+          message: err.name || 'Export Error',
+          detail: err.toString()
+        });
+      } else {
+        options = _.extend(options, {
+          title: 'Export Success',
+          type: 'info',
+          message: `Exported to ${filename}`
+        });
+      }
+      ipc.send('application:message-box', options);
+    });
   }
 
   onContextMenu(e) {

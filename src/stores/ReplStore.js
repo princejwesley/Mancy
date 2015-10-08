@@ -100,7 +100,9 @@ const ReplStore = Reflux.createStore({
     cache.showBell = true;
     ReplCommon.beep();
     this.trigger();
+  },
+  importHistory(history) {
+    // TODO import
   }
-
 });
 export default ReplStore;

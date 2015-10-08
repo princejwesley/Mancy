@@ -101,7 +101,7 @@ export default class ReplActiveInput extends React.Component {
       let cli = ReplActiveInput.getRepl();
       let output = this.commandOutput.join('');
 
-      const text = this.element.innerText;
+      const text = ReplCommon.trimRight(this.element.innerText);
       let {formattedOutput, error} = cli.$lastExpression.highlight(output);
 
       ReplActions.addEntry({
