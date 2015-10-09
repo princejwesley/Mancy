@@ -51,7 +51,15 @@
     "label": "&View",
     "submenu": [
       { "label": "&Reload Mancy", "accelerator": "CmdOrCtrl+R", "command": "window:reload" },
-      { "label": "Toggle &Full Screen", "command": "window:toggle-full-screen" }
+      { "label": "Toggle &Full Screen", "command": "window:toggle-full-screen" },
+      { "type": "separator" },
+      {
+        "label": "&Theme",
+        "submenu": [
+          { "label" : "Dark Theme", "type": "radio", "command": "application:view-theme-dark" },
+          { "label" : "Light Theme", "type": "radio", "command": "application:view-theme-light" }
+        ]
+      }
     ]
   },
 
@@ -85,6 +93,17 @@
         "label": "Format",
         "accelerator": "CmdOrCtrl+F",
         "command": "application:prompt-format"
+      },
+      {
+        "type": "separator"
+      },
+      {
+        "label": "Mode",
+        "submenu": [
+          { "label" : "Magic", "type": "radio", "command": "application:prompt-mode-magic" },
+          { "label" : "Sloppy", "type": "radio", "command": "application:prompt-mode-sloppy" },
+          { "label" : "Strict", "type": "radio", "command": "application:prompt-mode-strict" }
+        ]
       }
     ]
   },

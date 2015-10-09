@@ -13,12 +13,22 @@ import Config from '../package.json';
 export default class MancyApplication extends EventEmitter {
   constructor() {
     super();
-    
+
     ipc.on('application:sync-preference', (sender, preferences)  => {
       let {mode, theme} = preferences;
-      let mainMenu = Menu.getApplicationMenu().items[0];
+      let menu = Menu.getApplicationMenu();
+      let mainMenu = menu.items[0];
       let preferenceMenu = _.find(mainMenu.submenu.items, (item) => item.label === 'Preferences');
       let [modeMenu, themeMenu] = preferenceMenu.submenu.items;
+
+      _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
+      _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
+
+      // sync views, prompts
+      let viewMenu = menu.items[process.platform === 'darwin' ? 3 : 2];
+      themeMenu = _.find(viewMenu.submenu.items, (item) => item.label === 'Theme');
+      let promptMenu = menu.items[process.platform === 'darwin' ? 4 : 3];
+      modeMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Mode');
 
       _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
       _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
@@ -29,27 +39,33 @@ export default class MancyApplication extends EventEmitter {
     app.emit('ready');
   }
 
-  preferences(item, focusedWindow) {
+  forward(item, focusedWindow) {
+    if(!focusedWindow) { return; }
     focusedWindow.webContents.send(item.command);
   }
 
   promptClearAll(item, focusedWindow) {
+    if(!focusedWindow) { return; }
     focusedWindow.webContents.send('application:prompt-clear-all');
   }
 
   promptCollapseAll(item, focusedWindow) {
+    if(!focusedWindow) { return; }
     focusedWindow.webContents.send('application:prompt-collapse-all');
   }
 
   promptExpandAll(item, focusedWindow) {
+    if(!focusedWindow) { return; }
     focusedWindow.webContents.send('application:prompt-expand-all');
   }
 
   promptBreak(item, focusedWindow) {
+    if(!focusedWindow) { return; }
     focusedWindow.webContents.send('application:prompt-break');
   }
 
   promptFormat(item, focusedWindow) {
+    if(!focusedWindow) { return; }
     focusedWindow.webContents.send('application:prompt-format');
   }
 
@@ -102,6 +118,7 @@ export default class MancyApplication extends EventEmitter {
   }
 
   windowReload(item, focus) {
+    if(!focus) { return; }
     focus.reload();
   }
 

@@ -68,12 +68,19 @@ export default class Repl extends React.Component {
     ipc.on('application:prompt-break', this.onBreakPrompt);
     ipc.on('application:prompt-format', this.onFormatPromptCode);
 
+    ipc.on('application:prompt-mode-magic', () => ReplStore.setReplMode('REPL_MODE_MAGIC'));
+    ipc.on('application:prompt-mode-sloppy', () => ReplStore.setReplMode('REPL_MODE_SLOPPY'));
+    ipc.on('application:prompt-mode-strict', () => ReplStore.setReplMode('REPL_MODE_STRICT'));
+
     ipc.on('application:preference-mode-magic', () => this.updatePreferences({mode: 'Magic'}));
     ipc.on('application:preference-mode-sloppy', () => this.updatePreferences({mode: 'Sloppy'}));
     ipc.on('application:preference-mode-strict', () => this.updatePreferences({mode: 'Strict'}));
 
     ipc.on('application:preference-theme-dark', () => this.updatePreferences({theme: 'Dark Theme'}));
     ipc.on('application:preference-theme-light', () => this.updatePreferences({theme: 'Light Theme'}));
+
+    ipc.on('application:view-theme-dark', () => document.body.className = 'dark-theme');
+    ipc.on('application:view-theme-light', () => document.body.className = 'light-theme');
   }
 
   setupContextMenu() {
