@@ -10,7 +10,7 @@
       { "label": "Import from File…", "command": "application:import-file" },
       { "type": "separator" },
       {
-        "label": "Preferences",
+        "label": "Preferences…",
         "submenu": [
           {
             "label": "Mode",
@@ -124,7 +124,7 @@
       { "type": "separator" },
       { "label": "Learn &More", "command": "application:open-documentation" },
       { "type": "separator" },
-      { "label": "Report Issue", "command": "application:report-issue" },
+      { "label": "Report Issue…", "command": "application:report-issue" },
       { "type": "separator" },
       { "label": "About Mancy", "command": "application:about" },
       { "type": "separator" }

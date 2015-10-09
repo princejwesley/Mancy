@@ -4,7 +4,7 @@
     "submenu": [
       { "label": "About Mancy", "command": "application:about" },
       {
-        "label": "Preferences",
+        "label": "Preferences…",
         "submenu": [
           {
             "label": "Mode",
@@ -130,6 +130,7 @@
     "submenu": [
       { "label": "Minimize", "accelerator": "CmdOrCtrl+M", "role": "minimize" },
       { "label": "Maximize", "role": "maximize" },
+      { "label": "Zoom", "selector": "performZoom:" },
       { "label": "Close", "accelerator": "CmdOrCtrl+W", "role": "close" },
       { "type": "separator" },
       { "label": "Bring All to Front", "selector": "arrangeInFront:" }
@@ -142,7 +143,7 @@
     "submenu": [
       { "label": "Learn More", "command": "application:open-documentation" },
       { "type": "separator" },
-      { "label": "Report Issue", "command": "application:report-issue" }
+      { "label": "Report Issue…", "command": "application:report-issue" }
     ]
   }
 ]
