@@ -1,13 +1,13 @@
-@import 'default-theme';
+@import 'themes';
 
-@mixin suggestions() {
+@mixin suggestions($theme) {
   .repl-prompt-suggestion-wrapper {
     position: absolute;
-    background-color: $app-suggestion-background-color;
+    background-color: if($theme == $dark-theme, $dark-app-suggestion-background-color, $lt-app-suggestion-background-color);
 
     .repl-prompt-suggestion-list {
       [data-selected='true'] {
-        background-color: lighten($app-background-color, 10%);
+        background-color: lighten(if($theme == $dark-theme, $dark-app-background-color, $lt-app-background-color), 10%);
       }
       margin: 0;
       // dont change this
@@ -16,7 +16,7 @@
       // dont change this
       max-width: 300px;
       overflow: auto;
-      border: 2px solid $app-suggestion-border-color;
+      border: 2px solid if($theme == $dark-theme, $dark-app-suggestion-border-color, $lt-app-suggestion-border-color);
       border-radius: 5px;
       padding: 2px 0;
 
@@ -27,7 +27,7 @@
         max-height: calc(#{$app-font-size} + 8px);
         overflow: auto;
         padding: 4px 2px;
-        border-bottom: 1px solid $app-suggestion-entry-border-color;
+        border-bottom: 1px solid if($theme == $dark-theme, $dark-app-suggestion-entry-border-color, $lt-app-suggestion-entry-border-color);
         cursor: pointer;
 
         .repl-prompt-suggestion-type {
@@ -37,9 +37,9 @@
           width: $app-font-size;
           height: $app-font-size;
           text-align: center;
-          color: $app-suggestion-type-color;
-          font-family: $app-suggestion-type-font-family;
-          background-color: $app-suggestion-type-background-color;
+          color: if($theme == $dark-theme, $dark-app-suggestion-type-color, $lt-app-suggestion-type-color);
+          font-family: if($theme == $dark-theme, $dark-app-suggestion-type-font-family, $lt-app-suggestion-type-font-family);
+          background-color: if($theme == $dark-theme, $dark-app-suggestion-type-background-color, $lt-app-suggestion-type-background-color);
         }
 
         .repl-prompt-suggestion-text {
@@ -47,11 +47,11 @@
           flex: 1;
 
           .repl-prompt-suggestion-highlight {
-            color: $app-suggestion-type-hightlight-color;
+            color: if($theme == $dark-theme, $dark-app-suggestion-type-hightlight-color, $lt-app-suggestion-type-hightlight-color);
           }
 
           .repl-prompt-suggestion-expect {
-            color: $app-suggestion-type-expect-color;
+            color: if($theme == $dark-theme, $dark-app-suggestion-type-expect-color, $lt-app-suggestion-type-expect-color);
           }
         }
 

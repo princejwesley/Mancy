@@ -1,10 +1,10 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 @import 'highlight';
 @import 'repl-output-array';
 @import 'repl-output-object';
 
-@mixin replConsoleMessage() {
+@mixin replConsoleMessage($theme) {
   .repl-console-message {
     flex: 1;
     word-wrap: break-word;
@@ -20,7 +20,7 @@
       font-family: monospace;
       display: flex;
       padding: 5px 2px;
-      border-bottom: 1px solid $app-console-message-filter-border-color;
+      border-bottom: 1px solid if($theme == $dark-theme, $dark-app-console-message-filter-border-color, $lt-app-console-message-filter-border-color);
       .label {
       }
       .message-filter.clear {
@@ -32,22 +32,22 @@
 
     .repl-console-message-entry {
       padding: 5px;
-      border-bottom: 1px solid $app-console-message-entry-border-color;
+      border-bottom: 1px solid if($theme == $dark-theme, $dark-app-console-message-entry-border-color, $lt-app-console-message-entry-border-color);
 
       .fa {
         padding: 0px 4px 0px 2px;
       }
 
       .repl-console-message-info {
-        color: $app-console-message-entry-info-color;
+        color: if($theme == $dark-theme, $dark-app-console-message-entry-info-color, $lt-app-console-message-entry-info-color);
       }
 
       .repl-console-message-warning {
-        color: $app-console-message-entry-warn-color;
+        color: if($theme == $dark-theme, $dark-app-console-message-entry-warn-color, $lt-app-console-message-entry-warn-color);
       }
 
       .repl-console-message-error {
-        color: $app-console-message-entry-error-color;
+        color: if($theme == $dark-theme, $dark-app-console-message-entry-error-color, $lt-app-console-message-entry-error-color);
       }
 
       .repl-console-message-entry-content.log > * {
@@ -57,8 +57,8 @@
       .repl-console-message-entry-content {
         @include highlight();
         @include stackTraceHighlight();
-        @include replOutputArrayFold();
-        @include replOutputObjectFold();
+        @include replOutputArrayFold($theme);
+        @include replOutputObjectFold($theme);
       }
     }
 
@@ -67,7 +67,7 @@
     }
 
     .repl-console-message-entry.warn {
-      background-color: lighten($app-console-message-entry-warn-color, 30%);
+      background-color: lighten(if($theme == $dark-theme, $dark-app-console-message-entry-warn-color, $lt-app-console-message-entry-warn-color), 30%);
     }
 
     .repl-console-message-entry.info {

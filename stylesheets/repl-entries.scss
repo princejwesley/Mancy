@@ -1,9 +1,9 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 @import 'repl-entry-status';
 @import 'repl-entry-message';
 
-@mixin replEntries() {
+@mixin replEntries($theme) {
   .repl-entries {
     .repl-entry {
       display: flex;
@@ -16,13 +16,13 @@
       }
 
       .repl-entry-icon {
-        color: $app-entry-icon-color;
+        color: if($theme == $dark-theme, $dark-app-entry-icon-color, $lt-app-entry-icon-color);
         @include arrowIcon();
         cursor: pointer;
       }
 
-      @include replEntryStatus();
-      @include replEntryMessage();
+      @include replEntryStatus($theme);
+      @include replEntryMessage($theme);
     }
   }
 }

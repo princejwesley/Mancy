@@ -1,0 +1,51 @@
+// light theme
+$lt-app-background-color: whitesmoke;
+$lt-app-prompt-background-color: darken($lt-app-background-color, 5%);
+$lt-app-color: #E2A1A1;
+
+$lt-app-suggestion-background-color: $lt-app-background-color;
+$lt-app-suggestion-border-color: silver;
+$lt-app-suggestion-entry-border-color: #C2BFBF;
+$lt-app-suggestion-type-background-color: transparent;
+$lt-app-suggestion-type-color: #FF0044;
+$lt-app-suggestion-type-font-family: monospace;
+$lt-app-suggestion-type-expect-color: $lt-app-color;
+$lt-app-suggestion-type-hightlight-color: #7DC5EA;
+
+$lt-app-prompt-active-icon-color: silver;
+
+
+$lt-app-entry-icon-color: rgb(255, 0, 87);
+$lt-app-entry-icon-copy-color: powderblue;
+$lt-app-entry-status-redo-color: silver;
+$lt-app-entry-status-plus-color: rgb(78, 184, 78);
+$lt-app-entry-status-remove-color: tomato;
+$lt-app-entry-status-error-color: rgb(240, 92, 92);
+$lt-app-entry-status-minus-color: rgb(252, 181, 50);
+
+$lt-app-status-bar-background-color: darken(whitesmoke, 10%);
+$lt-app-status-bar-command-color: rgb(73, 197, 73);
+$lt-app-status-bar-error-color: rgb(208, 95, 75);
+$lt-app-status-bar-message-color: rgb(173, 170, 170);
+$lt-app-status-bar-mode-color: #CCCC4C;
+$lt-app-status-bar-console-color: deepskyblue;
+$lt-app-status-bar-console-notification-color: #E20B43;
+
+$lt-app-water-mark-color: rgba(192, 192, 192, 0.54);
+$lt-app-entry-ellipsis-color: rgb(58, 176, 162);
+
+$lt-app-console-resize-handle-color: rgb(68, 66, 67);
+$lt-app-console-background-color: whitesmoke;
+$lt-app-console-color: rgb(75, 76, 78);
+$lt-app-console-drag-lines-color: #D2CFD0;
+
+$lt-app-console-message-filter-border-color:#B3B1B1;
+$lt-app-console-message-entry-border-color: #E0DDDD;
+$lt-app-console-message-entry-info-color: #216FEC;
+$lt-app-console-message-entry-warn-color: #E4BF29;
+$lt-app-console-message-entry-error-color: #F54A4A;
+
+$lt-app-entry-message-output-expand-collapse-color: #C5C1C3;
+
+$lt-app-entry-message-output-arr-idx-color: #EF7C90;
+$lt-app-entry-message-output-arr-fold-color: deepskyblue;

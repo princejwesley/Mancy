@@ -1,11 +1,11 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 @import 'repl-prompt';
 @import 'repl-entries';
 @import 'highlight';
 
 
-@mixin containerLeft() {
+@mixin containerLeft($theme) {
   .repl-container-left {
     flex: 1;
     display: flex;
@@ -17,7 +17,7 @@
       height: 5px;
     }
 
-    @include replEntries();
-    @include replPrompt();
+    @include replEntries($theme);
+    @include replPrompt($theme);
   }
 }

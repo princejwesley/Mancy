@@ -1,4 +1,4 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 @import 'repl-container-left';
 @import 'repl-container-right';
@@ -9,12 +9,29 @@ html{
   height: 100%;
 }
 
+@mixin repl($theme) {
+  #node-repl-plus {
+    font-size: 0.9em;
+    margin: 5px 0px;
+    @include selectable();
+
+    .repl-container {
+      display: flex;
+      @include containerLeft($theme);
+      @include containerRight($theme);
+      @include statusBar($theme);
+    }
+  }
+
+  #node-repl-prompt-suggestions {
+    @include suggestions($theme);
+  }
+}
+
 body {
   min-height: 100%;
   max-height: 100%;
   margin: 0;
-  background-color: $app-background-color;
-  color: $app-color;
   font-size: $app-font-size;
   font-family: $app-font-family;
   @include notSelectable();
@@ -25,7 +42,6 @@ body {
     top: 30vh;
     left: 40vw;
     font-size: 20vh;
-    color: $app-water-mark-color;
     font-family: 'Fenix', sans-serif;
   }
   &:after {
@@ -37,8 +53,26 @@ body {
     color: rgba(192, 192, 192, 0.14);
     font-family: 'Fenix', sans-serif;
   }
+  @include repl($dark-theme);
 }
 
+body.dark-theme {
+  background-color: $dark-app-background-color;
+  color: $dark-app-color;
+  &:before, &:after {
+    color: $dark-app-water-mark-color;
+  }
+  @include repl($dark-theme);
+}
+
+body.light-theme {
+  background-color: $lt-app-background-color;
+  color: $lt-app-color;
+  &:before, &:after {
+    color: $lt-app-water-mark-color;
+  }
+  @include repl($light-theme);
+}
 
 pre {
   @include editor();
@@ -50,21 +84,4 @@ pre {
 
 .hide {
   display: none !important;
-}
-
-#node-repl-plus {
-  font-size: 0.9em;
-  margin: 5px 0px;
-  @include selectable();
-
-  .repl-container {
-    display: flex;
-    @include containerLeft();
-    @include containerRight();
-    @include statusBar();
-  }
-}
-
-#node-repl-prompt-suggestions {
-  @include suggestions();
 }

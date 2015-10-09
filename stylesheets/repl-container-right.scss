@@ -1,8 +1,8 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 @import 'repl-console-message';
 
-@mixin containerRight() {
+@mixin containerRight($theme) {
   .repl-container-right {
     display: flex;
     max-width: 40vw;
@@ -19,8 +19,8 @@
     .repl-console {
       position: relative;
       top: 0;
-      background-color: $app-console-background-color;
-      color: $app-console-color;
+      background-color: if($theme == $dark-theme, $dark-app-console-background-color, $lt-app-console-background-color);
+      color: if($theme == $dark-theme, $dark-app-console-color, $lt-app-console-color);
       overflow: auto;
       flex: 1;
       display: flex;
@@ -32,7 +32,7 @@
         width: 8px;
         position: relative;
         @include fullHeight();
-        background-color: $app-console-resize-handle-color;
+        background-color: if($theme == $dark-theme, $dark-app-console-resize-handle-color, $lt-app-console-resize-handle-color);
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         cursor: ew-resize;
@@ -45,11 +45,11 @@
             content: 'ǁ';
             text-align: center;
             margin: 1px;
-            color: $app-console-drag-lines-color;
+            color: if($theme == $dark-theme, $dark-app-console-drag-lines-color, $lt-app-console-drag-lines-color);
           }
         }
       }
-      @include replConsoleMessage();
+      @include replConsoleMessage($theme);
     }
   }
 }

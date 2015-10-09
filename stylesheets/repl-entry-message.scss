@@ -1,10 +1,10 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 @import 'highlight';
 @import 'repl-output-array';
 @import 'repl-output-object';
 
-@mixin replEntryMessage() {
+@mixin replEntryMessage($theme) {
   .repl-entry-message {
     @include entryLayout();
 
@@ -16,7 +16,7 @@
     .ellipsis {
       &:after {
         content: '\2026';
-        color: $app-entry-ellipsis-color;
+        color: if($theme == $dark-theme, $dark-app-entry-ellipsis-color, $lt-app-entry-ellipsis-color);
       }
     }
 
@@ -29,7 +29,7 @@
       .fa-clone {
         @include notSelectable();
         position: absolute;
-        color: $app-entry-icon-copy-color;
+        color: if($theme == $dark-theme, $dark-app-entry-icon-copy-color, $lt-app-entry-icon-copy-color);
         font-size: 0.7em;
         position: relative;
         font-weight: 900;
@@ -47,12 +47,12 @@
         .fa {
           padding-right: 10px;
           padding-top: 4px;
-          color: $app-entry-message-output-expand-collapse-color;
+          color: if($theme == $dark-theme, $dark-app-entry-message-output-expand-collapse-color, $lt-app-entry-message-output-expand-collapse-color);
         }
       }
 
-      @include replOutputArrayFold();
-      @include replOutputObjectFold();
+      @include replOutputArrayFold($theme);
+      @include replOutputObjectFold($theme);
       .repl-entry-output-error {
         @include stackTraceHighlight();
       }

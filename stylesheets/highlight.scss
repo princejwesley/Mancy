@@ -1,4 +1,4 @@
-@import 'default-theme';
+@import 'dark-theme';
 
 @mixin highlight() {
   .number {
@@ -30,7 +30,7 @@
   }
 
   .function {
-    color: lightskyblue;
+    color: #6ECAE8;
   }
 
   .title {

@@ -1,17 +1,17 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 
-@mixin replPrompt() {
+@mixin replPrompt($theme) {
   .repl-prompt {
     margin: 0;
     padding: 5px;
-    background-color: lighten($app-background-color, 5%);
+    background-color: if($theme == $dark-theme, $dark-app-prompt-background-color, $lt-app-prompt-background-color);
     display: flex;
     align-items: flex-start;
 
     .repl-active-icon {
       @include notSelectable();
-      color: $app-prompt-active-icon-color;
+      color: if($theme == $dark-theme, $dark-app-prompt-active-icon-color, $lt-app-prompt-active-icon-color);
       @include arrowIcon();
     }
 

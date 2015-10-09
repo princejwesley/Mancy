@@ -1,7 +1,7 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 
-@mixin replEntryStatus() {
+@mixin replEntryStatus($theme) {
   .repl-entry-status {
     padding-right: 8px;
 
@@ -15,23 +15,23 @@
     }
 
     .repeat {
-      color: $app-entry-status-redo-color;
+      color: if($theme == $dark-theme, $dark-app-entry-status-redo-color, $lt-app-entry-status-redo-color);
     }
 
     .error {
-      color: $app-entry-status-error-color;
+      color: if($theme == $dark-theme, $dark-app-entry-status-error-color, $lt-app-entry-status-error-color);
     }
 
     .minus {
-      color: $app-entry-status-minus-color;
+      color: if($theme == $dark-theme, $dark-app-entry-status-minus-color, $lt-app-entry-status-minus-color);
     }
 
     .plus {
-      color: $app-entry-status-plus-color;
+      color: if($theme == $dark-theme, $dark-app-entry-status-plus-color, $lt-app-entry-status-plus-color);
     }
 
     .remove {
-      color: $app-entry-status-remove-color;
+      color: if($theme == $dark-theme, $dark-app-entry-status-remove-color, $lt-app-entry-status-remove-color);
     }
   }
 }

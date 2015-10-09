@@ -1,4 +1,5 @@
-@import 'default-theme';
+@import 'themes';
+
 @keyframes spin {
   0% {
     -webkit-transform: rotate(-30deg);
@@ -11,36 +12,36 @@
   }
 }
 
-@mixin statusBar() {
+@mixin statusBar($theme) {
   .repl-status-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     padding: 3px 10px;
-    background-color: $app-status-bar-background-color;
+    background-color: if($theme == $dark-theme, $dark-app-status-bar-background-color, $lt-app-status-bar-background-color );
     width: 100%;
     display: flex;
     align-items: center;
 
     .repl-status-bar-commands {
-      color: $app-status-bar-command-color;
+      color: if($theme == $dark-theme, $dark-app-status-bar-command-color, $lt-app-status-bar-command-color);
       padding: 0 5px;
     }
 
     .repl-status-bar-errors {
-      color: $app-status-bar-error-color;
+      color: if($theme == $dark-theme, $dark-app-status-bar-error-color, $lt-app-status-bar-error-color);
       padding: 0 5px;
     }
 
     .repl-status-bar-count,
     .repl-status-bar-message {
-      color: $app-status-bar-message-color;
+      color: if($theme == $dark-theme, $dark-app-status-bar-message-color, $lt-app-status-bar-message-color);
       padding: 0 5px;
     }
 
     .console-notification {
       font-size: 0.8em;
-      color: $app-status-bar-console-notification-color;
+      color: if($theme == $dark-theme, $dark-app-status-bar-console-notification-color, $lt-app-status-bar-console-notification-color);
       -webkit-animation:spin 0.5s linear infinite;
       animation:spin 0.5s linear infinite;
       -webkit-animation-direction: alternate;
@@ -48,7 +49,7 @@
     }
 
     .repl-status-bar-console {
-      color: $app-status-bar-console-color;
+      color: if($theme == $dark-theme, $dark-app-status-bar-console-color, $lt-app-status-bar-console-color);
       padding-right: 25px;
       cursor: pointer;
 
@@ -56,7 +57,7 @@
         font-size: 0.7em;
 
         .text-danger {
-          color: $app-entry-status-error-color;
+          color: if($theme == $dark-theme, $dark-app-entry-status-error-color, $lt-app-entry-status-error-color);
         }
 
         .fa-terminal {
@@ -66,7 +67,7 @@
     }
 
     .repl-status-bar-mode {
-      color: $app-status-bar-mode-color;
+      color: if($theme == $dark-theme, $dark-app-status-bar-mode-color, $lt-app-status-bar-mode-color);
       padding: 0 5px;
 
       .fa {

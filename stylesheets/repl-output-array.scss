@@ -1,13 +1,13 @@
-@import 'default-theme';
+@import 'themes';
 @import 'repl-common';
 @import 'highlight';
 
-@mixin replOutputArrayFold() {
+@mixin replOutputArrayFold($theme) {
   .repl-entry-message-output-array-folds {
     .repl-entry-message-output-array {
       .fa-play {
         font-size: 0.8em;
-        color: $app-entry-message-output-arr-fold-color;
+        color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
       }
 
       .array-desc {
@@ -23,7 +23,7 @@
           padding-left: 10px;
 
           .array-idx {
-            color: $app-entry-message-output-arr-idx-color;
+            color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-idx-color, $lt-app-entry-message-output-arr-idx-color);
           }
         }
       }
