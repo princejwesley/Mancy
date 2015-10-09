@@ -16,6 +16,27 @@ export default class MancyApplication extends EventEmitter {
     app.emit('ready');
   }
 
+  promptClearAll(item, focusedWindow) {
+    focusedWindow.webContents.send('application:prompt-clear-all');
+  }
+
+  promptCollapseAll(item, focusedWindow) {
+    focusedWindow.webContents.send('application:prompt-collapse-all');
+  }
+
+  promptExpandAll(item, focusedWindow) {
+    focusedWindow.webContents.send('application:prompt-expand-all');
+  }
+
+  promptBreak(item, focusedWindow) {
+    focusedWindow.webContents.send('application:prompt-break');
+  }
+
+  promptFormat(item, focusedWindow) {
+    focusedWindow.webContents.send('application:prompt-format');    
+  }
+
+
   addPath(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let path = dialog.showOpenDialog(focusedWindow, {

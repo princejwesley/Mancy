@@ -60,6 +60,11 @@ export default class Repl extends React.Component {
     ipc.on('application:import', this.onImport);
     ipc.on('application:export', this.onExport);
     ipc.on('application:add-path', this.onAddPath);
+    ipc.on('application:prompt-clear-all', this.onClearCommands);
+    ipc.on('application:prompt-expand-all', this.onExpandAll);
+    ipc.on('application:prompt-collapse-all', this.onCollapseAll);
+    ipc.on('application:prompt-break', this.onBreakPrompt);
+    ipc.on('application:prompt-format', this.onFormatPromptCode);
   }
 
   setupContextMenu() {
@@ -200,39 +205,6 @@ export default class Repl extends React.Component {
       ReplDOM.scrollToEnd();
       return;
     }
-
-    let { ctrlKey, shiftKey, metaKey, altKey, which } = e;
-
-    // ctrl + d
-    let D = "D".codePointAt(0);
-    if( ctrlKey && !shiftKey && !metaKey && !altKey && which === D) {
-      return this.onBreakPrompt();
-    }
-
-    // cmd + k or ctrl + k
-    let K = "K".codePointAt(0);
-    if(!shiftKey && !altKey && which === K && (ctrlKey ^ metaKey)) {
-      return this.onClearCommands();
-    }
-
-    // cmd + e or ctrl + e
-    let E = "E".codePointAt(0);
-    if(!shiftKey && !altKey && which === E && (ctrlKey ^ metaKey)) {
-      return this.onExpandAll();
-    }
-
-    // cmd + l or ctrl + l
-    let L = "L".codePointAt(0);
-    if(!shiftKey && !altKey && which === L && (ctrlKey ^ metaKey)) {
-      return this.onCollapseAll();
-    }
-
-    // cmd + F or ctrl + F
-    let F = "F".codePointAt(0);
-    if(!shiftKey && !altKey && which === F && (ctrlKey ^ metaKey)) {
-      return this.onFormatPromptCode();
-    }
-
   }
 
   onFormatPromptCode() {

@@ -36,6 +36,40 @@
   },
 
   {
+    "label": "&Prompt",
+    "submenu": [
+      {
+        "label": "Clear All",
+        "accelerator": "CmdOrCtrl+K",
+        "command": "application:prompt-clear-all"
+      },
+      {
+        "label": "Collapse All",
+        "accelerator": "CmdOrCtrl+L",
+        "command": "application:prompt-collapse-all"
+      },
+      {
+        "label": "Expand All",
+        "accelerator": "CmdOrCtrl+E",
+        "command": "application:prompt-expand-all"
+      },
+      {
+        "type": "separator"
+      },
+      {
+        "label": "Break Prompt",
+        "accelerator": "Ctrl+D",
+        "command": "application:prompt-break"
+      },
+      {
+        "label": "Format",
+        "accelerator": "CmdOrCtrl+F",
+        "command": "application:prompt-format"
+      }
+    ]
+  },
+
+  {
     "label": "&Window",
     "submenu": [
       { "label": "&Minimize", "command": "application:minimize" },

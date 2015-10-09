@@ -46,7 +46,12 @@ export class MenuManager extends EventEmitter {
       'application:open-license': app.showLicense,
       'application:open-documentation': app.openDocumentation,
       'application:report-issue': app.reportIssue,
-      'application:about': app.aboutMancy
+      'application:about': app.aboutMancy,
+      'application:prompt-clear-all': app.promptClearAll,
+      'application:prompt-collapse-all': app.promptCollapseAll,
+      'application:prompt-expand-all': app.promptExpandAll,
+      'application:prompt-break': app.promptBreak,
+      'application:prompt-format': app.promptFormat,
     };
   }
 
