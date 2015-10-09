@@ -52,6 +52,11 @@ export class MenuManager extends EventEmitter {
       'application:prompt-expand-all': app.promptExpandAll,
       'application:prompt-break': app.promptBreak,
       'application:prompt-format': app.promptFormat,
+      'application:preference-mode-magic': app.preferences,
+      'application:preference-mode-sloppy': app.preferences,
+      'application:preference-mode-strict': app.preferences,
+      'application:preference-theme-dark': app.preferences,
+      'application:preference-theme-light': app.preferences,
     };
   }
 

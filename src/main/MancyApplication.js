@@ -2,6 +2,9 @@ import app from 'app';
 import BrowserWindow from 'browser-window';
 import {readFileSync} from 'fs';
 import dialog from 'dialog';
+import ipc from 'ipc';
+import _ from 'lodash';
+import Menu from 'menu';
 import shell from 'shell';
 import MenuManager from './MenuManager';
 import EventEmitter from 'events';
@@ -10,10 +13,24 @@ import Config from '../package.json';
 export default class MancyApplication extends EventEmitter {
   constructor() {
     super();
+    
+    ipc.on('application:sync-preference', (sender, preferences)  => {
+      let {mode, theme} = preferences;
+      let mainMenu = Menu.getApplicationMenu().items[0];
+      let preferenceMenu = _.find(mainMenu.submenu.items, (item) => item.label === 'Preferences');
+      let [modeMenu, themeMenu] = preferenceMenu.submenu.items;
+
+      _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
+      _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
+    });
   }
 
   openNewWindow() {
     app.emit('ready');
+  }
+
+  preferences(item, focusedWindow) {
+    focusedWindow.webContents.send(item.command);
   }
 
   promptClearAll(item, focusedWindow) {
@@ -33,7 +50,7 @@ export default class MancyApplication extends EventEmitter {
   }
 
   promptFormat(item, focusedWindow) {
-    focusedWindow.webContents.send('application:prompt-format');    
+    focusedWindow.webContents.send('application:prompt-format');
   }
 
 
@@ -139,6 +156,5 @@ export default class MancyApplication extends EventEmitter {
     };
 
     dialog.showMessageBox(focusedWindow, options);
-
   }
 }

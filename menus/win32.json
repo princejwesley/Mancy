@@ -9,7 +9,27 @@
       { "label": "Export to File…", "command": "application:export-file" },
       { "label": "Import from File…", "command": "application:import-file" },
       { "type": "separator" },
-      { "label": "E&xit", "command": "window:close" }
+      {
+        "label": "Preferences",
+        "submenu": [
+          {
+            "label": "Mode",
+            "submenu": [
+              { "label" : "Magic", "type": "radio", "command": "application:preference-mode-magic" },
+              { "label" : "Sloppy", "type": "radio", "command": "application:preference-mode-sloppy" },
+              { "label" : "Strict", "type": "radio", "command": "application:preference-mode-strict" }
+            ]
+          },
+          {
+            "label": "Theme",
+            "submenu": [
+              { "label" : "Dark Theme", "type": "radio", "command": "application:preference-theme-dark" },
+              { "label" : "Light Theme", "type": "radio", "command": "application:preference-theme-light" }
+            ]
+          }
+        ]
+      },
+      { "type": "separator" },      { "label": "E&xit", "command": "window:close" }
     ]
   },
 

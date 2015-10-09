@@ -25,6 +25,7 @@ import ReplCommon from '../common/ReplCommon';
 export default class Repl extends React.Component {
   constructor(props) {
     super(props);
+    this.loadPreferences();
     this.state = _.cloneDeep(ReplStore.getStore());
 
     _.each([
@@ -32,7 +33,7 @@ export default class Repl extends React.Component {
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
-      'onImport', 'onExport', 'onAddPath'
+      'onImport', 'onExport', 'onAddPath', 'updatePreferences', 'loadPreferences'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -60,11 +61,19 @@ export default class Repl extends React.Component {
     ipc.on('application:import', this.onImport);
     ipc.on('application:export', this.onExport);
     ipc.on('application:add-path', this.onAddPath);
+
     ipc.on('application:prompt-clear-all', this.onClearCommands);
     ipc.on('application:prompt-expand-all', this.onExpandAll);
     ipc.on('application:prompt-collapse-all', this.onCollapseAll);
     ipc.on('application:prompt-break', this.onBreakPrompt);
     ipc.on('application:prompt-format', this.onFormatPromptCode);
+
+    ipc.on('application:preference-mode-magic', () => this.updatePreferences({mode: 'Magic'}));
+    ipc.on('application:preference-mode-sloppy', () => this.updatePreferences({mode: 'Sloppy'}));
+    ipc.on('application:preference-mode-strict', () => this.updatePreferences({mode: 'Strict'}));
+
+    ipc.on('application:preference-theme-dark', () => this.updatePreferences({theme: 'Dark Theme'}));
+    ipc.on('application:preference-theme-light', () => this.updatePreferences({theme: 'Light Theme'}));
   }
 
   setupContextMenu() {
@@ -95,27 +104,7 @@ export default class Repl extends React.Component {
         label: 'Format',
         accelerator: 'CmdOrCtrl+F',
         click: this.onFormatPromptCode
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Mode',
-        submenu: [{
-          label: 'Sloppy',
-          type: 'radio',
-          click: () => { ReplStore.setReplMode('REPL_MODE_SLOPPY'); }
-        },{
-          label: 'Magic',
-          type: 'radio',
-          checked: true,
-          click: () => { ReplStore.setReplMode('REPL_MODE_MAGIC'); }
-        },{
-          label: 'Strict',
-          type: 'radio',
-          click: () => { ReplStore.setReplMode('REPL_MODE_STRICT'); }
-        }]
-      },
+      }
     ];
 
     _.each(actionTemplates, (template) => contextMenu.push(template));
@@ -135,6 +124,25 @@ export default class Repl extends React.Component {
 
     ReplConsoleHook.removeListener('console', this.onConsole);
     ReplConsoleHook.disable();
+  }
+
+  updatePreferences({mode, theme}) {
+    let preferences = JSON.parse(localStorage.getItem('preferences') || "{}");
+    if(mode) {
+      ReplStore.setReplMode(`REPL_MODE_${mode.toUpperCase()}`);
+      preferences = _.extend(preferences, {"mode": mode});
+    }
+    if(theme) {
+      document.body.className = theme.toLowerCase().replace(/\s+/, '-');
+      preferences = _.extend(preferences, {"theme": theme});
+    }
+    localStorage.setItem('preferences', JSON.stringify(preferences));
+  }
+
+  loadPreferences() {
+    let preferences = JSON.parse(localStorage.getItem('preferences') || JSON.stringify({ "mode": "Magic", "theme": "Dark Theme" }));
+    this.updatePreferences(preferences);
+    ipc.send('application:sync-preference', preferences);
   }
 
   onImport(filename) {

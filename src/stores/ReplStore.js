@@ -85,7 +85,7 @@ const ReplStore = Reflux.createStore({
     this.trigger();
   },
   setReplMode(type) {
-    cache.reloadPrompt = false;
+    cache.reloadPrompt = true;
     cache.mode = type;
     this.trigger();
   },
