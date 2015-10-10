@@ -25,7 +25,9 @@ app.on('browser-window-blur', function(event, window) {
 app.on('browser-window-focus', function(event, window) {
   window.$focus = true;
   dockNotificationCache[window.id] = 0;
-  app.dock.setBadge('');
+  if (process.platform === 'darwin') {
+    app.dock.setBadge('');
+  }
 });
 
 app.on('ready', onReady);
@@ -37,8 +39,10 @@ ipc.on('application:message-box', function(event, options) {
 
 ipc.on('application:dock-message-notification', function(event, id) {
   dockNotificationCache[id] = dockNotificationCache[id] + 1;
-  app.dock.setBadge(`${dockNotificationCache[id]}`);
-  app.dock.bounce();
+  if (process.platform === 'darwin') {
+    app.dock.setBadge(`${dockNotificationCache[id]}`);
+    app.dock.bounce();
+  }
 });
 
 function onReady() {
