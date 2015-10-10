@@ -75,8 +75,8 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onStoreChange() {
-    let {now, activeSuggestion, breakPrompt, format, playCommand, cmdHistory} 
-          = ReplActiveInputStore.getStore();
+    let { now, activeSuggestion, breakPrompt,
+          format, stagedCommands } = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
     if(format) {
       const text = this.element.innerText;
@@ -92,21 +92,14 @@ export default class ReplActiveInput extends React.Component {
       cli.input.emit('data', EOL);
       this.reloadPrompt('', 0);
     }
+    else if(stagedCommands.length) {
+      let cli = ReplActiveInput.getRepl();
+      this.waitingForOutput = true;
+      cli.input.emit('data', stagedCommands[0]);
+      cli.input.emit('data', EOL);
+    }
     else if(now && activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
-    } 
-    else if(playCommand) {
-      let cli = ReplActiveInput.getRepl();
-      this.reloadPrompt(cmdHistory, cmdHistory.length);
-      this.waitingForOutput = true;
-
-      //debugger;
-      setTimeout(() => {
-        cli.input.emit('data', cmdHistory);
-        cli.input.emit('data', EOL);
-      }, 1000);
-     
-
     }
   }
 
@@ -114,8 +107,8 @@ export default class ReplActiveInput extends React.Component {
     if(this.commandReady) {
       let cli = ReplActiveInput.getRepl();
       let output = this.commandOutput.join('');
-
-      const text = ReplCommon.trimRight(this.element.innerText);
+      let {stagedCommands} = ReplActiveInputStore.getStore();
+      const text = stagedCommands.length ? stagedCommands[0] : ReplCommon.trimRight(this.element.innerText);
       let {formattedOutput, error} = cli.$lastExpression.highlight(output);
 
       ReplActions.addEntry({
@@ -128,6 +121,10 @@ export default class ReplActiveInput extends React.Component {
       this.removeSuggestion();
       this.commandOutput = [];
       this.commandReady = false;
+
+      if(stagedCommands.length) {
+        ReplActiveInputStore.tailStagedCommands();
+      }
     }
   }
 

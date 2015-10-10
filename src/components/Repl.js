@@ -168,14 +168,11 @@ export default class Repl extends React.Component {
     readFile(filename, (err, data) => {
       if(!err) {
         try {
-          let _history = JSON.parse(data);
-          if(!Array.isArray(_history) || !_.every(_history, (h) => typeof h['plainCode'] === 'string')) {
+          let history = JSON.parse(data);
+          if(!Array.isArray(history) || !_.every(history, (h) => typeof h === 'string')) {
             throw Error(`Invalid import file ${filename}`);
           }
-
-          _.each(_history, (cmdHistory, idx) => {
-            ReplActiveInputActions.playCommands(_history[0]['plainCode']);
-          });
+          ReplActiveInputActions.playCommands(history);
           return;
         } catch(e) {
           err = e;
@@ -193,7 +190,7 @@ export default class Repl extends React.Component {
 
   onExport(filename) {
     let {history} = ReplStore.getStore();
-    let data = JSON.stringify(history);
+    let data = JSON.stringify(_.map(history, (h) => h.plainCode));
     writeFile(filename, data, { encoding: ReplConstants.REPL_ENCODING }, (err) => {
       let options = { buttons: ['Close'] };
       if(err) {
