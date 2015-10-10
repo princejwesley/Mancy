@@ -121,14 +121,10 @@
   {
     "label": "Help",
     "submenu": [
-      { "label": "View License", "command": "application:open-license" },
-      { "type": "separator" },
-      { "label": "Learn More", "command": "application:open-documentation" },
-      { "type": "separator" },
-      { "label": "Report Issue…", "command": "application:report-issue" },
-      { "type": "separator" },
       { "label": "About Mancy", "command": "application:about" },
-      { "type": "separator" }
+      { "label": "View License", "command": "application:open-license" },
+      { "label": "Repository", "command": "application:open-documentation" },
+      { "label": "Report Issue…", "command": "application:report-issue" }
     ]
   }
 ]

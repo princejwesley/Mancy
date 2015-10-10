@@ -141,8 +141,7 @@
     "label": "Help",
     "role": "help",
     "submenu": [
-      { "label": "Learn More", "command": "application:open-documentation" },
-      { "type": "separator" },
+      { "label": "Repository", "command": "application:open-documentation" },
       { "label": "Report Issue…", "command": "application:report-issue" }
     ]
   }
