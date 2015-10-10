@@ -38,8 +38,7 @@
     "babel-jest": "^5.3.0",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "^0.33.6",
-    "github": "^0.2.4",
+    "electron-prebuilt": "^0.33.7",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-cached": "^1.1.0",
@@ -67,7 +66,7 @@
     "md5": "^2.0.0",
     "react": "^0.13.3",
     "reflux": "^0.2.12",
-    "request": "^2.64.0"
+    "github": "^0.2.4"
   },
   "repository": {
     "type": "git",

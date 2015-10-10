@@ -9,7 +9,7 @@ import shell from 'shell';
 import MenuManager from './MenuManager';
 import EventEmitter from 'events';
 import Config from '../package.json';
-import request from 'request';
+import GitHubApi from 'github';
 
 export default class MancyApplication extends EventEmitter {
   constructor() {
@@ -197,16 +197,16 @@ export default class MancyApplication extends EventEmitter {
   }
 
   checkNewRelease() {
-    let options = {
-      headers: {
-        'User-Agent': 'MancyApp'
-      },
-      url: 'https://api.github.com/repos/princejwesley/Mancy/releases/latest'
-    };
-
-    request(options, (error, response, body) => {
-      if (!error && response.statusCode == 200) {
-        let {tag_name, assets} = JSON.parse(response.body);
+    try {
+      let api = new GitHubApi({
+        version: "3.0.0"
+      });
+      api.releases.listReleases({
+        owner: 'princejwesley',
+        repo: 'Mancy'
+      }, (err, data) => {
+        if(err) { return; }
+        let {tag_name, assets} = data[0];
         let assetName = `Mancy-${process.platform}-${process.arch}.zip`;
         let asset = _.find(assets, (asset) => asset.name === assetName);
         if(asset) {
@@ -215,7 +215,7 @@ export default class MancyApplication extends EventEmitter {
             release: tag_name
           };
         }
-      }
-    });
+      });
+    } catch(e) {}
   }
 }
