@@ -274,7 +274,8 @@ gulp.task('packageAll', ['build'], (cb) => {
 gulp.task('run', (cb) => {
   (async () => {
     try {
-      await spawn('./node_modules/.bin/electron', [PATHS.APP]);
+      let suffix = process.platform === 'win32' ? '.cmd' : '';
+      await spawn(`./node_modules/.bin/electron${suffix}`, [PATHS.APP]);
       cb();
     } catch(err) {
       onError(err);
