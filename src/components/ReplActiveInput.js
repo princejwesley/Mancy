@@ -204,6 +204,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
+    if(e.ctrlKey || e.metaKey || e.altKey) { return; }
     if( ReplDOMEvents.isKeyup(e)
       || ReplDOMEvents.isKeydown(e)
     ) {
@@ -245,6 +246,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyDown(e) {
+    if(e.ctrlKey || e.metaKey || e.altKey) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
     if( ReplDOMEvents.isKeyup(e)
       || (ReplDOMEvents.isKeydown(e))
