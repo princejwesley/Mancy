@@ -2,6 +2,7 @@
 import app from 'app';
 import ipc from 'ipc';
 import Menu from 'menu';
+import dialog from 'dialog';
 import MenuItem from 'menu-item';
 import _ from 'lodash';
 import EventEmitter from 'events';
@@ -83,7 +84,14 @@ export class MenuManager extends EventEmitter {
   }
 
   unhandledMenuItem(menuItem) {
-    console.error('UnHandled Menu Item', menuItem);
+    let options = {
+      title: 'Unhandled Menu Item',
+      buttons: ['Close'],
+      type: 'error',
+      message: `${menuItem.label}`,
+    };
+
+    dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
     return noop;
   }
 

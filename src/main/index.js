@@ -1,3 +1,4 @@
+require('crash-reporter').start();
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var {MenuManager} = require('./MenuManager');

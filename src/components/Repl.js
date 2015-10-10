@@ -25,18 +25,20 @@ import ReplCommon from '../common/ReplCommon';
 export default class Repl extends React.Component {
   constructor(props) {
     super(props);
-    this.loadPreferences();
-    this.state = _.cloneDeep(ReplStore.getStore());
-
     _.each([
       'onStateChange', 'onPaste', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
-      'onImport', 'onExport', 'onAddPath', 'updatePreferences', 'loadPreferences'
+      'onImport', 'onExport', 'onAddPath', 'updatePreferences', 'loadPreferences',
+      'checkNewRelease', 'onNewRelease'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
+
+    this.loadPreferences();
+    this.checkNewRelease();
+    this.state = _.cloneDeep(ReplStore.getStore());
   }
 
   componentDidMount() {
@@ -81,6 +83,8 @@ export default class Repl extends React.Component {
 
     ipc.on('application:view-theme-dark', () => document.body.className = 'dark-theme');
     ipc.on('application:view-theme-light', () => document.body.className = 'light-theme');
+
+    ipc.on('application:new-release', this.onNewRelease);
   }
 
   setupContextMenu() {
@@ -146,10 +150,18 @@ export default class Repl extends React.Component {
     localStorage.setItem('preferences', JSON.stringify(preferences));
   }
 
+  checkNewRelease() {
+    ipc.send('application:check-new-release');
+  }
+
   loadPreferences() {
     let preferences = JSON.parse(localStorage.getItem('preferences') || JSON.stringify({ "mode": "Magic", "theme": "Dark Theme" }));
     this.updatePreferences(preferences);
     ipc.send('application:sync-preference', preferences);
+  }
+
+  onNewRelease(release) {
+    ReplStore.setNewRelease(release);
   }
 
   onImport(filename) {
@@ -351,6 +363,7 @@ export default class Repl extends React.Component {
           mode={this.state.mode}
           showConsole={this.state.showConsole}
           showBell={this.state.showBell}
+          newRelease={this.state.newRelease}
           onToggleConsole={this.onToggleConsole}/>
       </div>
     );

@@ -9,30 +9,13 @@ import shell from 'shell';
 import MenuManager from './MenuManager';
 import EventEmitter from 'events';
 import Config from '../package.json';
+import request from 'request';
 
 export default class MancyApplication extends EventEmitter {
   constructor() {
     super();
-
-    ipc.on('application:sync-preference', (sender, preferences)  => {
-      let {mode, theme} = preferences;
-      let menu = Menu.getApplicationMenu();
-      let mainMenu = menu.items[0];
-      let preferenceMenu = _.find(mainMenu.submenu.items, (item) => item.label === 'Preferences');
-      let [modeMenu, themeMenu] = preferenceMenu.submenu.items;
-
-      _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
-      _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
-
-      // sync views, prompts
-      let viewMenu = menu.items[process.platform === 'darwin' ? 3 : 2];
-      themeMenu = _.find(viewMenu.submenu.items, (item) => item.label === 'Theme');
-      let promptMenu = menu.items[process.platform === 'darwin' ? 4 : 3];
-      modeMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Mode');
-
-      _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
-      _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
-    });
+    this.checkNewRelease();
+    this.rendererEvents();
   }
 
   openNewWindow() {
@@ -173,5 +156,66 @@ export default class MancyApplication extends EventEmitter {
     };
 
     dialog.showMessageBox(focusedWindow, options);
+  }
+
+  rendererEvents() {
+    let listenToSyncPreference = () => {
+      ipc.on('application:sync-preference', (sender, preferences)  => {
+        let {mode, theme} = preferences;
+        let menu = Menu.getApplicationMenu();
+        let mainMenu = menu.items[0];
+        let preferenceMenu = _.find(mainMenu.submenu.items, (item) => item.label === 'Preferences…');
+        let [modeMenu, themeMenu] = preferenceMenu.submenu.items;
+
+        _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
+        _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
+
+        // sync views, prompts
+        let viewMenu = menu.items[process.platform === 'darwin' ? 3 : 2];
+        themeMenu = _.find(viewMenu.submenu.items, (item) => item.label === 'Theme');
+        let promptMenu = menu.items[process.platform === 'darwin' ? 4 : 3];
+        modeMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Mode');
+
+        _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
+        _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
+      });
+    };
+
+    let listenToCheckNewRelease = () => {
+      ipc.on('application:check-new-release', (sender)  => {
+        if(this.latestRelease) {
+          let release = this.latestRelease.release;
+          if(`v${Config.version}` !== release) {
+            sender.send('application:new-release', this.latestRelease);
+          }
+        }
+      });
+    };
+
+    listenToSyncPreference();
+    listenToCheckNewRelease();
+  }
+
+  checkNewRelease() {
+    let options = {
+      headers: {
+        'User-Agent': 'MancyApp'
+      },
+      url: 'https://api.github.com/repos/princejwesley/Mancy/releases/latest'
+    };
+
+    request(options, (error, response, body) => {
+      if (!error && response.statusCode == 200) {
+        let {tag_name, assets} = JSON.parse(response.body);
+        let assetName = `Mancy-${process.platform}-${process.arch}.zip`;
+        let asset = _.find(assets, (asset) => asset.name === assetName);
+        if(asset) {
+          this.latestRelease =  {
+            url: asset.browser_download_url,
+            release: tag_name
+          };
+        }
+      }
+    });
   }
 }

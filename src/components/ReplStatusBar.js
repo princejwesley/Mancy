@@ -1,8 +1,10 @@
 import React from 'react';
+import shell from 'shell';
 
 export default class ReplStatusBar extends React.Component {
   constructor(props) {
     super(props);
+    this.onDownload = this.onDownload.bind(this);
   }
   extractStatusInfo() {
     let history = this.props.history;
@@ -13,6 +15,12 @@ export default class ReplStatusBar extends React.Component {
       errors: errors.length,
       mode: mode
     };
+  }
+  onDownload(e) {
+    let url = (this.props.newRelease || {}).url;
+    if(url) {
+      shell.openExternal(url);
+    }
   }
   render() {
     let {commands, errors, mode} = this.extractStatusInfo();
@@ -31,6 +39,13 @@ export default class ReplStatusBar extends React.Component {
           <span className='repl-status-bar-message'>{mode}</span>
         </span>
         <span style={{flex: 1}}/>
+        {
+          this.props.newRelease
+            ? <span className='console-release-notification' onClick={this.onDownload} title='Click to download'>
+                 <i className="fa fa-download"></i> Update
+              </span>
+            : null
+        }
         {
           this.props.showBell
             ? <i className="fa fa-bell console-notification"></i>

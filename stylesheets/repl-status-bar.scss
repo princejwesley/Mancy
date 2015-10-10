@@ -48,6 +48,12 @@
       animation-direction: alternate;
     }
 
+    .console-release-notification {
+      cursor: pointer;
+      color: if($theme == $dark-theme, $dark-app-status-bar-console-release-notification-color, $lt-app-status-bar-console-release-notification-color);
+      padding: 0 5px;
+    }
+
     .repl-status-bar-console {
       color: if($theme == $dark-theme, $dark-app-status-bar-console-color, $lt-app-status-bar-console-color);
       padding-right: 25px;
