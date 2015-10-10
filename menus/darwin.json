@@ -102,7 +102,7 @@
       },
       {
         "label": "Break Prompt",
-        "accelerator": "Ctrl+D",
+        "accelerator": "Ctrl+C",
         "command": "application:prompt-break"
       },
       {
