@@ -168,11 +168,14 @@ export default class Repl extends React.Component {
     readFile(filename, (err, data) => {
       if(!err) {
         try {
-          let history = JSON.parse(data);
-          if(!Array.isArray(history) || !_.every(history, (h) => typeof h === 'string')) {
+          let _history = JSON.parse(data);
+          if(!Array.isArray(_history) || !_.every(_history, (h) => typeof h['plainCode'] === 'string')) {
             throw Error(`Invalid import file ${filename}`);
           }
-          ReplStore.importHistory(history);
+
+          _.each(_history, (cmdHistory, idx) => {
+            ReplActiveInputActions.playCommands(_history[0]['plainCode']);
+          });
           return;
         } catch(e) {
           err = e;

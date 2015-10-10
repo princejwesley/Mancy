@@ -5,29 +5,31 @@ let activeSuggestion = null;
 let now = false;
 let breakPrompt = false;
 let format = false;
+let playCommand = false;
+let cmdHistory = [];
 const ReplActiveInputStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplActiveInputActions);
   },
   onTabCompleteSuggestion(suggestion) {
     activeSuggestion = suggestion;
-    now = breakPrompt = format = false;
+    playCommand = now = breakPrompt = format = false;
     this.trigger();
   },
   onResetTabCompleteSuggestion() {
     activeSuggestion = null;
-    now = breakPrompt = format = false;
+    playCommand = now = breakPrompt = format = false;
     this.trigger();
   },
   onFillTabCompleteSuggestion(suggestion) {
     activeSuggestion = suggestion;
-    breakPrompt = format = false;
+    playCommand = breakPrompt = format = false;
     now = true;
     this.trigger();
   },
   onBreakPrompt() {
     activeSuggestion = null;
-    now = format = false;
+    playCommand = now = format = false;
     breakPrompt = true;
     this.trigger();
   },
@@ -35,12 +37,19 @@ const ReplActiveInputStore = Reflux.createStore({
     format = true;
     this.trigger();
   },
+  onPlayCommands(_history) {
+    cmdHistory = _history;
+    playCommand = true;
+    this.trigger();
+  },
   getStore() {
     return {
       activeSuggestion: activeSuggestion,
       now: now,
       breakPrompt: breakPrompt,
-      format: format
+      format: format,
+      playCommand: playCommand,
+      cmdHistory: cmdHistory
     }
   }
 });

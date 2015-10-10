@@ -75,7 +75,8 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onStoreChange() {
-    let {now, activeSuggestion, breakPrompt, format} = ReplActiveInputStore.getStore();
+    let {now, activeSuggestion, breakPrompt, format, playCommand, cmdHistory} 
+          = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
     if(format) {
       const text = this.element.innerText;
@@ -93,6 +94,19 @@ export default class ReplActiveInput extends React.Component {
     }
     else if(now && activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+    } 
+    else if(playCommand) {
+      let cli = ReplActiveInput.getRepl();
+      this.reloadPrompt(cmdHistory, cmdHistory.length);
+      this.waitingForOutput = true;
+
+      //debugger;
+      setTimeout(() => {
+        cli.input.emit('data', cmdHistory);
+        cli.input.emit('data', EOL);
+      }, 1000);
+     
+
     }
   }
 

@@ -5,6 +5,7 @@ const ReplActiveInputActions = Reflux.createActions([
   "resetTabCompleteSuggestion",
   "fillTabCompleteSuggestion",
   "breakPrompt",
-  "formatCode"
+  "formatCode",
+  "playCommands"
 ]);
 export default ReplActiveInputActions;
