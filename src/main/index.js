@@ -8,6 +8,7 @@ var ipc = require('ipc');
 var dialog = require('dialog');
 
 var windowCache = {};
+var dockNotificationCache = {};
 var menuManagerCache = {};
 var windowCount = 0;
 
@@ -17,11 +18,27 @@ app.on('window-all-closed', function() {
   }
 });
 
+app.on('browser-window-blur', function(event, window) {
+  window.$focus = false;
+});
+
+app.on('browser-window-focus', function(event, window) {
+  window.$focus = true;
+  dockNotificationCache[window.id] = 0;
+  app.dock.setBadge('');
+});
+
 app.on('ready', onReady);
 app.on('activate-with-no-open-windows', onReady);
 
-ipc.on('application:message-box', function(sender, options) {
+ipc.on('application:message-box', function(event, options) {
   dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
+});
+
+ipc.on('application:dock-message-notification', function(event, id) {
+  dockNotificationCache[id] = dockNotificationCache[id] + 1;
+  app.dock.setBadge(`${dockNotificationCache[id]}`);
+  app.dock.bounce();
 });
 
 function onReady() {

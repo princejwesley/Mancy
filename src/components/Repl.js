@@ -314,10 +314,14 @@ export default class Repl extends React.Component {
       type: type,
       data: results
     });
-    this.onConsoleChange();
+    this.onConsoleChange(type);
   }
 
-  onConsoleChange() {
+  onConsoleChange(type) {
+    let currentWindow = remote.getCurrentWindow();
+    if(!currentWindow.$focus && process.platform === 'darwin') {
+      ipc.send('application:dock-message-notification', currentWindow.id);
+    }
     if(this.state.showConsole) { return; }
     ReplStore.showBell();
   }
