@@ -54,7 +54,7 @@
       { "label": "Toggle &Full Screen", "command": "window:toggle-full-screen" },
       { "type": "separator" },
       {
-        "label": "&Theme",
+        "label": "Theme",
         "submenu": [
           { "label" : "Dark Theme", "type": "radio", "command": "application:view-theme-dark" },
           { "label" : "Light Theme", "type": "radio", "command": "application:view-theme-light" }
