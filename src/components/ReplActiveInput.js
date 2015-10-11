@@ -251,8 +251,10 @@ export default class ReplActiveInput extends React.Component {
       cli.$lastExpression = ReplOutput.none();
       cli.input.emit('data', text);
       cli.input.emit('data', EOL);
-    } else {
+    } else if(this.element.innerText.trim()){
       this.complete(this.autoComplete);
+    } else {
+      this.removeSuggestion();
     }
   }
 
