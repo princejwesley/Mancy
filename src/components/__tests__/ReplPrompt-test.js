@@ -2,6 +2,7 @@
 jest.dontMock('../ReplPrompt.js');
 jest.dontMock('../ReplActiveIcon.js');
 jest.dontMock('../ReplActiveInput.js');
+jest.dontMock('../../stores/ReplActiveInputStore.js');
 
 describe('ReplPrompt', () => {
   let React = require('react/addons');

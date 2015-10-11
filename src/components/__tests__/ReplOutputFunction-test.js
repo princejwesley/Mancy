@@ -42,7 +42,7 @@ describe('ReplOutputFunction', () => {
     TestUtils.Simulate.click(icon);
 
     let entries = TestUtils.scryRenderedDOMComponentsWithClass(component, 'object-entry');
-    expect(entries.length).toBe(Object.keys(f).length);
+    expect(entries.length).toBe(Object.getOwnPropertyNames(f).length);
   });
 
   it('should expand function source', () => {
