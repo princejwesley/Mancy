@@ -22,22 +22,22 @@ A cross platform JavaScript REPL application based on electron and react framewo
 - Support to toggle REPL mode
 - Preferences for theme and REPL mode
 
-# <img src="icons/mancy.png" width="30">&nbsp;[Screenshots](http://mancy-re.pl)
+<img src="icons/mancy.png" width="30">&nbsp;[Screenshots](http://mancy-re.pl)
 
 #### light theme
-# <img src="images/light-theme.png">
+<img src="images/light-theme.png">
 
 #### dark theme
-# <img src="images/dark-theme.png">
+<img src="images/dark-theme.png">
 
 #### console section
-# <img src="images/console-window.png">
+<img src="images/console-window.png">
 
 #### auto suggestion
-# <img src="images/auto-suggestion.png">
+<img src="images/auto-suggestion.png">
 
 #### function source
-# <img src="images/source.png">
+<img src="images/source.png">
 
 
 # <img src="icons/mancy.png" width="30">&nbsp;Installation
