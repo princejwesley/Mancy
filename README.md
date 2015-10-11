@@ -2,7 +2,7 @@
 
 A cross platform JavaScript REPL application based on electron and react frameworks.
 
-# <img src="icons/mancy.png" width="30">&nbsp;[Features](http://mancy-re.pl)
+## <img src="icons/mancy.png" width="25">&nbsp;[Features](http://mancy-re.pl)
 
 - Syntax Highlighting
 - Dark and light themes
@@ -22,7 +22,7 @@ A cross platform JavaScript REPL application based on electron and react framewo
 - Support to toggle REPL mode
 - Preferences for theme and REPL mode
 
-<img src="icons/mancy.png" width="30">&nbsp;[Screenshots](http://mancy-re.pl)
+## <img src="icons/mancy.png" width="30">&nbsp;[Screenshots](http://mancy-re.pl)
 
 #### light theme
 <img src="images/light-theme.png">
@@ -40,15 +40,17 @@ A cross platform JavaScript REPL application based on electron and react framewo
 <img src="images/source.png">
 
 
-# <img src="icons/mancy.png" width="30">&nbsp;Installation
-
+# <img src="icons/mancy.png" width="25">&nbsp;Installation
+### Windows & OSX
 - Download from [latest release](https://github.com/princejwesley/Mancy/releases/latest) (or)
-- [Fork](https://github.com/princejwesley/Mancy/) and run `npm run package`
+- [Fork](https://github.com/princejwesley/Mancy/) and run `npm install` & `npm run package`
 
-# <img src="icons/mancy.png" width="30">&nbsp;Developers
+### Linux
+[Fork](https://github.com/princejwesley/Mancy/) and run `npm install` & `npm start` to run the application. (Standalone executable is crashing in linux distribution😔)
 
+## <img src="icons/mancy.png" width="25">&nbsp;Developers
 
 [Fork](https://github.com/princejwesley/Mancy/) and run `npm run debug` or `gulp debug` to debug this application.
 
-# <img src="icons/mancy.png" width="30">&nbsp;License
+## <img src="icons/mancy.png" width="25">&nbsp;License
 [MIT License](https://github.com/princejwesley/Mancy/blob/master/LICENSE.md)

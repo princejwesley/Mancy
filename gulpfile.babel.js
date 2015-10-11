@@ -15,7 +15,6 @@ import env from 'gulp-env';
 
 const $ = plugins();
 const electronVersion = require('./node_modules/electron-prebuilt/package.json').version;
-const electronLinuxVersion = '0.30.0';
 
 const nodeDevResources = _.chain(Config.dependencies)
   .keys()
@@ -247,8 +246,7 @@ gulp.task('package', ['build'], (cb) => {
   (async () => {
     try {
       let {platform, arch} = process;
-      let version = platform === 'linux' ? electronLinuxVersion : electronVersion;
-      await executable(platform, arch, version);
+      await executable(platform, arch, electronVersion);
       cb();
     } catch (err) {
       onError(err);
@@ -262,7 +260,8 @@ gulp.task('packageAll', ['build'], (cb) => {
     try {
       await executable('darwin', 'all', electronVersion);
       await executable('win32', 'all', electronVersion);
-      await executable('linux', 'all', electronLinuxVersion);
+      // linux exe is crashing
+      //await executable('linux', 'all', electronLinuxVersion);
       cb();
     } catch (err) {
       onError(err);
@@ -274,12 +273,11 @@ gulp.task('packageAll', ['build'], (cb) => {
 gulp.task('run', (cb) => {
   (async () => {
     try {
-      if (process.platform !== 'win32') {
-        await spawn('./node_modules/.bin/electron', [PATHS.APP]);
-      }
-      else {
-        await spawn('.\\node_modules\\.bin\\electron.cmd', [PATHS.APP]);
-      }
+      await spawn(
+        process.platform !== 'win32'
+          ? './node_modules/.bin/electron'
+          : '.\\node_modules\\.bin\\electron.cmd'
+        , [PATHS.APP]);
       cb();
     } catch(err) {
       onError(err);
