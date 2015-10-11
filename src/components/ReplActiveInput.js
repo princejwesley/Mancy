@@ -165,12 +165,10 @@ export default class ReplActiveInput extends React.Component {
   }
 
   removeSuggestion() {
-    // this.activeSuggestion = null;
-    ReplSuggestionActions.removeSuggestion();
+    setTimeout(() => ReplSuggestionActions.removeSuggestion(), 200);
   }
 
   reloadPrompt(cmd, cursor, idx = -1, staged = '') {
-    // this.removeSuggestion();
     ReplActions.reloadPrompt({
       command: cmd,
       cursor: cursor,
@@ -342,7 +340,6 @@ export default class ReplActiveInput extends React.Component {
     let code = text.substring(0, cursor);
     let cli = ReplActiveInput.getRepl();
     this.waitingForOutput = false;
-    // this.removeSuggestion();
     cli.complete(code, callback);
   }
 
