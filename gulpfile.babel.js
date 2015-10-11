@@ -36,7 +36,6 @@ const PATHS = {
   APP: 'build',
   DIST: 'dist',
   SRC: 'src',
-  TMP: 'tmp',
   ICON: 'icons',
   STYLES: 'stylesheets'
 };
@@ -50,17 +49,16 @@ let onError = (err) => {
 };
 
 async function authenticate(api) {
-  github.authenticate({
+  api.authenticate({
     type: "oauth",
     token: process.env.GITHUB_TOKEN
   });
 }
 
 let zipExe = async (dists) => {
-  await mkdir(PATHS.TMP);
   return Promise.all(_.map(dists, (dist) => {
     let name = basename(dist);
-    return spawn('zip', [`${PATHS.TMP}/${name}.zip`, '-r', `${PATHS.DIST}/${name}`]);
+    return spawn('zip', [`${PATHS.DIST}/${name}.zip`, '-r', `${PATHS.DIST}/${name}`]);
   }));
 }
 
@@ -148,7 +146,7 @@ let uploadAsset = async (api, id, dists) => {
 
   return Promise.all(_.map(dists, (dist) => {
     let name = `${basename(dist)}.zip`;
-    let filePath = join(PATHS.TMP, name);
+    let filePath = join(PATHS.DIST, name);
     return new Promise((resolve, reject) => {
       api.releases.uploadAsset({
         owner: owner,
