@@ -40,6 +40,10 @@ let createContext = () => {
     context[fun] = timers[fun];
   });
 
+  context.process.on('uncaughtException', function (err) {
+    console.error(new Error(err));
+  });
+
   return (cxt = context);
 };
 

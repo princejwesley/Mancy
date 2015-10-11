@@ -11,9 +11,9 @@ export default class ReplEntryOutputError extends React.Component {
     let filler = (match, p1, p2) => {
       if(p1 && p2) {
         output =
-          <div className='repl-entry-output-error-message-heading'>
+          <span className='repl-entry-output-error-message-heading'>
             <span className='error-name'>{p1}</span>: <span className='error-description'>{p2}</span>
-          </div>
+          </span>
       }
     };
     msg.replace(/^([^:]+):(.*)$/, filler);
@@ -50,14 +50,14 @@ export default class ReplEntryOutputError extends React.Component {
 
   render() {
     return (
-      <div className='repl-entry-output-error'>
-        <div className='repl-entry-output-error-message'>
+      <span className='repl-entry-output-error'>
+        <span className='repl-entry-output-error-message'>
           {this.highlightMessage(this.props.message)}
-        </div>
-        <div className='repl-entry-output-error-stack' >
+        </span>
+        <span className='repl-entry-output-error-stack' >
           {this.highlightException(this.props.trace)}
-        </div>
-      </div>
+        </span>
+      </span>
     );
   }
 }
