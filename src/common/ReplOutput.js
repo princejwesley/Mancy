@@ -83,7 +83,7 @@ let ReplOutputType = {
       return ReplOutputType['primitive'](o, 'Boolean');
     }
 
-    return <ReplOutputObject object={o} />
+    return <ReplOutputObject object={o} primitive={_.isString(o)}/>
   },
   'undefined': (u) => {
     return <span className='literal'>undefined</span>;

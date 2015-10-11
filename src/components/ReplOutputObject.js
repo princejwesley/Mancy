@@ -53,6 +53,19 @@ export default class ReplOutputObject extends React.Component {
                   )
                 })
               }
+              {
+                this.props.primitive
+                 ? <div className='object-entry' key='[[PrimitiveValue]]'>
+                     {
+                       <span className='object-key dull'>
+                         [[PrimitiveValue]]
+                         <span className='object-colon'>: </span>
+                       </span>
+                     }
+                     { ReplOutput.transformObject(this.props.object.toString()) }
+                   </div>
+                 : null
+              }
               </span>
             </span>
         }
