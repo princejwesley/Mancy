@@ -17,6 +17,7 @@ const ReplActiveInputStore = Reflux.createStore({
     this.trigger();
   },
   onResetTabCompleteSuggestion() {
+    $console.log('onResetTabCompleteSuggestion')
     activeSuggestion = null;
     now = breakPrompt = format = false;
     this.trigger();

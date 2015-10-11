@@ -11,6 +11,18 @@ import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
 
 let ReplOutputType = {
+  primitive: (n, type) => {
+    let prefix = `${type} {`;
+    let suffix = '}';
+    let className = type === 'Number' ? 'number' : 'literal';
+    return (
+      <span className='primitive-object'>
+        {prefix}
+        <span className='primitive-key'>[[PrimitiveValue]]</span>:
+        <span className={className}>{n.toString()}</span>
+        {suffix}
+      </span>);
+  },
   number: (n) => {
     return <span className='number'>{n}</span>;
   },
@@ -61,6 +73,14 @@ let ReplOutputType = {
 
     if(_.isNull(o)) {
       return ReplOutputType['null'](o);
+    }
+
+    if(_.isNumber(o)) {
+      return ReplOutputType['primitive'](o, 'Number');
+    }
+
+    if(_.isBoolean(o)) {
+      return ReplOutputType['primitive'](o, 'Boolean');
     }
 
     return <ReplOutputObject object={o} />

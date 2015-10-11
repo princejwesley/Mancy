@@ -36,7 +36,7 @@ export default class ReplActiveInput extends React.Component {
 
     this.waitingForOutput = false;
     this.commandOutput = [];
-    this.activeSuggestion = null;
+    this.activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     this.commandReady = false;
   }
   componentDidMount() {
@@ -165,12 +165,12 @@ export default class ReplActiveInput extends React.Component {
   }
 
   removeSuggestion() {
-    this.activeSuggestion = null;
+    // this.activeSuggestion = null;
     ReplSuggestionActions.removeSuggestion();
   }
 
   reloadPrompt(cmd, cursor, idx = -1, staged = '') {
-    this.removeSuggestion();
+    // this.removeSuggestion();
     ReplActions.reloadPrompt({
       command: cmd,
       cursor: cursor,
@@ -187,6 +187,7 @@ export default class ReplActiveInput extends React.Component {
       let [lcode, rcode] = ReplCommon.divide(text, cursor);
       let command = lcode + ReplCommon.times(ReplConstants.TAB_WIDTH, ' ') + rcode;
       this.reloadPrompt(command, cursor + ReplConstants.TAB_WIDTH);
+      this.removeSuggestion();
     } else if(list.length === 1) {
       this.onSelectTabCompletion(list[0]);
     } else {
@@ -212,6 +213,7 @@ export default class ReplActiveInput extends React.Component {
     let {prefix, suffix} = breakReplaceWord(left);
     left = prefix + suggestion.substring(suggestion.indexOf(suffix));
     this.reloadPrompt(left + right, left.length);
+    this.removeSuggestion();
   }
 
   onKeyUp(e) {
@@ -236,7 +238,11 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(ReplDOMEvents.isEnter(e)) {
-      this.removeSuggestion();
+      let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
+      if(activeSuggestion) {
+        e.preventDefault();
+        return;
+      }
       this.waitingForOutput = true;
       // allow user to code some more
       ReplDOM.scrollToEnd();
@@ -261,6 +267,15 @@ export default class ReplActiveInput extends React.Component {
   onKeyDown(e) {
     if(e.ctrlKey || e.metaKey || e.altKey) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
+
+    let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
+    if(ReplDOMEvents.isEnter(e) && activeSuggestion) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+      return;
+    }
+
     if( ReplDOMEvents.isKeyup(e)
       || (ReplDOMEvents.isKeydown(e))
     ) {
@@ -292,7 +307,6 @@ export default class ReplActiveInput extends React.Component {
 
     if(!ReplDOMEvents.isTab(e)) { return; }
     e.preventDefault();
-    let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     if(activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
     } else if(this.element.innerText.length){
@@ -328,7 +342,7 @@ export default class ReplActiveInput extends React.Component {
     let code = text.substring(0, cursor);
     let cli = ReplActiveInput.getRepl();
     this.waitingForOutput = false;
-    this.removeSuggestion();
+    // this.removeSuggestion();
     cli.complete(code, callback);
   }
 

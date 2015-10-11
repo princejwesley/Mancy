@@ -36,7 +36,7 @@ export default class ReplSuggestions extends React.Component {
   }
 
   onWindowEvents(e) {
-    if(ReplDOMEvents.isEscape(e) || ReplDOMEvents.isBlurEvent(e)) {
+    if(ReplDOMEvents.isEscape(e)) {
       this.setState({
         suggestions: [],
         selected: -1

@@ -1,7 +1,7 @@
 // light theme
 $lt-app-background-color: whitesmoke;
 $lt-app-prompt-background-color: darken($lt-app-background-color, 5%);
-$lt-app-color: #E2A1A1;
+$lt-app-color: #DE8787;
 
 $lt-app-suggestion-background-color: $lt-app-background-color;
 $lt-app-suggestion-border-color: silver;
@@ -50,3 +50,4 @@ $lt-app-entry-message-output-expand-collapse-color: #C5C1C3;
 
 $lt-app-entry-message-output-arr-idx-color: #EF7C90;
 $lt-app-entry-message-output-arr-fold-color: deepskyblue;
+$lt-app-entry-message-output-primitive-color: cadetblue;
