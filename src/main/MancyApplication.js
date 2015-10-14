@@ -182,7 +182,7 @@ export default class MancyApplication extends EventEmitter {
     };
 
     let listenToCheckNewRelease = () => {
-      ipc.on('application:check-new-release', (sender)  => {
+      ipc.on('application:check-new-release', ({sender})  => {
         if(this.latestRelease) {
           let release = this.latestRelease.release;
           if(`v${Config.version}` !== release) {

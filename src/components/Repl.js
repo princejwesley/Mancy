@@ -37,7 +37,6 @@ export default class Repl extends React.Component {
     });
 
     this.loadPreferences();
-    this.checkNewRelease();
     this.state = _.cloneDeep(ReplStore.getStore());
   }
 
@@ -85,6 +84,7 @@ export default class Repl extends React.Component {
     ipc.on('application:view-theme-light', () => document.body.className = 'light-theme');
 
     ipc.on('application:new-release', this.onNewRelease);
+    this.checkNewRelease();
   }
 
   setupContextMenu() {
@@ -151,7 +151,7 @@ export default class Repl extends React.Component {
   }
 
   checkNewRelease() {
-    ipc.send('application:check-new-release');
+    setTimeout(() => ipc.send('application:check-new-release'), 2000);
   }
 
   loadPreferences() {
