@@ -14,6 +14,7 @@ import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 import ReplOutput from '../common/ReplOutput';
+import ReplInput from '../common/ReplInput';
 import ReplContext from '../common/ReplContext';
 
 export default class ReplActiveInput extends React.Component {
@@ -95,7 +96,7 @@ export default class ReplActiveInput extends React.Component {
     else if(stagedCommands.length) {
       let cli = ReplActiveInput.getRepl();
       this.waitingForOutput = true;
-      cli.input.emit('data', stagedCommands[0]);
+      cli.input.emit('data', ReplInput.transform(stagedCommands[0]));
       cli.input.emit('data', EOL);
     }
     else if(now && activeSuggestion) {
@@ -253,7 +254,7 @@ export default class ReplActiveInput extends React.Component {
         cli.input.emit('data', EOL);
       }
       cli.$lastExpression = ReplOutput.none();
-      cli.input.emit('data', text);
+      cli.input.emit('data', ReplInput.transform(text));
       cli.input.emit('data', EOL);
     } else if(this.element.innerText.trim()){
       this.complete(this.autoComplete);

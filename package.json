@@ -58,15 +58,17 @@
     "yargs": "^3.26.0"
   },
   "dependencies": {
+    "babel-core": "^5.8.24",
+    "babel-runtime": "^5.8.25",
     "escodegen": "^1.7.0",
     "esprima": "^2.6.0",
     "font-awesome": "^4.4.0",
+    "github": "^0.2.4",
     "highlight.js": "^8.8.0",
     "lodash": "^3.10.1",
     "md5": "^2.0.0",
     "react": "^0.13.3",
-    "reflux": "^0.2.12",
-    "github": "^0.2.4"
+    "reflux": "^0.2.12"
   },
   "repository": {
     "type": "git",
