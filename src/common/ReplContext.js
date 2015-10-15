@@ -5,6 +5,7 @@ import vm from 'vm';
 import timers from 'timers';
 
 let cxt = null;
+let systemVariables = [];
 
 let createContext = () => {
   if(cxt) { return cxt; }
@@ -59,6 +60,7 @@ let createContext = () => {
     return cxt;
   };
 
+  systemVariables = _.keys(context);
 
   return (cxt = context);
 };
@@ -67,4 +69,8 @@ let getContext = () => {
   return cxt ? cxt : createContext();
 };
 
-export default { createContext: createContext, getContext: getContext };
+let builtIns = () => {
+  return systemVariables;
+};
+
+export default { createContext: createContext, getContext: getContext, builtIns: builtIns };

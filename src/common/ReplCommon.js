@@ -5,6 +5,7 @@ import shell from 'shell';
 import esprima from 'esprima';
 import escodegen from 'escodegen';
 import module from 'module';
+import ReplContext from '../common/ReplContext';
 
 let ReplCommon = {
   times: (num, str) => {
@@ -65,6 +66,15 @@ let ReplCommon = {
   },
   divide: (str, pos) => {
     return [str.substring(0, pos), str.substring(pos)];
+  },
+  sortTabCompletion: (context, completion) => {
+    let keys = _.difference(_.keys(context), ReplContext.builtIns());
+    let user = [], sys = [];
+    _.each(completion, (c) => {
+      let container = keys.indexOf(c) == -1 ? sys : user;
+      container.push(c);
+    });
+    return user.concat(sys);
   }
 };
 
