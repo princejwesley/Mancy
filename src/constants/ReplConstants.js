@@ -23,7 +23,8 @@ const ReplConstants = {
       'es7.objectRestSpread',
       'es7.trailingFunctionCommas',
       ]
-  }
+  },
+  EXEC_TIMEOUT: 5000
 };
 
 export default ReplConstants;

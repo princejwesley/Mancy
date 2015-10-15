@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import ReplConsoleHook from '../common/ReplConsoleHook';
+import ReplConstants from '../constants/ReplConstants';
 import vm from 'vm';
 import timers from 'timers';
 
@@ -43,6 +44,21 @@ let createContext = () => {
   context.process.on('uncaughtException', function (err) {
     console.error(new Error(err));
   });
+
+  let {createScript} = vm;
+  vm.createScript = (code, options) => {
+    let timeout = ReplConstants.EXEC_TIMEOUT; // TODO use preference
+    let cxt = createScript(code, options);
+    let runInContext = cxt.runInContext.bind(cxt);
+    cxt.runInContext = (contextifiedSandbox, options) => {
+      return runInContext(contextifiedSandbox, {
+        displayErrors: false,
+        timeout: timeout
+      });
+    };
+    return cxt;
+  };
+
 
   return (cxt = context);
 };
