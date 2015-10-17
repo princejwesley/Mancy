@@ -49,16 +49,24 @@ let createContext = () => {
 
   let {createScript} = vm;
   vm.createScript = (code, options) => {
-    let {timeout} = getPreferences();
-    let cxt = createScript(code, options);
-    let runInContext = cxt.runInContext.bind(cxt);
-    cxt.runInContext = (contextifiedSandbox, options) => {
-      return runInContext(contextifiedSandbox, {
-        displayErrors: false,
-        timeout: timeout
-      });
-    };
-    return cxt;
+    try {
+      let {timeout} = getPreferences();
+      let cxt = createScript(code, options);
+      let runInContext = cxt.runInContext.bind(cxt);
+      cxt.runInContext = (contextifiedSandbox, options) => {
+        return runInContext(contextifiedSandbox, {
+          displayErrors: false,
+          timeout: timeout
+        });
+      };
+      global.Mancy.REPLError = null;
+      return cxt;
+    } catch(e) {
+      if(e instanceof SyntaxError) {
+        global.Mancy.REPLError = e;
+      }
+      throw e;
+    }
   };
 
   systemVariables = _.keys(context);

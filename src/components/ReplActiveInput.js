@@ -105,27 +105,38 @@ export default class ReplActiveInput extends React.Component {
   }
 
   prompt(preserveCursor) {
-    if(this.commandReady) {
-      let cli = ReplActiveInput.getRepl();
-      let output = this.commandOutput.join('');
-      let {stagedCommands} = ReplActiveInputStore.getStore();
-      const text = stagedCommands.length ? stagedCommands[0] : ReplCommon.trimRight(this.element.innerText);
-      let {formattedOutput, error} = cli.$lastExpression.highlight(output);
-
+    let cli = ReplActiveInput.getRepl();
+    let addEntryAction = (formattedOutput, error, text) => {
       ReplActions.addEntry({
         formattedOutput: formattedOutput,
         status: !error,
         command: ReplCommon.highlight(text),
         plainCode: text,
       });
-
       this.removeSuggestion();
       this.commandOutput = [];
+      this.promptInput = this.replFeed = null;
       this.commandReady = false;
+    };
 
+    let playStagedCommand = () => {
+      let {stagedCommands} = ReplActiveInputStore.getStore();
+      const text = stagedCommands.length ? stagedCommands[0] : ReplCommon.trimRight(this.element.innerText);
+      let {formattedOutput, error} = cli.$lastExpression.highlight(output);
       if(stagedCommands.length) {
         ReplActiveInputStore.tailStagedCommands();
       }
+    };
+
+    if(cli.bufferedCommand.indexOf(this.replFeed) != -1) {
+      let {formattedOutput} = cli.$lastExpression.highlight(global.Mancy.REPLError.stack);
+      addEntryAction(formattedOutput, true, this.promptInput);
+      playStagedCommand();
+    }
+    else if(cli.bufferedCommand.length === 0 && this.commandReady) {
+      let output = this.commandOutput.join('');
+      addEntryAction(formattedOutput, error, text);
+      playStagedCommand();
     }
   }
 
@@ -254,7 +265,9 @@ export default class ReplActiveInput extends React.Component {
         cli.input.emit('data', EOL);
       }
       cli.$lastExpression = ReplOutput.none();
-      cli.input.emit('data', ReplInput.transform(text));
+      this.promptInput = text;
+      this.replFeed = ReplInput.transform(text);
+      cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
     } else if(this.element.innerText.trim()){
       this.complete(this.autoComplete);
