@@ -114,6 +114,10 @@ let ReplOutputType = {
       }
     }
 
+    if(o._isReactElement) {
+      return <ReplOutputObject object={o} label=' ReactElement {}' primitive={_.isString(o)}/>      
+    }
+
     return <ReplOutputObject object={o} primitive={_.isString(o)}/>
   },
   'undefined': (u) => {

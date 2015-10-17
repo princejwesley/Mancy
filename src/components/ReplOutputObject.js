@@ -19,7 +19,7 @@ export default class ReplOutputObject extends React.Component {
   }
 
   render() {
-    let label = ' Object {}';
+    let label = this.props.label || ' Object {}';
     return (
       <span className='repl-entry-message-output-object-folds'>
         {
