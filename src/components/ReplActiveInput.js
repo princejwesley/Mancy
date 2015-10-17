@@ -122,7 +122,6 @@ export default class ReplActiveInput extends React.Component {
     let playStagedCommand = () => {
       let {stagedCommands} = ReplActiveInputStore.getStore();
       const text = stagedCommands.length ? stagedCommands[0] : ReplCommon.trimRight(this.element.innerText);
-      let {formattedOutput, error} = cli.$lastExpression.highlight(output);
       if(stagedCommands.length) {
         ReplActiveInputStore.tailStagedCommands();
       }
@@ -135,7 +134,12 @@ export default class ReplActiveInput extends React.Component {
     }
     else if(cli.bufferedCommand.length === 0 && this.commandReady) {
       let output = this.commandOutput.join('');
-      addEntryAction(formattedOutput, error, text);
+      let {formattedOutput, error} = cli.$lastExpression.highlight(output);
+      if(!this.replFeed) {
+        ReplActions.overrideLastOutput(formattedOutput, !error);
+        return;
+      }
+      addEntryAction(formattedOutput, error, this.promptInput);
       playStagedCommand();
     }
   }
