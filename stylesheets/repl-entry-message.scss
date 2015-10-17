@@ -56,6 +56,13 @@
       .repl-entry-output-error {
         @include stackTraceHighlight();
       }
+
+      .promise-object {
+        .promise-status, .promise-value {
+          color: if($theme == $dark-theme, $dark-app-entry-message-output-primitive-color, $lt-app-entry-message-output-primitive-color);
+        }
+      }
+
       .primitive-object {
         .primitive-key {
           color: if($theme == $dark-theme, $dark-app-entry-message-output-primitive-color, $lt-app-entry-message-output-primitive-color);
