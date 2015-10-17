@@ -1,0 +1,77 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin preferences($theme) {
+  .repl-preferences-panel {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: calc(100% - #{$app-font-size} - 6px);
+    left: 0;
+    height: 0px;
+    z-index: 100;
+    color: if($theme == $dark-theme, $dark-app-preference-color, $lt-app-preference-color );
+    background-color: if($theme == $dark-theme, $dark-app-preference-background-color, $lt-app-preference-background-color );
+    transition: all 0.5s cubic-bezier(0.55, 0.09, 0.68, 0.53);
+
+    .repl-preferences-head {
+      height: 40px;
+      width: 100%;
+      display:flex;
+      background-color: if($theme == $dark-theme, $dark-app-preference-header-bg-color, $lt-app-preference-header-bg-color );
+      .title {
+        margin: auto;
+        font-weight: 900;
+        font-size: 1.2em;
+      }
+      .close-preference {
+        color: if($theme == $dark-theme, $dark-app-preference-close-color, $lt-app-preference-close-color );
+        position:absolute;
+        top: calc((40px - 1em) / 2);
+        right: 15px;
+        cursor: pointer;
+      }
+    }
+
+    .repl-preferences-body {
+      padding: 10px 20px;
+      display: flex;
+      flex-direction: column;
+
+      .preference {
+        flex: 1;
+        display: flex;
+        padding: 10px 0px;
+        border-bottom: 1px solid if($theme == $dark-theme, $dark-app-preference-entry-border-color, $lt-app-preference-entry-border-color );
+
+        .preference-name {
+          margin: auto 0;
+          flex-basis: 30%;
+          font-weight: 900;
+        }
+        .preference-value {
+
+          .radio-group {
+            padding: 0px 5px;
+          }
+
+          .checkbox-group {
+            padding: 0px 6px;
+          }
+
+        }
+      }
+
+      fieldset {
+        border: none;
+        padding: 0px;
+      }
+    }
+  }
+  .repl-preferences-panel.open {
+    top: 0px;
+    height: calc(100% - #{$app-font-size} - 6px);
+    display: flex;
+  }
+}

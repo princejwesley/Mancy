@@ -85,9 +85,9 @@ const ReplStore = Reflux.createStore({
     collapseOrExpandEntries(true);
     this.trigger();
   },
-  setReplMode(type) {
+  onSetREPLMode(mode) {
     cache.reloadPrompt = true;
-    cache.mode = type;
+    cache.mode = `REPL_MODE_${mode.toUpperCase()}`;
     this.trigger();
   },
   toggleConsole() {

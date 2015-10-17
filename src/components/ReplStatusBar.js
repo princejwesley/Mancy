@@ -1,10 +1,12 @@
 import React from 'react';
 import shell from 'shell';
+import ReplPreferencesActions from '../actions/ReplPreferencesActions';
 
 export default class ReplStatusBar extends React.Component {
   constructor(props) {
     super(props);
     this.onDownload = this.onDownload.bind(this);
+    this.onTriggerPreferences = this.onTriggerPreferences.bind(this);
   }
   extractStatusInfo() {
     let history = this.props.history;
@@ -22,10 +24,16 @@ export default class ReplStatusBar extends React.Component {
       shell.openExternal(url);
     }
   }
+  onTriggerPreferences(e) {
+    ReplPreferencesActions.togglePreferences();
+  }
   render() {
     let {commands, errors, mode} = this.extractStatusInfo();
     return (
       <div className='repl-status-bar'>
+        <span className='repl-status-bar-preference' title='Preferences'>
+          <i className="fa fa-cog" onClick={this.onTriggerPreferences}></i>
+        </span>
         <span className='repl-status-bar-commands' title='success commands'>
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{commands}</span>

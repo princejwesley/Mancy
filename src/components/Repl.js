@@ -7,6 +7,7 @@ import ReplStore from '../stores/ReplStore';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputActions from '../actions/ReplActiveInputActions';
+import ReplPreferencesActions from '../actions/ReplPreferencesActions';
 import ReplConsoleActions from '../actions/ReplConsoleActions';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import Reflux from 'reflux';
@@ -30,7 +31,7 @@ export default class Repl extends React.Component {
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
-      'onImport', 'onExport', 'onAddPath', 'updatePreferences', 'loadPreferences',
+      'onImport', 'onExport', 'onAddPath', 'loadPreferences',
       'checkNewRelease', 'onNewRelease'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -69,22 +70,22 @@ export default class Repl extends React.Component {
     ipc.on('application:prompt-break', this.onBreakPrompt);
     ipc.on('application:prompt-format', this.onFormatPromptCode);
 
-    ipc.on('application:prompt-mode-magic', () => ReplStore.setReplMode('REPL_MODE_MAGIC'));
-    ipc.on('application:prompt-mode-sloppy', () => ReplStore.setReplMode('REPL_MODE_SLOPPY'));
-    ipc.on('application:prompt-mode-strict', () => ReplStore.setReplMode('REPL_MODE_STRICT'));
+    ipc.on('application:prompt-mode-magic', () => ReplStore.onSetREPLMode('Magic'));
+    ipc.on('application:prompt-mode-sloppy', () => ReplStore.onSetREPLMode('Sloppy'));
+    ipc.on('application:prompt-mode-strict', () => ReplStore.onSetREPLMode('Strict'));
 
-    ipc.on('application:preference-mode-magic', () => this.updatePreferences({mode: 'Magic'}));
-    ipc.on('application:preference-mode-sloppy', () => this.updatePreferences({mode: 'Sloppy'}));
-    ipc.on('application:preference-mode-strict', () => this.updatePreferences({mode: 'Strict'}));
+    ipc.on('application:preferences', ReplPreferencesActions.openPreferences);
 
-    ipc.on('application:preference-theme-dark', () => this.updatePreferences({theme: 'Dark Theme'}));
-    ipc.on('application:preference-theme-light', () => this.updatePreferences({theme: 'Light Theme'}));
+    ipc.on('application:preference-theme-dark', () => ReplPreferencesActions.setTheme('Dark Theme'));
+    ipc.on('application:preference-theme-light', () => ReplPreferencesActions.setTheme('Light Theme'));
 
     ipc.on('application:view-theme-dark', () => document.body.className = 'dark-theme');
     ipc.on('application:view-theme-light', () => document.body.className = 'light-theme');
 
     ipc.on('application:new-release', this.onNewRelease);
     this.checkNewRelease();
+    ReplStore.onSetREPLMode(global.preferences.mode);
+    ReplPreferencesActions.setTheme(global.preferences.theme);
   }
 
   setupContextMenu() {
@@ -137,26 +138,12 @@ export default class Repl extends React.Component {
     ReplConsoleHook.disable();
   }
 
-  updatePreferences({mode, theme}) {
-    let preferences = JSON.parse(localStorage.getItem('preferences') || "{}");
-    if(mode) {
-      ReplStore.setReplMode(`REPL_MODE_${mode.toUpperCase()}`);
-      preferences = _.extend(preferences, {"mode": mode});
-    }
-    if(theme) {
-      document.body.className = theme.toLowerCase().replace(/\s+/, '-');
-      preferences = _.extend(preferences, {"theme": theme});
-    }
-    localStorage.setItem('preferences', JSON.stringify(preferences));
-  }
-
   checkNewRelease() {
     setTimeout(() => ipc.send('application:check-new-release'), 2000);
   }
 
   loadPreferences() {
-    let preferences = JSON.parse(localStorage.getItem('preferences') || JSON.stringify({ "mode": "Magic", "theme": "Dark Theme" }));
-    this.updatePreferences(preferences);
+    let preferences = JSON.parse(localStorage.getItem('preferences'));
     ipc.send('application:sync-preference', preferences);
   }
 
