@@ -7,8 +7,8 @@ export default class ReplPreferences extends React.Component {
     super(props);
     this.state = _.clone(ReplPreferencesStore.getStore());
     _.each([
-      'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange', 'onToggleGlobalPath',
-      'onModeChange'
+      'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
+      'onModeChange', 'onChangeTimeout'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -38,12 +38,12 @@ export default class ReplPreferences extends React.Component {
     ReplPreferencesStore.toggleBabel(e.target.checked);
   }
 
-  onToggleGlobalPath(e) {
-    ReplPreferencesStore.toggleGlobalPath(e.target.checked);
-  }
-
   onModeChange(e) {
     ReplPreferencesStore.onSetREPLMode(e.target.value);
+  }
+
+  onChangeTimeout(e) {
+    ReplPreferencesStore.onSetExeTimeout(e.target.value);
   }
 
   render() {
@@ -104,11 +104,11 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference'>
             <div className='preference-name'>
-              NPM Global Path
+              Execution Timeout(ms)
             </div>
             <div className='preference-value'>
-              <span className='checkbox-group'>
-                <input type="checkbox" name="global" checked={this.state.global} value="" onClick={this.onToggleGlobalPath} />
+              <span className='textbox'>
+                <input type="number" name="number" placeholder="(0 for no timeout)" value={this.state.timeout} min="0" onChange={this.onChangeTimeout} />
               </span>
             </div>
           </div>

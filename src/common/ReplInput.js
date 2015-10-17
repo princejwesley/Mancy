@@ -30,7 +30,7 @@ let babelTransfrom = (plain) => {
 let ReplInput = {
   transform: (plain) => {
     plain = preprocess(plain);
-    return global.preferences.babel ? babelTransfrom(plain) : plain;
+    return global.Mancy.preferences.babel ? babelTransfrom(plain) : plain;
   }
 };
 

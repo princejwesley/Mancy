@@ -10,7 +10,25 @@ import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
 
+let Debug = require('vm').runInDebugContext('Debug');
+let makeMirror = (o) => Debug.MakeMirror(o, true);
+let BabelCoreJS = require("babel-runtime/core-js");
+
+
 let ReplOutputType = {
+  promise: (status, value) => {
+    let prefix = `Promise {`;
+    let suffix = '}';
+    return (
+      <span className='promise-object'>
+        {prefix}
+        <span className='promise-status'>[[PromiseStatus]]</span>:
+        <span className='string'>'{status}'</span>,
+        <span className='promise-value'>[[PromiseValue]]</span>:
+        <span className='promise-value-type'>{ReplOutput.transformObject(value)}</span>
+        {suffix}
+      </span>);
+  },
   primitive: (n, type) => {
     let prefix = `${type} {`;
     let suffix = '}';
@@ -81,6 +99,19 @@ let ReplOutputType = {
 
     if(_.isBoolean(o)) {
       return ReplOutputType['primitive'](o, 'Boolean');
+    }
+
+    if(o instanceof Promise || o.then) {
+      if(o instanceof BabelCoreJS.default.Promise) {
+        let obj = o[Object.getOwnPropertyNames(o)[0]];
+        let status = obj.s === 0 ? 'pending' : (obj.s === 1 ? 'resolved' : 'rejected');
+        return ReplOutputType['promise'](status, obj.v);
+      } else {
+        let m = makeMirror(o);
+        if(m.isPromise()) {
+          return ReplOutputType['promise'](m.status(), m.promiseValue().value());
+        }
+      }
     }
 
     return <ReplOutputObject object={o} primitive={_.isString(o)}/>

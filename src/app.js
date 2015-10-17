@@ -26,7 +26,6 @@ import _ from 'lodash';
     "theme": "Dark Theme",
     "timeout": ReplConstants.EXEC_TIMEOUT,
     "babel": false,
-    "global": true,
   };
 
   _.each(_.keys(defaults), (key) => {
@@ -34,7 +33,7 @@ import _ from 'lodash';
       preferences[key] = defaults[key];
     }
   });
-  global.preferences = preferences;
+  global.Mancy = { preferences: preferences };
   localStorage.setItem('preferences', JSON.stringify(preferences));
 })();
 

@@ -25,14 +25,9 @@ const ReplPreferencesStore = Reflux.createStore({
   updatePreference(cb) {
     let preferences = JSON.parse(localStorage.getItem('preferences'));
     cb(preferences);
-    global.preferences = preferences;
+    global.Mancy.preferences = preferences;
     localStorage.setItem('preferences', JSON.stringify(preferences));
     this.trigger();
-  },
-  toggleGlobalPath(flag) {
-    this.updatePreference((preferences) => {
-      preferences.global = flag;
-    });
   },
   toggleBabel(flag) {
     this.updatePreference((preferences) => {
@@ -49,6 +44,11 @@ const ReplPreferencesStore = Reflux.createStore({
     this.updatePreference((preferences) => {
       preferences.mode = mode;
       ReplActions.setREPLMode(mode);
+    });
+  },
+  onSetExeTimeout(timeout) {
+    this.updatePreference((preferences) => {
+      preferences.timeout = parseInt(timeout, 10) || 0;
     });
   },
   getStore() {

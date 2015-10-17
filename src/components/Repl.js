@@ -84,8 +84,8 @@ export default class Repl extends React.Component {
 
     ipc.on('application:new-release', this.onNewRelease);
     this.checkNewRelease();
-    ReplStore.onSetREPLMode(global.preferences.mode);
-    ReplPreferencesActions.setTheme(global.preferences.theme);
+    ReplStore.onSetREPLMode(global.Mancy.preferences.mode);
+    ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
   }
 
   setupContextMenu() {

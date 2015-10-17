@@ -6,6 +6,7 @@ import timers from 'timers';
 
 let cxt = null;
 let systemVariables = [];
+let getPreferences = () => global.Mancy.preferences;
 
 let createContext = () => {
   if(cxt) { return cxt; }
@@ -48,7 +49,7 @@ let createContext = () => {
 
   let {createScript} = vm;
   vm.createScript = (code, options) => {
-    let timeout = ReplConstants.EXEC_TIMEOUT; // TODO use preference
+    let {timeout} = getPreferences();
     let cxt = createScript(code, options);
     let runInContext = cxt.runInContext.bind(cxt);
     cxt.runInContext = (contextifiedSandbox, options) => {
