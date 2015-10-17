@@ -3,8 +3,17 @@ import ReplConstants from '../constants/ReplConstants';
 import ReplCommon from './ReplCommon';
 let babel = require('babel-core');
 
-let preprocess = (plain) => {
+const awaitMatcher = /^(.*\s|^)(await\s.*)/;
+let asyncWrapper = (code) => {
+  return `(async function() { ${code} }())`;
+};
 
+let preprocess = (plain) => {
+  // bare await
+  let match = plain.match(awaitMatcher);
+  if(match && match[1].indexOf('async') === -1) {
+    return `${match[1]}${asyncWrapper(plain.substring(match[1].length))}`;
+  }
   return plain;
 };
 
