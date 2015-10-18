@@ -9,6 +9,8 @@ import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
+import ReplSourceFile from '../components/ReplSourceFile';
+import ReplContext from './ReplContext';
 
 let Debug = require('vm').runInDebugContext('Debug');
 let makeMirror = (o) => Debug.MakeMirror(o, true);
@@ -215,6 +217,15 @@ let ReplOutput = {
           [[Get Error]] {ReplOutputType[typeof e](e)}
         </span>);
     }
+  },
+  source: (mod) => {
+    let context = ReplContext.getContext();
+    return (
+      <ReplSourceFile
+        location= {ReplCommon.getModuleSourcePath(mod, context.module.paths)}
+        name={mod}
+      />
+    );
   }
 };
 

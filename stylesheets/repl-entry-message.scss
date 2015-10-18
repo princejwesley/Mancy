@@ -3,6 +3,7 @@
 @import 'highlight';
 @import 'repl-output-array';
 @import 'repl-output-object';
+@import 'repl-source-file';
 
 @mixin replEntryMessage($theme) {
   .repl-entry-message {
@@ -25,6 +26,8 @@
       @include highlight();
       position: relative;
       display: flex;
+
+      @include replSourceFile($theme);
 
       .fa-clone {
         @include notSelectable();

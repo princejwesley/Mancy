@@ -1,0 +1,24 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replSourceFile($theme) {
+
+  .repl-source-access {
+
+    .repl-source-file {
+      color: $app-external-link-color;
+      .fa-external-link {
+        padding: 0px 5px;
+        cursor: pointer;
+        color: $app-external-icon-color;
+        position: relative;
+        top: 1px;
+      }
+    }
+    .repl-no-source-file {
+      .name {
+        color: $app-text-error-color;
+      }
+    }
+  }
+}

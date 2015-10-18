@@ -30,7 +30,7 @@ export default class ReplActiveInput extends React.Component {
     _.each([
       'onTabCompletion', 'autoComplete', 'onKeyDown',
       'onKeyUp', 'onStoreChange', 'prompt',
-      'addEntry', 'removeSuggestion', 'onBlur'
+      'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -104,15 +104,19 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  addEntryAction(formattedOutput, status, command, plainCode) {
+    ReplActions.addEntry({
+      formattedOutput: formattedOutput,
+      status: status,
+      command: command,
+      plainCode: plainCode,
+    });
+  }
+
   prompt(preserveCursor) {
     let cli = ReplActiveInput.getRepl();
     let addEntryAction = (formattedOutput, error, text) => {
-      ReplActions.addEntry({
-        formattedOutput: formattedOutput,
-        status: !error,
-        command: ReplCommon.highlight(text),
-        plainCode: text,
-      });
+      this.addEntryAction(formattedOutput, !error, ReplCommon.highlight(text), text);
       this.removeSuggestion();
       this.commandOutput = [];
       this.promptInput = this.replFeed = null;
@@ -270,7 +274,13 @@ export default class ReplActiveInput extends React.Component {
       }
       cli.$lastExpression = ReplOutput.none();
       this.promptInput = text;
-      this.replFeed = ReplInput.transform(text);
+      let {local, output, input} = ReplInput.transform(text);
+
+      if(local) {
+        return this.addEntryAction(output, true, input, text);
+      }
+
+      this.replFeed = output;
       cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
     } else if(this.element.innerText.trim()){

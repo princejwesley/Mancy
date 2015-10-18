@@ -1,20 +1,38 @@
 import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
 import ReplCommon from './ReplCommon';
+import ReplOutput from '../common/ReplOutput';
 let babel = require('babel-core');
 
 const awaitMatcher = /^(.*\s|^)(await\s.*)/;
+const sourceMatcher = /^\s*(:source)\s+([^\s]+)\s*$/;
 let asyncWrapper = (code) => {
   return `(async function() { ${code} }())`;
 };
 
-let preprocess = (plain) => {
+let cook = (plain) => {
+  let tplain = plain.trim();
+  let source = tplain.match(sourceMatcher);
+  if(source) {
+    let mod = source[2];
+    return {
+      local: true,
+      output: ReplOutput.source(mod),
+      input: `<span class='source'>:source <span class='module'>${mod}</span></span>`
+    }
+  }
+
+  let output = plain;
   // bare await
   let match = plain.match(awaitMatcher);
   if(match && match[1].indexOf('async') === -1) {
-    return `${match[1]}${asyncWrapper(plain.substring(match[1].length))}`;
+    output = `${match[1]}${asyncWrapper(plain.substring(match[1].length))}`;
   }
-  return plain;
+
+  return {
+    local: false,
+    output: global.Mancy.preferences.babel ? babelTransfrom(output) : output
+  };
 };
 
 let babelTransfrom = (plain) => {
@@ -29,8 +47,7 @@ let babelTransfrom = (plain) => {
 
 let ReplInput = {
   transform: (plain) => {
-    plain = preprocess(plain);
-    return global.Mancy.preferences.babel ? babelTransfrom(plain) : plain;
+    return cook(plain);
   }
 };
 

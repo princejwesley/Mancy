@@ -75,7 +75,10 @@ let ReplCommon = {
       container.push(c);
     });
     return user.concat(sys);
-  }
+  },
+  getModuleSourcePath: (request, paths) => {
+    return module._findPath(request, paths);
+  },
 };
 
 let esCodeGenOptions = {
