@@ -42,7 +42,7 @@ export default class ReplOutputFunction extends React.Component {
               <span className='object-rec'>
               {
                 _.map(Object.getOwnPropertyNames(this.props.fun), (key) => {
-                  let value = this.props.fun[key];
+                  let value = ReplOutput.readProperty(this.props.fun, key);
                   let keyClass = this.props.fun.propertyIsEnumerable(key) ? 'object-key' : 'object-key dull';
                   return (
                     <div className='object-entry' key={key}>

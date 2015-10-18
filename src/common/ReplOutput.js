@@ -14,6 +14,17 @@ let Debug = require('vm').runInDebugContext('Debug');
 let makeMirror = (o) => Debug.MakeMirror(o, true);
 let BabelCoreJS = require("babel-runtime/core-js");
 
+let getObjectLabels = (o) => {
+  if(o._isReactElement) {
+    return ' ReactElement {}';
+  }
+
+  if(o instanceof Error) {
+    return ` ${o.name} {}`;
+  }
+
+  return null;
+}
 
 let ReplOutputType = {
   promise: (status, value) => {
@@ -114,11 +125,7 @@ let ReplOutputType = {
       }
     }
 
-    if(o._isReactElement) {
-      return <ReplOutputObject object={o} label=' ReactElement {}' primitive={_.isString(o)}/>
-    }
-
-    return <ReplOutputObject object={o} primitive={_.isString(o)}/>
+    return <ReplOutputObject object={o} label={getObjectLabels(o)} primitive={_.isString(o)}/>
   },
   'undefined': (u) => {
     return <span className='literal'>undefined</span>;
@@ -198,8 +205,17 @@ let ReplOutput = {
   },
   transformObject: (object) => {
     return ReplOutputType[typeof object](object);
+  },
+  readProperty: (obj, prop) => {
+    try {
+      return obj && obj[prop];
+    } catch(e) {
+      return (
+        <span className='read-error'>
+          [[Get Error]] {ReplOutputType[typeof e](e)}
+        </span>);
+    }
   }
-
 };
 
 export default ReplOutput;
