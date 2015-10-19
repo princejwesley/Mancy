@@ -4,6 +4,7 @@ import ReplPreferences from './components/ReplPreferences';
 import Repl from './components/Repl';
 import ReplConstants from './constants/ReplConstants';
 import _ from 'lodash';
+import remote from 'remote';
 
 
 (() => {
@@ -18,7 +19,7 @@ import _ from 'lodash';
   };
 })();
 
-// preferences
+// preferences & user data path
 (() => {
   let preferences = JSON.parse(localStorage.getItem('preferences') || '{}');
   let defaults = {
@@ -35,6 +36,8 @@ import _ from 'lodash';
   });
   global.Mancy = { preferences: preferences };
   localStorage.setItem('preferences', JSON.stringify(preferences));
+
+  global.Mancy.userData = remote.require('app').getPath('userData');
 })();
 
 // react entry point

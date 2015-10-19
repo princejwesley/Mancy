@@ -2,8 +2,11 @@ import _ from 'lodash';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplConstants from '../constants/ReplConstants';
 import vm from 'vm';
+import {dirname} from 'path';
 import timers from 'timers';
+import module from 'module';
 
+let execSync = require('child_process').execSync;
 let cxt = null;
 let systemVariables = [];
 let getPreferences = () => global.Mancy.preferences;
@@ -68,6 +71,23 @@ let createContext = () => {
       throw e;
     }
   };
+
+  let _load = module._load;
+  module._load = (request, parent, isMain) => {
+    try {
+      return _load(request, parent, isMain);
+    } catch(e) {
+      let path = dirname(parent.paths[parent.paths.length - 1]);
+      try {
+        let child = execSync(`npm install ${request}`,
+          { cwd: `${path}`, stdio:[], timeout: global.Mancy.preferences.timeout });
+        return _load(request, parent, isMain);
+      } catch(ex) {
+        throw e;
+      }
+    }
+  };
+
 
   systemVariables = _.keys(context);
 

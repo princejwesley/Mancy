@@ -2,6 +2,7 @@ import _ from 'lodash';
 import hl from 'highlight.js';
 import ReplConstants from '../constants/ReplConstants';
 import shell from 'shell';
+import {resolve} from 'path';
 import esprima from 'esprima';
 import escodegen from 'escodegen';
 import module from 'module';
@@ -58,6 +59,7 @@ let ReplCommon = {
     return code;
   },
   addToPath: (paths, context = this) => {
+    //TODO duplicate check
     let newPaths = Array.isArray(paths) ? paths : [paths];
     context.module.paths = newPaths.concat(context.module.paths);
   },
@@ -78,6 +80,10 @@ let ReplCommon = {
   },
   getModuleSourcePath: (request, paths) => {
     return module._findPath(request, paths);
+  },
+  addUserDataToPath: (context) => {
+    //TODO duplicate check
+    context.module.paths = context.module.paths.concat([resolve(global.Mancy.userData, 'node_modules')]);  
   },
 };
 

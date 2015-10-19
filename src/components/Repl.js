@@ -38,6 +38,8 @@ export default class Repl extends React.Component {
     });
 
     this.loadPreferences();
+    ReplCommon.addUserDataToPath(ReplContext.getContext());
+
     this.state = _.cloneDeep(ReplStore.getStore());
   }
 
@@ -283,11 +285,11 @@ export default class Repl extends React.Component {
   }
 
   onStdout(msg) {
-    this.onStdMessage(msg, 'log');
+    this.onStdMessage(msg.data ? msg.data.toString() : msg, 'log');
   }
 
   onStderr(msg) {
-    this.onStdMessage(msg, 'error');
+    this.onStdMessage(msg.data ? msg.data.toString() : msg, 'error');
   }
 
   onConsole({type, data}) {
