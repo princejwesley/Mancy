@@ -8,7 +8,7 @@ export default class ReplPreferences extends React.Component {
     this.state = _.clone(ReplPreferencesStore.getStore());
     _.each([
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
-      'onModeChange', 'onChangeTimeout'
+      'onModeChange', 'onChangeTimeout', 'onToggleShiftEnter'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -44,6 +44,10 @@ export default class ReplPreferences extends React.Component {
 
   onChangeTimeout(e) {
     ReplPreferencesStore.onSetExeTimeout(e.target.value);
+  }
+
+  onToggleShiftEnter(e) {
+    ReplPreferencesStore.toggleShiftEnter(e.target.checked);
   }
 
   render() {
@@ -109,6 +113,16 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='textbox'>
                 <input type="number" name="number" placeholder="(0 for no timeout)" value={this.state.timeout} min="0" onChange={this.onChangeTimeout} />
+              </span>
+            </div>
+          </div>
+          <div className='preference'>
+            <div className='preference-name'>
+              Toggle Shift + Enter Key
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="toggle-shift-enter" checked={this.state.toggleShiftEnter} value="" onClick={this.onToggleShiftEnter} />
               </span>
             </div>
           </div>

@@ -259,6 +259,9 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(ReplDOMEvents.isEnter(e)) {
+    
+      if (!e.shiftKey && global.Mancy.preferences.toggleShiftEnter) return;
+    
       let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
       if(activeSuggestion) {
         e.preventDefault();
@@ -267,7 +270,7 @@ export default class ReplActiveInput extends React.Component {
       this.waitingForOutput = true;
       // allow user to code some more
       ReplDOM.scrollToEnd();
-      if(e.shiftKey) { return; }
+      if(e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) { return; }
 
       let cli = ReplActiveInput.getRepl();
       const text = this.element.innerText.replace(/\s{1,2}$/, '');
@@ -298,7 +301,7 @@ export default class ReplActiveInput extends React.Component {
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
-    if(ReplDOMEvents.isEnter(e) && activeSuggestion) {
+    if(ReplDOMEvents.isEnter(e) && activeSuggestion && !global.Mancy.preferences.toggleShiftEnter) {
       e.stopPropagation();
       e.preventDefault();
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
@@ -325,7 +328,7 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    if(ReplDOMEvents.isEnter(e) && !e.shiftKey) {
+    if(ReplDOMEvents.isEnter(e) && !e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) {
       const text = this.element.innerText;
       if(text.indexOf(EOL) === -1) {
         // move cursor to end before talk to REPL
