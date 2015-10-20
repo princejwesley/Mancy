@@ -6,6 +6,7 @@ import fs from 'fs';
 import {dirname, resolve} from 'path';
 import timers from 'timers';
 import module from 'module';
+import util from 'util';
 
 let execSync = require('child_process').execSync;
 let cxt = null;
@@ -13,6 +14,13 @@ let systemVariables = [];
 let npmExe = resolve('node_modules', '.bin', 'npm');
 
 let getPreferences = () => global.Mancy.preferences;
+let noop = () => {};
+let unlinkFun = noop;
+let unlink = () => { (unlinkFun || noop)(); };
+
+let unlinkContext = (fun) => {
+  unlinkFun = fun;
+}
 
 let createContext = () => {
   if(cxt) { return cxt; }
@@ -91,11 +99,18 @@ let createContext = () => {
     }
   };
 
-  // temporary workaround
-  let {readFileSync} = fs;
-  fs.readFileSync = (filename, encoding) => {
-    let result = readFileSync(filename, encoding);
-    return result.length ? result : '';
+
+  let debuglog = util.debuglog;
+  util.debuglog = (name) => {
+    if(name === 'repl') {
+      return (fun, e, ret) => {
+        if(fun === 'finish' && !e) {
+          // unlink context
+          unlink();
+        }
+      };
+    }
+    return debuglog(name);
   };
 
   systemVariables = _.keys(context);
@@ -111,4 +126,5 @@ let builtIns = () => {
   return systemVariables;
 };
 
-export default { createContext: createContext, getContext: getContext, builtIns: builtIns };
+createContext();
+export default { createContext: createContext, getContext: getContext, builtIns: builtIns, unlinkContext: unlinkContext };

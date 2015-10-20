@@ -1,7 +1,8 @@
 import React from 'react';
 import _ from 'lodash';
-import repl from 'repl';
 import util from 'util';
+import ReplContext from '../common/ReplContext';
+import repl from 'repl';
 import {Readable, Writable} from 'stream';
 import {EOL} from 'os';
 import shell from 'shell';
@@ -15,7 +16,6 @@ import ReplDOM from '../common/ReplDOM';
 import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 import ReplOutput from '../common/ReplOutput';
 import ReplInput from '../common/ReplInput';
-import ReplContext from '../common/ReplContext';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -178,6 +178,12 @@ export default class ReplActiveInput extends React.Component {
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
     if(suggestions.length && completeEntry(suggestions, code)) {
+      if(code === '.') {
+        suggestions.push({
+          type: ReplType.typeOf('source'),
+          text: 'source'
+        });
+      }
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code});
     } else {
       this.removeSuggestion();
@@ -398,6 +404,8 @@ export default class ReplActiveInput extends React.Component {
       useColors: false,
       writer: (obj, opt) => {
         nodeRepl.$lastExpression = ReplOutput.some(obj);
+        // link context
+        nodeRepl.context = ReplContext.getContext();
         return '<<response>>';
       },
       historySize: ReplConstants.REPL_HISTORY_SIZE,
@@ -406,6 +414,8 @@ export default class ReplActiveInput extends React.Component {
 
     // here is our sandbox environment
     nodeRepl.context = ReplContext.createContext();
+    ReplContext.unlinkContext(() => { nodeRepl.context = {}; });
+
 
     return () => {
       return nodeRepl;

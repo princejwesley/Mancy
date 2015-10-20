@@ -5,7 +5,7 @@ import ReplOutput from '../common/ReplOutput';
 let babel = require('babel-core');
 
 const awaitMatcher = /^(.*\s|^)(await\s.*)/;
-const sourceMatcher = /^\s*(:source)\s+([^\s]+)\s*$/;
+const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
 let asyncWrapper = (code) => {
   return `(async function() { ${code} }())`;
 };
@@ -18,7 +18,7 @@ let cook = (plain) => {
     return {
       local: true,
       output: ReplOutput.source(mod),
-      input: `<span class='source'>:source <span class='module'>${mod}</span></span>`
+      input: `<span class='source'>.source <span class='module'>${mod}</span></span>`
     }
   }
 
