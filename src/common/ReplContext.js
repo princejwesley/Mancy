@@ -58,7 +58,7 @@ let createContext = () => {
   });
 
   context.process.on('uncaughtException', function (err) {
-    console.error(new Error(err));
+    console.error(err instanceof Error ? err.stack : new Error(err));
   });
 
   let {createScript} = vm;

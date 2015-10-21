@@ -8,7 +8,7 @@ export default class ReplPreferences extends React.Component {
     this.state = _.clone(ReplPreferencesStore.getStore());
     _.each([
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
-      'onModeChange', 'onChangeTimeout'
+      'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -46,6 +46,10 @@ export default class ReplPreferences extends React.Component {
     ReplPreferencesStore.onSetExeTimeout(e.target.value);
   }
 
+  onChangeSuggestionDelay(e) {
+    ReplPreferencesStore.onSetSuggestionDelay(e.target.value);
+  }
+
   render() {
     let clazz = `repl-preferences-panel ${this.state.open ? 'open' : ''}`;
     return (
@@ -76,7 +80,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference'>
             <div className='preference-name'>
-              REPL Mode
+              REPL mode
             </div>
             <div className='preference-value'>
               <fieldset>
@@ -94,7 +98,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference'>
             <div className='preference-name'>
-              Babel Transform
+              Babel transform
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -104,11 +108,21 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference'>
             <div className='preference-name'>
-              Execution Timeout(ms)
+              Execution timeout(ms)
             </div>
             <div className='preference-value'>
               <span className='textbox'>
-                <input type="number" name="number" placeholder="(0 for no timeout)" value={this.state.timeout} min="0" onChange={this.onChangeTimeout} />
+                <input type="number" name="exec-timeout" placeholder="(0 for no timeout)" value={this.state.timeout} min="0" onChange={this.onChangeTimeout} />
+              </span>
+            </div>
+          </div>
+          <div className='preference'>
+            <div className='preference-name'>
+              Auto suggestion delay(ms)
+            </div>
+            <div className='preference-value'>
+              <span className='textbox'>
+                <input type="number" name="suggestion-delay" placeholder="(0 for no delay)" value={this.state.suggestionDelay} min="0" onChange={this.onChangeSuggestionDelay} />
               </span>
             </div>
           </div>

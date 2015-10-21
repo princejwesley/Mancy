@@ -1,5 +1,6 @@
 import ReplPreferencesActions from '../actions/ReplPreferencesActions';
 import ReplActions from '../actions/ReplActions';
+import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import Reflux from 'reflux';
 import _ from 'lodash';
 
@@ -44,6 +45,12 @@ const ReplPreferencesStore = Reflux.createStore({
     this.updatePreference((preferences) => {
       preferences.mode = mode;
       ReplActions.setREPLMode(mode);
+    });
+  },
+  onSetSuggestionDelay(delay) {
+    this.updatePreference((preferences) => {
+      preferences.suggestionDelay = parseInt(delay, 10) || 0;
+      ReplActiveInputActions.updateSuggestionDelay();
     });
   },
   onSetExeTimeout(timeout) {

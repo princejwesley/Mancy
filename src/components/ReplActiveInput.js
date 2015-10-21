@@ -29,7 +29,7 @@ export default class ReplActiveInput extends React.Component {
 
     _.each([
       'onTabCompletion', 'autoComplete', 'onKeyDown',
-      'onKeyUp', 'onStoreChange', 'prompt',
+      'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -39,7 +39,9 @@ export default class ReplActiveInput extends React.Component {
     this.commandOutput = [];
     this.activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     this.commandReady = false;
+    this.setDebouncedComplete();
   }
+
   componentDidMount() {
     this.unsubscribe = ReplActiveInputStore.listen(this.onStoreChange);
     this.element = React.findDOMNode(this);
@@ -65,6 +67,13 @@ export default class ReplActiveInput extends React.Component {
     cli.displayPrompt = this.displayPrompt;
   }
 
+  setDebouncedComplete() {
+    this.debouncedComplete = _.debounce(
+      () => this.complete(this.autoComplete),
+      global.Mancy.preferences.suggestionDelay
+    );
+  }
+
   focus() {
     // focus
     ReplDOM.focusOn(this.element);
@@ -79,28 +88,37 @@ export default class ReplActiveInput extends React.Component {
     let { now, activeSuggestion, breakPrompt,
           format, stagedCommands } = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
+    this.setDebouncedComplete();
+
     if(format) {
       const text = this.element.innerText;
       if(text.length) {
         const formattedCode =  ReplCommon.format(this.element.innerText);
         this.reloadPrompt(formattedCode, formattedCode.length);
       }
+      return;
     }
-    else if(breakPrompt) {
+
+    if(breakPrompt) {
       let cli = ReplActiveInput.getRepl();
       this.waitingForOutput = false;
       cli.input.emit('data', '.break');
       cli.input.emit('data', EOL);
       this.reloadPrompt('', 0);
+      return;
     }
-    else if(stagedCommands.length) {
+
+    if(stagedCommands.length) {
       let cli = ReplActiveInput.getRepl();
       this.waitingForOutput = true;
       cli.input.emit('data', ReplInput.transform(stagedCommands[0]));
       cli.input.emit('data', EOL);
+      return;
     }
-    else if(now && activeSuggestion) {
+
+    if(now && activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+      return;
     }
   }
 
@@ -290,7 +308,7 @@ export default class ReplActiveInput extends React.Component {
       cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
     } else if(this.element.innerText.trim()){
-      this.complete(this.autoComplete);
+      this.debouncedComplete();
     } else {
       this.removeSuggestion();
     }

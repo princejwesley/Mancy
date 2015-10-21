@@ -293,6 +293,7 @@ export default class Repl extends React.Component {
   }
 
   onConsole({type, data}) {
+    if(data.length === 0) { return; }
     let results = _.reduce(data, function(result, datum) {
       let {formattedOutput} = ReplOutput.some(datum).highlight(datum);
       result.push(formattedOutput);

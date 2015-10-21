@@ -47,6 +47,9 @@ const ReplActiveInputStore = Reflux.createStore({
       this.trigger();
     }
   },
+  onUpdateSuggestionDelay() {
+    this.trigger();
+  },
   getStore() {
     return {
       activeSuggestion: activeSuggestion,
