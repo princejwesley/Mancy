@@ -84,7 +84,7 @@ export default class ReplActiveInput extends React.Component {
     setTimeout(() => this.removeSuggestion(), 200);
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     ReplDOM.focusOn(this.element);
-    ReplDOM.setCursorPosition(cursor || 0, this.element);
+    ReplDOM.setCursorPositionRelativeTo(cursor || 0, this.element);
   }
 
   onStoreChange() {
@@ -283,9 +283,9 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(ReplDOMEvents.isEnter(e)) {
-    
+
       if (!e.shiftKey && global.Mancy.preferences.toggleShiftEnter) return;
-    
+
       let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
       if(activeSuggestion) {
         e.preventDefault();
