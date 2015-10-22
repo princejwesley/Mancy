@@ -91,6 +91,14 @@ let ReplCommon = {
       .map((module) => module.replace(/NativeModule\s/, ''))
       .value();
   },
+  shouldTriggerAutoComplete: (e) => {
+    let keyCode = e.which;
+    let notAllowed = [123, 125, 40, 41, 13, 59, 61, 10];
+    if(notAllowed.indexOf(keyCode) !== -1) {
+      return false;
+    }
+    return true;
+  },
 };
 
 let esCodeGenOptions = {

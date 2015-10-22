@@ -195,6 +195,8 @@ export default class ReplActiveInput extends React.Component {
       })
       .value();
 
+    if(!document.activeElement.isSameNode(this.element)) { return; }
+
     const text = this.element.innerText;
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
@@ -315,7 +317,7 @@ export default class ReplActiveInput extends React.Component {
       cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
     } else {
-      if(this.element.innerText.trim()){
+      if(ReplCommon.shouldTriggerAutoComplete(e) && this.element.innerText.trim()){
         this.debouncedComplete();
       } else {
         this.removeSuggestion();
@@ -404,6 +406,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   complete(callback) {
+    if(!document.activeElement.isSameNode(this.element)) { return; }
     let text = this.element.innerText || '';
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
@@ -417,8 +420,7 @@ export default class ReplActiveInput extends React.Component {
       <div className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
         onKeyDown={this.onKeyDown}
-        onBlur={this.onBlur}>
-        {this.props.command}
+        onBlur={this.onBlur} dangerouslySetInnerHTML={{__html:ReplCommon.highlight(this.props.command)}}>
       </div>
     );
   }
