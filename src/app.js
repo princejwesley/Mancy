@@ -27,7 +27,8 @@ import remote from 'remote';
     "theme": "Dark Theme",
     "timeout": ReplConstants.EXEC_TIMEOUT,
     "babel": false,
-    "suggestionDelay": 250
+    "suggestionDelay": 250,
+    "toggleShiftEnter": false
   };
 
   _.each(_.keys(defaults), (key) => {

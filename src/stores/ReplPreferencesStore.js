@@ -27,12 +27,18 @@ const ReplPreferencesStore = Reflux.createStore({
     let preferences = JSON.parse(localStorage.getItem('preferences'));
     cb(preferences);
     global.Mancy.preferences = preferences;
+    global.Mancy.preferences.shiftEnter = true;
     localStorage.setItem('preferences', JSON.stringify(preferences));
     this.trigger();
   },
   toggleBabel(flag) {
     this.updatePreference((preferences) => {
       preferences.babel = flag;
+    });
+  },
+  toggleShiftEnter(flag) {
+    this.updatePreference((preferences) => {
+      preferences.toggleShiftEnter = flag;
     });
   },
   onSetTheme(name) {
