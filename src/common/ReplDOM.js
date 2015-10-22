@@ -50,72 +50,51 @@ let ReplDOM = {
     }
     return true;
   },
-  setCursorPosition: (pos, dom) => {
-    // handled for single child node
-    let range = document.createRange();
-    dom = dom || document.activeElement;
-    range.selectNodeContents(dom);
-
-    if(dom.innerText.length >= pos && dom.childNodes.length) {
-      range.setStart(dom.childNodes[0], pos);
-    }
-    range.collapse(true);
-    let selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
+  getTextNodeTreeWalker: (dom, range) => {
+    return document.createTreeWalker(
+      dom,
+      NodeFilter.SHOW_TEXT,
+      (node) => {
+        let nodeRange = document.createRange();
+        nodeRange.selectNodeContents(node);
+        return (!range || nodeRange.compareBoundaryPoints(Range.END_TO_END, range) < 1) ?
+          NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+      false
+    );
   },
   getCursorPositionRelativeTo: (dom) => {
-    let selection = window.getSelection();
-    let sameNode = (l, r) => l.isSameNode(r);
-    if (selection.rangeCount <= 0) { return 0; }
-    let range = selection.getRangeAt(0);
-    const endNode = (range.endContainer.nodeType === 3 &&
-      !range.endContainer.textContent.length) ? range.endContainer.parentNode : range.endContainer;
-
-    let getCaretPosition = (nodes, endNode, range, pos) => {
-      if(!nodes.length) { return pos; }
-      let [first, ...rest] = nodes;
-      if(sameNode(endNode, first) ||
-        sameNode(endNode, first.firstChild) ||
-        sameNode(endNode, first.lastChild)) {
-        return pos + range.endOffset;
-      }
-      return getCaretPosition(rest, endNode, range, pos + first.textContent.length + 1)
-    };
-    return endNode.isSameNode(dom)
-      ? range.endOffset
-      : getCaretPosition(ReplCommon.toArray(dom.childNodes), endNode, range, 0);
+    const range = window.getSelection().getRangeAt(0);
+    let pos = 0;
+    let treeWalker = ReplDOM.getTextNodeTreeWalker(dom, range);
+    while( treeWalker.nextNode() ) {
+      pos += treeWalker.currentNode.length;
+    }
+    if( range.startContainer.nodeType == 3
+      && !range.startContainer.isSameNode(treeWalker.currentNode) ) {
+      pos += range.startOffset;
+    }
+    return pos;
   },
   setCursorPositionRelativeTo: (pos, dom) => {
-    let findNodeWithPos = (nodes, pos) => {
-      if(nodes.length === 0 || pos < 0) {
-        return [null, -1];
-      } else {
-        let [first, ...rest] = nodes;
-        let len = first.textContent.length + 1;
-        return len > pos
-          ? [first, pos]
-          : findNodeWithPos(rest, pos - len);
+    let treeWalker = ReplDOM.getTextNodeTreeWalker(dom);
+    let idx = pos;
+    while( treeWalker.nextNode() ) {
+      if(idx - treeWalker.currentNode.length <= 0) {
+        break;
       }
-    };
-    let [node, idx] = findNodeWithPos(ReplCommon.toArray(dom.childNodes), pos);
-    if(node) {
+      idx -= treeWalker.currentNode.length;
+    }
+
+    if(treeWalker.currentNode) {
       let range = document.createRange();
       range.selectNodeContents(dom);
-      range.setStart((idx && node.nodeType === 1)
-        ? node.childNodes[0]
-        : node, idx);
+      range.setStart(treeWalker.currentNode, idx);
       range.collapse(true);
       let selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
     }
-  },
-  getCursorPosition: () => {
-    let selection = window.getSelection();
-    if (selection.rangeCount <= 0) { return 0; }
-    let range = selection.getRangeAt(0).cloneRange();
-    return range.endOffset;
   },
   // for auto complete
   getAutoCompletePosition: () => {
@@ -166,7 +145,5 @@ let ReplDOM = {
     };
   }
 }
-
-
 
 export default ReplDOM;

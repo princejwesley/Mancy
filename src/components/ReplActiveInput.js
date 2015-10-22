@@ -77,7 +77,7 @@ export default class ReplActiveInput extends React.Component {
   focus() {
     // focus
     ReplDOM.focusOn(this.element);
-    ReplDOM.setCursorPosition(this.props.cursor || 0, this.element);
+    ReplDOM.setCursorPositionRelativeTo(this.props.cursor || 0, this.element);
   }
 
   onBlur() {
@@ -297,6 +297,7 @@ export default class ReplActiveInput extends React.Component {
         cli.input.emit('data', EOL);
       }
       cli.$lastExpression = ReplOutput.none();
+      cli.context = ReplContext.getContext();
       this.promptInput = text;
       let {local, output, input} = ReplInput.transform(text);
 
@@ -307,10 +308,16 @@ export default class ReplActiveInput extends React.Component {
       this.replFeed = output;
       cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
-    } else if(this.element.innerText.trim()){
-      this.debouncedComplete();
     } else {
-      this.removeSuggestion();
+      if(this.element.innerText.trim()){
+        this.debouncedComplete();
+      } else {
+        this.removeSuggestion();
+      }
+
+      let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
+      this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
+      ReplDOM.setCursorPositionRelativeTo(pos, this.element);
     }
   }
 
@@ -348,9 +355,13 @@ export default class ReplActiveInput extends React.Component {
 
     if(ReplDOMEvents.isEnter(e) && !e.shiftKey) {
       const text = this.element.innerText;
+      if(text.trim().length === 0) {
+        e.preventDefault();
+        return;
+      }
       if(text.indexOf(EOL) === -1) {
         // move cursor to end before talk to REPL
-        ReplDOM.setCursorPosition(text.length);
+        ReplDOM.setCursorPositionRelativeTo(text.length, this.element);
       }
       return;
     }
