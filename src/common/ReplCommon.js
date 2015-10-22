@@ -83,7 +83,13 @@ let ReplCommon = {
   },
   addUserDataToPath: (context) => {
     //TODO duplicate check
-    context.module.paths = context.module.paths.concat([resolve(global.Mancy.userData, 'node_modules')]);  
+    context.module.paths = context.module.paths.concat([resolve(global.Mancy.userData, 'node_modules')]);
+  },
+  getNativeModules: (context) => {
+    return _.chain(context.process.moduleLoadList)
+      .filter((module) => module.startsWith('NativeModule '))
+      .map((module) => module.replace(/NativeModule\s/, ''))
+      .value();
   },
 };
 

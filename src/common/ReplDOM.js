@@ -79,10 +79,7 @@ let ReplDOM = {
   setCursorPositionRelativeTo: (pos, dom) => {
     let treeWalker = ReplDOM.getTextNodeTreeWalker(dom);
     let idx = pos;
-    while( treeWalker.nextNode() ) {
-      if(idx - treeWalker.currentNode.length <= 0) {
-        break;
-      }
+    while( treeWalker.nextNode() && (idx - treeWalker.currentNode.length > 0)) {
       idx -= treeWalker.currentNode.length;
     }
 
