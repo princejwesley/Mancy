@@ -82,6 +82,9 @@ export default class ReplActiveInput extends React.Component {
 
   onBlur() {
     setTimeout(() => this.removeSuggestion(), 200);
+    let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
+    ReplDOM.focusOn(this.element);
+    ReplDOM.setCursorPosition(cursor || 0, this.element);
   }
 
   onStoreChange() {
