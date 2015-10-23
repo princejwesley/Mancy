@@ -3,7 +3,8 @@
 @import 'highlight';
 @import 'repl-output-array';
 @import 'repl-output-object';
-@import 'repl-integer';
+@import 'repl-output-integer';
+@import 'repl-output-regex';
 @import 'repl-source-file';
 
 @mixin replEntryMessage($theme) {
@@ -57,7 +58,8 @@
 
       @include replOutputArrayFold($theme);
       @include replOutputObjectFold($theme);
-      @include replInteger($theme);
+      @include replOutputInteger($theme);
+      @include replOutputRegex($theme);
       .repl-entry-output-error {
         @include stackTraceHighlight();
       }

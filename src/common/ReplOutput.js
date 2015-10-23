@@ -9,7 +9,8 @@ import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
-import ReplInteger from '../components/ReplInteger';
+import ReplOutputInteger from '../components/ReplOutputInteger';
+import ReplOutputRegex from '../components/ReplOutputRegex';
 import ReplSourceFile from '../components/ReplSourceFile';
 import ReplContext from './ReplContext';
 
@@ -62,7 +63,7 @@ let ReplOutputType = {
   number: (n) => {
     if(_.isFinite(n) && ((n | 0) === n)) {
       // integers
-      return <ReplInteger int={n} />
+      return <ReplOutputInteger int={n} />
     }
     return <span className='number'>{n}</span>;
   },
@@ -159,7 +160,7 @@ let ReplOutputType = {
     return <span className='literal'>{sy.toString()}</span>;
   },
   regexp: (re) => {
-    return <span className='regexp'>{re.toString()}</span>;
+    return <ReplOutputRegex regex={re} />;
   },
   'null': () => {
     return <span className='literal'>null</span>;

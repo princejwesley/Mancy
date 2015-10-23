@@ -82,7 +82,6 @@ export default class ReplActiveInput extends React.Component {
 
   onBlur() {
     setTimeout(() => this.removeSuggestion(), 200);
-//    ReplDOM.focusOn(this.element);
   }
 
   onStoreChange() {
@@ -298,10 +297,10 @@ export default class ReplActiveInput extends React.Component {
 
       let cli = ReplActiveInput.getRepl();
       // managed by us (no react)
-      const text = this.element.innerText.replace(/\s{1,2}$/, '');
       this.element.className += ' repl-active-input-running';
 
       setTimeout(() => {
+        const text = this.element.innerText.replace(/\s{1,2}$/, '');
         if(cli.bufferedCommand.length) {
           cli.input.emit('data', '.break');
           cli.input.emit('data', EOL);

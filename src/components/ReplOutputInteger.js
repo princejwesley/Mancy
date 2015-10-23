@@ -8,7 +8,7 @@ const mode = {
   'hex' : 16
 };
 
-export default class ReplInteger extends React.Component {
+export default class ReplOutputInteger extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
