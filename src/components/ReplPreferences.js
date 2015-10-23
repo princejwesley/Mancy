@@ -132,7 +132,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference'>
             <div className='preference-name'>
-              Toggle Shift + Enter Key
+              Toggle run (⇧ + ↩) / ↩
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
