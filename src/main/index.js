@@ -51,8 +51,8 @@ function onReady() {
   let mainWindow = new BrowserWindow({
     width: width * 0.75,
     height: height * 0.75,
-    'min-height': width * 0.5,
-    'min-width': height * 0.5,
+    'min-height': height * 0.5,
+    'min-width': width * 0.5,
     resizable: true,
     'web-preferences': {
 			'overlay-scrollbars': true,
