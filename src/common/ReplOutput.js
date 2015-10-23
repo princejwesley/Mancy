@@ -178,7 +178,7 @@ class Some {
     this.value = value;
   }
   highlight(output) {
-    if(this.value instanceof Error) {
+    if(_.isError(this.value)) {
       let [first, ...rest] = this.value.stack.split(EOL);
       return {
         formattedOutput:

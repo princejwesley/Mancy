@@ -60,7 +60,7 @@ let createContext = () => {
   context.os = require('os');
 
   context.process.on('uncaughtException', function (err) {
-    console.error(err instanceof Error ? err.stack : new Error(err));
+    console.error(_.isError(err) ? err : new Error(err));
   });
 
   let {createScript} = vm;
