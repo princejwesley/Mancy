@@ -3,6 +3,7 @@
 @import 'highlight';
 @import 'repl-output-array';
 @import 'repl-output-object';
+@import 'repl-integer';
 
 @mixin replConsoleMessage($theme) {
   .repl-console-message {
@@ -59,6 +60,7 @@
         @include stackTraceHighlight();
         @include replOutputArrayFold($theme);
         @include replOutputObjectFold($theme);
+        @include replInteger($theme);
       }
     }
 

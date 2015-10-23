@@ -9,6 +9,7 @@ import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
+import ReplInteger from '../components/ReplInteger';
 import ReplSourceFile from '../components/ReplSourceFile';
 import ReplContext from './ReplContext';
 
@@ -23,6 +24,10 @@ let getObjectLabels = (o) => {
 
   if(o instanceof Error) {
     return ` ${o.name} {}`;
+  }
+
+  if(Buffer.isBuffer(o)) {
+    return ` Buffer (${o.length} bytes) {}`;
   }
 
   return null;
@@ -55,6 +60,10 @@ let ReplOutputType = {
       </span>);
   },
   number: (n) => {
+    if(_.isFinite(n) && ((n | 0) === n)) {
+      // integers
+      return <ReplInteger int={n} />
+    }
     return <span className='number'>{n}</span>;
   },
   boolean: (b) => {

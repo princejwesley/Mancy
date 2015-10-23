@@ -1,0 +1,28 @@
+@import 'themes';
+
+@mixin replInteger($theme) {
+
+  .repl-integer {
+    .mode-group {
+      margin: 0px 5px;
+      display: inline-flex;
+      border: 1px solid if($theme == $dark-theme, $dark-app-integer-mode-color, $lt-app-integer-mode-color);
+      border-radius: 3px;
+      .mode {
+        width: 1.2em;
+        text-align: center;
+        border-right: 1px solid if($theme == $dark-theme, $dark-app-integer-mode-color, $lt-app-integer-mode-color);
+        cursor: pointer;
+        font-size: 0.8em;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+      .mode.selected {
+        background-color: if($theme == $dark-theme, $dark-app-integer-mode-color, $lt-app-integer-mode-color);
+        color: white;
+      }
+    }
+  }
+}
