@@ -24,7 +24,7 @@ const ReplConstants = {
       'es7.trailingFunctionCommas',
       ]
   },
-  EXEC_TIMEOUT: 5000
+  EXEC_TIMEOUT: 15000
 };
 
 export default ReplConstants;

@@ -297,23 +297,28 @@ export default class ReplActiveInput extends React.Component {
       if(e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) { return; }
 
       let cli = ReplActiveInput.getRepl();
+      // managed by us (no react)
       const text = this.element.innerText.replace(/\s{1,2}$/, '');
-      if(cli.bufferedCommand.length) {
-        cli.input.emit('data', '.break');
+      this.element.className += ' repl-active-input-running';
+
+      setTimeout(() => {
+        if(cli.bufferedCommand.length) {
+          cli.input.emit('data', '.break');
+          cli.input.emit('data', EOL);
+        }
+        cli.$lastExpression = ReplOutput.none();
+        cli.context = ReplContext.getContext();
+        this.promptInput = text;
+        let {local, output, input} = ReplInput.transform(text);
+
+        if(local) {
+          return this.addEntryAction(output, true, input, text);
+        }
+
+        this.replFeed = output;
+        cli.input.emit('data', this.replFeed);
         cli.input.emit('data', EOL);
-      }
-      cli.$lastExpression = ReplOutput.none();
-      cli.context = ReplContext.getContext();
-      this.promptInput = text;
-      let {local, output, input} = ReplInput.transform(text);
-
-      if(local) {
-        return this.addEntryAction(output, true, input, text);
-      }
-
-      this.replFeed = output;
-      cli.input.emit('data', this.replFeed);
-      cli.input.emit('data', EOL);
+      }, 17);
     } else {
       if(ReplCommon.shouldTriggerAutoComplete(e) && this.element.innerText.trim()){
         this.debouncedComplete();

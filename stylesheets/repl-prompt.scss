@@ -21,5 +21,13 @@
       @include entryLayout();
       @include editor();
     }
+    .repl-active-input.repl-active-input-running:before {
+      content: "\f021";
+      float: right;
+      margin-right: 8px;
+      font: normal normal normal 14px/1 FontAwesome;
+      color: if($theme == $dark-theme, $dark-app-prompt-spin-color, $lt-app-prompt-spin-color);
+      animation: fa-spin 2s infinite linear;
+    }
   }
 }
