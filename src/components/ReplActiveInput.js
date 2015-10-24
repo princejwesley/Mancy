@@ -35,8 +35,6 @@ export default class ReplActiveInput extends React.Component {
       this[field] = this[field].bind(this);
     });
 
-    this.waitingForOutput = false;
-    this.commandOutput = [];
     this.activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     this.commandReady = false;
     this.setDebouncedComplete();
@@ -101,7 +99,6 @@ export default class ReplActiveInput extends React.Component {
 
     if(breakPrompt) {
       let cli = ReplActiveInput.getRepl();
-      this.waitingForOutput = false;
       cli.input.emit('data', '.break');
       cli.input.emit('data', EOL);
       this.reloadPrompt('', 0);
@@ -110,7 +107,6 @@ export default class ReplActiveInput extends React.Component {
 
     if(stagedCommands.length) {
       let cli = ReplActiveInput.getRepl();
-      this.waitingForOutput = true;
       cli.input.emit('data', ReplInput.transform(stagedCommands[0]));
       cli.input.emit('data', EOL);
       return;
@@ -132,11 +128,11 @@ export default class ReplActiveInput extends React.Component {
   }
 
   prompt(preserveCursor) {
+    this.element.className = 'repl-active-input';
     let cli = ReplActiveInput.getRepl();
     let addEntryAction = (formattedOutput, error, text) => {
       this.addEntryAction(formattedOutput, !error, ReplCommon.highlight(text), text);
       this.removeSuggestion();
-      this.commandOutput = [];
       this.promptInput = this.replFeed = null;
       this.commandReady = false;
     };
@@ -149,30 +145,30 @@ export default class ReplActiveInput extends React.Component {
       }
     };
 
-    if(cli.bufferedCommand.indexOf(this.replFeed) != -1) {
+    if(cli.bufferedCommand.indexOf(this.replFeed) != -1 && global.Mancy.REPLError) {
       let {formattedOutput} = cli.$lastExpression.highlight(global.Mancy.REPLError.stack);
       addEntryAction(formattedOutput, true, this.promptInput);
       playStagedCommand();
     }
     else if(cli.bufferedCommand.length === 0 && this.commandReady) {
-      let output = this.commandOutput.join('');
-      let {formattedOutput, error} = cli.$lastExpression.highlight(output);
+      let {formattedOutput, error} = cli.$lastExpression.highlight(this.commandOutput);
       if(!this.replFeed) {
         ReplActions.overrideLastOutput(formattedOutput, !error);
         return;
       }
       addEntryAction(formattedOutput, error, this.promptInput);
       playStagedCommand();
+    } else {
+      $console.error('unhandled', this);
     }
   }
 
   addEntry(buf) {
-    if(!this.waitingForOutput) { return; }
     let output = buf.toString() || '';
     if(output.length === 0) { return; }
 
     this.commandReady = true;
-    this.commandOutput.push(output)
+    this.commandOutput = output;
   }
 
   autoComplete(__, completion) {
@@ -282,7 +278,6 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(ReplDOMEvents.isEnter(e)) {
-
       if (!e.shiftKey && global.Mancy.preferences.toggleShiftEnter) return;
 
       let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
@@ -290,7 +285,7 @@ export default class ReplActiveInput extends React.Component {
         e.preventDefault();
         return;
       }
-      this.waitingForOutput = true;
+
       // allow user to code some more
       ReplDOM.scrollToEnd();
       if(e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) { return; }
@@ -317,7 +312,7 @@ export default class ReplActiveInput extends React.Component {
         this.replFeed = output;
         cli.input.emit('data', this.replFeed);
         cli.input.emit('data', EOL);
-      }, 20);
+      }, 17);
     } else {
       if(ReplCommon.shouldTriggerAutoComplete(e) && this.element.innerText.trim()){
         this.debouncedComplete();
@@ -413,7 +408,7 @@ export default class ReplActiveInput extends React.Component {
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
     let cli = ReplActiveInput.getRepl();
-    this.waitingForOutput = false;
+
     cli.complete(code, callback);
   }
 
