@@ -99,6 +99,8 @@ let ReplCommon = {
     }
     return true;
   },
+  //http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
+  type: (obj) => Object.prototype.toString.call(obj).slice(8, -1),
 };
 
 let esCodeGenOptions = {

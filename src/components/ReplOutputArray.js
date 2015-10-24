@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
 import ReplOutputObject from './ReplOutputObject';
+import ReplCommon from '../common/ReplCommon';
 
 export default class ReplOutputArray extends React.Component {
   constructor(props) {
@@ -12,12 +13,18 @@ export default class ReplOutputArray extends React.Component {
 
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
     this.getKeysButLength = this.getKeysButLength.bind(this);
+    this.getType = this.getType.bind(this);
   }
 
   onToggleCollapse() {
     this.setState({
       collapse: !this.state.collapse
     });
+  }
+
+  getType() {
+    let type = ReplCommon.type(this.props.array.__proto__);
+    return ` ${type !== 'Undefined' ? type : 'Array[0]'} {}`;
   }
 
   getKeysButLength() {
@@ -73,8 +80,9 @@ export default class ReplOutputArray extends React.Component {
                 continuation
                   ? null
                   : <div className='array-entry' key='prototype'>
-                      __prototype__:
-                      <ReplOutputObject object={Array.prototype} label=' Array[0]' primitive={false}/>
+                      __proto__
+                      <span className='array-colon'>: </span>
+                      <ReplOutputObject object={Object.getPrototypeOf(this.props.array)} label={this.getType()} primitive={false}/>
                     </div>
               }
               </span>

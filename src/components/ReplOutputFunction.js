@@ -1,6 +1,8 @@
 import React from 'react';
 import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
+import ReplCommon from '../common/ReplCommon';
+import ReplOutputObject from './ReplOutputObject';
 
 export default class ReplOutputFunction extends React.Component {
   constructor(props) {
@@ -12,6 +14,8 @@ export default class ReplOutputFunction extends React.Component {
 
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
     this.onToggleFunCollapse = this.onToggleFunCollapse.bind(this);
+    this.getType = this.getType.bind(this);
+    this.getAllProps = this.getAllProps.bind(this);
   }
 
   onToggleCollapse() {
@@ -23,6 +27,19 @@ export default class ReplOutputFunction extends React.Component {
   onToggleFunCollapse() {
     this.setState({
       funCollapse: !this.state.funCollapse
+    });
+  }
+
+  getType() {
+    let type = this.props.fun.__proto__ ? ReplCommon.type(this.props.fun.__proto__) : 'Undefined';
+    return ` ${type !== 'Undefined' ? type : 'Object'} {}`;
+  }
+
+  getAllProps() {
+    let names = Object.getOwnPropertyNames(this.props.fun);
+    let symbols = Object.getOwnPropertySymbols(this.props.fun);
+    return _.sortBy(names.concat(symbols), (value) => {
+      return value.toString();
     });
   }
 
@@ -41,14 +58,14 @@ export default class ReplOutputFunction extends React.Component {
               <span className='object-desc'>{label}</span>
               <span className='object-rec'>
               {
-                _.map(Object.getOwnPropertyNames(this.props.fun), (key) => {
+                _.map(this.getAllProps(), (key) => {
                   let value = ReplOutput.readProperty(this.props.fun, key);
                   let keyClass = this.props.fun.propertyIsEnumerable(key) ? 'object-key' : 'object-key dull';
                   return (
-                    <div className='object-entry' key={key}>
+                    <div className='object-entry' key={key.toString()}>
                       {
                         <span className={keyClass}>
-                          {key}
+                          {key.toString()}
                           <span className='object-colon'>: </span>
                         </span>
                       }
@@ -60,6 +77,15 @@ export default class ReplOutputFunction extends React.Component {
                     </div>
                   )
                 })
+              }
+              {
+                this.props.fun.__proto__
+                ?  <div className='object-entry' key='prototype'>
+                      __proto__
+                      <span className='object-colon'>: </span>
+                      <ReplOutputObject object={Object.getPrototypeOf(this.props.fun)} label={this.getType()} primitive={false}/>
+                  </div>
+                : null
               }
               {
                 this.props.expandable
