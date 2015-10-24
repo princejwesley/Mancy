@@ -5,6 +5,7 @@
 @import 'repl-output-object';
 @import 'repl-output-integer';
 @import 'repl-output-regex';
+@import 'repl-output-buffer-explorer';
 
 @mixin replConsoleMessage($theme) {
   .repl-console-message {
@@ -63,6 +64,7 @@
         @include replOutputObjectFold($theme);
         @include replOutputInteger($theme);
         @include replOutputRegex($theme);
+        @include replOutputBufferExplorer($theme);
       }
     }
 

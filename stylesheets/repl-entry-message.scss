@@ -6,6 +6,7 @@
 @import 'repl-output-integer';
 @import 'repl-output-regex';
 @import 'repl-source-file';
+@import 'repl-output-buffer-explorer';
 
 @mixin replEntryMessage($theme) {
   .repl-entry-message {
@@ -60,6 +61,7 @@
       @include replOutputObjectFold($theme);
       @include replOutputInteger($theme);
       @include replOutputRegex($theme);
+      @include replOutputBufferExplorer($theme);
       .repl-entry-output-error {
         @include stackTraceHighlight();
       }

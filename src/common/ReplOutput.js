@@ -11,6 +11,7 @@ import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
 import ReplOutputInteger from '../components/ReplOutputInteger';
 import ReplOutputRegex from '../components/ReplOutputRegex';
+import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplSourceFile from '../components/ReplSourceFile';
 import ReplContext from './ReplContext';
 
@@ -47,6 +48,9 @@ let ReplOutputType = {
         <span className='promise-value-type'>{ReplOutput.transformObject(value)}</span>
         {suffix}
       </span>);
+  },
+  buffer: (buf) => {
+    return <ReplOutputBuffer buffer={buf} />;
   },
   primitive: (n, type) => {
     let prefix = `${type} {`;
@@ -137,6 +141,10 @@ let ReplOutputType = {
       }
     }
 
+    if(Buffer.isBuffer(o)) {
+      return ReplOutputType['buffer'](o);
+    }
+
     return <ReplOutputObject object={o} label={getObjectLabels(o)} primitive={_.isString(o)}/>
   },
   'undefined': (u) => {
@@ -213,6 +221,11 @@ let ReplOutput = {
       return { object: JSON.parse(data) };
     } catch(e) {
       return { error: e.message };
+    }
+  },
+  asObject: (object, type) => {
+    if(ReplOutputType[type]) {
+      return ReplOutputType[type](object);      
     }
   },
   transformObject: (object) => {
