@@ -317,7 +317,7 @@ export default class ReplActiveInput extends React.Component {
         this.replFeed = output;
         cli.input.emit('data', this.replFeed);
         cli.input.emit('data', EOL);
-      }, 17);
+      }, 20);
     } else {
       if(ReplCommon.shouldTriggerAutoComplete(e) && this.element.innerText.trim()){
         this.debouncedComplete();

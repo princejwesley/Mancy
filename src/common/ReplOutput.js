@@ -98,7 +98,7 @@ let ReplOutputType = {
     if(arrays.length > 1) {
       return <ReplOutputArray array={arrays}
         label={['Array[',a.length,']'].join('')}
-        start={0} noIndex={true}/>
+        start={0} noIndex={true} length={a.length}/>
     } else {
       return arrays;
     }

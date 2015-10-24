@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
+import ReplOutputObject from './ReplOutputObject';
 
 export default class ReplOutputArray extends React.Component {
   constructor(props) {
@@ -10,6 +11,7 @@ export default class ReplOutputArray extends React.Component {
     }
 
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
+    this.getKeysButLength = this.getKeysButLength.bind(this);
   }
 
   onToggleCollapse() {
@@ -18,7 +20,13 @@ export default class ReplOutputArray extends React.Component {
     });
   }
 
+  getKeysButLength() {
+    let keys = Object.getOwnPropertyNames(this.props.array);
+    return keys.slice(0, keys.length - 1);
+  }
+
   render() {
+    let continuation = this.props.label.indexOf(' … ') !== -1;
     return (
       <span className='repl-entry-message-output-array-folds'>
         {
@@ -32,14 +40,16 @@ export default class ReplOutputArray extends React.Component {
               <span className='array-desc'>{this.props.label}</span>
               <span className='array-rec'>
               {
-                _.map(this.props.array, (value, idx) => {
+                _.map(this.getKeysButLength(), (key) => {
+                  let value = ReplOutput.readProperty(this.props.array, key);
+                  let idx = parseInt(key, 10);
                   return (
                     <div className='array-entry' key={idx}>
                       {
                         this.props.noIndex
                           ? null
                           : <span className='array-idx'>
-                              {this.props.start + idx}
+                              { this.props.start + idx}
                               <span className='array-colon'>: </span>
                             </span>
                       }
@@ -51,6 +61,21 @@ export default class ReplOutputArray extends React.Component {
                     </div>
                   )
                 })
+              }
+              {
+                continuation
+                  ? null
+                  : <div className='array-entry' key='number'>
+                      length: <span className='number'>{this.props.length ? this.props.length : this.props.array.length}</span>
+                    </div>
+              }
+              {
+                continuation
+                  ? null
+                  : <div className='array-entry' key='prototype'>
+                      __prototype__:
+                      <ReplOutputObject object={Array.prototype} label=' Array[0]' primitive={false}/>
+                    </div>
               }
               </span>
             </span>
