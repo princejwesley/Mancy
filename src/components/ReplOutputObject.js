@@ -21,8 +21,8 @@ export default class ReplOutputObject extends React.Component {
     });
   }
 
-  getType() {
-    let type = this.props.object.__proto__ ? ReplCommon.type(this.props.object.__proto__) : 'Undefined';
+  getType(obj) {
+    let type = obj ? ReplCommon.type(obj) : 'Object';
     return ` ${type !== 'Undefined' ? type : 'Object'} {}`;
   }
 
@@ -35,18 +35,18 @@ export default class ReplOutputObject extends React.Component {
   }
 
   render() {
-    let label = this.props.label || ' Object {}';
+    let label = ReplCommon.highlight(this.props.label || this.getType(this.props.object));
     return (
       <span className='repl-entry-message-output-object-folds'>
         {
           this.state.collapse
           ? <span className='repl-entry-message-output-object'>
               <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
-              <span className='object-desc'>{label}</span>
+              <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
             </span>
           : <span className='repl-entry-message-output-object'>
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
-              <span className='object-desc'>{label}</span>
+              <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
               <span className='object-rec'>
               {
                 _.map(this.getAllProps(), (key) => {
@@ -74,7 +74,7 @@ export default class ReplOutputObject extends React.Component {
                 ?  <div className='object-entry' key='prototype'>
                       __proto__
                       <span className='object-colon'>: </span>
-                      <ReplOutputObject object={Object.getPrototypeOf(this.props.object)} label={this.getType()} primitive={false}/>
+                      <ReplOutputObject object={Object.getPrototypeOf(this.props.object)} label={this.getType(this.props.object.__proto__)} primitive={false}/>
                   </div>
                 : null
               }

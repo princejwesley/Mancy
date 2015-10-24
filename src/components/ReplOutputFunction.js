@@ -31,8 +31,9 @@ export default class ReplOutputFunction extends React.Component {
   }
 
   getType() {
-    let type = this.props.fun.__proto__ ? ReplCommon.type(this.props.fun.__proto__) : 'Undefined';
-    return ` ${type !== 'Undefined' ? type : 'Object'} {}`;
+    let type = ReplCommon.type(this.props.fun);
+    let name = this.props.fun.name || '';
+    return ` ${type.toLocaleLowerCase()} ${name}() {}`;
   }
 
   getAllProps() {
@@ -44,18 +45,18 @@ export default class ReplOutputFunction extends React.Component {
   }
 
   render() {
-    let label = ' function() {}';
+    let label = ReplCommon.highlight(this.getType());
     return (
       <span className='repl-entry-message-output-object-folds'>
         {
           this.state.collapse
           ? <span className='repl-entry-message-output-object'>
               <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
-              <span className='object-desc'>{label}</span>
+              <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
             </span>
           : <span className='repl-entry-message-output-object'>
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
-              <span className='object-desc'>{label}</span>
+              <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
               <span className='object-rec'>
               {
                 _.map(this.getAllProps(), (key) => {
@@ -83,7 +84,7 @@ export default class ReplOutputFunction extends React.Component {
                 ?  <div className='object-entry' key='prototype'>
                       __proto__
                       <span className='object-colon'>: </span>
-                      <ReplOutputObject object={Object.getPrototypeOf(this.props.fun)} label={this.getType()} primitive={false}/>
+                      <ReplOutputObject object={Object.getPrototypeOf(this.props.fun)} primitive={false}/>
                   </div>
                 : null
               }
