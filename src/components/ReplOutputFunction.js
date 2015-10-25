@@ -31,9 +31,8 @@ export default class ReplOutputFunction extends React.Component {
   }
 
   getType() {
-    let type = ReplCommon.type(this.props.fun);
-    let name = this.props.fun.name || '';
-    return ` ${type.toLocaleLowerCase()} ${name}() {}`;
+    let type = ReplCommon.funType(this.props.fun);
+    return ` ${type} {}`;
   }
 
   getAllProps() {

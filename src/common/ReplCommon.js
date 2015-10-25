@@ -8,6 +8,7 @@ import escodegen from 'escodegen';
 import module from 'module';
 import ReplContext from '../common/ReplContext';
 
+const funPattern = /^\s*((?:function\s)?\s*[^)]+\))/;
 let ReplCommon = {
   times: (num, str) => {
     return new Array(num + 1).join(str);
@@ -99,8 +100,22 @@ let ReplCommon = {
     }
     return true;
   },
-  //http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
-  type: (obj) => Object.prototype.toString.call(obj).slice(8, -1),
+  type: (obj) => {
+    //http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
+    let name = Object.prototype.toString.call(obj).slice(8, -1);
+    if(name === 'Object' && obj && obj.constructor && obj.constructor.name) {
+      return obj.constructor.name;
+    }
+    return name;
+  },
+  funType: (fun) => {
+    let code = fun.toString();
+    let result = code.match(funPattern);
+    if(result && result.length == 2) {
+      return result[1];
+    }
+    return /^\s*function/.test(code) ? 'function ()' : '()';
+  },
   isPrintableAscii: (char) => /[ -~]/.test(char),
 };
 
