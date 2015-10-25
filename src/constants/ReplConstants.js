@@ -2,6 +2,12 @@ const ReplConstants = {
   REPL_HISTORY_SIZE: 1000,
   REPL_ENCODING: 'utf8',
   TAB_WIDTH: 2,
+  COMMAND_TRUNCATE_LENGTH: 80,
+  PROMISE: {
+    PENDING: 'pending',
+    RESOLVED: 'fulfilled',
+    REJECTED: 'rejected',
+  },
   BABEL_OPTIONS: {
     filename: 'repl',
     highlightCode: false,

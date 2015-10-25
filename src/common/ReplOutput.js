@@ -10,6 +10,7 @@ import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
 import ReplOutputInteger from '../components/ReplOutputInteger';
+import ReplOutputPromise from '../components/ReplOutputPromise';
 import ReplOutputRegex from '../components/ReplOutputRegex';
 import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplSourceFile from '../components/ReplSourceFile';
@@ -36,18 +37,8 @@ let getObjectLabels = (o) => {
 }
 
 let ReplOutputType = {
-  promise: (status, value) => {
-    let prefix = `Promise {`;
-    let suffix = '}';
-    return (
-      <span className='promise-object'>
-        {prefix}
-        <span className='promise-status'>[[PromiseStatus]]</span>:
-        <span className='string'>'{status}'</span>,
-        <span className='promise-value'>[[PromiseValue]]</span>:
-        <span className='promise-value-type'>{ReplOutput.transformObject(value)}</span>
-        {suffix}
-      </span>);
+  promise: (status, value, p) => {
+    return <ReplOutputPromise initStatus={status} initValue={value} promise={p}/>;
   },
   buffer: (buf) => {
     return <ReplOutputBuffer buffer={buf} />;
@@ -132,11 +123,11 @@ let ReplOutputType = {
       if(o instanceof BabelCoreJS.default.Promise) {
         let obj = o[Object.getOwnPropertyNames(o)[0]];
         let status = obj.s === 0 ? 'pending' : (obj.s === 1 ? 'resolved' : 'rejected');
-        return ReplOutputType['promise'](status, obj.v);
+        return ReplOutputType['promise'](status, obj.v, o);
       } else {
         let m = makeMirror(o);
         if(m.isPromise()) {
-          return ReplOutputType['promise'](m.status(), m.promiseValue().value());
+          return ReplOutputType['promise'](m.status(), m.promiseValue().value(), o);
         }
       }
     }
@@ -225,7 +216,7 @@ let ReplOutput = {
   },
   asObject: (object, type) => {
     if(ReplOutputType[type]) {
-      return ReplOutputType[type](object);      
+      return ReplOutputType[type](object);
     }
   },
   transformObject: (object) => {
