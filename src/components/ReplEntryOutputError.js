@@ -4,6 +4,17 @@ import _ from 'lodash';
 export default class ReplEntryOutputError extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      collapse: true
+    }
+
+    this.onToggleCollapse = this.onToggleCollapse.bind(this);
+  }
+
+  onToggleCollapse() {
+    this.setState({
+      collapse: !this.state.collapse
+    });
   }
 
   highlightMessage(msg) {
@@ -51,12 +62,20 @@ export default class ReplEntryOutputError extends React.Component {
   render() {
     return (
       <span className='repl-entry-output-error'>
-        <span className='repl-entry-output-error-message'>
-          {this.highlightMessage(this.props.message)}
-        </span>
-        <span className='repl-entry-output-error-stack' >
-          {this.highlightException(this.props.trace)}
-        </span>
+        {
+          this.state.collapse
+            ? <span className='repl-entry-output-error-message'>
+                <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
+                {this.highlightMessage(this.props.message)}
+              </span>
+            : <span className='repl-entry-output-error-message'>
+                <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
+                {this.highlightMessage(this.props.message)}
+                <span className='repl-entry-output-error-stack' >
+                  {this.highlightException(this.props.trace)}
+                </span>
+              </span>
+        }
       </span>
     );
   }

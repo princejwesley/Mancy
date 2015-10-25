@@ -59,12 +59,29 @@
 
       .repl-console-message-entry-content {
         @include highlight();
-        @include stackTraceHighlight();
         @include replOutputArrayFold($theme);
         @include replOutputObjectFold($theme);
         @include replOutputInteger($theme);
         @include replOutputRegex($theme);
         @include replOutputBufferExplorer($theme);
+        .repl-entry-output-error {
+          .repl-entry-output-error-message {
+            .fa-play {
+              color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+            }
+            .repl-entry-output-error-message-heading {
+              padding-left: 5px;
+            }
+
+            .repl-entry-output-error-stack {
+              .repl-entry-output-error-stack-lines {
+                padding-left: calc(1em + 5px);
+              }
+            }
+          }
+
+          @include stackTraceHighlight();
+        }
       }
     }
 
