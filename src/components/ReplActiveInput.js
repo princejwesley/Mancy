@@ -159,16 +159,25 @@ export default class ReplActiveInput extends React.Component {
       addEntryAction(formattedOutput, error, this.promptInput);
       playStagedCommand();
     } else {
-      $console.error('unhandled', this);
+//      $console.error('unhandled', this, cli.bufferedCommand);
     }
   }
 
   addEntry(buf) {
     let output = buf.toString() || '';
-    if(output.length === 0) { return; }
+    if(output.length === 0 || output.indexOf('at REPLServer.complete') !== -1) { return; }
+    this.commandOutput = null;
 
-    this.commandReady = true;
-    this.commandOutput = output;
+    if(output !== '<<response>>') {
+      this.commandOutput = output;
+    }
+    
+    if(!this.promptInput && this.commandOutput) {
+      console.error(new Error(this.commandOutput));
+      this.commandOutput = null;
+    } else {
+      this.commandReady = true;
+    }
   }
 
   autoComplete(__, completion) {

@@ -1,5 +1,8 @@
 import React from 'react';
 import _ from 'lodash';
+import ReplSourceFile from './ReplSourceFile';
+import ReplContext from '../common/ReplContext';
+import ReplCommon from '../common/ReplCommon';
 
 export default class ReplEntryOutputError extends React.Component {
   constructor(props) {
@@ -39,6 +42,10 @@ export default class ReplEntryOutputError extends React.Component {
         openBrace = '(';
         closeBrace = ')';
       }
+      let context = ReplContext.getContext();
+      let location = ReplCommon.getModuleSourcePath(p2, context.module.paths);
+      if(location) { p2 = <ReplSourceFile location= {location} name={p2}/> }
+
       output.push(
         <div className='repl-entry-output-error-stack-lines' key={output.length}>
           <span className='stack-error-at'>&nbsp;&nbsp;at</span>
