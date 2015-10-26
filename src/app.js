@@ -28,7 +28,8 @@ import remote from 'remote';
     "timeout": ReplConstants.EXEC_TIMEOUT,
     "babel": false,
     "suggestionDelay": 250,
-    "toggleShiftEnter": false
+    "toggleShiftEnter": false,
+    "asyncWrap": true,
   };
 
   _.each(_.keys(defaults), (key) => {

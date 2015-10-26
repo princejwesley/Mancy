@@ -23,10 +23,13 @@ let cook = (plain) => {
   }
 
   let output = plain;
-  // bare await
-  let match = plain.match(awaitMatcher);
-  if(match && match[1].indexOf('async') === -1) {
-    output = `${match[1]}${asyncWrapper(plain.substring(match[1].length))}`;
+
+  if(global.Mancy.preferences.asyncWrap) {
+    // bare await
+    let match = plain.match(awaitMatcher);
+    if(match && match[1].indexOf('async') === -1) {
+      output = `${match[1]}${asyncWrapper(plain.substring(match[1].length))}`;
+    }
   }
 
   return {

@@ -36,6 +36,11 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.babel = flag;
     });
   },
+  toggleAsyncWrap(flag) {
+    this.updatePreference((preferences) => {
+      preferences.asyncWrap = flag;
+    });
+  },
   toggleShiftEnter(flag) {
     this.updatePreference((preferences) => {
       preferences.toggleShiftEnter = flag;

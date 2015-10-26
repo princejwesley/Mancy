@@ -8,7 +8,8 @@ export default class ReplPreferences extends React.Component {
     this.state = _.clone(ReplPreferencesStore.getStore());
     _.each([
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
-      'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter'
+      'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
+      'onAsyncWrapChange'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -52,6 +53,10 @@ export default class ReplPreferences extends React.Component {
 
   onToggleShiftEnter(e) {
     ReplPreferencesStore.toggleShiftEnter(e.target.checked);
+  }
+
+  onAsyncWrapChange(e) {
+    ReplPreferencesStore.toggleAsyncWrap(e.target.checked);
   }
 
   render() {
@@ -110,7 +115,17 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference'>
+          <div className='preference' title='await expression ￫ (async function(){ let result = (await expression); return result; }())'>
+            <div className='preference-name'>
+              Auto async wrapper
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="await" checked={this.state.asyncWrap} value="" onClick={this.onAsyncWrapChange} />
+              </span>
+            </div>
+          </div>
+          <div className='preference' title='(0 for no timeout)'>
             <div className='preference-name'>
               Execution timeout(ms)
             </div>
