@@ -7,7 +7,7 @@ let babel = require('babel-core');
 const awaitMatcher = /^(.*\s|^)(await\s.*)/;
 const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
 let asyncWrapper = (code) => {
-  return `(async function() { ${code} }())`;
+  return `(async function() { let result = (${code}); return result; }())`;
 };
 
 let cook = (plain) => {
