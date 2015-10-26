@@ -171,7 +171,7 @@ export default class ReplActiveInput extends React.Component {
     if(output !== '<<response>>') {
       this.commandOutput = output;
     }
-    
+
     if(!this.promptInput && this.commandOutput) {
       console.error(new Error(this.commandOutput));
       this.commandOutput = null;
@@ -457,7 +457,7 @@ export default class ReplActiveInput extends React.Component {
 
     // here is our sandbox environment
     nodeRepl.context = ReplContext.createContext();
-    ReplContext.unlinkContext(() => { nodeRepl.context = {}; });
+    ReplContext.hookContext((context) => { nodeRepl.context = context; });
 
 
     return () => {

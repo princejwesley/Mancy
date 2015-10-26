@@ -15,11 +15,11 @@ let npmExe = resolve('node_modules', '.bin', 'npm');
 
 let getPreferences = () => global.Mancy.preferences;
 let noop = () => {};
-let unlinkFun = noop;
-let unlink = () => { (unlinkFun || noop)(); };
+let linkFun = noop;
+let link = (context) => { (linkFun || noop)(context); };
 
-let unlinkContext = (fun) => {
-  unlinkFun = fun;
+let hookContext = (fun) => {
+  linkFun = fun;
 }
 
 let createContext = () => {
@@ -108,7 +108,11 @@ let createContext = () => {
       return (fun, e, ret) => {
         if(fun === 'finish' && !e) {
           // unlink context
-          unlink();
+          link({});
+        }
+        else if(fun === 'line %j') {
+          // link context
+          link(context);
         }
       };
     }
@@ -129,4 +133,4 @@ let builtIns = () => {
 };
 
 createContext();
-export default { createContext: createContext, getContext: getContext, builtIns: builtIns, unlinkContext: unlinkContext };
+export default { createContext: createContext, getContext: getContext, builtIns: builtIns, hookContext: hookContext };

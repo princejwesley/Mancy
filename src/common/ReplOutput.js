@@ -12,6 +12,7 @@ import ReplOutputObject from '../components/ReplOutputObject';
 import ReplOutputInteger from '../components/ReplOutputInteger';
 import ReplOutputPromise from '../components/ReplOutputPromise';
 import ReplOutputRegex from '../components/ReplOutputRegex';
+import ReplOutputString from '../components/ReplOutputString';
 import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplSourceFile from '../components/ReplSourceFile';
 import ReplContext from './ReplContext';
@@ -153,7 +154,7 @@ let ReplOutputType = {
     return <ReplOutputFunction html={funElement} fun={f} expandable={expandable} short={shortElement}/>
   },
   string: (s) => {
-    return <span className='string'>'{s}'</span>;
+    return <ReplOutputString str={s}/>;
   },
   symbol: (sy) => {
     return <span className='literal'>{sy.toString()}</span>;
