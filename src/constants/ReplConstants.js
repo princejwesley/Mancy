@@ -3,6 +3,7 @@ const ReplConstants = {
   REPL_ENCODING: 'utf8',
   TAB_WIDTH: 2,
   COMMAND_TRUNCATE_LENGTH: 80,
+  OUTPUT_TRUNCATE_LENGTH: 80,
   PROMISE: {
     PENDING: 'pending',
     RESOLVED: 'fulfilled',

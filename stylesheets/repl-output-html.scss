@@ -1,0 +1,27 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replOutputHTML($theme) {
+
+  .repl-html-fold {
+    flex: 1;
+
+    .fa-html5 {
+      color: grey;
+      padding-left: 5px;
+      cursor: pointer;
+    }
+
+    .fa-html5.nohtml {
+      color: crimson;
+    }
+
+
+    iframe.sandbox-view {
+      display: block;
+      border: none;
+      width: 100%;
+      background-color: initial;
+    }
+  }
+}

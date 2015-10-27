@@ -5,6 +5,7 @@ import util from 'util';
 import ReplEntryOutputError from '../components/ReplEntryOutputError';
 import {EOL} from 'os';
 import React from 'react';
+import ReplDOM from '../common/ReplDOM';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
@@ -13,6 +14,7 @@ import ReplOutputInteger from '../components/ReplOutputInteger';
 import ReplOutputPromise from '../components/ReplOutputPromise';
 import ReplOutputRegex from '../components/ReplOutputRegex';
 import ReplOutputString from '../components/ReplOutputString';
+import ReplOutputHTML from '../components/ReplOutputHTML';
 import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplSourceFile from '../components/ReplSourceFile';
 import ReplContext from './ReplContext';
@@ -154,6 +156,9 @@ let ReplOutputType = {
     return <ReplOutputFunction html={funElement} fun={f} expandable={expandable} short={shortElement}/>
   },
   string: (s) => {
+    if(ReplDOM.isHTML(s)) {
+      return <ReplOutputHTML source={s}/>;
+    }
     return <ReplOutputString str={s}/>;
   },
   symbol: (sy) => {

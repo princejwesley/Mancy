@@ -1,21 +1,19 @@
 import React from 'react';
-import _ from 'lodash';
-import ReplDOM from '../common/ReplDOM';
-import ReplDOMEvents from '../common/ReplDOMEvents';
+import ReplConstants from '../constants/ReplConstants';
 
 export default class ReplOutputString extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       collapse: true
-    }
+    };
 
     const str = this.props.str;
     let len = str.length;
-    this.collapsable = len > 80;
+    this.collapsable = len > (this.props.limit || ReplConstants.OUTPUT_TRUNCATE_LENGTH);
     if(this.collapsable) {
-      this.prefix = str.slice(0, 40);
-      this.suffix = str.slice(len - 40);
+      this.prefix = str.slice(0, ReplConstants.OUTPUT_TRUNCATE_LENGTH/2);
+      this.suffix = str.slice(len - ReplConstants.OUTPUT_TRUNCATE_LENGTH/2);
     }
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
   }
