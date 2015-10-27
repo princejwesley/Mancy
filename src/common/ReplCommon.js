@@ -7,6 +7,7 @@ import esprima from 'esprima';
 import escodegen from 'escodegen';
 import module from 'module';
 import ReplContext from '../common/ReplContext';
+import IsCSSColor from 'is-css-color';
 
 const funPattern = /^\s*((?:function\s)?\s*[^)]+\))/;
 let ReplCommon = {
@@ -117,6 +118,10 @@ let ReplCommon = {
     return /^\s*function/.test(code) ? 'function ()' : '()';
   },
   isPrintableAscii: (char) => /[ -~]/.test(char),
+  isCSSColor: (color) => {
+    let cssValues = ['transparent', 'initial', 'inherit', 'currentColor'];
+    return IsCSSColor(color) && cssValues.indexOf(color.toLowerCase()) === -1;
+  },
 };
 
 let esCodeGenOptions = {

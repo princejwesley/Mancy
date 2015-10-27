@@ -63,6 +63,7 @@
     "font-awesome": "^4.4.0",
     "github": "^0.2.4",
     "highlight.js": "^8.8.0",
+    "is-css-color": "^1.0.0",
     "lodash": "^3.10.1",
     "md5": "^2.0.0",
     "npm": "^3.3.8",

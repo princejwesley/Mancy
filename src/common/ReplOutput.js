@@ -14,6 +14,7 @@ import ReplOutputInteger from '../components/ReplOutputInteger';
 import ReplOutputPromise from '../components/ReplOutputPromise';
 import ReplOutputRegex from '../components/ReplOutputRegex';
 import ReplOutputString from '../components/ReplOutputString';
+import ReplOutputColor from '../components/ReplOutputColor';
 import ReplOutputHTML from '../components/ReplOutputHTML';
 import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplSourceFile from '../components/ReplSourceFile';
@@ -159,6 +160,10 @@ let ReplOutputType = {
     let body = ReplDOM.toHTMLBody(s);
     if(body) {
       return <ReplOutputHTML body={body} source={s}/>;
+    }
+    // string is a color
+    if(ReplCommon.isCSSColor(s)) {
+      return <ReplOutputColor str={s}/>;
     }
     return <ReplOutputString str={s}/>;
   },
