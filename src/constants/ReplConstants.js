@@ -31,7 +31,8 @@ const ReplConstants = {
       'es7.trailingFunctionCommas',
       ]
   },
-  EXEC_TIMEOUT: 15000
+  EXEC_TIMEOUT: 15000,
+  IFRAME_MAX_HEIGHT: 500,
 };
 
 export default ReplConstants;

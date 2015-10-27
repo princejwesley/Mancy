@@ -5,10 +5,11 @@ import {EOL} from 'os';
 
 // Not very generic but sufficient to handle our usecase
 let ReplDOM = {
-  isHTML: (str) => {
-    let div = document.createElement('div');
-    div.innerHTML = str;
-    return !!_.find(div.childNodes, (node) => node.nodeType === document.ELEMENT_NODE);
+  toHTMLBody: (str) => {
+    let body = document.createElement('body');
+    body.innerHTML = str;
+    let result = _.find(body.childNodes, (node) => node.nodeType === document.ELEMENT_NODE);
+    return result ? body : null;
   },
   scrollToEnd: (dom, timeout = 50) => {
     let fun = dom

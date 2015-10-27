@@ -12,7 +12,7 @@ export default class ReplOutputHTML extends React.Component {
     };
     this.onToggleHTMLView = this.onToggleHTMLView.bind(this);
     this.onLoadIFrame = this.onLoadIFrame.bind(this);
-    this.id = md5(this.props.source.slice(0,40));
+    this.id = md5(this.props.source.slice(0,40) + `-${Date.now()}`);
   }
 
   componentDidMount() {
@@ -27,8 +27,13 @@ export default class ReplOutputHTML extends React.Component {
 
   onLoadIFrame() {
     let iframe = document.getElementById(this.id);
-    let styles = window.getComputedStyle(iframe.contentWindow.document.body);
-    iframe.height = (parseInt(styles.height) + parseInt(styles.marginTop) + parseInt(styles.marginBottom)) + 'px';
+    let doc = iframe.contentDocument;
+    doc.body = this.props.body;
+    let styles = window.getComputedStyle(doc.body);
+    let height = parseInt(styles.height) + parseInt(styles.marginTop) + parseInt(styles.marginBottom);
+    // fix max height
+    iframe.height = Math.min(height, ReplConstants.IFRAME_MAX_HEIGHT) + 'px';
+    doc.body.style.color = (document.body.className === 'dark-theme' ? 'whitesmoke' : 'black');
   }
 
   render() {
@@ -41,7 +46,7 @@ export default class ReplOutputHTML extends React.Component {
         {
           this.state.html
             ? <iframe className='sandbox-view' id={this.id} sandbox='allow-forms allow-scripts'
-              srcDoc={this.props.source} onLoad={this.onLoadIFrame}>
+                onLoad={this.onLoadIFrame} srcDoc=''>
               </iframe>
             : null
         }

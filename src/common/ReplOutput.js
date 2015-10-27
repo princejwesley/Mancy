@@ -156,8 +156,9 @@ let ReplOutputType = {
     return <ReplOutputFunction html={funElement} fun={f} expandable={expandable} short={shortElement}/>
   },
   string: (s) => {
-    if(ReplDOM.isHTML(s)) {
-      return <ReplOutputHTML source={s}/>;
+    let body = ReplDOM.toHTMLBody(s);
+    if(body) {
+      return <ReplOutputHTML body={body} source={s}/>;
     }
     return <ReplOutputString str={s}/>;
   },
