@@ -1,0 +1,24 @@
+@import 'repl-output-array';
+@import 'repl-output-object';
+@import 'repl-output-integer';
+@import 'repl-output-regex';
+@import 'repl-output-string';
+@import 'repl-output-color';
+@import 'repl-output-html';
+@import 'repl-output-url';
+@import 'repl-output-crypto';
+@import 'repl-output-buffer-explorer';
+
+
+@mixin replOutput($theme) {
+  @include replOutputArrayFold($theme);
+  @include replOutputObjectFold($theme);
+  @include replOutputInteger($theme);
+  @include replOutputRegex($theme);
+  @include replOutputString($theme);
+  @include replOutputColor($theme);
+  @include replOutputHTML($theme);
+  @include replOutputBufferExplorer($theme);
+  @include replOutputURL($theme);
+  @include replOutputCrypto($theme);
+}

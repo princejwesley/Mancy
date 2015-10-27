@@ -10,7 +10,10 @@ import ReplContext from '../common/ReplContext';
 import IsCSSColor from 'is-css-color';
 
 const funPattern = /^\s*((?:function\s)?\s*[^)]+\))/;
+// http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
 const urlPattern = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+//http://stackoverflow.com/questions/8571501/how-to-check-whether-the-string-is-base64-encoded-or-not
+const base64Pattern = /^([a-z0-9+/]{4})*([a-z0-9+/]{4}|[a-z0-9+/]{3}=|[a-z0-9+/]{2}==)$/i;
 
 let ReplCommon = {
   times: (num, str) => {
@@ -124,8 +127,9 @@ let ReplCommon = {
     let cssValues = ['transparent', 'initial', 'inherit', 'currentColor'];
     return IsCSSColor(color) && cssValues.indexOf(color.toLowerCase()) === -1;
   },
-  // http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
   isURL: (url) => !!url.match(urlPattern),
+  isBase64: (encoded) => !!encoded.match(base64Pattern),
+  decodeBase64: (encoded, charset='utf8') => new Buffer(encoded, 'base64').toString(charset), 
 };
 
 let esCodeGenOptions = {

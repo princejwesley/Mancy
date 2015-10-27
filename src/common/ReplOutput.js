@@ -16,6 +16,7 @@ import ReplOutputRegex from '../components/ReplOutputRegex';
 import ReplOutputString from '../components/ReplOutputString';
 import ReplOutputColor from '../components/ReplOutputColor';
 import ReplOutputURL from '../components/ReplOutputURL';
+import ReplOutputCrypto from '../components/ReplOutputCrypto';
 import ReplOutputHTML from '../components/ReplOutputHTML';
 import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplSourceFile from '../components/ReplSourceFile';
@@ -165,6 +166,10 @@ let ReplOutputType = {
 
     if(ReplCommon.isURL(s)) {
       return <ReplOutputURL url={s}/>;
+    }
+
+    if(ReplCommon.isBase64(s)) {
+      return <ReplOutputCrypto type='base64' encode={s} decode={ReplCommon.decodeBase64(s)}/>;
     }
 
     let body = ReplDOM.toHTMLBody(s);
