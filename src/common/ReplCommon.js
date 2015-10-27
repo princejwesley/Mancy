@@ -10,6 +10,8 @@ import ReplContext from '../common/ReplContext';
 import IsCSSColor from 'is-css-color';
 
 const funPattern = /^\s*((?:function\s)?\s*[^)]+\))/;
+const urlPattern = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+
 let ReplCommon = {
   times: (num, str) => {
     return new Array(num + 1).join(str);
@@ -122,6 +124,8 @@ let ReplCommon = {
     let cssValues = ['transparent', 'initial', 'inherit', 'currentColor'];
     return IsCSSColor(color) && cssValues.indexOf(color.toLowerCase()) === -1;
   },
+  // http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+  isURL: (url) => !!url.match(urlPattern),
 };
 
 let esCodeGenOptions = {

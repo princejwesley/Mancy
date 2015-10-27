@@ -8,6 +8,7 @@
 @import 'repl-output-string';
 @import 'repl-output-color';
 @import 'repl-output-html';
+@import 'repl-output-url';
 @import 'repl-source-file';
 @import 'repl-output-buffer-explorer';
 
@@ -68,6 +69,7 @@
       @include replOutputColor($theme);
       @include replOutputHTML($theme);
       @include replOutputBufferExplorer($theme);
+      @include replOutputURL($theme);
       .repl-entry-output-error {
         .repl-entry-output-error-message {
           .fa-play {

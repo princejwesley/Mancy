@@ -1,0 +1,19 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replOutputURL($theme) {
+
+  .repl-output-url {
+
+    .repl-url {
+      color: $app-external-link-color;
+      .fa-external-link {
+        padding: 0px 5px;
+        cursor: pointer;
+        color: $app-external-icon-color;
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
+}

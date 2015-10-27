@@ -6,6 +6,7 @@
 @import 'repl-output-integer';
 @import 'repl-output-regex';
 @import 'repl-output-string';
+@import 'repl-output-url';
 @import 'repl-output-color';
 @import 'repl-output-html';
 @import 'repl-output-buffer-explorer';
@@ -69,6 +70,7 @@
         @include replOutputString($theme);
         @include replOutputColor($theme);
         @include replOutputHTML($theme);
+        @include replOutputURL($theme);
         @include replOutputBufferExplorer($theme);
         .repl-entry-output-error {
           .repl-entry-output-error-message {
