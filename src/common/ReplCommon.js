@@ -129,7 +129,45 @@ let ReplCommon = {
   },
   isURL: (url) => !!url.match(urlPattern),
   isBase64: (encoded) => !!encoded.match(base64Pattern),
-  decodeBase64: (encoded, charset='utf8') => new Buffer(encoded, 'base64').toString(charset), 
+  decodeBase64: (encoded, charset='utf8') => new Buffer(encoded, 'base64').toString(charset),
+  getImageData: (buffer) => {
+    if(!buffer) { return null; }
+    if(ReplCommon.isJPEG(buffer)) { return { type: 'image/jpeg', base64: buffer.toString('base64') }; }
+    if(ReplCommon.isPNG(buffer)) { return { type: 'image/png', base64: buffer.toString('base64') }; }
+    if(ReplCommon.isGIF(buffer)) { return { type: 'image/gif', base64: buffer.toString('base64') }; }
+    if(ReplCommon.isWEBP(buffer)) { return { type: 'image/webp', base64: buffer.toString('base64') }; }
+    if(ReplCommon.isBMP(buffer)) { return { type: 'image/bmp', base64: buffer.toString('base64') }; }
+    return null;
+  },
+  // guesses
+  isJPEG: (buffer) => {
+    return (buffer && buffer.length > 4 && buffer[0] === 0xff
+      && buffer[1] === 0xd8 && buffer[buffer.length - 2] === 0xff
+      && buffer[buffer.length - 1] === 0xd9);
+  },
+  isPNG: (buffer) => {
+    return (buffer && buffer.length > 8 && buffer[0] === 0x89 && buffer[1] === 0x50
+      && buffer[2] === 0x4e && buffer[3] === 0x47 && buffer[4] === 0x0d
+      && buffer[5] === 0x0a && buffer[6] === 0x1a && buffer[7] === 0x0a
+    );
+  },
+  isGIF: (buffer) => {
+    return (buffer && buffer.length > 6 && buffer[0] === 0x47 && buffer[1] === 0x49
+      && buffer[2] === 0x46 && buffer[3] === 0x08 && (buffer[4] === 0x07
+      || buffer[4] === 0x09) &&  buffer[5] === 0x0a
+    );
+  },
+  isWEBP: (buffer) => {
+    return (buffer && buffer.length > 12 && buffer[8] === 0x57
+      && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50);
+  },
+  isBMP: (buffer) => {
+    if(!buffer || !buffer.length < 14) {
+      return false;
+    }
+    let size = ((buffer[5] << 24) | (buffer[4] << 16) | (buffer[3] << 8) | buffer[2]);
+    return ((buffer.length === 14 + size) && buffer[0] === 0x42 && buffer[1] === 0x4d);
+  }
 };
 
 let esCodeGenOptions = {
