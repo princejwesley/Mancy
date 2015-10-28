@@ -123,13 +123,18 @@ let ReplCommon = {
     return /^\s*function/.test(code) ? 'function ()' : '()';
   },
   isPrintableAscii: (char) => /[ -~]/.test(char),
+  isPrintableAsciiString: (str) => (/^[ -~]*$/mg).test(str),
   isCSSColor: (color) => {
     let cssValues = ['transparent', 'initial', 'inherit', 'currentColor'];
     return IsCSSColor(color) && cssValues.indexOf(color.toLowerCase()) === -1;
   },
   isURL: (url) => !!url.match(urlPattern),
   isBase64: (encoded) => !!encoded.match(base64Pattern),
-  decodeBase64: (encoded, charset='utf8') => new Buffer(encoded, 'base64').toString(charset),
+  decodeBase64: (encoded) => {
+    let data = new Buffer(encoded, 'base64');
+    let str = data.toString('utf8');
+    return ReplCommon.isPrintableAsciiString(str) ? str : data;
+  },
   getImageData: (buffer) => {
     if(!buffer) { return null; }
     if(ReplCommon.isJPEG(buffer)) { return { type: 'image/jpeg', base64: buffer.toString('base64') }; }

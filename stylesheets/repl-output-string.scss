@@ -6,6 +6,7 @@
   .repl-string-fold {
     flex: 1;
     .repl-string {
+      word-break: break-all;
       .fa-play {
         font-size: 0.8em;
         color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);

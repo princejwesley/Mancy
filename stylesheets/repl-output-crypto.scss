@@ -4,6 +4,7 @@
 @mixin replOutputCrypto($theme) {
   .repl-output-crypto{
     .repl-crypto-data {
+      display: inline-flex;
       .fa-lock, .fa-unlock {
         padding-left: 5px;
         cursor: pointer;

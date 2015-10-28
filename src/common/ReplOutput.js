@@ -169,7 +169,11 @@ let ReplOutputType = {
     }
 
     if(ReplCommon.isBase64(s)) {
-      return <ReplOutputCrypto type='base64' encode={s} decode={ReplCommon.decodeBase64(s)}/>;
+      let decode = ReplCommon.decodeBase64(s);
+      let dom = (typeof decode === 'string')
+        ? <ReplOutputString str={decode}/>
+        : ReplOutputType['buffer'](decode);
+      return <ReplOutputCrypto type='base64' encode={<ReplOutputString str={s}/>} decode={dom}/>;
     }
 
     let body = ReplDOM.toHTMLBody(s);
