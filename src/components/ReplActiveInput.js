@@ -167,8 +167,7 @@ export default class ReplActiveInput extends React.Component {
     let output = buf.toString() || '';
     if(output.length === 0 || output.indexOf('at REPLServer.complete') !== -1) { return; }
     this.commandOutput = null;
-
-    if(output !== '<<response>>') {
+    if(output.trim() !== '<<response>>') {
       this.commandOutput = output;
     }
 
