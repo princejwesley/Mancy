@@ -10,10 +10,11 @@ export default class ReplOutputString extends React.Component {
 
     const str = this.props.str;
     let len = str.length;
-    this.collapsable = len > (this.props.limit || ReplConstants.OUTPUT_TRUNCATE_LENGTH);
+    let limit = this.props.limit || ReplConstants.OUTPUT_TRUNCATE_LENGTH;
+    this.collapsable = len > limit - 1;
     if(this.collapsable) {
-      this.prefix = str.slice(0, ReplConstants.OUTPUT_TRUNCATE_LENGTH/2);
-      this.suffix = str.slice(len - ReplConstants.OUTPUT_TRUNCATE_LENGTH/2);
+      this.prefix = str.slice(0, limit/2);
+      this.suffix = str.slice(Math.max(limit/2, len - (limit/2)));
     }
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
   }

@@ -47,7 +47,7 @@ let ReplOutputType = {
     return <ReplOutputPromise initStatus={status} initValue={value} promise={p}/>;
   },
   buffer: (buf) => {
-    return <ReplOutputBuffer buffer={buf} />;
+    return <ReplOutputBuffer buffer={buf} image={ReplCommon.getImageData(buf)}/>;
   },
   primitive: (n, type) => {
     let prefix = `${type} {`;
@@ -174,7 +174,8 @@ let ReplOutputType = {
 
     let body = ReplDOM.toHTMLBody(s);
     if(body) {
-      return <ReplOutputHTML body={body} source={s}/>;
+      let source = <ReplOutputString str={s} limit={ReplConstants.OUTPUT_TRUNCATE_LENGTH / 2}/>;
+      return <ReplOutputHTML body={body} source={source}/>;
     }
 
     return <ReplOutputString str={s}/>;

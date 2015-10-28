@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
 import ReplCommon from '../common/ReplCommon';
 import ReplOutputObject from './ReplOutputObject';
+import ReplOutputHTML from './ReplOutputHTML';
 import ReplOutputBufferExplorer from './ReplOutputBufferExplorer'
 
 export default class ReplOutputBuffer extends React.Component {
@@ -10,11 +11,21 @@ export default class ReplOutputBuffer extends React.Component {
     super(props);
     this.state = {
       collapse: true,
-      explorerCollapse: true
+      explorerCollapse: true,
+      imageCollapse: true
     }
 
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
     this.onToggleExplorerCollapse = this.onToggleExplorerCollapse.bind(this);
+
+    if(this.props.image) {
+      let img = document.createElement('img');
+      let {type, base64} = this.props.image;
+      img.src = `data:${type};base64,${base64}`;
+      img.title = type.replace('image/', '');
+      this.body = document.createElement('body');
+      this.body.appendChild(img);
+    }
   }
 
   onToggleCollapse() {
@@ -38,10 +49,12 @@ export default class ReplOutputBuffer extends React.Component {
           ? <span className='repl-entry-message-output-object'>
               <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
               <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
+              { this.props.image ? <ReplOutputHTML body={this.body}/> : null }
             </span>
           : <span className='repl-entry-message-output-object'>
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
               <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
+              { this.props.image ? <ReplOutputHTML body={this.body}/> : null }
               <span className='object-rec'>
               {
                 <div className='object-entry' key='data'>

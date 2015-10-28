@@ -153,8 +153,8 @@ let ReplCommon = {
   },
   isGIF: (buffer) => {
     return (buffer && buffer.length > 6 && buffer[0] === 0x47 && buffer[1] === 0x49
-      && buffer[2] === 0x46 && buffer[3] === 0x08 && (buffer[4] === 0x07
-      || buffer[4] === 0x09) &&  buffer[5] === 0x0a
+      && buffer[2] === 0x46 && buffer[3] === 0x38 && (buffer[4] === 0x37
+      || buffer[4] === 0x39) &&  buffer[5] === 0x61
     );
   },
   isWEBP: (buffer) => {

@@ -1,7 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
-import ReplOutputString from './ReplOutputString';
 import md5 from 'md5';
 
 export default class ReplOutputHTML extends React.Component {
@@ -12,7 +11,7 @@ export default class ReplOutputHTML extends React.Component {
     };
     this.onToggleHTMLView = this.onToggleHTMLView.bind(this);
     this.onLoadIFrame = this.onLoadIFrame.bind(this);
-    this.id = md5(this.props.source.slice(0,40) + `-${Date.now()}`);
+    this.id = md5(this.props.body.innerText + `-${Date.now()}`);      
   }
 
   componentDidMount() {
@@ -38,10 +37,9 @@ export default class ReplOutputHTML extends React.Component {
 
   render() {
     let clazz = `fa fa-html5 ${this.state.html ? 'html' : 'nohtml'}`;
-    let limit = ReplConstants.OUTPUT_TRUNCATE_LENGTH / 2;
     return (
       <span className='repl-html-fold'>
-        <ReplOutputString str={this.props.source} limit={limit}/>
+        {this.props.source}
         <i className={clazz} onClick={this.onToggleHTMLView}></i>
         {
           this.state.html
