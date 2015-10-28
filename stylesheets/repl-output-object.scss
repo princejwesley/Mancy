@@ -4,6 +4,7 @@
 
 @mixin replOutputObjectFold($theme) {
   .repl-entry-message-output-object-folds {
+    flex: 1;
     .repl-entry-message-output-object {
       .fa-play {
         font-size: 0.8em;

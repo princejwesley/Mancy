@@ -122,8 +122,11 @@ let ReplCommon = {
     }
     return /^\s*function/.test(code) ? 'function ()' : '()';
   },
-  isPrintableAscii: (char) => /[ -~]/.test(char),
-  isPrintableAsciiString: (str) => (/^[ -~]*$/mg).test(str),
+//  isPrintableAscii: (char) => /[ -~]/.test(char),
+  isPrintableAscii: (str) => !_.find(str, (c) => {
+    let charCode = c.charCodeAt(0);
+    return c < 0x20 || c > 0x7e;
+  }),
   isCSSColor: (color) => {
     let cssValues = ['transparent', 'initial', 'inherit', 'currentColor'];
     return IsCSSColor(color) && cssValues.indexOf(color.toLowerCase()) === -1;
@@ -133,7 +136,7 @@ let ReplCommon = {
   decodeBase64: (encoded) => {
     let data = new Buffer(encoded, 'base64');
     let str = data.toString('utf8');
-    return ReplCommon.isPrintableAsciiString(str) ? str : data;
+    return ReplCommon.isPrintableAscii(str) ? str : data;
   },
   getImageData: (buffer) => {
     if(!buffer) { return null; }

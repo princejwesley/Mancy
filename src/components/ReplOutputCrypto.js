@@ -17,8 +17,9 @@ export default class ReplOutputCrypto extends React.Component {
   render() {
     let data = this.state.lock ? this.props.encode : this.props.decode;
     let clazz = `fa ${this.state.lock ? 'fa-lock' : 'fa-unlock'}`;
+    let cryptoClazz = `repl-output-crypto ${this.state.lock ? '' : 'extend'}`;
     return (
-      <span className='repl-output-crypto'>
+      <span className={cryptoClazz}>
       {
         <span className='repl-crypto-data' title={this.props.type}>
           {data}
