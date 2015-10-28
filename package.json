@@ -57,6 +57,7 @@
     "yargs": "^3.26.0"
   },
   "dependencies": {
+    "babel-core": "^5.8.31",
     "babel-runtime": "^5.8.20",
     "escodegen": "^1.7.0",
     "esprima": "^2.6.0",
