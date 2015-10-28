@@ -266,7 +266,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
-    if(e.ctrlKey || e.metaKey || e.altKey) { return; }
+    if(e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     if( ReplDOMEvents.isKeyup(e)
       || ReplDOMEvents.isKeydown(e)
     ) {
@@ -336,7 +336,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyDown(e) {
-    if(e.ctrlKey || e.metaKey || e.altKey) { return; }
+    if(e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;

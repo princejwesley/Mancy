@@ -210,9 +210,9 @@ export default class Repl extends React.Component {
   }
 
   onPaste(e) {
-    e.preventDefault();
-    var text = e.clipboardData.getData("text/plain");
-    document.execCommand("insertHTML", false, text);
+    // e.preventDefault();
+    // var text = e.clipboardData.getData("text/plain");
+    // document.execCommand("insertHTML", false, text);
     ReplSuggestionActions.removeSuggestion();
   }
 
