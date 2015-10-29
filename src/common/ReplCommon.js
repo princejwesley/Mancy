@@ -126,7 +126,7 @@ let ReplCommon = {
 //  isPrintableAscii: (char) => /[ -~]/.test(char),
   isPrintableAscii: (str) => !_.find(str, (c) => {
     let charCode = c.charCodeAt(0);
-    return c < 0x20 || c > 0x7e;
+    return charCode < 0x20 || charCode > 0x7e;
   }),
   isCSSColor: (color) => {
     let cssValues = ['transparent', 'initial', 'inherit', 'currentColor'];
