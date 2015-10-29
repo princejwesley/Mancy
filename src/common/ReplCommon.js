@@ -2,6 +2,7 @@ import _ from 'lodash';
 import hl from 'highlight.js';
 import ReplConstants from '../constants/ReplConstants';
 import shell from 'shell';
+import fs from 'fs';
 import {resolve} from 'path';
 import esprima from 'esprima';
 import escodegen from 'escodegen';
@@ -175,6 +176,13 @@ let ReplCommon = {
     }
     let size = ((buffer[5] << 24) | (buffer[4] << 16) | (buffer[3] << 8) | buffer[2]);
     return ((buffer.length === 14 + size) && buffer[0] === 0x42 && buffer[1] === 0x4d);
+  },
+  isFile: (file) => {
+    try {
+      return fs.statSync(file).isFile();
+    } catch (e) {
+      return false;
+    }
   }
 };
 

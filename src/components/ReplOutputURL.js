@@ -1,6 +1,7 @@
 import React from 'react';
 import shell from 'shell';
 import ReplCommon from '../common/ReplCommon';
+import url from 'url';
 
 export default class ReplOutputURL extends React.Component {
   constructor(props) {
@@ -8,7 +9,14 @@ export default class ReplOutputURL extends React.Component {
     this.openExternalFile = this.openExternalFile.bind(this);
   }
   openExternalFile() {
-    shell.openExternal(this.props.url);
+    let u = url.parse(this.props.url);
+    if(u.protocol) {
+      shell.openExternal(this.props.url);
+    } else if(ReplCommon.isFile(this.props.url)) {
+      shell.openExternal(`file://${this.props.url}`);
+    } else {
+      shell.openExternal(`http://${this.props.url}`);
+    }
   }
   render() {
     return (
