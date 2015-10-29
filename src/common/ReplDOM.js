@@ -5,6 +5,15 @@ import {EOL} from 'os';
 
 // Not very generic but sufficient to handle our usecase
 let ReplDOM = {
+  execCommand: (dom, cmd, arg) => {
+    let selection = window.getSelection();
+    let range = document.createRange();
+    range.selectNodeContents(dom);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    document.execCommand(cmd, false, arg);
+  },
   toHTMLBody: (str) => {
     let body = document.createElement('body');
     body.innerHTML = str;

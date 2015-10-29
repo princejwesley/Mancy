@@ -330,6 +330,7 @@ export default class ReplActiveInput extends React.Component {
 
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
       this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
+      // ReplDOM.execCommand(this.element, 'insertHTML', ReplCommon.highlight(this.element.innerText));
       ReplDOM.setCursorPositionRelativeTo(pos, this.element);
     }
   }

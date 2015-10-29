@@ -61,16 +61,17 @@ export default class ReplOutputInteger extends React.Component {
   }
 
   render() {
+    let clazz = `mode-group ${(this.props.int > -1 && this.props.int < 2) ? 'hide' : 'show'}`;
     return (
       <span className='repl-integer'>
         <span className='number'>{this.toIntString(this.props.int)}</span>
-        <span className="mode-group">
+        <span className={clazz}>
           <span className={this.getClazz('bin')} data-token='m' title='binary' onClick={this.onBinMode}>b</span>
           <span className={this.getClazz('oct')} data-token='o' title='octal' onClick={this.onOctMode}>o</span>
           <span className={this.getClazz('dec')} data-token='d' title='decimal' onClick={this.onDecMode}>d</span>
           <span className={this.getClazz('hex')} data-token='e' title='hexa decimal' onClick={this.onHexMode}>x</span>
         </span>
-        <span className="mode-group">
+        <span className={clazz}>
           <span className={this.getTypedClazz('signed')} data-token='-' title='signed' onClick={this.onSignedMode}>s</span>
           <span className={this.getTypedClazz('unsigned')} data-token='+' title='unsigned' onClick={this.onUnsignedMode}>u</span>
         </span>

@@ -56,7 +56,10 @@ function onReady() {
     resizable: true,
     'web-preferences': {
 			'overlay-scrollbars': true,
-      'plugins': true
+      'plugins': true,
+      'experimental-features': true,
+      'experimental-canvas-features': true,
+      'webgl': true
 		},
     show: false,
   });
