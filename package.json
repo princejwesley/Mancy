@@ -70,7 +70,7 @@
     "npm": "^3.3.8",
     "react": "^0.13.3",
     "reflux": "^0.2.12",
-    "c3": "git@github.com:princejwesley/c3.git"
+    "c3": "https://github.com/princejwesley/c3.git"
   },
   "repository": {
     "type": "git",
