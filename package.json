@@ -69,7 +69,8 @@
     "md5": "^2.0.0",
     "npm": "^3.3.8",
     "react": "^0.13.3",
-    "reflux": "^0.2.12"
+    "reflux": "^0.2.12",
+    "c3": "git@github.com:princejwesley/c3.git"
   },
   "repository": {
     "type": "git",
