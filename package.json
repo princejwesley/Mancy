@@ -6,15 +6,15 @@
   "main": "main/index.js",
   "scripts": {
     "preinstall": "npm prune",
-    "test": "./node_modules/.bin/jest",
-    "cov": "./node_modules/.bin/jest --coverage",
-    "start": "./node_modules/.bin/gulp start",
-    "debug": "./node_modules/.bin/gulp debug",
-    "package": "./node_modules/.bin/gulp package",
-    "package-all": "./node_modules/.bin/gulp packageAll",
-    "release": "./node_modules/.bin/gulp release",
-    "watch": "./node_modules/.bin/gulp watch",
-    "build": "./node_modules/.bin/gulp build"
+    "test": "jest",
+    "cov": "jest --coverage",
+    "start": "gulp start",
+    "debug": "gulp debug",
+    "package": "gulp package",
+    "package-all": "gulp packageAll",
+    "release": "gulp release",
+    "watch": "gulp watch",
+    "build": "gulp build"
   },
   "jest": {
     "scriptPreprocessor": "../node_modules/babel-jest",
