@@ -8,6 +8,7 @@
 @import 'repl-output-url';
 @import 'repl-output-crypto';
 @import 'repl-output-buffer-explorer';
+@import 'repl-output-chart-viewer';
 
 
 @mixin replOutput($theme) {
@@ -21,4 +22,5 @@
   @include replOutputBufferExplorer($theme);
   @include replOutputURL($theme);
   @include replOutputCrypto($theme);
+  @include replOutputChartViewer($theme);
 }

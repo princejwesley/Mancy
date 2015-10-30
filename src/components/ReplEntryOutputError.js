@@ -35,7 +35,9 @@ export default class ReplEntryOutputError extends React.Component {
   }
 
   highlightException(stack) {
-    let output = []
+    //top two stacks are ours
+    stack = stack.slice(2);
+    let output = [];
     let filler = (match, p1, p2, p3, p4) => {
       let openBrace = '', closeBrace = '';
       if(p1.trim().length) {
@@ -48,7 +50,7 @@ export default class ReplEntryOutputError extends React.Component {
 
       output.push(
         <div className='repl-entry-output-error-stack-lines' key={output.length}>
-          <span className='stack-error-at'>&nbsp;&nbsp;at</span>
+          <span className='stack-error-at'>&nbsp;&nbsp;at&nbsp;</span>
           <span className='stack-error-function'>{p1}</span>
           {openBrace}
           <span className='stack-error-file'>{p2}</span>:
@@ -61,7 +63,7 @@ export default class ReplEntryOutputError extends React.Component {
     };
 
     _.each(stack, (s) => {
-      s.replace(/(?:at)(.*\s)\(?([\w.]+):(\d+):(\d+)\)?/, filler);
+      s.replace(/(?:at\s*)([^(]+)\(?([^:]+):(\d+):(\d+)\)?/, filler);
     });
     return output;
   }

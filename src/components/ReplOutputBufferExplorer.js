@@ -1,11 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
 import ReplCommon from '../common/ReplCommon';
-import ReplOutputBufferExplorer from './ReplOutputBufferExplorer'
 
 let sentinalValues = _.map(new Array(0x10), () => 0);
 
-export default class ReplOutputBuffer extends React.Component {
+export default class ReplOutputBufferExplorer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -137,7 +136,7 @@ export default class ReplOutputBuffer extends React.Component {
         <div className='data-buffer-grid-pagination'>
           <span className='placeholder'></span>
           <i className={caretLeftClazz} title='Previous Page' onClick={this.onPreviousPage}></i>
-          {this.state.page}/{this.pages} 
+          {this.state.page}/{this.pages}
           <span className='textbox'>
             <input type="number" name="page-number" title="Goto Page" value={this.state.page} min="1" max={this.pages} onChange={this.gotoPage} />
           </span>

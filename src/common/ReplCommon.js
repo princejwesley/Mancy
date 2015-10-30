@@ -12,7 +12,7 @@ import IsCSSColor from 'is-css-color';
 
 const funPattern = /^\s*((?:function\s)?\s*[^)]+\))/;
 // http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-const urlPattern = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+const urlPattern = /^[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$/i;
 //http://stackoverflow.com/questions/8571501/how-to-check-whether-the-string-is-base64-encoded-or-not
 const base64Pattern = /^([a-z0-9+/]{4})*([a-z0-9+/]{4}|[a-z0-9+/]{3}=|[a-z0-9+/]{2}==)$/i;
 
@@ -183,6 +183,22 @@ let ReplCommon = {
     } catch (e) {
       return false;
     }
+  },
+  candidateForChart: (o) => {
+    if(typeof o !== 'object') { return false; }
+
+    let keys = _.keys(o);
+    if(keys.length <= 1) { return false; }
+    let data = 0;
+    let invalid = _.find(keys, (k) => {
+      let v = o[k];
+      if(!Array.isArray(v)) { return true; }
+      if(_.find(v, (d) => !(typeof d === 'number'))) { return true; }
+      data += v.length;
+      return false;
+    });
+
+    return !invalid && data > 0;
   }
 };
 

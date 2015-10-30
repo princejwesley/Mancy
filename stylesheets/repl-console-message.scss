@@ -2,6 +2,7 @@
 @import 'repl-common';
 @import 'highlight';
 @import 'repl-output';
+@import 'repl-source-file';
 
 @mixin replConsoleMessage($theme) {
   .repl-console-message {
@@ -55,7 +56,16 @@
 
       .repl-console-message-entry-content {
         @include highlight();
+        @include replSourceFile($theme);
         @include replOutput($theme);
+
+        .ellipsis {
+          &:after {
+            content: '\2026';
+            color: if($theme == $dark-theme, $dark-app-entry-ellipsis-color, $lt-app-entry-ellipsis-color);
+          }
+        }
+
         .repl-entry-output-error {
           .repl-entry-output-error-message {
             .fa-play {
