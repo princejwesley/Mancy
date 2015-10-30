@@ -8,7 +8,7 @@ export default class ReplOutputChartViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      type: '',
+      type: 'bar',
       flip: false,
       rotate: false
     };
@@ -58,6 +58,9 @@ export default class ReplOutputChartViewer extends React.Component {
       },
       axis: {
         rotated: this.state.rotate
+      },
+      zoom: {
+        enabled: true
       }
     };
 
@@ -71,7 +74,7 @@ export default class ReplOutputChartViewer extends React.Component {
       obj.data.type = this.state.type;
     }
 
-    c3.generate(obj);
+    this.chart = c3.generate(obj);
   }
 
   onToggleFlip(e) {
@@ -92,7 +95,7 @@ export default class ReplOutputChartViewer extends React.Component {
     this.setState({
       type: type
     });
-    setTimeout(() => this.generateChart(), 100);
+    this.chart.transform(type);
   }
 
   onClickBarChart(e) {
@@ -100,7 +103,7 @@ export default class ReplOutputChartViewer extends React.Component {
   }
 
   onClickLineChart(e) {
-    this.onChangeChartType('');
+    this.onChangeChartType('line');
   }
 
   onClickPieChart(e) {
@@ -114,7 +117,7 @@ export default class ReplOutputChartViewer extends React.Component {
   render() {
     let barClazz = `fa fa-bar-chart ${this.state.type === 'bar' ? 'selected' : ''}`;
     let areaClazz = `fa fa-area-chart ${this.state.type === 'area-spline' ? 'selected' : ''}`;
-    let lineClazz = `fa fa-line-chart ${this.state.type === '' ? 'selected' : ''}`;
+    let lineClazz = `fa fa-line-chart ${this.state.type === 'line' ? 'selected' : ''}`;
     let pieClazz = `fa fa-pie-chart ${this.state.type === 'pie' ? 'selected' : ''}`;
 
     return (
