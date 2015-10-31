@@ -12,8 +12,8 @@ export default class ReplEntryMessage extends React.Component {
     let shortEntry;
     if(this.props.commandCollapse) {
       let lines = this.props.message.plainCode.trim().split(EOL);
-      if(lines.length && lines[0].length > ReplConstants.COMMAND_TRUNCATE_LENGTH){
-        shortEntry = ReplCommon.highlight(lines[0].slice(0, ReplConstants.COMMAND_TRUNCATE_LENGTH));        
+      if(lines.length > 1 || lines[0].length > ReplConstants.COMMAND_TRUNCATE_LENGTH){
+        shortEntry = ReplCommon.highlight(lines[0].slice(0, ReplConstants.COMMAND_TRUNCATE_LENGTH));
       }
     }
     return (
