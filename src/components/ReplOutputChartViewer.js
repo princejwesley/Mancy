@@ -10,19 +10,21 @@ export default class ReplOutputChartViewer extends React.Component {
     this.state = {
       type: 'bar',
       flip: false,
-      rotate: false
+      rotate: false,
+      spline: false
     };
     _.each([
-      'generateChart', 'generateFlippedData',
+      'generateChart', 'generateFlippedData', 'onToggleSpline',
       'onToggleFlip', 'onToggleRotate', 'onClickBarChart',
-      'onClickLineChart', 'onClickAreaChart', 'onClickPieChart'
+      'onClickLineChart', 'onClickAreaChart', 'onClickPieChart',
+      'isLineChart', 'isAreaChart', 'isSplineChart', 'generateColumnData'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
 
     this.id = `chart-${_.uniqueId()}-${Date.now()}`;
     let keys = _.keys(this.props.chart);
-    this.columns = _.map(this.props.chart, (v, k) => [k].concat(v));
+    this.columns = this.generateColumnData(this.props.chart);
     this.flippedData = this.generateFlippedData(this.columns);
   }
 
@@ -30,17 +32,22 @@ export default class ReplOutputChartViewer extends React.Component {
     this.generateChart();
   }
 
-  generateFlippedData(cols) {
-    let {size, categories} = _.reduce(cols, (o, col) => { return {
-      size: Math.max(o.size, col.length - 1),
-      categories: o.categories.concat(col[0])
-    }}, { size: 0, categories: [] });
+  generateColumnData(source) {
+    let size = _.reduce(source, (o, arr) => {
+      return Math.max(o, arr.length);
+    }, 0);
+    let range = new Array(size).fill(0);
+    return _.map(source, (v, k) => ([k].concat(v).concat(range)).slice(0, size + 1));
+  }
 
-    let range = _.range(size);
+  generateFlippedData(cols) {
+    let categories = _.reduce(cols, (o, col) => o.concat(col[0]), []);
+
+    let range = _.range(cols[0].length - 1);
 
     let columns = _.reduce(range, (o, r) => {
       let record = _.reduce(cols, (out, col) => {
-        out.push(col[r + 1])
+        out.push(col[r + 1] || 0);
         return out;
       }, [`${r}`]);
       o.push(record);
@@ -77,6 +84,19 @@ export default class ReplOutputChartViewer extends React.Component {
     this.chart = c3.generate(obj);
   }
 
+  onToggleSpline(e) {
+    this.setState({
+      spline: !this.state.spline
+    });
+    setTimeout(() => {
+      if(this.isLineChart()) {
+        this.onClickLineChart();
+      } else if(this.isAreaChart()) {
+        this.onClickAreaChart();
+      }
+    }, 100);
+  }
+
   onToggleFlip(e) {
     this.setState({
       flip: !this.state.flip
@@ -103,7 +123,8 @@ export default class ReplOutputChartViewer extends React.Component {
   }
 
   onClickLineChart(e) {
-    this.onChangeChartType('line');
+    let type = this.state.spline ? 'spline' : 'line';
+    this.onChangeChartType(type);
   }
 
   onClickPieChart(e) {
@@ -111,13 +132,26 @@ export default class ReplOutputChartViewer extends React.Component {
   }
 
   onClickAreaChart(e) {
-    this.onChangeChartType('area-spline');
+    let type = this.state.spline ? 'area-spline' : 'area';
+    this.onChangeChartType(type);
+  }
+
+  isLineChart() {
+    return this.state.type === 'line' || this.state.type === 'spline';
+  }
+
+  isAreaChart() {
+    return this.state.type === 'area' || this.state.type === 'area-spline';
+  }
+
+  isSplineChart() {
+    return this.isLineChart() || this.isAreaChart();
   }
 
   render() {
     let barClazz = `fa fa-bar-chart ${this.state.type === 'bar' ? 'selected' : ''}`;
-    let areaClazz = `fa fa-area-chart ${this.state.type === 'area-spline' ? 'selected' : ''}`;
-    let lineClazz = `fa fa-line-chart ${this.state.type === 'line' ? 'selected' : ''}`;
+    let areaClazz = `fa fa-area-chart ${this.isAreaChart() ? 'selected' : ''}`;
+    let lineClazz = `fa fa-line-chart ${this.isLineChart() ? 'selected' : ''}`;
     let pieClazz = `fa fa-pie-chart ${this.state.type === 'pie' ? 'selected' : ''}`;
 
     return (
@@ -134,13 +168,19 @@ export default class ReplOutputChartViewer extends React.Component {
             <input type="checkbox" name="flip"
               title='flip category and data'
               checked={this.state.flip} value="" onClick={this.onToggleFlip} />
-            Flip
+            flip
           </span>
           <span className="checkbox-group">
             <input type="checkbox"
               title='rotate category and data'
               name="rotate" checked={this.state.rotate} value="" onClick={this.onToggleRotate} />
-            Rotate
+            rotate
+          </span>
+          <span className="checkbox-group">
+            <input type="checkbox"
+              title='spline curve'
+              name="spline" disabled={!this.isSplineChart()} checked={this.state.spline} value="" onClick={this.onToggleSpline} />
+            spline
           </span>
           <span className='placeholder'></span>
         </span>
