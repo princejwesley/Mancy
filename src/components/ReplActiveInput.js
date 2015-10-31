@@ -333,12 +333,18 @@ export default class ReplActiveInput extends React.Component {
       }
 
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
-      this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
+      // this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
+      ReplDOM.execCommand(this.element, 'insertHTML', ReplCommon.highlight(this.element.innerText));
       ReplDOM.setCursorPositionRelativeTo(pos, this.element);
     }
   }
 
   onKeyDown(e) {
+    if(e.metaKey && e.keyCode == 90) {
+      // undo
+      let action = e.shiftKey ? 'redo' : 'undo';
+      document.execCommand(action, false);
+    }
     if(e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
