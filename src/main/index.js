@@ -5,6 +5,7 @@ var {MenuManager} = require('./MenuManager');
 var Config = require('../package.json');
 var _ = require('lodash');
 var ipc = require('ipc');
+var fs = require('fs');
 var dialog = require('dialog');
 
 var windowCache = {};
@@ -35,6 +36,36 @@ app.on('activate-with-no-open-windows', onReady);
 
 ipc.on('application:message-box', function(event, options) {
   dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
+});
+
+ipc.on('application:download', function(event, buffer) {
+  console.log(event, buffer);
+  let filename = dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), {
+    title: 'Download to File…',
+    filters: [
+      { name: 'All Files', extensions: ['*'] }
+    ]
+  });
+  if(filename) {
+    fs.writeFile(filename, buffer, (err) => {
+      let options = { buttons: ['Close'] };
+      if(err) {
+        options = _.extend(options, {
+          title: 'Download Error',
+          type: 'error',
+          message: err.name || 'Export Error',
+          detail: err.toString()
+        });
+      } else {
+        options = _.extend(options, {
+          title: 'Download Success',
+          type: 'info',
+          message: `Saved to ${filename}`
+        });
+      }
+      dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
+    });
+  }
 });
 
 ipc.on('application:dock-message-notification', function(event, id) {

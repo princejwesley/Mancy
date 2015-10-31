@@ -5,7 +5,8 @@ import ReplCommon from '../common/ReplCommon';
 import ReplOutputObject from './ReplOutputObject';
 import ReplOutputHTML from './ReplOutputHTML';
 import ReplOutputBufferExplorer from './ReplOutputBufferExplorer'
-
+import ipc from 'ipc';
+ipc.send
 export default class ReplOutputBuffer extends React.Component {
   constructor(props) {
     super(props);
@@ -17,6 +18,7 @@ export default class ReplOutputBuffer extends React.Component {
 
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
     this.onToggleExplorerCollapse = this.onToggleExplorerCollapse.bind(this);
+    this.onDownload = this.onDownload.bind(this);
 
     if(this.props.image) {
       let img = document.createElement('img');
@@ -40,6 +42,10 @@ export default class ReplOutputBuffer extends React.Component {
     });
   }
 
+  onDownload() {
+    ipc.send('application:download', this.props.buffer);
+  }
+
   render() {
     let label = ReplCommon.highlight(` Buffer (${this.props.buffer.length} bytes) {}`);
     return (
@@ -49,11 +55,13 @@ export default class ReplOutputBuffer extends React.Component {
           ? <span className='repl-entry-message-output-object'>
               <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
               <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
+              <i className='fa fa-download' onClick={this.onDownload}> </i>
               { this.props.image ? <ReplOutputHTML body={this.body}/> : null }
             </span>
           : <span className='repl-entry-message-output-object'>
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
               <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
+              <i className='fa fa-download' onClick={this.onDownload}> </i>
               { this.props.image ? <ReplOutputHTML body={this.body}/> : null }
               <span className='object-rec'>
               {

@@ -11,6 +11,15 @@
         color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
       }
 
+      .fa-download {
+        padding: 0px 5px;
+        position: relative;
+        top: 1px;
+        font-size: 0.8em;
+        cursor: pointer;
+        color: if($theme == $dark-theme, $dark-app-download-color, $lt-app-download-color);
+      }
+
       .object-desc {
         padding-left: 5px;
       }

@@ -417,8 +417,9 @@ export default class ReplActiveInput extends React.Component {
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
     let cli = ReplActiveInput.getRepl();
+    ReplSuggestionActions.removeSuggestion();
     if(ReplCommon.shouldTriggerAutoComplete(code.slice(code.length - 1))) {
-      cli.complete(code, callback);      
+      cli.complete(code, callback);
     }
   }
 
