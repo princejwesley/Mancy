@@ -100,11 +100,17 @@ let ReplCommon = {
       .value();
   },
   shouldTriggerAutoComplete: (e) => {
+    if(typeof e === 'string') {
+      e = { which: e.charCodeAt(0), shiftKey: true };
+    }
     let keyCode = e.which;
-    let notAllowed = [123, 125, 40, 41, 13, 59, 61, 10];
-    if(notAllowed.indexOf(keyCode) !== -1) {
+    let notAllowed = [123, 125, 13, 59, 61, 10, 37, 38, 39, 40]; // CR;=LF(direction)
+    let shiftNotAllowed = [40, 41, 91, 93, 123, 125, 60, 62]; // ()[]{}<>
+    if((notAllowed.indexOf(keyCode) !== -1) ||
+      (e.shiftKey && shiftNotAllowed.indexOf(keyCode) !== -1)){
       return false;
     }
+
     return true;
   },
   type: (obj) => {
