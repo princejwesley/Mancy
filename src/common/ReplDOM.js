@@ -78,6 +78,13 @@ let ReplDOM = {
       false
     );
   },
+  removeDIV: (dom) => {
+    _.each(dom.childNodes, (node) => {
+      if(!node.nodeValue && node.nodeName === 'DIV') {
+        dom.removeChild(node);
+      }
+    });
+  },
   getCursorPositionRelativeTo: (dom) => {
     const range = window.getSelection().getRangeAt(0);
     let pos = 0;

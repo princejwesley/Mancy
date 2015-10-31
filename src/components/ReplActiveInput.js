@@ -285,7 +285,11 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
+    if(!ReplDOMEvents.isEnter(e) && this.element.innerText === this.lastText) { return; }
+    this.lastText = this.element.innerText;
+
     if(ReplDOMEvents.isEnter(e)) {
+      ReplDOM.removeDIV(this.element);
       if (!e.shiftKey && global.Mancy.preferences.toggleShiftEnter) return;
 
       let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
@@ -330,7 +334,6 @@ export default class ReplActiveInput extends React.Component {
 
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
       this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
-      // ReplDOM.execCommand(this.element, 'insertHTML', ReplCommon.highlight(this.element.innerText));
       ReplDOM.setCursorPositionRelativeTo(pos, this.element);
     }
   }
@@ -338,6 +341,12 @@ export default class ReplActiveInput extends React.Component {
   onKeyDown(e) {
     if(e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
+
+    if(ReplDOMEvents.isEnter(e) && !e.shiftKey) {
+      let pos = window.getSelection().getRangeAt(0).startOffset;
+      let newLine = _.contains(this.lastText, '\n') && this.lastText.length !== pos ? '\n' : '\n\n';
+      document.execCommand('insertHTML', false, newLine);
+    }
 
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     if(ReplDOMEvents.isEnter(e) && activeSuggestion && !global.Mancy.preferences.toggleShiftEnter) {

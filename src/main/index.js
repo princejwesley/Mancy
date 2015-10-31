@@ -39,7 +39,6 @@ ipc.on('application:message-box', function(event, options) {
 });
 
 ipc.on('application:download', function(event, buffer) {
-  console.log(event, buffer);
   let filename = dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), {
     title: 'Download to File…',
     filters: [

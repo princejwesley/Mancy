@@ -41,4 +41,6 @@ ReplDOMEvents.isNavigation = (() => {
   return (e) => values.indexOf(e.which) !== -1;
 })();
 
+ReplDOMEvents.duplicate = (e) => new e.constructor(e.type, e);
+
 export default ReplDOMEvents;

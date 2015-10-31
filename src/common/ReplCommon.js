@@ -104,8 +104,8 @@ let ReplCommon = {
       e = { which: e.charCodeAt(0), shiftKey: true };
     }
     let keyCode = e.which;
-    let notAllowed = [123, 125, 13, 59, 61, 10, 37, 38, 39, 40]; // CR;=LF(direction)
-    let shiftNotAllowed = [40, 41, 91, 93, 123, 125, 60, 62]; // ()[]{}<>
+    let notAllowed = [123, 125, 13, 59, 61, 10, 37, 38, 39, 40, 219, 221]; // CR;=LF(direction)[]
+    let shiftNotAllowed = [57, 48, 91, 93, 123, 125, 188, 190]; // (){}<>
     if((notAllowed.indexOf(keyCode) !== -1) ||
       (e.shiftKey && shiftNotAllowed.indexOf(keyCode) !== -1)){
       return false;
