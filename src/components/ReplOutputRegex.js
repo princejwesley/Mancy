@@ -36,26 +36,11 @@ export default class ReplOutputRegex extends React.Component {
 
   onKeyUp(e) {
     if(e.shiftKey) { return; }
-    if(ReplDOMEvents.isEnter(e)) {
-      e.preventDefault();
-      let selection = window.getSelection();
-      let {anchorNode, anchorOffset} = selection;
-      let text = anchorNode.textContent;
-      anchorNode.textContent = `${text.slice(0, anchorOffset)}\n${text.slice(anchorOffset) || ''}`;
-
-      let range = document.createRange();
-      range.setStart(anchorNode, anchorOffset + 1);
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-
     let playGround = this.element.querySelector('.repl-regex-play-ground');
     this.state.input = playGround.innerText;
     let cursor = ReplDOM.getCursorPositionRelativeTo(playGround);
     let output = this.onHighlight();
     playGround.innerHTML = output;
-    playGround.normalize();
     ReplDOM.setCursorPositionRelativeTo(cursor, playGround);
   }
 
