@@ -20,9 +20,6 @@
     .repl-active-input {
       @include entryLayout();
       @include editor();
-      br {
-        display: none;
-      }
     }
     .repl-active-input.repl-active-input-running:before {
       content: "\f021";

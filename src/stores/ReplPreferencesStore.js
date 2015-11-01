@@ -46,6 +46,11 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.toggleShiftEnter = flag;
     });
   },
+  toggleAutoCompleteOnEnter(flag) {
+    this.updatePreference((preferences) => {
+      preferences.autoCompleteOnEnter = flag;
+    });
+  },
   onSetTheme(name) {
     this.updatePreference((preferences) => {
       preferences.theme = name;

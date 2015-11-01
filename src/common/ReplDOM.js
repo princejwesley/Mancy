@@ -17,7 +17,8 @@ let ReplDOM = {
   toHTMLBody: (str) => {
     let body = document.createElement('body');
     body.innerHTML = str;
-    let result = _.find(body.childNodes, (node) => node.nodeType === document.ELEMENT_NODE);
+    let result = _.find(body.childNodes,
+      (node) => node.nodeName !== 'ANONYMOUS' && node.nodeType === document.ELEMENT_NODE);
     return result ? body : null;
   },
   scrollToEnd: (dom, timeout = 50) => {
@@ -78,23 +79,47 @@ let ReplDOM = {
       false
     );
   },
-  removeDIV: (dom) => {
-    _.each(dom.childNodes, (node) => {
-      if(!node.nodeValue && node.nodeName === 'DIV') {
-        dom.removeChild(node);
+  removeEmptyTextNode: (dom) => {
+    _.each(dom.childNodes, (n) => {
+      if(n && n.nodeType == 3 && (n.textContent === '\n' || !n.textContent.length)) {
+        dom.removeChild(n);
+      } else if(n) {
+        ReplDOM.removeEmptyTextNode(n);
       }
     });
   },
   getCursorPositionRelativeTo: (dom) => {
     const range = window.getSelection().getRangeAt(0);
     let pos = 0;
-    let treeWalker = ReplDOM.getTextNodeTreeWalker(dom, range);
-    while( treeWalker.nextNode() ) {
-      pos += treeWalker.currentNode.length;
-    }
-    if( range.startContainer.nodeType == 3
-      && !range.startContainer.isSameNode(treeWalker.currentNode) ) {
-      pos += range.startOffset;
+    let done = false;
+    let treeWalker = document.createTreeWalker(
+      dom,
+      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+      // null,
+      (node) => {
+        let nodeRange = document.createRange();
+        nodeRange.selectNodeContents(node);
+        let filter = !node.isSameNode(range.endContainer) &&
+          nodeRange.compareBoundaryPoints(Range.END_TO_END, range) < 1 ?
+            NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        if(filter === NodeFilter.FILTER_REJECT) {
+          if(range.startContainer.nodeType == 3 && nodeRange.compareBoundaryPoints(Range.END_TO_START, range) <= 0) {
+            pos += range.startOffset + (node.nodeName === 'DIV' ? 1 : 0);
+          }
+          done = true;
+        }
+        return done ? NodeFilter.FILTER_REJECT : filter;
+      },
+      false
+    );
+    while(!done && treeWalker.nextNode()) {
+      let cnode = treeWalker.currentNode;
+      if(cnode.nodeType != 1) {
+        pos += cnode.textContent.length;
+      }
+      else if(cnode.nodeName === 'DIV') {
+        pos += 1;
+      }
     }
     return pos;
   },

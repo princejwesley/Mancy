@@ -9,7 +9,7 @@ export default class ReplPreferences extends React.Component {
     _.each([
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
-      'onAsyncWrapChange'
+      'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -53,6 +53,10 @@ export default class ReplPreferences extends React.Component {
 
   onToggleShiftEnter(e) {
     ReplPreferencesStore.toggleShiftEnter(e.target.checked);
+  }
+
+  onToggleAutoCompleteOnEnter(e) {
+    ReplPreferencesStore.toggleAutoCompleteOnEnter(e.target.checked);
   }
 
   onAsyncWrapChange(e) {
@@ -152,6 +156,16 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='checkbox-group'>
                 <input type="checkbox" name="toggle-shift-enter" checked={this.state.toggleShiftEnter} value="" onClick={this.onToggleShiftEnter} />
+              </span>
+            </div>
+          </div>
+          <div className='preference'>
+            <div className='preference-name'>
+              Toggle auto suggestion on ↩
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="toggle-auto-suggestion" checked={this.state.autoCompleteOnEnter} value="" onClick={this.onToggleAutoCompleteOnEnter} />
               </span>
             </div>
           </div>

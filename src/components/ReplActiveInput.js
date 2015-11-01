@@ -265,7 +265,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
-    if(e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
+    if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     if( ReplDOMEvents.isKeyup(e)
       || ReplDOMEvents.isKeydown(e)
     ) {
@@ -289,7 +289,7 @@ export default class ReplActiveInput extends React.Component {
     this.lastText = this.element.innerText;
 
     if(ReplDOMEvents.isEnter(e)) {
-      ReplDOM.removeDIV(this.element);
+      this.removeSuggestion();
       if (!e.shiftKey && global.Mancy.preferences.toggleShiftEnter) return;
 
       let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
@@ -332,30 +332,25 @@ export default class ReplActiveInput extends React.Component {
         this.removeSuggestion();
       }
 
+      // ReplDOM.removeEmptyTextNode(this.element);
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
-      // this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
-      ReplDOM.execCommand(this.element, 'insertHTML', ReplCommon.highlight(this.element.innerText));
+      this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
+      // ReplDOM.execCommand(this.element, 'insertHTML', ReplCommon.highlight(this.element.innerText));
       ReplDOM.setCursorPositionRelativeTo(pos, this.element);
     }
   }
 
   onKeyDown(e) {
-    if(e.metaKey && e.keyCode == 90) {
-      // undo
-      let action = e.shiftKey ? 'redo' : 'undo';
-      document.execCommand(action, false);
-    }
-    if(e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
+    // if(e.metaKey && e.keyCode == 90) {
+    //   // undo
+    //   let action = e.shiftKey ? 'redo' : 'undo';
+    //   document.execCommand(action, false);
+    // }
+    if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
-    if(ReplDOMEvents.isEnter(e) && !e.shiftKey) {
-      let pos = window.getSelection().getRangeAt(0).startOffset;
-      let newLine = _.contains(this.lastText, '\n') && this.lastText.length !== pos ? '\n' : '\n\n';
-      document.execCommand('insertHTML', false, newLine);
-    }
-
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
-    if(ReplDOMEvents.isEnter(e) && activeSuggestion && !global.Mancy.preferences.toggleShiftEnter) {
+    if(ReplDOMEvents.isEnter(e) && activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) {
       e.stopPropagation();
       e.preventDefault();
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
@@ -382,7 +377,10 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    if(ReplDOMEvents.isEnter(e) && !e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) {
+    if(ReplDOMEvents.isEnter(e) && (
+      (!e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) ||
+      (e.shiftKey && global.Mancy.preferences.toggleShiftEnter)
+    )) {
       const text = this.element.innerText;
       if(text.trim().length === 0) {
         e.preventDefault();
