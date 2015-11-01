@@ -293,7 +293,7 @@ export default class ReplActiveInput extends React.Component {
       if (!e.shiftKey && global.Mancy.preferences.toggleShiftEnter) return;
 
       let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
-      if(activeSuggestion) {
+      if(activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) {
         e.preventDefault();
         return;
       }
