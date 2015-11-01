@@ -11,6 +11,8 @@
       .fa-lock, .fa-unlock {
         padding-left: 5px;
         cursor: pointer;
+        top: 3px;
+        position: relative;
       }
       .fa-lock {
         color: if($theme == $dark-theme, $dark-app-crypto-lock-color, $lt-app-crypto-lock-color);
