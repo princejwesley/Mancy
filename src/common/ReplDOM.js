@@ -92,6 +92,34 @@ let ReplDOM = {
     const range = window.getSelection().getRangeAt(0);
     let pos = 0;
     let done = false;
+    let remainings = (nodeRange, range) => {
+      const leftOver = (nrange, srange) => {
+        let pos = 0;
+        if(nrange.compareBoundaryPoints(Range.END_TO_START, srange) <= 0) {
+          let child = nrange.startContainer.childNodes;
+          if(child.length) {
+            _.each(child, (n) => {
+              if(n.isSameNode(srange.startContainer)) {
+                pos += srange.startOffset;
+              } else {
+                let nr = document.createRange();
+                nr.selectNodeContents(n);
+                if(nr.compareBoundaryPoints(Range.END_TO_END, srange) < 1) {
+                  pos += n.textContent.length;
+                } else {
+                  pos += leftOver(nr, srange);
+                }
+              }
+            });
+          } else {
+            pos += range.startOffset;
+          }
+        }
+        return pos;
+      };
+      return leftOver(nodeRange, range);
+    };
+
     let treeWalker = document.createTreeWalker(
       dom,
       NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
@@ -103,9 +131,7 @@ let ReplDOM = {
           nodeRange.compareBoundaryPoints(Range.END_TO_END, range) < 1 ?
             NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
         if(filter === NodeFilter.FILTER_REJECT) {
-          if(range.startContainer.nodeType == 3 && nodeRange.compareBoundaryPoints(Range.END_TO_START, range) <= 0) {
-            pos += range.startOffset + (node.nodeName === 'DIV' ? 1 : 0);
-          }
+          pos += remainings(nodeRange, range);
           done = true;
         }
         return done ? NodeFilter.FILTER_REJECT : filter;
@@ -116,9 +142,6 @@ let ReplDOM = {
       let cnode = treeWalker.currentNode;
       if(cnode.nodeType != 1) {
         pos += cnode.textContent.length;
-      }
-      else if(cnode.nodeName === 'DIV') {
-        pos += 1;
       }
     }
     return pos;
