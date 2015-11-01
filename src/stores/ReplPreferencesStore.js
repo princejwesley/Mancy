@@ -3,6 +3,7 @@ import ReplActions from '../actions/ReplActions';
 import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import Reflux from 'reflux';
 import _ from 'lodash';
+import ipc from 'ipc';
 
 let open = false;
 const ReplPreferencesStore = Reflux.createStore({
@@ -29,6 +30,7 @@ const ReplPreferencesStore = Reflux.createStore({
     global.Mancy.preferences = preferences;
     global.Mancy.preferences.shiftEnter = true;
     localStorage.setItem('preferences', JSON.stringify(preferences));
+    ipc.send('application:sync-preference', preferences);
     this.trigger();
   },
   toggleBabel(flag) {

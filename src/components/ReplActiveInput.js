@@ -28,7 +28,7 @@ export default class ReplActiveInput extends React.Component {
     };
 
     _.each([
-      'onTabCompletion', 'autoComplete', 'onKeyDown',
+      'onTabCompletion', 'autoComplete', 'onKeyDown', 'onClick',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction'
     ], (field) => {
@@ -79,6 +79,10 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onBlur() {
+    setTimeout(() => this.removeSuggestion(), 200);
+  }
+
+  onClick() {
     setTimeout(() => this.removeSuggestion(), 200);
   }
 
@@ -440,6 +444,7 @@ export default class ReplActiveInput extends React.Component {
     return (
       <div className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
+        onClick={this.onClick}
         onKeyDown={this.onKeyDown}
         onBlur={this.onBlur} dangerouslySetInnerHTML={{__html:ReplCommon.highlight(this.props.command)}}>
       </div>

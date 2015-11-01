@@ -30,7 +30,7 @@
           content: attr(data-token);
           position: absolute;
           top: -1.4em;
-          font-size: 0.6em;
+          font-size: 0.7em;
           color: if($theme == $dark-theme, $dark-app-integer-mode-title-color, $lt-app-integer-mode-title-color);
         }
       }
