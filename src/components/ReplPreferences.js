@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import ReplPreferencesStore from '../stores/ReplPreferencesStore';
+import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 
 export default class ReplPreferences extends React.Component {
   constructor(props) {
@@ -53,6 +54,7 @@ export default class ReplPreferences extends React.Component {
 
   onToggleShiftEnter(e) {
     ReplPreferencesStore.toggleShiftEnter(e.target.checked);
+    ReplStatusBarActions.updateRunCommand();
   }
 
   onToggleAutoCompleteOnEnter(e) {
@@ -109,7 +111,7 @@ export default class ReplPreferences extends React.Component {
               </fieldset>
             </div>
           </div>
-          <div className='preference'>
+          <div className='preference' title='enable babel transcompiler'>
             <div className='preference-name'>
               Babel transform
             </div>
@@ -139,9 +141,9 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference'>
+          <div className='preference' title='auto suggestion popup delay(ms)'>
             <div className='preference-name'>
-              Auto suggestion delay(ms)
+              Auto complete popup delay(ms)
             </div>
             <div className='preference-value'>
               <span className='textbox'>
@@ -149,9 +151,9 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference'>
+          <div className='preference' title='Toggle run mode (⇧ + ↲) / ↲(default)'>
             <div className='preference-name'>
-              Toggle run (⇧ + ↩) / ↩
+              Toggle run mode (⇧ + ↲) / ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -159,9 +161,9 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference'>
+          <div className='preference' title='ignoring auto complete results on ↲'>
             <div className='preference-name'>
-              Toggle auto suggestion on ↩
+              Ignore auto complete on ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>

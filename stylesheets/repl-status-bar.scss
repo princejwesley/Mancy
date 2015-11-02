@@ -35,6 +35,24 @@
       }
     }
 
+    .run-help {
+      padding: 0px 25px;
+      color: if($theme == $dark-theme, $dark-app-status-bar-run-help-color, $lt-app-status-bar-run-help-color);
+      .run-command {
+        color: if($theme == $dark-theme, $dark-app-status-bar-run-color, $lt-app-status-bar-run-color);
+        font-size: 0.9em;
+        font-weight: 900;
+        font-style: normal;
+      }
+      .run {
+        font-weight: 900;
+      }
+    }
+
+    .placeholder {
+      flex: 1;
+    }
+
     .repl-status-bar-commands {
       color: if($theme == $dark-theme, $dark-app-status-bar-command-color, $lt-app-status-bar-command-color);
       padding: 0 5px;
