@@ -131,6 +131,7 @@ let ReplCommon = {
   },
 //  isPrintableAscii: (char) => /[ -~]/.test(char),
   isPrintableAscii: (str) => !_.find(str, (c) => {
+    if(c === '\n' || c === '\r' || c === '\t') { return false; }
     let charCode = c.charCodeAt(0);
     return charCode < 0x20 || charCode > 0x7e;
   }),

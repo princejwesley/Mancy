@@ -18,6 +18,7 @@
         color: if($theme == $dark-theme, $dark-app-crypto-lock-color, $lt-app-crypto-lock-color);
         display: flex;
         align-self: center;
+        top: 0px;
       }
       .fa-unlock {
         color: if($theme == $dark-theme, $dark-app-crypto-unlock-color, $lt-app-crypto-unlock-color);
