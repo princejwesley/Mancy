@@ -13,6 +13,7 @@ import ReplType from '../common/ReplType';
 import ReplCommon from '../common/ReplCommon';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
+import ReplUndo from '../common/ReplUndo';
 import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 import ReplOutput from '../common/ReplOutput';
 import ReplInput from '../common/ReplInput';
@@ -30,7 +31,8 @@ export default class ReplActiveInput extends React.Component {
     _.each([
       'onTabCompletion', 'autoComplete', 'onKeyDown', 'onClick',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
-      'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction'
+      'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
+      'onUndoRedo'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -38,6 +40,7 @@ export default class ReplActiveInput extends React.Component {
     this.activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     this.commandReady = false;
     this.setDebouncedComplete();
+    this.undoManager = new ReplUndo();
   }
 
   componentDidMount() {
@@ -84,6 +87,13 @@ export default class ReplActiveInput extends React.Component {
 
   onClick() {
     setTimeout(() => this.removeSuggestion(), 200);
+  }
+
+  onUndoRedo({undo, redo}, type) {
+    let {html, cursor} = type === ReplUndo.Undo ? undo : redo;
+    this.removeSuggestion();
+    this.element.innerHTML = html;
+    ReplDOM.setCursorPositionRelativeTo(cursor, this.element);
   }
 
   onStoreChange() {
@@ -336,20 +346,27 @@ export default class ReplActiveInput extends React.Component {
         this.removeSuggestion();
       }
 
-      // ReplDOM.removeEmptyTextNode(this.element);
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
       this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
-      // ReplDOM.execCommand(this.element, 'insertHTML', ReplCommon.highlight(this.element.innerText));
+      this.undoManager.add({
+        undo: { html: this.lastEdit || '', cursor: this.lastCursorPosition || 0},
+        redo: { html: this.element.innerHTML, cursor: pos},
+      }, this.onUndoRedo);
       ReplDOM.setCursorPositionRelativeTo(pos, this.element);
+      this.lastCursorPosition = pos;
+      this.lastEdit = this.element.innerHTML;
     }
   }
 
   onKeyDown(e) {
-    // if(e.metaKey && e.keyCode == 90) {
-    //   // undo
-    //   let action = e.shiftKey ? 'redo' : 'undo';
-    //   document.execCommand(action, false);
-    // }
+    if(((e.metaKey && !e.ctrlKey) || (!e.metaKey && e.ctrlKey)) && e.keyCode == 90) {
+      // undo
+      e.shiftKey ? this.undoManager.redo() : this.undoManager.undo();
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
     if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 

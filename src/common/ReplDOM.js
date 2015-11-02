@@ -79,15 +79,6 @@ let ReplDOM = {
       false
     );
   },
-  removeEmptyTextNode: (dom) => {
-    _.each(dom.childNodes, (n) => {
-      if(n && n.nodeType == 3 && (n.textContent === '\n' || !n.textContent.length)) {
-        dom.removeChild(n);
-      } else if(n) {
-        ReplDOM.removeEmptyTextNode(n);
-      }
-    });
-  },
   getCursorPositionRelativeTo: (dom) => {
     const range = window.getSelection().getRangeAt(0);
     let pos = 0;
