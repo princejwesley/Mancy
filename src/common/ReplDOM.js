@@ -87,7 +87,7 @@ let ReplDOM = {
       const leftOver = (nrange, srange) => {
         let pos = 0;
         if(nrange.compareBoundaryPoints(Range.END_TO_START, srange) <= 0) {
-          let child = nrange.startContainer.childNodes;
+          let child = nrange.endContainer.childNodes;
           if(child.length) {
             _.each(child, (n) => {
               if(n.isSameNode(srange.startContainer)) {
@@ -103,7 +103,7 @@ let ReplDOM = {
               }
             });
           } else {
-            pos += range.startOffset;
+            pos += range.endOffset;
           }
         }
         return pos;
@@ -123,6 +123,7 @@ let ReplDOM = {
             NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
         if(filter === NodeFilter.FILTER_REJECT) {
           pos += remainings(nodeRange, range);
+          pos += (node.nodeName === 'DIV' ? 1 : 0);
           done = true;
         }
         return done ? NodeFilter.FILTER_REJECT : filter;
@@ -133,6 +134,8 @@ let ReplDOM = {
       let cnode = treeWalker.currentNode;
       if(cnode.nodeType != 1) {
         pos += cnode.textContent.length;
+      } else if(cnode.nodeName === 'DIV') {
+        pos += 1;
       }
     }
     return pos;

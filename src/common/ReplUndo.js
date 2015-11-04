@@ -32,11 +32,9 @@ export default class ReplUndo {
       this.pos = 0;
       this.stack.push(item);
     }
-    $console.log(item, this.pos)
   }
 
   undo(data, action) {
-    $console.log('undo', this.pos)
     if(this.pos >= 0) {
       let {action, data} = this.stack[this.pos];
       this.pos--;
@@ -45,7 +43,6 @@ export default class ReplUndo {
   }
 
   redo(data, action) {
-    $console.log('redo', this.pos)
     const item = this.stack[this.pos + 1];
     if(item) {
       let {action, data} = item;
