@@ -7,7 +7,7 @@
   }
   .repl-output-crypto{
     .repl-crypto-data {
-      display: flex;
+      display: inline-flex;
       .fa-lock, .fa-unlock {
         padding-left: 5px;
         cursor: pointer;
