@@ -121,7 +121,20 @@ export default class ReplActiveInput extends React.Component {
 
     if(stagedCommands.length) {
       let cli = ReplActiveInput.getRepl();
-      cli.input.emit('data', ReplInput.transform(stagedCommands[0]));
+      this.promptInput = stagedCommands[0];
+      let {local, output, input} = ReplInput.transform(stagedCommands[0]);
+
+      cli.$lastExpression = ReplOutput.none();
+      cli.context = ReplContext.getContext();
+
+      if(local) {
+        this.addEntryAction(output, true, input, stagedCommands[0]);
+        ReplActiveInputStore.tailStagedCommands();
+        return;
+      }
+
+      this.replFeed = output;
+      cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
       return;
     }
@@ -139,6 +152,9 @@ export default class ReplActiveInput extends React.Component {
       command: command,
       plainCode: plainCode,
     });
+    this.removeSuggestion();
+    this.promptInput = this.replFeed = null;
+    this.commandReady = false;
   }
 
   prompt(preserveCursor) {
@@ -146,14 +162,10 @@ export default class ReplActiveInput extends React.Component {
     let cli = ReplActiveInput.getRepl();
     let addEntryAction = (formattedOutput, error, text) => {
       this.addEntryAction(formattedOutput, !error, ReplCommon.highlight(text), text);
-      this.removeSuggestion();
-      this.promptInput = this.replFeed = null;
-      this.commandReady = false;
     };
 
     let playStagedCommand = () => {
       let {stagedCommands} = ReplActiveInputStore.getStore();
-      const text = stagedCommands.length ? stagedCommands[0] : ReplCommon.trimRight(this.element.innerText);
       if(stagedCommands.length) {
         ReplActiveInputStore.tailStagedCommands();
       }
