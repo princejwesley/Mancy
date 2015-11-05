@@ -1,0 +1,28 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replOutputHTML($theme) {
+
+  .repl-html-fold {
+    flex: 1;
+
+    .fa-html5 {
+      color: if($theme == $dark-theme, $dark-app-active-html-logo-color, $lt-app-active-html-logo-color);;
+      padding-left: 5px;
+      cursor: pointer;
+    }
+
+    .fa-html5.nohtml {
+      color: if($theme == $dark-theme, $dark-app-inactive-html-logo-color, $lt-app-inactive-html-logo-color);;
+    }
+
+
+    iframe.sandbox-view {
+      display: block;
+      border: none;
+      width: 100%;
+      background-color: initial;
+      overflow: auto;
+    }
+  }
+}

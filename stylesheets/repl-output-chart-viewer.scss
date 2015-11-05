@@ -1,0 +1,52 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replOutputChartViewer($theme) {
+  .repl-output-chart-viewer-container {
+    .data-explorer-label {
+      color: if($theme == $dark-theme, $dark-app-data-explorer-label-color, $lt-app-data-explorer-label-color);
+      padding: 0px 10px;
+    }
+
+    .repl-output-data-chart-viewer {
+      .chart-viewer {
+        display: block;
+        position: relative;
+        top: 0px;
+        left: 0px;
+
+        .c3 line, .c3 path {
+          stroke: if($theme == $dark-theme, $dark-app-chart-stroke-color, $lt-app-chart-stroke-color);
+        }
+        g {
+          fill: if($theme == $dark-theme, $dark-app-chart-text-color, $lt-app-chart-text-color);
+        }
+        .c3-tooltip-container {
+          color: if($theme == $dark-theme, $dark-app-chart-text-color, $lt-app-color);
+        }
+      }
+      .chart-viewer-preferences {
+        display: flex;
+        margin: auto;
+        align-items: center;
+        .fa {
+          color: if($theme == $dark-theme, $dark-app-chart-icon-color, $lt-app-chart-icon-color);
+          padding: 0px 5px;
+          cursor: pointer;
+        }
+        .placeholder {
+          flex: 1;
+        }
+        .fa.selected {
+          pointer-events: none;
+          color: if($theme == $dark-theme, $dark-app-chart-icon-selected-color, $lt-app-chart-icon-selected-color);
+        }
+
+        .checkbox-group {
+          padding: 0px 5px;
+        }
+      }
+    }
+  }
+
+}

@@ -1,7 +1,8 @@
 import React from 'react';
 import _ from 'lodash';
-import repl from 'repl';
 import util from 'util';
+import ReplContext from '../common/ReplContext';
+import repl from 'repl';
 import {Readable, Writable} from 'stream';
 import {EOL} from 'os';
 import shell from 'shell';
@@ -12,9 +13,10 @@ import ReplType from '../common/ReplType';
 import ReplCommon from '../common/ReplCommon';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplDOM from '../common/ReplDOM';
+import ReplUndo from '../common/ReplUndo';
 import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 import ReplOutput from '../common/ReplOutput';
-import ReplContext from '../common/ReplContext';
+import ReplInput from '../common/ReplInput';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -27,18 +29,20 @@ export default class ReplActiveInput extends React.Component {
     };
 
     _.each([
-      'onTabCompletion', 'autoComplete', 'onKeyDown',
-      'onKeyUp', 'onStoreChange', 'prompt',
-      'addEntry', 'removeSuggestion', 'onBlur'
+      'onTabCompletion', 'autoComplete', 'onKeyDown', 'onClick',
+      'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
+      'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
+      'onUndoRedo'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
 
-    this.waitingForOutput = false;
-    this.commandOutput = [];
     this.activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     this.commandReady = false;
+    this.setDebouncedComplete();
+    this.undoManager = new ReplUndo();
   }
+
   componentDidMount() {
     this.unsubscribe = ReplActiveInputStore.listen(this.onStoreChange);
     this.element = React.findDOMNode(this);
@@ -64,77 +68,129 @@ export default class ReplActiveInput extends React.Component {
     cli.displayPrompt = this.displayPrompt;
   }
 
+  setDebouncedComplete() {
+    this.debouncedComplete = _.debounce(
+      () => this.complete(this.autoComplete),
+      global.Mancy.preferences.suggestionDelay
+    );
+  }
+
   focus() {
     // focus
     ReplDOM.focusOn(this.element);
-    ReplDOM.setCursorPosition(this.props.cursor || 0, this.element);
+    ReplDOM.setCursorPositionRelativeTo(this.props.cursor || 0, this.element);
   }
 
   onBlur() {
     setTimeout(() => this.removeSuggestion(), 200);
   }
 
+  onClick() {
+    setTimeout(() => this.removeSuggestion(), 200);
+  }
+
+  onUndoRedo({undo, redo}, type) {
+    let {html, cursor} = type === ReplUndo.Undo ? undo : redo;
+    this.removeSuggestion();
+    this.element.innerHTML = html;
+    ReplDOM.setCursorPositionRelativeTo(cursor, this.element);
+  }
+
   onStoreChange() {
     let { now, activeSuggestion, breakPrompt,
           format, stagedCommands } = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
+    this.setDebouncedComplete();
+
     if(format) {
       const text = this.element.innerText;
       if(text.length) {
         const formattedCode =  ReplCommon.format(this.element.innerText);
         this.reloadPrompt(formattedCode, formattedCode.length);
       }
+      return;
     }
-    else if(breakPrompt) {
+
+    if(breakPrompt) {
       let cli = ReplActiveInput.getRepl();
-      this.waitingForOutput = false;
       cli.input.emit('data', '.break');
       cli.input.emit('data', EOL);
       this.reloadPrompt('', 0);
+      return;
     }
-    else if(stagedCommands.length) {
+
+    if(stagedCommands.length) {
       let cli = ReplActiveInput.getRepl();
-      this.waitingForOutput = true;
-      cli.input.emit('data', stagedCommands[0]);
+      cli.input.emit('data', ReplInput.transform(stagedCommands[0]));
       cli.input.emit('data', EOL);
+      return;
     }
-    else if(now && activeSuggestion) {
+
+    if(now && activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+      return;
     }
   }
 
+  addEntryAction(formattedOutput, status, command, plainCode) {
+    ReplActions.addEntry({
+      formattedOutput: formattedOutput,
+      status: status,
+      command: command,
+      plainCode: plainCode,
+    });
+  }
+
   prompt(preserveCursor) {
-    if(this.commandReady) {
-      let cli = ReplActiveInput.getRepl();
-      let output = this.commandOutput.join('');
+    this.element.className = 'repl-active-input';
+    let cli = ReplActiveInput.getRepl();
+    let addEntryAction = (formattedOutput, error, text) => {
+      this.addEntryAction(formattedOutput, !error, ReplCommon.highlight(text), text);
+      this.removeSuggestion();
+      this.promptInput = this.replFeed = null;
+      this.commandReady = false;
+    };
+
+    let playStagedCommand = () => {
       let {stagedCommands} = ReplActiveInputStore.getStore();
       const text = stagedCommands.length ? stagedCommands[0] : ReplCommon.trimRight(this.element.innerText);
-      let {formattedOutput, error} = cli.$lastExpression.highlight(output);
-
-      ReplActions.addEntry({
-        formattedOutput: formattedOutput,
-        status: !error,
-        command: ReplCommon.highlight(text),
-        plainCode: text,
-      });
-
-      this.removeSuggestion();
-      this.commandOutput = [];
-      this.commandReady = false;
-
       if(stagedCommands.length) {
         ReplActiveInputStore.tailStagedCommands();
       }
+    };
+
+    if(cli.bufferedCommand.indexOf(this.replFeed) != -1 && global.Mancy.REPLError) {
+      let {formattedOutput} = cli.$lastExpression.highlight(global.Mancy.REPLError.stack);
+      addEntryAction(formattedOutput, true, this.promptInput);
+      playStagedCommand();
+    }
+    else if(cli.bufferedCommand.length === 0 && this.commandReady) {
+      let {formattedOutput, error} = cli.$lastExpression.highlight(this.commandOutput);
+      if(!this.replFeed) {
+        ReplActions.overrideLastOutput(formattedOutput, !error);
+        return;
+      }
+      addEntryAction(formattedOutput, error, this.promptInput);
+      playStagedCommand();
+    } else {
+//      $console.error('unhandled', this, cli.bufferedCommand);
     }
   }
 
   addEntry(buf) {
-    if(!this.waitingForOutput) { return; }
     let output = buf.toString() || '';
-    if(output.length === 0) { return; }
+    if(output.length === 0 || output.indexOf('at REPLServer.complete') !== -1) { return; }
+    this.commandOutput = null;
+    if(output.trim() !== '<<response>>') {
+      this.commandOutput = output;
+    }
 
-    this.commandReady = true;
-    this.commandOutput.push(output)
+    if(!this.promptInput && this.commandOutput) {
+      console.error(new Error(this.commandOutput));
+      this.commandOutput = null;
+    } else {
+      this.commandReady = true;
+    }
   }
 
   autoComplete(__, completion) {
@@ -142,7 +198,7 @@ export default class ReplActiveInput extends React.Component {
       return suggestions.length != 1 || !text.endsWith(suggestions[0].text);
     };
     let [list, ] = completion;
-    let suggestions = _.chain(list)
+    let suggestions = _.chain(ReplCommon.sortTabCompletion(ReplActiveInput.getRepl().context, list))
       .filter((suggestion) => {
         return suggestion && suggestion.length !== 0;
       })
@@ -154,10 +210,18 @@ export default class ReplActiveInput extends React.Component {
       })
       .value();
 
+    if(!document.activeElement.isSameNode(this.element)) { return; }
+
     const text = this.element.innerText;
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
     if(suggestions.length && completeEntry(suggestions, code)) {
+      if(code === '.') {
+        suggestions.push({
+          type: ReplType.typeOf('source'),
+          text: 'source'
+        });
+      }
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code});
     } else {
       this.removeSuggestion();
@@ -215,7 +279,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyUp(e) {
-    if(e.ctrlKey || e.metaKey || e.altKey) { return; }
+    if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     if( ReplDOMEvents.isKeyup(e)
       || ReplDOMEvents.isKeydown(e)
     ) {
@@ -235,39 +299,79 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
+    if(!ReplDOMEvents.isEnter(e) && this.element.innerText === this.lastText) { return; }
+    this.lastText = this.element.innerText;
+
     if(ReplDOMEvents.isEnter(e)) {
+      this.removeSuggestion();
+      if (!e.shiftKey && global.Mancy.preferences.toggleShiftEnter) return;
+
       let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
-      if(activeSuggestion) {
+      if(activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) {
         e.preventDefault();
         return;
       }
-      this.waitingForOutput = true;
+
       // allow user to code some more
       ReplDOM.scrollToEnd();
-      if(e.shiftKey) { return; }
+      if(e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) { return; }
 
       let cli = ReplActiveInput.getRepl();
-      const text = this.element.innerText.replace(/\s{1,2}$/, '');
-      if(cli.bufferedCommand.length) {
-        cli.input.emit('data', '.break');
+      // managed by us (no react)
+      this.element.className += ' repl-active-input-running';
+
+      setTimeout(() => {
+        const text = this.element.innerText.replace(/\s{1,2}$/, '');
+        if(cli.bufferedCommand.length) {
+          cli.input.emit('data', '.break');
+          cli.input.emit('data', EOL);
+        }
+        cli.$lastExpression = ReplOutput.none();
+        cli.context = ReplContext.getContext();
+        this.promptInput = text;
+        let {local, output, input} = ReplInput.transform(text);
+
+        if(local) {
+          return this.addEntryAction(output, true, input, text);
+        }
+
+        this.replFeed = output;
+        cli.input.emit('data', this.replFeed);
         cli.input.emit('data', EOL);
-      }
-      cli.$lastExpression = ReplOutput.none();
-      cli.input.emit('data', text);
-      cli.input.emit('data', EOL);
-    } else if(this.element.innerText.trim()){
-      this.complete(this.autoComplete);
+      }, 17);
     } else {
-      this.removeSuggestion();
+      if(ReplCommon.shouldTriggerAutoComplete(e) && this.element.innerText.trim()){
+        this.debouncedComplete();
+      } else {
+        this.removeSuggestion();
+      }
+
+      let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
+      this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
+      this.undoManager.add({
+        undo: { html: this.lastEdit || '', cursor: this.lastCursorPosition || 0},
+        redo: { html: this.element.innerHTML, cursor: pos},
+      }, this.onUndoRedo);
+      ReplDOM.setCursorPositionRelativeTo(pos, this.element);
+      this.lastCursorPosition = pos;
+      this.lastEdit = this.element.innerHTML;
     }
   }
 
   onKeyDown(e) {
-    if(e.ctrlKey || e.metaKey || e.altKey) { return; }
+    if(((e.metaKey && !e.ctrlKey) || (!e.metaKey && e.ctrlKey)) && e.keyCode == 90) {
+      // undo
+      e.shiftKey ? this.undoManager.redo() : this.undoManager.undo();
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
-    if(ReplDOMEvents.isEnter(e) && activeSuggestion) {
+    if(ReplDOMEvents.isEnter(e) && activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) {
       e.stopPropagation();
       e.preventDefault();
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
@@ -294,11 +398,18 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    if(ReplDOMEvents.isEnter(e) && !e.shiftKey) {
+    if(ReplDOMEvents.isEnter(e) && (
+      (!e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) ||
+      (e.shiftKey && global.Mancy.preferences.toggleShiftEnter)
+    )) {
       const text = this.element.innerText;
+      if(text.trim().length === 0) {
+        e.preventDefault();
+        return;
+      }
       if(text.indexOf(EOL) === -1) {
         // move cursor to end before talk to REPL
-        ReplDOM.setCursorPosition(text.length);
+        ReplDOM.setCursorPositionRelativeTo(text.length, this.element);
       }
       return;
     }
@@ -335,21 +446,24 @@ export default class ReplActiveInput extends React.Component {
   }
 
   complete(callback) {
+    if(!document.activeElement.isSameNode(this.element)) { return; }
     let text = this.element.innerText || '';
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
     let cli = ReplActiveInput.getRepl();
-    this.waitingForOutput = false;
-    cli.complete(code, callback);
+    ReplSuggestionActions.removeSuggestion();
+    if(ReplCommon.shouldTriggerAutoComplete(code.slice(code.length - 1))) {
+      cli.complete(code, callback);
+    }
   }
 
   render() {
     return (
       <div className='repl-active-input' tabIndex="-1" contentEditable={true}
         onKeyUp={this.onKeyUp}
+        onClick={this.onClick}
         onKeyDown={this.onKeyDown}
-        onBlur={this.onBlur}>
-        {this.props.command}
+        onBlur={this.onBlur} dangerouslySetInnerHTML={{__html:ReplCommon.highlight(this.props.command)}}>
       </div>
     );
   }
@@ -370,6 +484,8 @@ export default class ReplActiveInput extends React.Component {
       useColors: false,
       writer: (obj, opt) => {
         nodeRepl.$lastExpression = ReplOutput.some(obj);
+        // link context
+        nodeRepl.context = ReplContext.getContext();
         return '<<response>>';
       },
       historySize: ReplConstants.REPL_HISTORY_SIZE,
@@ -378,6 +494,8 @@ export default class ReplActiveInput extends React.Component {
 
     // here is our sandbox environment
     nodeRepl.context = ReplContext.createContext();
+    ReplContext.hookContext((context) => { nodeRepl.context = context; });
+
 
     return () => {
       return nodeRepl;

@@ -19,7 +19,8 @@ export default class ReplConsole extends React.Component {
 
     _.each([
       'onConsoleChange', 'getTypedClassName',
-      'onAll', 'onFilter', 'onClear'
+      'onAll', 'onFilter', 'onClear', 'getDupCountStyle',
+      'getDupTooltip'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -79,6 +80,15 @@ export default class ReplConsole extends React.Component {
     return className + ' ' + type;
   }
 
+  getDupCountStyle(count) {
+    let widthLength = `${count}`.length;
+    return { width: `${widthLength + 0.2}em` };
+  }
+
+  getDupTooltip(count, type) {
+    return `${count} ${type} messages`;
+  }
+
   render() {
     //scroll to bottom
     ReplDOM.scrollToEnd(this.element);
@@ -94,9 +104,10 @@ export default class ReplConsole extends React.Component {
           onClear={this.onClear}
           onDebug={this.onDebug}/>
         {
-          _.map(this.state.entries, ({type, data, time}) => {
+          _.map(this.state.entries, ({type, data, time, count}) => {
             return (
               <div className={this.getTypedClassName('repl-console-message-entry', type)} key={time}>
+                {count > 1 ? <span className='console-message-count' title={this.getDupTooltip(count, type)} style={this.getDupCountStyle(count)}>{count}</span>: null}
                 {ReplConsole.getTypeIcon[type]}
                 <span className={this.getTypedClassName('repl-console-message-entry-content', type)}>
                   {data}

@@ -1,0 +1,113 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin bufferRecord($theme){
+  padding: 3px 0px;
+  .offset {
+    font-weight: 900;
+    padding: 0px 10px;
+    width: 60px;
+    text-align: right;
+    display: inline-block;
+  }
+
+  .offset-pos, .offset-ascii-pos {
+    padding: 0px 5px;
+    text-align: center;
+    &:nth-child(8n + 1) {
+      margin-right: 15px;
+    }
+  }
+
+  .offset-ascii-pos {
+    padding: 0px;
+  }
+  .offset-pos.even.in {
+    background-color: if($theme == $dark-theme, $dark-app-data-buffer-even-in-color, $lt-app-data-buffer-even-in-color);
+  }
+
+  .offset-ascii-pos.even.in {
+    background-color: if($theme == $dark-theme, $dark-app-data-buffer-even-in-ascii-color, $lt-app-data-buffer-even-in-ascii-color);
+  }
+
+  .offset-pos.odd.in {
+    background-color: if($theme == $dark-theme, $dark-app-data-buffer-odd-in-color, $lt-app-data-buffer-odd-in-color);
+  }
+
+  .offset-ascii-pos.odd.in {
+    background-color: if($theme == $dark-theme, $dark-app-data-buffer-odd-in-ascii-color, $lt-app-data-buffer-odd-in-ascii-color);
+  }
+
+  .out {
+    background-color: if($theme == $dark-theme, $dark-app-data-buffer-out-bg-color, $lt-app-data-buffer-out-bg-color);;
+  }
+
+  .offset-ascii-pos.mask.in {
+    color: if($theme == $dark-theme, $dark-app-data-buffer-mask-color, $lt-app-data-buffer-mask-color);
+  }
+}
+
+@mixin replOutputBufferExplorer($theme) {
+
+  .repl-output-buffer-explorer-container {
+    .data-explorer-label {
+      color: if($theme == $dark-theme, $dark-app-data-explorer-label-color, $lt-app-data-explorer-label-color);
+      padding: 0px 10px;
+    }
+  }
+
+  .repl-output-data-buffer-explorer {
+    min-width: 700px;
+    overflow: auto;
+    color: if($theme == $dark-theme, $dark-app-data-buffer-explorer-color, $lt-app-data-buffer-explorer-color);
+    border-radius: 5px;
+    padding-top: 10px;
+    border: 1px dashed currentColor;
+
+    .data-buffer-grid-header {
+      font-weight: 900;
+      @include bufferRecord($theme);
+    }
+
+    .data-buffer-grid-body {
+      .data-buffer-grid-row {
+        @include bufferRecord($theme);
+      }
+    }
+
+    .data-buffer-grid-pagination {
+      display: flex;
+      align-items: center;
+
+      i.fa {
+        font-size: 2em;
+        padding: 3px 5px;
+        cursor: pointer;
+      }
+
+      .fa-caret-right {
+        text-align: left;
+      }
+      .fa-caret-left {
+        text-align: right;
+      }
+      .fa-caret-left.disabled, .fa-caret-right.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+
+      .placeholder {
+        flex: 1;
+      }
+
+      .textbox {
+        padding: 0px 4px;
+        input {
+          height: 0.9em;
+          outline: none;
+        }
+      }
+    }
+  }
+
+}

@@ -1,8 +1,8 @@
 @import 'themes';
 @import 'repl-common';
 @import 'highlight';
-@import 'repl-output-array';
-@import 'repl-output-object';
+@import 'repl-output';
+@import 'repl-source-file';
 
 @mixin replEntryMessage($theme) {
   .repl-entry-message {
@@ -25,6 +25,8 @@
       @include highlight();
       position: relative;
       display: flex;
+
+      @include replSourceFile($theme);
 
       .fa-clone {
         @include notSelectable();
@@ -51,11 +53,32 @@
         }
       }
 
-      @include replOutputArrayFold($theme);
-      @include replOutputObjectFold($theme);
+      @include replOutput($theme);
       .repl-entry-output-error {
+        .repl-entry-output-error-message {
+          .fa-play {
+            color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+          }
+          .repl-entry-output-error-message-heading {
+            padding-left: 5px;
+          }
+
+          .repl-entry-output-error-stack {
+            .repl-entry-output-error-stack-lines {
+              padding-left: calc(1em + 5px);
+            }
+          }
+        }
+
         @include stackTraceHighlight();
       }
+
+      .promise-object {
+        .promise-status, .promise-value {
+          color: if($theme == $dark-theme, $dark-app-entry-message-output-primitive-color, $lt-app-entry-message-output-primitive-color);
+        }
+      }
+
       .primitive-object {
         .primitive-key {
           color: if($theme == $dark-theme, $dark-app-entry-message-output-primitive-color, $lt-app-entry-message-output-primitive-color);

@@ -10,11 +10,11 @@ import Config from './package.json';
 import semver from 'semver';
 import ChildProcess from 'child_process';
 import {writeFileSync} from 'fs';
-import {basename, extname, dirname, join} from 'path';
+import {basename, extname, dirname, resolve, join} from 'path';
 import env from 'gulp-env';
 
 const $ = plugins();
-const electronVersion = require('./node_modules/electron-prebuilt/package.json').version;
+const electronVersion = require(resolve('node_modules', 'electron-prebuilt', 'package.json')).version;
 
 const nodeDevResources = _.chain(Config.dependencies)
   .keys()

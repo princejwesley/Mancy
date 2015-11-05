@@ -5,6 +5,22 @@ import {EOL} from 'os';
 
 // Not very generic but sufficient to handle our usecase
 let ReplDOM = {
+  execCommand: (dom, cmd, arg) => {
+    let selection = window.getSelection();
+    let range = document.createRange();
+    range.selectNodeContents(dom);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    document.execCommand(cmd, false, arg);
+  },
+  toHTMLBody: (str) => {
+    let body = document.createElement('body');
+    body.innerHTML = str;
+    let result = _.find(body.childNodes,
+      (node) => node.nodeName !== 'ANONYMOUS' && node.nodeType === document.ELEMENT_NODE);
+    return result ? body : null;
+  },
   scrollToEnd: (dom, timeout = 50) => {
     let fun = dom
       ? () => { dom.scrollTop = dom.scrollHeight; }
@@ -50,72 +66,96 @@ let ReplDOM = {
     }
     return true;
   },
-  setCursorPosition: (pos, dom) => {
-    // handled for single child node
-    let range = document.createRange();
-    dom = dom || document.activeElement;
-    range.selectNodeContents(dom);
-
-    if(dom.innerText.length >= pos && dom.childNodes.length) {
-      range.setStart(dom.childNodes[0], pos);
-    }
-    range.collapse(true);
-    let selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
+  getTextNodeTreeWalker: (dom, range) => {
+    return document.createTreeWalker(
+      dom,
+      NodeFilter.SHOW_TEXT,
+      (node) => {
+        let nodeRange = document.createRange();
+        nodeRange.selectNodeContents(node);
+        return (!range || nodeRange.compareBoundaryPoints(Range.END_TO_END, range) < 1) ?
+          NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+      false
+    );
   },
   getCursorPositionRelativeTo: (dom) => {
-    let selection = window.getSelection();
-    let sameNode = (l, r) => l.isSameNode(r);
-    if (selection.rangeCount <= 0) { return 0; }
-    let range = selection.getRangeAt(0);
-    const endNode = (range.endContainer.nodeType === 3 &&
-      !range.endContainer.textContent.length) ? range.endContainer.parentNode : range.endContainer;
-
-    let getCaretPosition = (nodes, endNode, range, pos) => {
-      if(!nodes.length) { return pos; }
-      let [first, ...rest] = nodes;
-      if(sameNode(endNode, first) ||
-        sameNode(endNode, first.firstChild) ||
-        sameNode(endNode, first.lastChild)) {
-        return pos + range.endOffset;
-      }
-      return getCaretPosition(rest, endNode, range, pos + first.textContent.length + 1)
+    const range = window.getSelection().getRangeAt(0);
+    let pos = 0;
+    let done = false;
+    let remainings = (nodeRange, range) => {
+      const leftOver = (nrange, srange) => {
+        let pos = 0;
+        if(nrange.compareBoundaryPoints(Range.END_TO_START, srange) <= 0) {
+          let child = nrange.endContainer.childNodes;
+          if(child.length) {
+            _.each(child, (n) => {
+              if(n.isSameNode(srange.startContainer)) {
+                pos += srange.startOffset;
+              } else {
+                let nr = document.createRange();
+                nr.selectNodeContents(n);
+                if(nr.compareBoundaryPoints(Range.END_TO_END, srange) < 1) {
+                  pos += n.textContent.length;
+                } else {
+                  pos += leftOver(nr, srange);
+                }
+              }
+            });
+          } else {
+            pos += range.endOffset;
+          }
+        }
+        return pos;
+      };
+      return leftOver(nodeRange, range);
     };
-    return endNode.isSameNode(dom)
-      ? range.endOffset
-      : getCaretPosition(ReplCommon.toArray(dom.childNodes), endNode, range, 0);
+
+    let treeWalker = document.createTreeWalker(
+      dom,
+      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+      // null,
+      (node) => {
+        let nodeRange = document.createRange();
+        nodeRange.selectNodeContents(node);
+        let filter = !node.isSameNode(range.endContainer) &&
+          nodeRange.compareBoundaryPoints(Range.END_TO_END, range) < 1 ?
+            NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        if(filter === NodeFilter.FILTER_REJECT) {
+          pos += remainings(nodeRange, range);
+          pos += (node.nodeName === 'DIV' ? 1 : 0);
+          done = true;
+        }
+        return done ? NodeFilter.FILTER_REJECT : filter;
+      },
+      false
+    );
+    while(!done && treeWalker.nextNode()) {
+      let cnode = treeWalker.currentNode;
+      if(cnode.nodeType != 1) {
+        pos += cnode.textContent.length;
+      } else if(cnode.nodeName === 'DIV') {
+        pos += 1;
+      }
+    }
+    return pos;
   },
   setCursorPositionRelativeTo: (pos, dom) => {
-    let findNodeWithPos = (nodes, pos) => {
-      if(nodes.length === 0 || pos < 0) {
-        return [null, -1];
-      } else {
-        let [first, ...rest] = nodes;
-        let len = first.textContent.length + 1;
-        return len > pos
-          ? [first, pos]
-          : findNodeWithPos(rest, pos - len);
-      }
-    };
-    let [node, idx] = findNodeWithPos(ReplCommon.toArray(dom.childNodes), pos);
-    if(node) {
+    let treeWalker = ReplDOM.getTextNodeTreeWalker(dom);
+    let idx = pos;
+    while( treeWalker.nextNode() && (idx - treeWalker.currentNode.length > 0)) {
+      idx -= treeWalker.currentNode.length;
+    }
+
+    if(treeWalker.currentNode) {
       let range = document.createRange();
       range.selectNodeContents(dom);
-      range.setStart((idx && node.nodeType === 1)
-        ? node.childNodes[0]
-        : node, idx);
+      range.setStart(treeWalker.currentNode, idx);
       range.collapse(true);
       let selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
     }
-  },
-  getCursorPosition: () => {
-    let selection = window.getSelection();
-    if (selection.rangeCount <= 0) { return 0; }
-    let range = selection.getRangeAt(0).cloneRange();
-    return range.endOffset;
   },
   // for auto complete
   getAutoCompletePosition: () => {
@@ -166,7 +206,5 @@ let ReplDOM = {
     };
   }
 }
-
-
 
 export default ReplDOM;

@@ -1,11 +1,30 @@
 import React from 'react';
 import shell from 'shell';
+import ReplPreferencesActions from '../actions/ReplPreferencesActions';
+import ReplStatusBarStore from '../stores/ReplStatusBarStore';
+import _ from 'lodash';
 
 export default class ReplStatusBar extends React.Component {
   constructor(props) {
     super(props);
+    this.state = _.clone(ReplStatusBarStore.getStore());
     this.onDownload = this.onDownload.bind(this);
+    this.onTriggerPreferences = this.onTriggerPreferences.bind(this);
+    this.onStoreChange = this.onStoreChange.bind(this);
   }
+
+  componentDidMount() {
+    this.unsubscribe = ReplStatusBarStore.listen(this.onStoreChange);
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  onStoreChange() {
+    this.setState(ReplStatusBarStore.getStore());
+  }
+
   extractStatusInfo() {
     let history = this.props.history;
     let errors = history.filter((h) => !h.status);
@@ -22,10 +41,17 @@ export default class ReplStatusBar extends React.Component {
       shell.openExternal(url);
     }
   }
+  onTriggerPreferences(e) {
+    ReplPreferencesActions.togglePreferences();
+  }
   render() {
     let {commands, errors, mode} = this.extractStatusInfo();
+    let runHelp = this.state.runCommand ? '⇧ + ↲' : '↲';
     return (
       <div className='repl-status-bar'>
+        <span className='repl-status-bar-preference' title='Preferences'>
+          <i className="fa fa-cog" onClick={this.onTriggerPreferences}></i>
+        </span>
         <span className='repl-status-bar-commands' title='success commands'>
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{commands}</span>
@@ -38,7 +64,8 @@ export default class ReplStatusBar extends React.Component {
           <i className="fa fa-tag"></i>
           <span className='repl-status-bar-message'>{mode}</span>
         </span>
-        <span style={{flex: 1}}/>
+        <span className='run-help'>Press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
+        <span className='placeholder'></span>
         {
           this.props.newRelease
             ? <span className='console-release-notification' onClick={this.onDownload} title='Click to download'>

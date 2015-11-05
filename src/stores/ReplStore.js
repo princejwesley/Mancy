@@ -85,9 +85,9 @@ const ReplStore = Reflux.createStore({
     collapseOrExpandEntries(true);
     this.trigger();
   },
-  setReplMode(type) {
+  onSetREPLMode(mode) {
     cache.reloadPrompt = true;
-    cache.mode = type;
+    cache.mode = `REPL_MODE_${mode.toUpperCase()}`;
     this.trigger();
   },
   toggleConsole() {
@@ -106,8 +106,14 @@ const ReplStore = Reflux.createStore({
     cache.newRelease = release;
     this.trigger();
   },
-  importHistory(history) {
-    // TODO import
+  onOverrideLastOutput(output, error) {
+    let len = cache.entries.length;
+    if(len > 0) {
+      let lastEntry = cache.entries[len - 1];
+      lastEntry.status = error;
+      lastEntry.formattedOutput = output;
+      this.trigger();
+    }
   }
 });
 export default ReplStore;

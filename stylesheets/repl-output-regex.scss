@@ -1,0 +1,39 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replOutputRegex($theme) {
+
+  .repl-regex-fold {
+    flex: 1;
+    .repl-regex {
+
+      .fa-play {
+        color: if($theme == $dark-theme, $dark-app-regex-fold-color, $lt-app-regex-fold-color);
+        font-size: 0.8em;
+        position: relative;
+        top: -1px;
+        left: 0px;
+        padding-right: 2px;
+      }
+
+      .repl-regex-play-ground[contentEditable=true]:empty:not(:focus):before {
+        content:attr(placeholder);
+        color: if($theme == $dark-theme, $dark-app-regex-playground-placeholder-color, $lt-app-regex-playground-placeholder-color);
+      }
+
+      .repl-regex-play-ground {
+        @include editor();
+        color: if($theme == $dark-theme, $dark-app-regex-playground-color, $lt-app-regex-playground-color);
+        margin-top: 5px;
+        border: 2px solid if($theme == $dark-theme, $dark-app-regex-playground-border-color, $lt-app-regex-playground-border-color);
+        border-radius: 5px;
+        padding: 5px;
+
+        .matched {
+          background-color: if($theme == $dark-theme, $dark-app-pattern-matched-bg-color, $lt-app-pattern-matched-bg-color);
+        }
+      }
+
+    }
+  }
+}

@@ -4,24 +4,7 @@
     "submenu": [
       { "label": "About Mancy", "command": "application:about" },
       {
-        "label": "Preferences…",
-        "submenu": [
-          {
-            "label": "Mode",
-            "submenu": [
-              { "label" : "Magic", "type": "radio", "command": "application:preference-mode-magic" },
-              { "label" : "Sloppy", "type": "radio", "command": "application:preference-mode-sloppy" },
-              { "label" : "Strict", "type": "radio", "command": "application:preference-mode-strict" }
-            ]
-          },
-          {
-            "label": "Theme",
-            "submenu": [
-              { "label" : "Dark Theme", "type": "radio", "command": "application:preference-theme-dark" },
-              { "label" : "Light Theme", "type": "radio", "command": "application:preference-theme-light" }
-            ]
-          }
-        ]
+        "label": "Preferences…", "accelerator": "CmdOrCtrl+,", "command": "application:preferences"
       },
       { "label": "View License", "command": "application:open-license" },
       { "type": "separator" },

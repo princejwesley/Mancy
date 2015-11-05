@@ -1,8 +1,8 @@
 @import 'themes';
 @import 'repl-common';
 @import 'highlight';
-@import 'repl-output-array';
-@import 'repl-output-object';
+@import 'repl-output';
+@import 'repl-source-file';
 
 @mixin replConsoleMessage($theme) {
   .repl-console-message {
@@ -56,9 +56,34 @@
 
       .repl-console-message-entry-content {
         @include highlight();
-        @include stackTraceHighlight();
-        @include replOutputArrayFold($theme);
-        @include replOutputObjectFold($theme);
+        @include replSourceFile($theme);
+        @include replOutput($theme);
+
+        .ellipsis {
+          &:after {
+            content: '\2026';
+            color: if($theme == $dark-theme, $dark-app-entry-ellipsis-color, $lt-app-entry-ellipsis-color);
+          }
+        }
+
+        .repl-entry-output-error {
+          .repl-entry-output-error-message {
+            .fa-play {
+              color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+            }
+            .repl-entry-output-error-message-heading {
+              padding-left: 5px;
+            }
+
+            .repl-entry-output-error-stack {
+              .repl-entry-output-error-stack-lines {
+                padding-left: calc(1em + 5px);
+              }
+            }
+          }
+
+          @include stackTraceHighlight();
+        }
       }
     }
 
@@ -67,7 +92,24 @@
     }
 
     .repl-console-message-entry.warn {
-      background-color: lighten(if($theme == $dark-theme, $dark-app-console-message-entry-warn-color, $lt-app-console-message-entry-warn-color), 30%);
+      background-color: if($theme == $dark-theme, $dark-app-console-message-entry-warn-bg-color, $lt-app-console-message-entry-warn-bg-color);
+    }
+
+    .console-message-count {
+      border-radius: 0.5em;
+      background-color: if($theme == $dark-theme, $dark-app-console-message-dup-count-bg-color, $lt-app-console-message-dup-count-bg-color);
+      color: if($theme == $dark-theme, $dark-app-console-message-dup-count-color, $lt-app-console-message-dup-count-color);
+      font-family: monospace;
+      width: 1.2em;
+      height: 1.18em;
+      display: inline-block;
+      font-size: 0.85em;
+      text-align: center;
+      top: -2px;
+      position: relative;
+      margin-right: 5px;
+      font-weight: 900;
+      cursor: default;
     }
 
     .repl-console-message-entry.info {

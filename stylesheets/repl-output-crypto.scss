@@ -1,0 +1,28 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replOutputCrypto($theme) {
+  .repl-output-crypto.extend{
+    flex: 1;
+  }
+  .repl-output-crypto{
+    .repl-crypto-data {
+      display: inline-flex;
+      .fa-lock, .fa-unlock {
+        padding-left: 5px;
+        cursor: pointer;
+        top: 3px;
+        position: relative;
+      }
+      .fa-lock {
+        color: if($theme == $dark-theme, $dark-app-crypto-lock-color, $lt-app-crypto-lock-color);
+        display: flex;
+        align-self: center;
+        top: 0px;
+      }
+      .fa-unlock {
+        color: if($theme == $dark-theme, $dark-app-crypto-unlock-color, $lt-app-crypto-unlock-color);
+      }
+    }
+  }
+}

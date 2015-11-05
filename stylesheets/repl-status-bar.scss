@@ -14,6 +14,7 @@
 
 @mixin statusBar($theme) {
   .repl-status-bar {
+    z-index: 101;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -22,6 +23,35 @@
     width: 100%;
     display: flex;
     align-items: center;
+
+    .repl-status-bar-preference {
+      padding-right: 10px;
+      font-size: 1.3em;
+      i.fa-cog {
+        cursor: pointer;
+        &:hover {
+          animation: fa-spin 2s 1 linear;
+        }
+      }
+    }
+
+    .run-help {
+      padding: 0px 25px;
+      color: if($theme == $dark-theme, $dark-app-status-bar-run-help-color, $lt-app-status-bar-run-help-color);
+      .run-command {
+        color: if($theme == $dark-theme, $dark-app-status-bar-run-color, $lt-app-status-bar-run-color);
+        font-size: 0.9em;
+        font-weight: 900;
+        font-style: normal;
+      }
+      .run {
+        font-weight: 900;
+      }
+    }
+
+    .placeholder {
+      flex: 1;
+    }
 
     .repl-status-bar-commands {
       color: if($theme == $dark-theme, $dark-app-status-bar-command-color, $lt-app-status-bar-command-color);

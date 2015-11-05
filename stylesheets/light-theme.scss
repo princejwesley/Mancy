@@ -13,7 +13,7 @@ $lt-app-suggestion-type-expect-color: $lt-app-color;
 $lt-app-suggestion-type-hightlight-color: #7DC5EA;
 
 $lt-app-prompt-active-icon-color: darkgoldenrod;
-
+$lt-app-prompt-spin-color: yellowgreen;
 
 $lt-app-entry-icon-color: rgb(255, 0, 87);
 $lt-app-entry-icon-copy-color: powderblue;
@@ -27,27 +27,68 @@ $lt-app-status-bar-background-color: darken(whitesmoke, 10%);
 $lt-app-status-bar-command-color: rgb(73, 197, 73);
 $lt-app-status-bar-error-color: rgb(208, 95, 75);
 $lt-app-status-bar-message-color: #676464;
-$lt-app-status-bar-mode-color: #CCCC4C;
+$lt-app-status-bar-mode-color: #C3C378;
 $lt-app-status-bar-console-color: #0378F9;
 $lt-app-status-bar-console-notification-color: #E20B43;
 $lt-app-status-bar-console-release-notification-color: dodgerblue;
+$lt-app-status-bar-run-help-color: #7D7B7B;
+$lt-app-status-bar-run-color: #8E8E0D;
 
-$lt-app-water-mark-color: rgba(192, 192, 192, 0.54);
-$lt-app-entry-ellipsis-color: rgb(58, 176, 162);
+$lt-app-water-mark-color: rgba(192, 192, 192, 0.30);
+$lt-app-entry-ellipsis-color: crimson;
 
 $lt-app-console-resize-handle-color: #DEDBDE;
 $lt-app-console-background-color: whitesmoke;
-$lt-app-console-color: rgb(75, 76, 78);
+$lt-app-console-color: #DE8787;
 $lt-app-console-drag-lines-color: whitesmoke;
 
 $lt-app-console-message-filter-border-color:#B3B1B1;
 $lt-app-console-message-entry-border-color: #E0DDDD;
 $lt-app-console-message-entry-info-color: #216FEC;
 $lt-app-console-message-entry-warn-color: #E4BF29;
+$lt-app-console-message-entry-warn-bg-color: #f5e8b1;
 $lt-app-console-message-entry-error-color: #F54A4A;
+$lt-app-console-message-dup-count-bg-color: #E8659B;
+$lt-app-console-message-dup-count-color: whitesmoke;
 
 $lt-app-entry-message-output-expand-collapse-color: #C5C1C3;
 
 $lt-app-entry-message-output-arr-idx-color: #EF7C90;
 $lt-app-entry-message-output-arr-fold-color: deepskyblue;
 $lt-app-entry-message-output-primitive-color: cadetblue;
+$lt-app-preference-background-color: $lt-app-background-color;
+$lt-app-preference-color: dimgrey;
+$lt-app-preference-header-bg-color: $lt-app-status-bar-background-color;
+$lt-app-preference-entry-border-color: rgba(224, 223, 220, 0.97);
+
+$lt-app-preference-close-color: tomato;
+$lt-app-integer-mode-color: crimson;
+$lt-app-integer-mode-title-color: grey;
+
+$lt-app-regex-playground-border-color: #ED7E64;
+$lt-app-regex-playground-color: crimson;
+$lt-app-regex-playground-placeholder-color: grey;
+$lt-app-pattern-matched-bg-color: yellow;
+$lt-app-regex-fold-color: crimson;
+
+$lt-app-data-explorer-label-color: crimson;
+$lt-app-data-buffer-explorer-color: dimgrey;
+$lt-app-data-buffer-mask-color: tomato;
+$lt-app-data-buffer-out-bg-color: tomato;
+$lt-app-data-buffer-odd-in-ascii-color: yellowgreen;
+$lt-app-data-buffer-odd-in-color: goldenrod;
+$lt-app-data-buffer-even-in-color: blanchedalmond;
+$lt-app-data-buffer-even-in-ascii-color: gold;
+
+$lt-app-inactive-html-logo-color: crimson;
+$lt-app-active-html-logo-color: grey;
+
+$lt-app-crypto-lock-color: crimson;
+$lt-app-crypto-unlock-color: grey;
+
+$lt-app-chart-icon-color: #DE8787;
+$lt-app-chart-icon-selected-color: rgba(222, 135, 135, 0.55);
+$lt-app-chart-stroke-color: currentColor;
+$lt-app-chart-text-color: currentColor;
+
+$lt-app-download-color: forestgreen;

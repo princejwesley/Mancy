@@ -5,12 +5,51 @@ import util from 'util';
 import ReplEntryOutputError from '../components/ReplEntryOutputError';
 import {EOL} from 'os';
 import React from 'react';
+import ReplDOM from '../common/ReplDOM';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplOutputFunction from '../components/ReplOutputFunction';
 import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
+import ReplOutputInteger from '../components/ReplOutputInteger';
+import ReplOutputPromise from '../components/ReplOutputPromise';
+import ReplOutputRegex from '../components/ReplOutputRegex';
+import ReplOutputString from '../components/ReplOutputString';
+import ReplOutputColor from '../components/ReplOutputColor';
+import ReplOutputURL from '../components/ReplOutputURL';
+import ReplOutputCrypto from '../components/ReplOutputCrypto';
+import ReplOutputHTML from '../components/ReplOutputHTML';
+import ReplOutputBuffer from '../components/ReplOutputBuffer';
+import ReplOutputChart from '../components/ReplOutputChart';
+import ReplSourceFile from '../components/ReplSourceFile';
+import ReplContext from './ReplContext';
+
+let Debug = require('vm').runInDebugContext('Debug');
+let makeMirror = (o) => Debug.MakeMirror(o, true);
+let BabelCoreJS = require("babel-runtime/core-js");
+
+let getObjectLabels = (o) => {
+  if(o._isReactElement) {
+    return ' ReactElement {}';
+  }
+
+  if(o instanceof Error) {
+    return ` ${o.name} {}`;
+  }
+
+  if(Buffer.isBuffer(o)) {
+    return ` Buffer (${o.length} bytes) {}`;
+  }
+
+  return null;
+}
 
 let ReplOutputType = {
+  promise: (status, value, p) => {
+    return <ReplOutputPromise initStatus={status} initValue={value} promise={p}/>;
+  },
+  buffer: (buf) => {
+    return <ReplOutputBuffer buffer={buf} image={ReplCommon.getImageData(buf)}/>;
+  },
   primitive: (n, type) => {
     let prefix = `${type} {`;
     let suffix = '}';
@@ -24,6 +63,10 @@ let ReplOutputType = {
       </span>);
   },
   number: (n) => {
+    if(_.isFinite(n) && ((n | 0) === n)) {
+      // integers
+      return <ReplOutputInteger int={n} />
+    }
     return <span className='number'>{n}</span>;
   },
   boolean: (b) => {
@@ -57,7 +100,7 @@ let ReplOutputType = {
     if(arrays.length > 1) {
       return <ReplOutputArray array={arrays}
         label={['Array[',a.length,']'].join('')}
-        start={0} noIndex={true}/>
+        start={0} noIndex={true} length={a.length}/>
     } else {
       return arrays;
     }
@@ -83,7 +126,27 @@ let ReplOutputType = {
       return ReplOutputType['primitive'](o, 'Boolean');
     }
 
-    return <ReplOutputObject object={o} primitive={_.isString(o)}/>
+    if(o instanceof Promise || o.then) {
+      if(o instanceof BabelCoreJS.default.Promise) {
+        let obj = o[Object.getOwnPropertyNames(o)[0]];
+        let status = obj.s === 0 ? 'pending' : (obj.s === 1 ? 'resolved' : 'rejected');
+        return ReplOutputType['promise'](status, obj.v, o);
+      } else {
+        let m = makeMirror(o);
+        if(m.isPromise()) {
+          return ReplOutputType['promise'](m.status(), m.promiseValue().value(), o);
+        }
+      }
+    }
+
+    if(Buffer.isBuffer(o)) {
+      return ReplOutputType['buffer'](o);
+    }
+
+    if(ReplCommon.candidateForChart(o)) {
+      return <ReplOutputChart chart={o}/>;
+    }
+    return <ReplOutputObject object={o} label={getObjectLabels(o)} primitive={_.isString(o)}/>
   },
   'undefined': (u) => {
     return <span className='literal'>undefined</span>;
@@ -100,13 +163,36 @@ let ReplOutputType = {
     return <ReplOutputFunction html={funElement} fun={f} expandable={expandable} short={shortElement}/>
   },
   string: (s) => {
-    return <span className='string'>'{s}'</span>;
+    // string is a color
+    if(ReplCommon.isCSSColor(s)) {
+      return <ReplOutputColor str={s}/>;
+    }
+
+    if(ReplCommon.isURL(s)) {
+      return <ReplOutputURL url={s}/>;
+    }
+
+    if(ReplCommon.isBase64(s)) {
+      let decode = ReplCommon.decodeBase64(s);
+      let dom = (typeof decode === 'string')
+        ? <ReplOutputString str={decode}/>
+        : ReplOutputType['buffer'](decode);
+      return <ReplOutputCrypto type='base64' encode={<ReplOutputString str={s}/>} decode={dom}/>;
+    }
+
+    let body = ReplDOM.toHTMLBody(s);
+    if(body) {
+      let source = <ReplOutputString str={s} limit={ReplConstants.OUTPUT_TRUNCATE_LENGTH / 2}/>;
+      return <ReplOutputHTML body={body} source={source}/>;
+    }
+
+    return <ReplOutputString str={s}/>;
   },
   symbol: (sy) => {
     return <span className='literal'>{sy.toString()}</span>;
   },
   regexp: (re) => {
-    return <span className='regexp'>{re.toString()}</span>;
+    return <ReplOutputRegex regex={re} />;
   },
   'null': () => {
     return <span className='literal'>null</span>;
@@ -134,7 +220,7 @@ class Some {
     this.value = value;
   }
   highlight(output) {
-    if(this.value instanceof Error) {
+    if(_.isError(this.value)) {
       let [first, ...rest] = this.value.stack.split(EOL);
       return {
         formattedOutput:
@@ -161,10 +247,33 @@ let ReplOutput = {
       return { error: e.message };
     }
   },
+  asObject: (object, type) => {
+    if(ReplOutputType[type]) {
+      return ReplOutputType[type](object);
+    }
+  },
   transformObject: (object) => {
     return ReplOutputType[typeof object](object);
+  },
+  readProperty: (obj, prop) => {
+    try {
+      return obj && obj[prop];
+    } catch(e) {
+      return (
+        <span className='read-error'>
+          [[Get Error]] {ReplOutputType[typeof e](e)}
+        </span>);
+    }
+  },
+  source: (mod) => {
+    let context = ReplContext.getContext();
+    return (
+      <ReplSourceFile
+        location= {ReplCommon.getModuleSourcePath(mod, context.module.paths)}
+        name={mod}
+      />
+    );
   }
-
 };
 
 export default ReplOutput;

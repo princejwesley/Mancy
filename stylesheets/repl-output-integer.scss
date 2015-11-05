@@ -1,0 +1,39 @@
+@import 'themes';
+
+@mixin replOutputInteger($theme) {
+
+  .repl-integer {
+    .mode-group {
+      opacity: 0.5;
+      margin: 3px 5px;
+      display: inline-flex;
+      border: 1px solid if($theme == $dark-theme, $dark-app-integer-mode-color, $lt-app-integer-mode-color);
+      border-radius: 3px;
+      .mode {
+        width: 1.2em;
+        text-align: center;
+        border-right: 1px solid if($theme == $dark-theme, $dark-app-integer-mode-color, $lt-app-integer-mode-color);
+        cursor: pointer;
+        font-size: 0.8em;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+      .mode.selected {
+        background-color: if($theme == $dark-theme, $dark-app-integer-mode-color, $lt-app-integer-mode-color);
+        color: white;
+      }
+      .mode {
+        position: relative;
+        &:before {
+          content: attr(data-token);
+          position: absolute;
+          top: -1.4em;
+          font-size: 0.7em;
+          color: if($theme == $dark-theme, $dark-app-integer-mode-title-color, $lt-app-integer-mode-title-color);
+        }
+      }
+    }
+  }
+}

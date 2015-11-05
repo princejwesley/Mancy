@@ -5,6 +5,7 @@ var {MenuManager} = require('./MenuManager');
 var Config = require('../package.json');
 var _ = require('lodash');
 var ipc = require('ipc');
+var fs = require('fs');
 var dialog = require('dialog');
 
 var windowCache = {};
@@ -37,6 +38,35 @@ ipc.on('application:message-box', function(event, options) {
   dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
 });
 
+ipc.on('application:download', function(event, buffer) {
+  let filename = dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), {
+    title: 'Download to File…',
+    filters: [
+      { name: 'All Files', extensions: ['*'] }
+    ]
+  });
+  if(filename) {
+    fs.writeFile(filename, buffer, (err) => {
+      let options = { buttons: ['Close'] };
+      if(err) {
+        options = _.extend(options, {
+          title: 'Download Error',
+          type: 'error',
+          message: err.name || 'Export Error',
+          detail: err.toString()
+        });
+      } else {
+        options = _.extend(options, {
+          title: 'Download Success',
+          type: 'info',
+          message: `Saved to ${filename}`
+        });
+      }
+      dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
+    });
+  }
+});
+
 ipc.on('application:dock-message-notification', function(event, id) {
   dockNotificationCache[id] = dockNotificationCache[id] + 1;
   if (process.platform === 'darwin') {
@@ -51,12 +81,15 @@ function onReady() {
   let mainWindow = new BrowserWindow({
     width: width * 0.75,
     height: height * 0.75,
-    'min-height': width * 0.5,
-    'min-width': height * 0.5,
+    'min-height': height * 0.5,
+    'min-width': width * 0.5,
     resizable: true,
     'web-preferences': {
 			'overlay-scrollbars': true,
-      'plugins': true
+      'plugins': true,
+      'experimental-features': true,
+      'experimental-canvas-features': true,
+      'webgl': true
 		},
     show: false,
   });

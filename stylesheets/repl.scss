@@ -4,6 +4,7 @@
 @import 'repl-container-right';
 @import 'repl-status-bar';
 @import 'repl-suggestions';
+@import 'repl-preferences';
 
 html{
   height: 100%;
@@ -25,6 +26,10 @@ html{
 
   #node-repl-prompt-suggestions {
     @include suggestions($theme);
+  }
+
+  #node-repl-preferences {
+    @include preferences($theme);
   }
 }
 
@@ -53,7 +58,6 @@ body {
     color: rgba(192, 192, 192, 0.14);
     font-family: 'Fenix', sans-serif;
   }
-  @include repl($dark-theme);
 }
 
 body.dark-theme {

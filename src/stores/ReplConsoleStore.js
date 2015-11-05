@@ -1,5 +1,6 @@
 import ReplConsoleActions from '../actions/ReplConsoleActions';
 import Reflux from 'reflux';
+import _ from 'lodash';
 
 let cache = [];
 const ReplConsoleStore = Reflux.createStore({
@@ -7,9 +8,22 @@ const ReplConsoleStore = Reflux.createStore({
     this.listenToMany(ReplConsoleActions);
   },
   onAddEntry(item) {
-    //set limit
-    item.time = Math.random();
-    cache.push(item);
+    let dup = false;
+    if(cache.length) {
+      let lastItem = cache[cache.length - 1];
+      item.time = lastItem.time;
+      item.count = lastItem.count;
+      if(_.isEqual(item, lastItem)) {
+        lastItem.count = lastItem.count + 1;
+        dup = true;
+      }
+    }
+
+    if(!dup){
+      item.count = 1;
+      item.time = Math.random();
+      cache.push(item);
+    }
     this.trigger();
   },
   onClear() {
