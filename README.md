@@ -67,7 +67,7 @@ For more detailed documentation, [read here](https://github.com/princejwesley/Ma
 # <img src="icons/mancy.png" width="25">&nbsp;Installation
 ### Windows & OSX
 - Download from [latest release](https://github.com/princejwesley/Mancy/releases/latest) (or)
-- [Fork](https://github.com/princejwesley/Mancy/) and run `npm install` & `npm run package`
+- [Fork](https://github.com/princejwesley/Mancy/) and run `npm install` & `npm run package`. Executable file will be created inside `./dist/Mancy-darwin-x64/` directory.
 
 ### Linux
 [Fork](https://github.com/princejwesley/Mancy/) and run `npm install` & `npm start` to run the application. (Standalone executable is crashing in linux distribution😔)
