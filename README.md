@@ -22,6 +22,30 @@ A cross platform JavaScript REPL application based on electron and react framewo
 - Support to toggle REPL mode
 - Preferences for theme and REPL mode
 
+#### <img src="icons/mancy.png" width="25">&nbsp;[v2.0.0 :star2:](http://mancy-re.pl)
+
+-  Download npm modules on demand
+-  babel integration
+-  await with auto async wrapper
+-  Data visualization support
+   -  Integer representation (bin, oct, dec and hex)
+   -  Regular expression live editor
+   -  Buffer explorer
+   -  HTML view
+   -  CSS color view
+   -  base64 detection
+   -  Basic chart representation of data
+   -  Image detection / display
+   -  Download buffers support
+-  Support to break long lasting commands
+-  Preference window
+-  Promise output tracking
+-  Source file open support for node modules(`.source name`)
+-  No special meaning for `_`.
+-  Syntax highlight as we type.
+
+For more detailed documentation, [read here](https://github.com/princejwesley/Mancy/wiki/Version-II)
+
 ## <img src="icons/mancy.png" width="30">&nbsp;[Screenshots](http://mancy-re.pl)
 
 #### light theme

@@ -200,7 +200,7 @@ let ReplCommon = {
     let invalid = _.find(keys, (k) => {
       let v = o[k];
       if(!Array.isArray(v)) { return true; }
-      if(_.find(v, (d) => !(typeof d === 'number'))) { return true; }
+      if(_.find(v, (d) => !(typeof d === 'number' || _.isDate(d) || typeof d === 'string'))) { return true; }
       data += v.length;
       return false;
     });
