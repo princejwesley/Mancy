@@ -161,9 +161,9 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference' title='ignoring auto complete results on ↲'>
+          <div className='preference' title='Auto suggest selection result on ↲'>
             <div className='preference-name'>
-              Ignore auto complete on ↲
+              Auto suggest selection on ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>

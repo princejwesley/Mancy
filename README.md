@@ -25,10 +25,10 @@ A cross platform JavaScript REPL application based on electron and react framewo
 #### <img src="icons/mancy.png" width="25">&nbsp;[v2.0.0 :star2:](http://mancy-re.pl)
 
 -  Download npm modules on demand
--  babel integration
+-  Babel support
 -  await with auto async wrapper
 -  Data visualization support
-   -  Integer representation (bin, oct, dec and hex)
+   -  Integer representation (bin/oct/dec/hex and signed/unsigned)
    -  Regular expression live editor
    -  Buffer explorer
    -  HTML view
@@ -41,8 +41,8 @@ A cross platform JavaScript REPL application based on electron and react framewo
 -  Preference window
 -  Promise output tracking
 -  Source file open support for node modules(`.source name`)
--  No special meaning for `_`.
--  Syntax highlight as we type.
+-  No special meaning for `_`
+-  Syntax highlight as we type
 
 For more detailed documentation, [read here](https://github.com/princejwesley/Mancy/wiki/Version-II)
 
