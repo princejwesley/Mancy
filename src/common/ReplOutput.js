@@ -252,17 +252,24 @@ let ReplOutput = {
       return ReplOutputType[type](object);
     }
   },
+  accessError: (e) => {
+    return (
+      <span className='read-error'>
+        [[Get Error]] {ReplOutputType[typeof e](e)}
+      </span>);
+  },
   transformObject: (object) => {
-    return ReplOutputType[typeof object](object);
+    try {
+      return ReplOutputType[typeof object](object);
+    } catch(e) {
+      return ReplOutput.accessError(e);
+    }
   },
   readProperty: (obj, prop) => {
     try {
       return obj && obj[prop];
     } catch(e) {
-      return (
-        <span className='read-error'>
-          [[Get Error]] {ReplOutputType[typeof e](e)}
-        </span>);
+      return ReplOutput.accessError(e);
     }
   },
   source: (mod) => {
