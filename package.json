@@ -1,7 +1,7 @@
 {
   "name": "mancy",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A GUI REPL for Javascript",
   "main": "main/index.js",
   "scripts": {
