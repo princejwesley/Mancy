@@ -22,7 +22,7 @@ A cross platform JavaScript REPL application based on electron and react framewo
 - Support to toggle REPL mode
 - Preferences for theme and REPL mode
 
-#### <img src="icons/mancy.png" width="25">&nbsp;[v2.0.0 :star2:](http://mancy-re.pl)
+#### <img src="icons/mancy.png" width="25">&nbsp;[Version II :star2:](https://github.com/princejwesley/Mancy/wiki/Version-II)
 
 -  Download npm modules on demand
 -  Babel support
