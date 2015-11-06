@@ -77,4 +77,4 @@ For more detailed documentation, [read here](https://github.com/princejwesley/Ma
 [Fork](https://github.com/princejwesley/Mancy/) and run `npm run debug` or `gulp debug` to debug this application.
 
 ## <img src="icons/mancy.png" width="25">&nbsp;License
-[MIT License](https://github.com/princejwesley/Mancy/blob/master/LICENSE.md)
+[MIT License](https://github.com/princejwesley/Mancy/blob/master/LICENSE)
