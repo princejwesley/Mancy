@@ -10,7 +10,7 @@ export default class ReplPreferences extends React.Component {
     _.each([
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
-      'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter',
+      'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -63,6 +63,10 @@ export default class ReplPreferences extends React.Component {
 
   onAsyncWrapChange(e) {
     ReplPreferencesStore.toggleAsyncWrap(e.target.checked);
+  }
+
+  onToggleAutomaticAutoComplete(e) {
+    ReplPreferencesStore.toggleAutomaticAutoComplete(e.target.checked);
   }
 
   render() {
@@ -141,13 +145,25 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
+          <div className='preference' title='Disable automatic auto complete'>
+            <div className='preference-name'>
+              Disable automatic auto complete
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="await" checked={this.state.toggleAutomaticAutoComplete} value="" onClick={this.onToggleAutomaticAutoComplete} />
+              </span>
+            </div>
+          </div>
           <div className='preference' title='auto suggestion popup delay(ms)'>
             <div className='preference-name'>
               Auto complete popup delay(ms)
             </div>
             <div className='preference-value'>
               <span className='textbox'>
-                <input type="number" name="suggestion-delay" placeholder="(0 for no delay)" value={this.state.suggestionDelay} min="0" onChange={this.onChangeSuggestionDelay} />
+                <input type="number" name="suggestion-delay" placeholder="(0 for no delay)"
+                  value={this.state.suggestionDelay} min="0" disabled={this.state.toggleAutomaticAutoComplete}
+                  onChange={this.onChangeSuggestionDelay} />
               </span>
             </div>
           </div>

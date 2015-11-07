@@ -38,6 +38,11 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.babel = flag;
     });
   },
+  toggleAutomaticAutoComplete(flag) {
+    this.updatePreference((preferences) => {
+      preferences.toggleAutomaticAutoComplete = flag;
+    });
+  },
   toggleAsyncWrap(flag) {
     this.updatePreference((preferences) => {
       preferences.asyncWrap = flag;

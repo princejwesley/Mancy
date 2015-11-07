@@ -311,7 +311,7 @@ export default class ReplActiveInput extends React.Component {
       || ReplDOMEvents.isEscape(e)
       || ReplDOMEvents.isNavigation(e)
     ) {
-      this.removeSuggestion();
+      if(!ReplDOMEvents.isTab(e)) { this.removeSuggestion(); }
       e.preventDefault();
       return;
     }
@@ -357,7 +357,10 @@ export default class ReplActiveInput extends React.Component {
         cli.input.emit('data', EOL);
       }, 17);
     } else {
-      if(ReplCommon.shouldTriggerAutoComplete(e) && this.element.innerText.trim()){
+      if((!global.Mancy.preferences.toggleAutomaticAutoComplete &&
+          ReplCommon.shouldTriggerAutoComplete(e) &&
+          this.element.innerText.trim()) ||
+          ReplActiveInputStore.getStore().activeSuggestion) {
         this.debouncedComplete();
       } else {
         this.removeSuggestion();

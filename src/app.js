@@ -30,7 +30,8 @@ import remote from 'remote';
     "suggestionDelay": 250,
     "toggleShiftEnter": false,
     "asyncWrap": true,
-    "autoCompleteOnEnter": false
+    "autoCompleteOnEnter": false,
+    "toggleAutomaticAutoComplete": false,
   };
 
   _.each(_.keys(defaults), (key) => {
