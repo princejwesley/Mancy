@@ -70,7 +70,7 @@ export default class MancyApplication extends EventEmitter {
   exportToFile(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let filename = dialog.showSaveDialog(focusedWindow, {
-      title: 'Export to File…',
+      title: 'Save session to file…',
       filters: [
         { name: 'Json Files', extensions: ['json'] },
         { name: 'All Files', extensions: ['*'] }
@@ -85,7 +85,7 @@ export default class MancyApplication extends EventEmitter {
   importFromFile(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let filename = dialog.showOpenDialog(focusedWindow, {
-      title: 'Import from File…',
+      title: 'Load session from file…',
       filters: [
         { name: 'Json Files', extensions: ['json'] },
         { name: 'All Files', extensions: ['*'] }

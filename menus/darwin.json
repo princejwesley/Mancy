@@ -25,8 +25,8 @@
       { "type": "separator" },
       { "label": "Add module path…", "command": "application:add-path" },
       { "type": "separator" },
-      { "label": "Export to File…", "command": "application:export-file" },
-      { "label": "Import from File…", "command": "application:import-file" },
+      { "label": "Save session to file…", "command": "application:export-file" },
+      { "label": "Load session from file…", "command": "application:import-file" },
       { "type": "separator" },
       { "label": "Close Window", "accelerator": "Command+W", "role": "close"}
     ]
