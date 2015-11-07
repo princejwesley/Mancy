@@ -52,11 +52,11 @@ export default class ReplStatusBar extends React.Component {
         <span className='repl-status-bar-preference' title='Preferences'>
           <i className="fa fa-cog" onClick={this.onTriggerPreferences}></i>
         </span>
-        <span className='repl-status-bar-commands' title='success commands'>
+        <span className='repl-status-bar-commands' title='Success Commands'>
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{commands}</span>
         </span>
-        <span className='repl-status-bar-errors' title='error outputs'>
+        <span className='repl-status-bar-errors' title='Error Outputs'>
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{errors}</span>
         </span>

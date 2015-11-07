@@ -11,7 +11,7 @@ import util from 'util';
 let execSync = require('child_process').execSync;
 let cxt = null;
 let systemVariables = [];
-let npmExe = resolve('node_modules', '.bin', 'npm');
+let npmExe = resolve(__dirname, 'node_modules', '.bin', 'npm');
 
 let getPreferences = () => global.Mancy.preferences;
 let noop = () => {};
@@ -92,7 +92,7 @@ let createContext = () => {
     } catch(e) {
       let path = dirname(parent.paths[parent.paths.length - 1]);
       try {
-        let child = execSync(`${npmExe} install ${request}`,
+        let child = execSync(`npm install ${request}`,
           { cwd: `${path}`, stdio:[], timeout: global.Mancy.preferences.timeout });
         return _load(request, parent, isMain);
       } catch(ex) {
