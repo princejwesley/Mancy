@@ -121,6 +121,10 @@ let createContext = () => {
 
   systemVariables = _.keys(context);
 
+  if(process.platform !== 'win32' && context.process.env.PATH.indexOf() == -1) {
+    context.process.env.PATH += ':/usr/local/bin';
+  }
+
   return (cxt = context);
 };
 
