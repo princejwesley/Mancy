@@ -116,7 +116,7 @@ export default class Repl extends React.Component {
       },
       {
         label: 'Format',
-        accelerator: 'CmdOrCtrl+F',
+        accelerator: 'Shift+Ctrl+F',
         click: this.onFormatPromptCode
       }
     ];
