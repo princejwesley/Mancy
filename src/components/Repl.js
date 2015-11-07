@@ -159,7 +159,7 @@ export default class Repl extends React.Component {
         try {
           let history = JSON.parse(data);
           if(!Array.isArray(history) || !_.every(history, (h) => typeof h === 'string')) {
-            throw Error(`Invalid import file ${filename}`);
+            throw Error(`Invalid session file ${filename}`);
           }
           ReplActiveInputActions.playCommands(history);
           return;
@@ -169,7 +169,7 @@ export default class Repl extends React.Component {
       }
 
       ipc.send('application:message-box', {
-        title: 'Export Error',
+        title: 'Load session error',
         buttons: ['Close'],
         type: 'error',
         message: err.toString()
@@ -186,14 +186,14 @@ export default class Repl extends React.Component {
         options = _.extend(options, {
           title: 'Export Error',
           type: 'error',
-          message: err.name || 'Export Error',
+          message: err.name || ' Error',
           detail: err.toString()
         });
       } else {
         options = _.extend(options, {
-          title: 'Export Success',
+          title: 'Session saved',
           type: 'info',
-          message: `Exported to ${filename}`
+          message: `Session saved to ${filename}`
         });
       }
       ipc.send('application:message-box', options);
@@ -220,6 +220,9 @@ export default class Repl extends React.Component {
     if(ReplDOMEvents.isEnter(e)) {
       ReplDOM.scrollToEnd();
       return;
+    }
+    if(e.ctrlKey && ReplDOMEvents.isSpace(e)) {
+      ReplActiveInputActions.performAutoComplete();
     }
   }
 

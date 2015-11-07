@@ -7,6 +7,7 @@ const ReplActiveInputActions = Reflux.createActions([
   "breakPrompt",
   "formatCode",
   "playCommands",
-  "updateSuggestionDelay"
+  "updateSuggestionDelay",
+  "performAutoComplete"
 ]);
 export default ReplActiveInputActions;

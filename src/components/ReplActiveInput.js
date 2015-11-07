@@ -98,9 +98,14 @@ export default class ReplActiveInput extends React.Component {
 
   onStoreChange() {
     let { now, activeSuggestion, breakPrompt,
-          format, stagedCommands } = ReplActiveInputStore.getStore();
+          format, stagedCommands, autoComplete } = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
     this.setDebouncedComplete();
+
+    if(autoComplete) {
+      this.complete(this.autoComplete);
+      return;
+    }
 
     if(format) {
       const text = this.element.innerText;
