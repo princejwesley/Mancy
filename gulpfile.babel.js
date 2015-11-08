@@ -12,14 +12,17 @@ import ChildProcess from 'child_process';
 import {writeFileSync} from 'fs';
 import {basename, extname, dirname, resolve, join} from 'path';
 import env from 'gulp-env';
+let execSync = require('child_process').execSync;
 
 const $ = plugins();
 const electronVersion = require(resolve('node_modules', 'electron-prebuilt', 'package.json')).version;
 
-const nodeDevResources = _.chain(Config.dependencies)
-  .keys()
-  .map((dep) => `node_modules/${dep}/**/*`)
-  .value();
+const nodeResources = (() => {
+  let result = execSync('npm list --prod --parseable');
+  return _.chain(result.toString().trim().split(/\r?\n/))
+    .map((dep) => `${dep}/**/*.{js,css,json,svg,png,gif,woff2,otf,ttf,woff,eot}`)
+    .value();
+})();
 
 const resources = [
   'fonts/**/*',
@@ -30,7 +33,7 @@ const resources = [
   'README.md',
   'LICENSE',
   'icons/*',
-].concat(nodeDevResources);
+].concat(nodeResources);
 
 const PATHS = {
   APP: 'build',
@@ -258,8 +261,7 @@ gulp.task('packageAll', ['build'], (cb) => {
     try {
       await executable('darwin', 'all', electronVersion);
       await executable('win32', 'all', electronVersion);
-      // linux exe is crashing
-      //await executable('linux', 'all', electronLinuxVersion);
+      await executable('linux', 'all', electronLinuxVersion);
       cb();
     } catch (err) {
       onError(err);
