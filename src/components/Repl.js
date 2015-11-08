@@ -32,7 +32,7 @@ export default class Repl extends React.Component {
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
       'onImport', 'onExport', 'onAddPath', 'loadPreferences',
-      'checkNewRelease', 'onNewRelease'
+      'checkNewRelease', 'onNewRelease', 'resizeWindow'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -88,6 +88,21 @@ export default class Repl extends React.Component {
     this.checkNewRelease();
     ReplStore.onSetREPLMode(global.Mancy.preferences.mode);
     ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
+
+    this.resizeWindow();
+  }
+
+  resizeWindow() {
+    let setSize = (w, h) => localStorage.setItem('window', JSON.stringify({ width: w, height: h }));
+    let win = remote.getCurrentWindow();
+    let lastWindow = JSON.parse(localStorage.getItem('window'));
+    let [width, height] = win.getSize();
+    if(!lastWindow) { setSize(width, height) }
+    else { win.setSize(lastWindow.width, lastWindow.height); }
+    win.on('resize', () => {
+      let [width, height] = win.getSize();
+      setSize(width, height);
+    });
   }
 
   setupContextMenu() {
