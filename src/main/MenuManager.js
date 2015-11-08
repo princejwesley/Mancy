@@ -58,7 +58,8 @@ export class MenuManager extends EventEmitter {
       'application:prompt-mode-sloppy': app.forward,
       'application:prompt-mode-strict': app.forward,
       'application:view-theme-dark': app.forward,
-      'application:view-theme-light': app.forward
+      'application:view-theme-light': app.forward,
+      'application:check-update': app.checkForUpdate,
     };
   }
 

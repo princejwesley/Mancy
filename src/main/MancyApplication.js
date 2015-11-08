@@ -16,6 +16,7 @@ export default class MancyApplication extends EventEmitter {
     super();
     this.checkNewRelease();
     this.rendererEvents();
+    this.checkForUpdate = this.checkForUpdate.bind(this);
   }
 
   openNewWindow() {
@@ -139,11 +140,11 @@ export default class MancyApplication extends EventEmitter {
   }
 
   openDocumentation() {
-    shell.openExternal(`${Config.homepage}`);
+    shell.openExternal(Config.homepage);
   }
 
   reportIssue() {
-    shell.openExternal(`${Config.bugs.url}`);
+    shell.openExternal(Config.bugs.url);
   }
 
   aboutMancy(item, focusedWindow) {
@@ -190,7 +191,34 @@ export default class MancyApplication extends EventEmitter {
     listenToCheckNewRelease();
   }
 
-  checkNewRelease() {
+  checkForUpdate() {
+    this.latestRelease = null;
+    let releasePopup = () => {
+      let options = {
+        title: 'Check for Updates…',
+        buttons: ['Close'],
+        type: 'info',
+      };
+
+      if(this.latestRelease && `v${Config.version}` !== this.latestRelease.release) {
+        options.buttons.push('Download');
+        options.message = 'New updates available.';
+        options.detail = `New version ${this.latestRelease.release.substring(1)} is available.`;
+      } else {
+        options.message = 'no updates available.';
+        options.detail = `Version ${Config.version} is the latest version.`;
+      }
+      dialog.showMessageBox(null, options, (pos) => {
+        if(pos === 1) {
+          shell.openExternal(this.latestRelease.url);
+        }
+      });
+    }
+    this.checkNewRelease(releasePopup);
+  }
+
+  checkNewRelease(cb) {
+    cb = cb ? cb : function() {};
     try {
       let api = new GitHubApi({
         version: "3.0.0"
@@ -199,17 +227,18 @@ export default class MancyApplication extends EventEmitter {
         owner: 'princejwesley',
         repo: 'Mancy'
       }, (err, data) => {
-        if(err) { return; }
+        if(err) { return cb(); }
         let {tag_name, assets} = data[0];
         let assetName = `Mancy-${process.platform}-${process.arch}.zip`;
         let asset = _.find(assets, (asset) => asset.name === assetName);
         if(asset) {
-          this.latestRelease =  {
+          this.latestRelease = {
             url: asset.browser_download_url,
             release: tag_name
           };
         }
+        cb();
       });
-    } catch(e) {}
+    } catch(e) { cb(); }
   }
 }

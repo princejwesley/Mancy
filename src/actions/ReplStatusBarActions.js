@@ -1,6 +1,7 @@
 import Reflux from 'reflux';
 
 const ReplStatusBarActions = Reflux.createActions([
-  "updateRunCommand"
+  "updateRunCommand",
+  "newRelease",
 ]);
 export default ReplStatusBarActions;

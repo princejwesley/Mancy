@@ -105,6 +105,7 @@
     "label": "Help",
     "submenu": [
       { "label": "About Mancy", "command": "application:about" },
+      { "label": "Check for Updates…", "command": "application:check-update" },
       { "label": "View License", "command": "application:open-license" },
       { "label": "Repository", "command": "application:open-documentation" },
       { "label": "Report Issue…", "command": "application:report-issue" }

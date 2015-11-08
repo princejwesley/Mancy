@@ -3,6 +3,7 @@
     "label": "Mancy",
     "submenu": [
       { "label": "About Mancy", "command": "application:about" },
+      { "label": "Check for Updates…", "command": "application:check-update" },
       {
         "label": "Preferences…", "accelerator": "CmdOrCtrl+,", "command": "application:preferences"
       },

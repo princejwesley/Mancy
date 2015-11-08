@@ -36,7 +36,7 @@ export default class ReplStatusBar extends React.Component {
     };
   }
   onDownload(e) {
-    let url = (this.props.newRelease || {}).url;
+    let url = (this.state.newRelease || {}).url;
     if(url) {
       shell.openExternal(url);
     }
@@ -67,7 +67,7 @@ export default class ReplStatusBar extends React.Component {
         <span className='run-help'>Press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
         <span className='placeholder'></span>
         {
-          this.props.newRelease
+          this.state.newRelease
             ? <span className='console-release-notification' onClick={this.onDownload} title='Click to download'>
                  <i className="fa fa-download"></i> Update
               </span>

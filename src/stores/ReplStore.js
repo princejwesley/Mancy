@@ -13,8 +13,7 @@ let cache = {
   showConsole: false,
   showBell: false,
   mode: 'REPL_MODE_MAGIC',
-  reloadPrompt: false,
-  newRelease: null
+  reloadPrompt: false
 };
 
 let resetButEntry = (cmd) => {
@@ -100,10 +99,6 @@ const ReplStore = Reflux.createStore({
     cache.reloadPrompt = false;
     cache.showBell = true;
     ReplCommon.beep();
-    this.trigger();
-  },
-  setNewRelease(release) {
-    cache.newRelease = release;
     this.trigger();
   },
   onOverrideLastOutput(output, error) {

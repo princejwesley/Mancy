@@ -10,6 +10,7 @@ import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import ReplPreferencesActions from '../actions/ReplPreferencesActions';
 import ReplConsoleActions from '../actions/ReplConsoleActions';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
+import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import Reflux from 'reflux';
 import ipc from 'ipc';
 import {writeFile, readFile} from 'fs';
@@ -165,7 +166,7 @@ export default class Repl extends React.Component {
   }
 
   onNewRelease(release) {
-    ReplStore.setNewRelease(release);
+    ReplStatusBarActions.newRelease(release);
   }
 
   onImport(filename) {
@@ -375,7 +376,6 @@ export default class Repl extends React.Component {
           mode={this.state.mode}
           showConsole={this.state.showConsole}
           showBell={this.state.showBell}
-          newRelease={this.state.newRelease}
           onToggleConsole={this.onToggleConsole}/>
       </div>
     );

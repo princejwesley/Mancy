@@ -1,7 +1,7 @@
 import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import Reflux from 'reflux';
 
-let open = false;
+let newRelease = null;
 const ReplStatusBarStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplStatusBarActions);
@@ -9,8 +9,15 @@ const ReplStatusBarStore = Reflux.createStore({
   onUpdateRunCommand() {
     this.trigger();
   },
+  onNewRelease(release) {
+    newRelease = release;
+    this.trigger();
+  },
   getStore() {
-    return { runCommand: global.Mancy.preferences.toggleShiftEnter };
+    return {
+      runCommand: global.Mancy.preferences.toggleShiftEnter,
+      newRelease: newRelease
+    };
   }
 });
 export default ReplStatusBarStore;
