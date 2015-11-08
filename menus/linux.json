@@ -52,12 +52,12 @@
     "submenu": [
       {
         "label": "Clear All",
-        "accelerator": "CmdOrCtrl+K",
+        "accelerator": "Ctrl+L",
         "command": "application:prompt-clear-all"
       },
       {
         "label": "Collapse All",
-        "accelerator": "CmdOrCtrl+L",
+        "accelerator": "CmdOrCtrl+K",
         "command": "application:prompt-collapse-all"
       },
       {

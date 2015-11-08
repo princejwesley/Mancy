@@ -112,12 +112,12 @@ export default class Repl extends React.Component {
     let actionTemplates = [
       {
         label: 'Clear All',
-        accelerator: 'CmdOrCtrl+K',
+        accelerator: 'Ctrl+L',
         click: this.onClearCommands
       },
       {
         label: 'Collapse All',
-        accelerator: 'CmdOrCtrl+L',
+        accelerator: 'CmdOrCtrl+K',
         click: this.onCollapseAll
       },
       {
