@@ -195,7 +195,7 @@ let ReplCommon = {
     if(typeof o !== 'object') { return false; }
 
     let keys = _.keys(o);
-    if(keys.length <= 1) { return false; }
+    if(!keys.length) { return false; }
     let data = 0;
     let invalid = _.find(keys, (k) => {
       let v = o[k];
