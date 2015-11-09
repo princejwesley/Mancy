@@ -32,7 +32,7 @@ export default class ReplActiveInput extends React.Component {
       'onTabCompletion', 'autoComplete', 'onKeyDown', 'onClick',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
-      'onUndoRedo', 'onKeyPress'
+      'onUndoRedo', 'onKeyPress', 'autoFillCharacters', 'insertCharacter'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -295,6 +295,31 @@ export default class ReplActiveInput extends React.Component {
     this.removeSuggestion();
   }
 
+  insertCharacter(pos, ch) {
+    let text = this.element.innerText;
+    this.element.innerText = text.slice(0, pos) + ch + text.slice(pos);
+  }
+
+  autoFillCharacters(code, pos) {
+    let codes = [57, 192, 219, 222];
+    if(!pos || codes.indexOf(code) === -1) { return; }
+
+    let text = this.element.innerText;
+    let ch = text[pos - 1];
+    let open = ['[', '(', '{'];
+    let close = [']', ')', '}'];
+    let idx = open.indexOf(ch);
+
+    if(idx !== -1) { return this.insertCharacter(pos, close[idx]); }
+    if(pos === 1 || text[pos - 2] !== ch) { return this.insertCharacter(pos, ch); }
+
+    if(code === 192 || code === 222) {
+      if(text[pos - 2] === ch && text[pos] === ch) {
+        this.element.innerText = text.slice(0, pos) + text.slice(pos + 1);
+      }
+    }
+  }
+
   onKeyUp(e) {
     if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     if( ReplDOMEvents.isKeyup(e)
@@ -366,9 +391,10 @@ export default class ReplActiveInput extends React.Component {
         this.removeSuggestion();
       }
 
+      let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
+      this.autoFillCharacters(e.keyCode, pos);
       if(!this.keyPressFired) { return; }
 
-      let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
       this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
       this.undoManager.add({
         undo: { html: this.lastEdit || '', cursor: this.lastCursorPosition || 0},
