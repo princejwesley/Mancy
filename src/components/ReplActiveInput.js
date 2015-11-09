@@ -32,7 +32,7 @@ export default class ReplActiveInput extends React.Component {
       'onTabCompletion', 'autoComplete', 'onKeyDown', 'onClick',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
-      'onUndoRedo'
+      'onUndoRedo', 'onKeyPress'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -366,6 +366,8 @@ export default class ReplActiveInput extends React.Component {
         this.removeSuggestion();
       }
 
+      if(!this.keyPressFired) { return; }
+
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
       this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
       this.undoManager.add({
@@ -378,14 +380,19 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  onKeyPress(e) {
+    this.keyPressFired = true;
+  }
+
   onKeyDown(e) {
-    if(((e.metaKey && !e.ctrlKey) || (!e.metaKey && e.ctrlKey)) && e.keyCode == 90) {
+    if(this.keyPressFired && ((e.metaKey && !e.ctrlKey) || (!e.metaKey && e.ctrlKey)) && e.keyCode == 90) {
       // undo
       e.shiftKey ? this.undoManager.redo() : this.undoManager.undo();
       e.preventDefault();
       e.stopPropagation();
       return;
     }
+    this.keyPressFired = false;
 
     if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
@@ -483,6 +490,7 @@ export default class ReplActiveInput extends React.Component {
         onKeyUp={this.onKeyUp}
         onClick={this.onClick}
         onKeyDown={this.onKeyDown}
+        onKeyPress={this.onKeyPress}
         onBlur={this.onBlur} dangerouslySetInnerHTML={{__html:ReplCommon.highlight(this.props.command)}}>
       </div>
     );
