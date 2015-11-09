@@ -300,9 +300,8 @@ export default class ReplActiveInput extends React.Component {
     this.element.innerText = text.slice(0, pos) + ch + text.slice(pos);
   }
 
-  autoFillCharacters(code, pos) {
-    let codes = [57, 192, 219, 222];
-    if(!pos || codes.indexOf(code) === -1) { return; }
+  autoFillCharacters(e, pos) {
+    if(!pos || !ReplDOMEvents.hasAutoFillCharacters(e)) { return; }
 
     let text = this.element.innerText;
     let ch = text[pos - 1];
@@ -313,7 +312,8 @@ export default class ReplActiveInput extends React.Component {
     if(idx !== -1) { return this.insertCharacter(pos, close[idx]); }
     if(pos === 1 || text[pos - 2] !== ch) { return this.insertCharacter(pos, ch); }
 
-    if(code === 192 || code === 222) {
+    // backtick or quotes
+    if(ReplDOMEvents.isBackTick(e) || codReplDOMEvents.isQuote(e)) {
       if(text[pos - 2] === ch && text[pos] === ch) {
         this.element.innerText = text.slice(0, pos) + text.slice(pos + 1);
       }
@@ -392,7 +392,7 @@ export default class ReplActiveInput extends React.Component {
       }
 
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
-      this.autoFillCharacters(e.keyCode, pos);
+      this.autoFillCharacters(e, pos);
       if(!this.keyPressFired) { return; }
 
       this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
