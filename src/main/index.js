@@ -1,5 +1,6 @@
 require('crash-reporter').start();
 var app = require('app');
+var path = require('path')
 var BrowserWindow = require('browser-window');
 var {MenuManager} = require('./MenuManager');
 var Config = require('../package.json');
@@ -77,8 +78,7 @@ ipc.on('application:dock-message-notification', function(event, id) {
 
 function onReady() {
   var {width, height} = require('screen').getPrimaryDisplay().workAreaSize;
-
-  let mainWindow = new BrowserWindow({
+  var options = {
     width: width * 0.75,
     height: height * 0.75,
     'min-height': height * 0.5,
@@ -92,7 +92,11 @@ function onReady() {
       'webgl': true
 		},
     show: false,
-  });
+  }
+  if(process.platform === 'linux') {
+    options.icon = path.resolve(__dirname, '..', 'icons', 'mancy.png');
+  }
+  let mainWindow = new BrowserWindow(options);
 
   windowCache[mainWindow.id] = mainWindow;
   let menuManager = menuManagerCache[mainWindow.id] = new MenuManager();
