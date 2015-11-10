@@ -21,7 +21,7 @@ let ReplCommon = {
     return new Array(num + 1).join(str);
   },
   highlight: (code) => {
-    return hl.highlight('js', code, true).value;
+    return hl.highlight(global.Mancy.preferences.lang, code, true).value;
   },
   isExceptionMessage: (msg) => {
     return /Error:?/.test(msg);

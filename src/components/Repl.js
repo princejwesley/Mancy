@@ -23,6 +23,7 @@ import ContextMenu from '../menus/context-menu.json';
 import ReplConstants from '../constants/ReplConstants';
 import ReplContext from '../common/ReplContext';
 import ReplCommon from '../common/ReplCommon';
+import ReplLanguages from '../languages/ReplLanguages';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -45,6 +46,8 @@ export default class Repl extends React.Component {
   }
 
   componentDidMount() {
+    // set REPL language
+    ReplLanguages.setREPL(global.Mancy.preferences.lang);
     this.setupContextMenu();
     this.activePromptKey = Date.now();
 
