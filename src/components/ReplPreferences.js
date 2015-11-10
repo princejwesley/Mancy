@@ -11,6 +11,7 @@ export default class ReplPreferences extends React.Component {
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
+      'onLangChange'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -42,6 +43,10 @@ export default class ReplPreferences extends React.Component {
 
   onModeChange(e) {
     ReplPreferencesStore.onSetREPLMode(e.target.value);
+  }
+
+  onLangChange(e) {
+    ReplPreferencesStore.onSetLanguage(e.target.value);
   }
 
   onChangeTimeout(e) {
@@ -99,6 +104,21 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference'>
             <div className='preference-name'>
+              Language
+            </div>
+            <div className='preference-value'>
+              <fieldset>
+                <span className='radio-group'>
+                  <input type="radio" name="lang" checked={this.state.lang === 'js'} value="js" onClick={this.onLangChange} /> JavaScript
+                </span>
+                <span className='radio-group'>
+                  <input type="radio" name="lang" checked={this.state.lang === 'coffee'} value="coffee" onClick={this.onLangChange} /> CoffeeScript
+                </span>
+              </fieldset>
+            </div>
+          </div>
+          <div className='preference'>
+            <div className='preference-name'>
               REPL mode
             </div>
             <div className='preference-value'>
@@ -115,13 +135,15 @@ export default class ReplPreferences extends React.Component {
               </fieldset>
             </div>
           </div>
-          <div className='preference' title='enable babel transcompiler'>
+          <div className='preference' title='enable babel transcompiler for javascript'>
             <div className='preference-name'>
               Babel transform
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="babel" checked={this.state.babel} value="" onClick={this.onBabelChange} />
+                <input type="checkbox" name="babel"
+                  checked={this.state.babel} value=""
+                  disabled={this.state.lang !== 'js'} onClick={this.onBabelChange} />
               </span>
             </div>
           </div>
@@ -131,7 +153,9 @@ export default class ReplPreferences extends React.Component {
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="await" checked={this.state.asyncWrap} value="" onClick={this.onAsyncWrapChange} />
+                <input type="checkbox" name="await"
+                  checked={this.state.asyncWrap} value=""
+                  disabled={this.state.lang !== 'js'} onClick={this.onAsyncWrapChange} />
               </span>
             </div>
           </div>

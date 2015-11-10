@@ -11,6 +11,7 @@ export default class ReplStatusBar extends React.Component {
     this.onDownload = this.onDownload.bind(this);
     this.onTriggerPreferences = this.onTriggerPreferences.bind(this);
     this.onStoreChange = this.onStoreChange.bind(this);
+    this.getLangIcon = this.getLangIcon.bind(this);
   }
 
   componentDidMount() {
@@ -41,12 +42,22 @@ export default class ReplStatusBar extends React.Component {
       shell.openExternal(url);
     }
   }
+
   onTriggerPreferences(e) {
     ReplPreferencesActions.togglePreferences();
   }
+
+  getLangIcon() {
+    let lang = this.state.lang;
+    if(lang === 'js') { return 'icon-javascript'; }
+
+    return 'fa fa-language';
+  }
+
   render() {
     let {commands, errors, mode} = this.extractStatusInfo();
     let runHelp = this.state.runCommand ? '⇧ + ↲' : '↲';
+    let langIcon = this.getLangIcon();
     return (
       <div className='repl-status-bar'>
         <span className='repl-status-bar-preference' title='Preferences'>
@@ -59,6 +70,10 @@ export default class ReplStatusBar extends React.Component {
         <span className='repl-status-bar-errors' title='Error Outputs'>
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{errors}</span>
+        </span>
+        <span className='repl-status-bar-lang' title='REPL mode'>
+          <i className={langIcon}></i>
+          <span className='repl-status-bar-message'>{this.state.lang}</span>
         </span>
         <span className='repl-status-bar-mode' title='REPL mode'>
           <i className="fa fa-tag"></i>

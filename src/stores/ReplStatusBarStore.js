@@ -13,10 +13,15 @@ const ReplStatusBarStore = Reflux.createStore({
     newRelease = release;
     this.trigger();
   },
+  onUpdateLanguage() {
+    this.trigger();
+  },
   getStore() {
+    let {toggleShiftEnter, lang} = global.Mancy.preferences;
     return {
-      runCommand: global.Mancy.preferences.toggleShiftEnter,
-      newRelease: newRelease
+      runCommand: toggleShiftEnter,
+      newRelease: newRelease,
+      lang: lang
     };
   }
 });
