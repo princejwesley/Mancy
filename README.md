@@ -6,7 +6,7 @@ A cross platform JavaScript REPL application based on electron and react framewo
 
 - Syntax Highlighting
 - Dark and light themes
-- Import/Export command history
+- Load and save session history
 - Separate console window for async stdout/stderr logs
 - Notification for async console logs
 - console output filter support
