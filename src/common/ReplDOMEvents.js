@@ -45,13 +45,13 @@ ReplDOMEvents.isNavigation = (() => {
 })();
 
 let autoFillCharacters = [
-  57,  //'('
   192, //backtick
   219, //{ or [
   222, //single/double quotes
 ];
 ReplDOMEvents.hasAutoFillCharacters = (e) => {
-  return autoFillCharacters.indexOf(e.keyCode) !== -1;
+  // SHIFT + 57 -> '('
+  return autoFillCharacters.indexOf(e.keyCode) !== -1 || (e.shiftKey && e.keyCode === 57);
 };
 
 
