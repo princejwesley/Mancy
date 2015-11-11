@@ -60,6 +60,7 @@
     "babel-core": "^5.8.31",
     "babel-runtime": "^5.8.20",
     "c3": "https://github.com/princejwesley/c3.git",
+    "coffee-script": "https://github.com/princejwesley/coffeescript.git",
     "escodegen": "^1.7.0",
     "esprima": "^2.6.0",
     "font-awesome": "^4.4.0",
@@ -69,7 +70,8 @@
     "lodash": "^3.10.1",
     "md5": "^2.0.0",
     "react": "^0.13.3",
-    "reflux": "^0.2.12"
+    "reflux": "^0.2.12",
+    "font-mfizz": "https://github.com/fizzed/font-mfizz.git"
   },
   "repository": {
     "type": "git",

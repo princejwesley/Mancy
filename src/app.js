@@ -32,6 +32,7 @@ import remote from 'remote';
     "asyncWrap": true,
     "autoCompleteOnEnter": false,
     "toggleAutomaticAutoComplete": false,
+    "lang": "js"
   };
 
   _.each(_.keys(defaults), (key) => {

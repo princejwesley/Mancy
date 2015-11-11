@@ -137,4 +137,4 @@ let builtIns = () => {
 };
 
 createContext();
-export default { createContext: createContext, getContext: getContext, builtIns: builtIns, hookContext: hookContext };
+export default { createContext, getContext, builtIns, hookContext };

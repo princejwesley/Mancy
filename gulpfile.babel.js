@@ -33,6 +33,7 @@ const resources = [
   'README.md',
   'LICENSE',
   'icons/*',
+  'node_modules/coffee-script/bin/*'
 ].concat(nodeResources);
 
 const PATHS = {

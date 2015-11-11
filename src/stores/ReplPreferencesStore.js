@@ -1,6 +1,8 @@
 import ReplPreferencesActions from '../actions/ReplPreferencesActions';
 import ReplActions from '../actions/ReplActions';
+import ReplLanguages from '../languages/ReplLanguages';
 import ReplActiveInputActions from '../actions/ReplActiveInputActions';
+import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import Reflux from 'reflux';
 import _ from 'lodash';
 import ipc from 'ipc';
@@ -68,6 +70,13 @@ const ReplPreferencesStore = Reflux.createStore({
     this.updatePreference((preferences) => {
       preferences.mode = mode;
       ReplActions.setREPLMode(mode);
+    });
+  },
+  onSetLanguage(lang) {
+    this.updatePreference((preferences) => {
+      preferences.lang = lang;
+      ReplLanguages.setREPL(lang);
+      ReplStatusBarActions.updateLanguage();
     });
   },
   onSetSuggestionDelay(delay) {

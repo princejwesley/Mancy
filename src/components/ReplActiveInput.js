@@ -3,7 +3,6 @@ import _ from 'lodash';
 import util from 'util';
 import ReplContext from '../common/ReplContext';
 import repl from 'repl';
-import {Readable, Writable} from 'stream';
 import {EOL} from 'os';
 import shell from 'shell';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
@@ -17,6 +16,7 @@ import ReplUndo from '../common/ReplUndo';
 import ReplActiveInputStore from '../stores/ReplActiveInputStore';
 import ReplOutput from '../common/ReplOutput';
 import ReplInput from '../common/ReplInput';
+import ReplLanguages from '../languages/ReplLanguages';
 
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
@@ -48,7 +48,7 @@ export default class ReplActiveInput extends React.Component {
     this.element = React.findDOMNode(this);
     this.focus();
 
-    let cli = ReplActiveInput.getRepl();
+    let cli = ReplLanguages.getREPL();
     //set desired repl mode
     cli.replMode = repl[this.props.mode];
     //bind write handle
@@ -63,7 +63,7 @@ export default class ReplActiveInput extends React.Component {
 
   componentWillUnmount() {
     this.unsubscribe();
-    let cli = ReplActiveInput.getRepl();
+    let cli = ReplLanguages.getREPL();
     cli.output.write = () => {};
     cli.displayPrompt = this.displayPrompt;
   }
@@ -117,7 +117,7 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(breakPrompt) {
-      let cli = ReplActiveInput.getRepl();
+      let cli = ReplLanguages.getREPL();
       cli.input.emit('data', '.break');
       cli.input.emit('data', EOL);
       this.reloadPrompt('', 0);
@@ -125,7 +125,7 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(stagedCommands.length) {
-      let cli = ReplActiveInput.getRepl();
+      let cli = ReplLanguages.getREPL();
       this.promptInput = stagedCommands[0];
       let {local, output, input} = ReplInput.transform(stagedCommands[0]);
 
@@ -164,7 +164,7 @@ export default class ReplActiveInput extends React.Component {
 
   prompt(preserveCursor) {
     this.element.className = 'repl-active-input';
-    let cli = ReplActiveInput.getRepl();
+    let cli = ReplLanguages.getREPL();
     let addEntryAction = (formattedOutput, error, text) => {
       this.addEntryAction(formattedOutput, !error, ReplCommon.highlight(text), text);
     };
@@ -215,7 +215,7 @@ export default class ReplActiveInput extends React.Component {
       return suggestions.length != 1 || !text.endsWith(suggestions[0].text);
     };
     let [list, ] = completion;
-    let suggestions = _.chain(ReplCommon.sortTabCompletion(ReplActiveInput.getRepl().context, list))
+    let suggestions = _.chain(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list))
       .filter((suggestion) => {
         return suggestion && suggestion.length !== 0;
       })
@@ -358,7 +358,7 @@ export default class ReplActiveInput extends React.Component {
       ReplDOM.scrollToEnd();
       if(e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) { return; }
 
-      let cli = ReplActiveInput.getRepl();
+      let cli = ReplLanguages.getREPL();
       // managed by us (no react)
       this.element.className += ' repl-active-input-running';
 
@@ -503,7 +503,7 @@ export default class ReplActiveInput extends React.Component {
     let text = this.element.innerText || '';
     let cursor = ReplDOM.getCursorPositionRelativeTo(this.element);
     let code = text.substring(0, cursor);
-    let cli = ReplActiveInput.getRepl();
+    let cli = ReplLanguages.getREPL();
     ReplSuggestionActions.removeSuggestion();
     if(ReplCommon.shouldTriggerAutoComplete(code.slice(code.length - 1))) {
       cli.complete(code, callback);
@@ -521,39 +521,4 @@ export default class ReplActiveInput extends React.Component {
       </div>
     );
   }
-
-  static getRepl = (() => {
-    let readable = new Readable();
-    let writable = new Writable();
-
-    readable._read = writable.write = () => {};
-
-    let nodeRepl = repl.start({
-      prompt: '',
-      input: readable,
-      output: writable,
-      terminal: false,
-      useGlobal: false,
-      ignoreUndefined: false,
-      useColors: false,
-      writer: (obj, opt) => {
-        nodeRepl.$lastExpression = ReplOutput.some(obj);
-        // link context
-        nodeRepl.context = ReplContext.getContext();
-        return '<<response>>';
-      },
-      historySize: ReplConstants.REPL_HISTORY_SIZE,
-      replMode: repl['REPL_MODE_MAGIC'],
-    });
-
-    // here is our sandbox environment
-    nodeRepl.context = ReplContext.createContext();
-    ReplContext.hookContext((context) => { nodeRepl.context = context; });
-
-
-    return () => {
-      return nodeRepl;
-    };
-  })();
-
 }

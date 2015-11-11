@@ -24,7 +24,7 @@ let cook = (plain) => {
 
   let output = plain;
 
-  if(global.Mancy.preferences.asyncWrap) {
+  if(global.Mancy.preferences.asyncWrap && global.Mancy.preferences.lang === 'js') {
     // bare await
     let match = plain.match(awaitMatcher);
     if(match && match[1].indexOf('async') === -1) {
@@ -34,7 +34,7 @@ let cook = (plain) => {
 
   return {
     local: false,
-    output: global.Mancy.preferences.babel ? babelTransfrom(output) : output
+    output: global.Mancy.preferences.babel && global.Mancy.preferences.lang === 'js' ? babelTransfrom(output) : output
   };
 };
 
