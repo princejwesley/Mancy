@@ -71,7 +71,7 @@ export default class ReplStatusBar extends React.Component {
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{errors}</span>
         </span>
-        <span className='repl-status-bar-lang' title='REPL mode'>
+        <span className='repl-status-bar-lang' title='REPL language'>
           <i className={langIcon}></i>
           <span className='repl-status-bar-message'>{this.state.lang}</span>
         </span>
