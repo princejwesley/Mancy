@@ -313,7 +313,7 @@ export default class ReplActiveInput extends React.Component {
     if(pos === 1 || text[pos - 2] !== ch) { return this.insertCharacter(pos, ch); }
 
     // backtick or quotes
-    if(ReplDOMEvents.isBackTick(e) || codReplDOMEvents.isQuote(e)) {
+    if(ReplDOMEvents.isBackTick(e) || ReplDOMEvents.isQuote(e)) {
       if(text[pos - 2] === ch && text[pos] === ch) {
         this.element.innerText = text.slice(0, pos) + text.slice(pos + 1);
       }
