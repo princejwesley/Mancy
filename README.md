@@ -2,6 +2,8 @@
 
 A cross platform JavaScript REPL application based on electron and react frameworks.
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/princejwesley/Mancy)
+
 ## <img src="icons/mancy.png" width="25">&nbsp;[Features](http://mancy-re.pl)
 
 - Syntax Highlighting
