@@ -1,9 +1,10 @@
-import {js, coffee} from './ReplLangWrapper';
+import {js, coffee, ts} from './ReplLangWrapper';
 
 // node repl wrappers
 const langs = {
   js,
   coffee,
+  ts
 };
 
 let repl = langs.js;

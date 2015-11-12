@@ -20,7 +20,7 @@ const electronVersion = require(resolve('node_modules', 'electron-prebuilt', 'pa
 const nodeResources = (() => {
   let result = execSync('npm list --prod --parseable');
   return _.chain(result.toString().trim().split(/\r?\n/))
-    .map((dep) => `${dep}/**/*.{js,css,json,svg,png,gif,woff2,otf,ttf,woff,eot}`)
+    .map((dep) => `${dep}/**/*.{js,css,json,svg,png,gif,woff2,otf,ttf,woff,eot,ts}`)
     .value();
 })();
 
@@ -33,7 +33,11 @@ const resources = [
   'README.md',
   'LICENSE',
   'icons/*',
-  'node_modules/coffee-script/bin/*'
+  '!**/__mocks__/*',
+  '!**/__tests__/*',
+  '!src/**/*',
+  'node_modules/coffee-script/bin/*',
+  'node_modules/typescript/bin/*',
 ].concat(nodeResources);
 
 const PATHS = {
@@ -210,6 +214,8 @@ gulp.task('clean', () => {
 });
 
 gulp.task('copy', () => {
+  gulp.src(['src/languages/typescript/*'], { base: 'src/' })
+    .pipe(gulp.dest(PATHS.APP));
   return gulp.src(resources, { base: '.' })
     .pipe(gulp.dest(PATHS.APP));
 });

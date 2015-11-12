@@ -2,7 +2,7 @@
   "name": "mancy",
   "private": true,
   "version": "2.0.1",
-  "description": "A GUI REPL for Javascript",
+  "description": "A GUI REPL for Javascript & more…",
   "main": "main/index.js",
   "scripts": {
     "preinstall": "npm prune",
@@ -28,7 +28,9 @@
   },
   "keywords": [
     "REPL",
-    "Javascript"
+    "Javascript",
+    "CoffeeScript",
+    "TypeScript"
   ],
   "author": "Prince John Wesley <princejohnwesley@gmail.com>",
   "license": "MIT",
@@ -64,6 +66,7 @@
     "escodegen": "^1.7.0",
     "esprima": "^2.6.0",
     "font-awesome": "^4.4.0",
+    "font-mfizz": "https://github.com/fizzed/font-mfizz.git",
     "github": "^0.2.4",
     "highlight.js": "^8.8.0",
     "is-css-color": "^1.0.0",
@@ -71,7 +74,7 @@
     "md5": "^2.0.0",
     "react": "^0.13.3",
     "reflux": "^0.2.12",
-    "font-mfizz": "https://github.com/fizzed/font-mfizz.git"
+    "typescript": "^1.6.2"
   },
   "repository": {
     "type": "git",

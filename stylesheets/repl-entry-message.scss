@@ -57,6 +57,7 @@
       .repl-entry-output-error {
         .repl-entry-output-error-message {
           .fa-play {
+            padding-right: 2px;
             color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
           }
           .repl-entry-output-error-message-heading {

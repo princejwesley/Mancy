@@ -5,6 +5,7 @@ import ReplOutput from '../common/ReplOutput';
 
 import jsREPL from 'repl';
 import coffeeREPL from 'coffee-script/repl';
+import tsREPL from './ReplTypeScript';
 
 const REPL = (repl) => {
   let readable = new Readable();
@@ -41,5 +42,6 @@ const REPL = (repl) => {
 
 export default {
   js: REPL(jsREPL),
-  coffee: REPL(coffeeREPL)
+  coffee: REPL(coffeeREPL),
+  ts: REPL(tsREPL)
 };

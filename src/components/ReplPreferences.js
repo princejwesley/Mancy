@@ -114,6 +114,9 @@ export default class ReplPreferences extends React.Component {
                 <span className='radio-group'>
                   <input type="radio" name="lang" checked={this.state.lang === 'coffee'} value="coffee" onClick={this.onLangChange} /> CoffeeScript
                 </span>
+                <span className='radio-group'>
+                  <input type="radio" name="lang" checked={this.state.lang === 'ts'} value="ts" onClick={this.onLangChange} /> TypeScript
+                </span>
               </fieldset>
             </div>
           </div>
