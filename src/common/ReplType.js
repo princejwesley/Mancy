@@ -8,6 +8,12 @@ const UNDEFINED = Symbol.for('undefined');
 const STRING = Symbol.for('string');
 const FUNCTION = Symbol.for('function');
 
+//ts
+const VAR = Symbol.for('var');
+const LET = Symbol.for('let');
+const MODULE = Symbol.for('module');
+const INTERFACE = Symbol.for('interface');
+
 let typeEval = (x) => {
   try { return eval(x); }
   catch(e) {}
@@ -22,7 +28,11 @@ const typeNames = {
   [SYMBOL]: 'symbol',
   [FUNCTION]: 'function',
   [KEYWORD]: 'keyword',
-  [UNDEFINED]: 'undefined'
+  [UNDEFINED]: 'undefined',
+  [INTERFACE]: 'interface',
+  [MODULE]: 'module',
+  [LET]: 'let',
+  [VAR]: 'var',
 };
 
 const typeNamesShort = {
@@ -33,8 +43,17 @@ const typeNamesShort = {
   [SYMBOL]: 'y',
   [FUNCTION]: 'f',
   [KEYWORD]: 'k',
-  [UNDEFINED]: 'u'
+  [UNDEFINED]: 'u',
+  [INTERFACE]: 'i',
+  [MODULE]: 'm',
+  [LET]: 'l',
+  [VAR]: 'v',
 };
+
+let typeOfNonJS = (x) => {
+  var symbol = Symbol.for(x);
+  return typeNames[symbol] ? symbol : OBJECT;
+}
 
 const es2015Keywords = [
   "arguments",
@@ -141,6 +160,9 @@ const isES2015Keyword = (x) => es2015Keywords.indexOf(x) !== -1;
 const isES5Keyword = (x) => es5Keywords.indexOf(x) !== -1;
 
 const typeOf = (x) => {
+  if(global.Mancy.preferences.lang !== 'js') {
+    return typeOfNonJS(x);
+  }
   if(isES2015Keyword(x)) { return KEYWORD; }
   var type = typeEval(x);
   var typeIdentifier = typeof type;

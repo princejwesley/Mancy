@@ -80,7 +80,7 @@ let ReplCommon = {
   sortTabCompletion: (context, completion) => {
     let keys = _.difference(_.keys(context), ReplContext.builtIns());
     let user = [], sys = [];
-    _.each(completion, (c) => {
+    _.each(_.sortBy(completion), (c) => {
       let container = keys.indexOf(c) == -1 ? sys : user;
       container.push(c);
     });

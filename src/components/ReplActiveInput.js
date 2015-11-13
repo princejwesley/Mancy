@@ -210,19 +210,20 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
-  autoComplete(__, completion) {
+  autoComplete(__, completion, kinds) {
     let completeEntry = (suggestions, text) => {
       return suggestions.length != 1 || !text.endsWith(suggestions[0].text);
     };
-    let [list, ] = completion;
-    let suggestions = _.chain(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list))
-      .filter((suggestion) => {
-        return suggestion && suggestion.length !== 0;
+    let [list, completeOn] = completion;
+    let suggestions = _.chain(_.zip(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list), kinds))
+      .filter((zipped) => {
+        return zipped[0] && zipped[0].length !== 0;
       })
-      .map((suggestion) => {
+      .map((zipped) => {
         return {
-          type: ReplType.typeOf(suggestion),
-          text: suggestion.replace(/^.*\./, '')
+          type: ReplType.typeOf(zipped[1] ? zipped[1] : zipped[0]),
+          text: zipped[0].replace(/^.*\./, ''),
+          completeOn: completeOn.replace(/^.*\./, '')
         };
       })
       .value();
@@ -236,7 +237,8 @@ export default class ReplActiveInput extends React.Component {
       if(code === '.') {
         suggestions.push({
           type: ReplType.typeOf('source'),
-          text: 'source'
+          text: 'source',
+          completeOn: ""
         });
       }
       ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code});

@@ -77,6 +77,7 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.lang = lang;
       ReplLanguages.setREPL(lang);
       ReplStatusBarActions.updateLanguage();
+      ReplActiveInputActions.breakPrompt();
     });
   },
   onSetSuggestionDelay(delay) {

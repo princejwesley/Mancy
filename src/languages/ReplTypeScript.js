@@ -99,7 +99,42 @@ let addMultilineHandler = ({rli}) => {
   });
 };
 
-//TODO autocomplete integration
+let completion = (repl) => {
+  repl.complete = (input, cb) => {
+    let original = code;
+    try {
+      code += input;
+      let suggestions = service.getCompletionsAtPosition(replFile, code.length);
+      code = original;
+
+      if(!suggestions) { cb(null, [[],""]); }
+      else {
+        let lines = input.split(/\r?\n/);
+        let lastLine = lines[lines.length - 1];
+        let prefix = lastLine.match(/[$\w]+$/);
+        let results;
+        if(prefix) {
+          let p = prefix[0];
+          results = _.chain(suggestions.entries)
+            .filter((e) => e.name.substring(0, p.length) === p)
+            .map((e) => [e.name, e.kind])
+            .value();
+        } else {
+          results = suggestions.entries.map((e) => [e.name, e.kind]);
+        }
+        let [names, kinds] = _.reduce(results, (o, [name, kind]) => {
+          o[0].push(name);
+          o[1].push(kind);
+          return o;
+        }, [[], []]);
+        cb(null, [names, prefix ? prefix[0] : ""], kinds);
+      }
+    } catch(e) {
+      code = original;
+      cb(null, [[],""]);
+    }
+  };
+};
 
 /// export repl
 export default {
@@ -119,6 +154,7 @@ export default {
       }
     });
     addMultilineHandler(repl);
+    completion(repl);
     return repl;
   }
 };
