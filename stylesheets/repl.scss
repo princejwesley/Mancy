@@ -42,17 +42,17 @@ body {
   @include notSelectable();
 
   &:before {
-    content: "JS>";
+    content: ">_";
     position: fixed;
     top: 30vh;
     left: 40vw;
     font-size: 20vh;
-    font-family: 'Fenix', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
   }
   &:after {
     content: "REPL for fun 🙈";
     position: fixed;
-    top: 50vh;
+    top: 48vh;
     left: 43vw;
     font-size: 2vh;
     color: rgba(192, 192, 192, 0.14);

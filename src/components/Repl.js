@@ -102,7 +102,11 @@ export default class Repl extends React.Component {
     let lastWindow = JSON.parse(localStorage.getItem('window'));
     let [width, height] = win.getSize();
     if(!lastWindow) { setSize(width, height) }
-    else { win.setSize(lastWindow.width, lastWindow.height); }
+    else {
+      try {
+        win.setSize(lastWindow.width, lastWindow.height);
+      } catch(e) {}
+    }
     win.on('resize', () => {
       let [width, height] = win.getSize();
       setSize(width, height);
