@@ -1,6 +1,6 @@
 # <img src="icons/mancy.png" width="30">&nbsp;Mancy
 
-A cross platform JavaScript REPL application based on electron and react frameworks.
+A cross platform REPL application based on electron and react frameworks.
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/princejwesley/Mancy)
 
