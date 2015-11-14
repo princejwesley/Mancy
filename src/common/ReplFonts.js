@@ -28,6 +28,11 @@ const widths = {
 const systemFonts = (() => {
   try {
     return _.chain(FontManager.getAvailableFontsSync())
+      .tap((fonts) => {
+        fonts.push({ family: 'Droid Sans Mono' });
+        fonts.push({ family: 'FiraCode' });
+        fonts.push({ family: 'Josefin Sans' });
+      })
       .sortBy("family")
       .map((f) => f.family)
       .uniq(true)

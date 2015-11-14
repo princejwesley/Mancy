@@ -34,7 +34,7 @@ import webFrame from 'web-frame';
     "autoCompleteOnEnter": false,
     "toggleAutomaticAutoComplete": false,
     "lang": "js",
-    "fontFamily": "FiraCode",
+    "fontFamily": "Droid Sans Mono",
     "pageZoomFactor": 1,
   };
 
