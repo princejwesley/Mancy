@@ -75,10 +75,14 @@ export default class ReplStatusBar extends React.Component {
           <i className={langIcon}></i>
           <span className='repl-status-bar-message'>{this.state.lang}</span>
         </span>
-        <span className='repl-status-bar-mode' title='REPL mode'>
-          <i className="fa fa-tag"></i>
-          <span className='repl-status-bar-message'>{mode}</span>
-        </span>
+        {
+          global.Mancy.preferences.lang === 'js'
+            ? <span className='repl-status-bar-mode' title='REPL mode'>
+                <i className="fa fa-tag"></i>
+                <span className='repl-status-bar-message'>{mode}</span>
+              </span>
+            : null
+        }
         <span className='run-help'>Press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
         <span className='placeholder'></span>
         {

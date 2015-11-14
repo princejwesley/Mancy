@@ -127,13 +127,13 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <fieldset>
                 <span className='radio-group'>
-                  <input type="radio" name="mode" checked={this.state.mode === 'Magic'} value="Magic" onClick={this.onModeChange} /> Magic
+                  <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Magic'} value="Magic" onClick={this.onModeChange} /> Magic
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="mode" checked={this.state.mode === 'Sloppy'} value="Sloppy" onClick={this.onModeChange} /> Sloppy
+                  <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Sloppy'} value="Sloppy" onClick={this.onModeChange} /> Sloppy
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="mode" checked={this.state.mode === 'Strict'} value="Strict" onClick={this.onModeChange} /> Strict
+                  <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Strict'} value="Strict" onClick={this.onModeChange} /> Strict
                 </span>
               </fieldset>
             </div>

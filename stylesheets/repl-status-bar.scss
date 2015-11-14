@@ -115,8 +115,13 @@
       color: if($theme == $dark-theme, $dark-app-status-bar-lang-color, $lt-app-status-bar-lang-color);
       padding: 0 5px;
 
-      .fa {
+      .fa, .icon-javascript {
         padding: 0 3px;
+        font-size: 1.1em;
+      }
+      .icon-javascript {
+        position: relative;
+        top: 1px;
       }
     }
 
