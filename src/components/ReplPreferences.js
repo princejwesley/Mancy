@@ -2,6 +2,8 @@ import React from 'react';
 import _ from 'lodash';
 import ReplPreferencesStore from '../stores/ReplPreferencesStore';
 import ReplStatusBarActions from '../actions/ReplStatusBarActions';
+import ReplFontFamily from './ReplFontFamily';
+import ReplPageZoom from './ReplPageZoom';
 
 export default class ReplPreferences extends React.Component {
   constructor(props) {
@@ -102,6 +104,8 @@ export default class ReplPreferences extends React.Component {
               </fieldset>
             </div>
           </div>
+          <ReplFontFamily/>
+          <ReplPageZoom/>
           <div className='preference'>
             <div className='preference-name'>
               Language

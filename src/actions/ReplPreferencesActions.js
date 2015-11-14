@@ -5,6 +5,8 @@ const ReplPreferencesActions = Reflux.createActions([
   "openPreferences",
   "closePreferences",
   "setTheme",
-  "setREPLMode"
+  "setREPLMode",
+  "changeFontFamily",
+  "changePageZoomFactor",
 ]);
 export default ReplPreferencesActions;

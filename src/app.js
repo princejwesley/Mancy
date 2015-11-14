@@ -3,9 +3,10 @@ import ReplSuggestions from './components/ReplSuggestions';
 import ReplPreferences from './components/ReplPreferences';
 import Repl from './components/Repl';
 import ReplConstants from './constants/ReplConstants';
+import ReplFonts from './common/ReplFonts';
 import _ from 'lodash';
 import remote from 'remote';
-
+import webFrame from 'web-frame';
 
 (() => {
   // Temporary fix for node bug : https://github.com/nodejs/node/issues/3158
@@ -32,7 +33,9 @@ import remote from 'remote';
     "asyncWrap": true,
     "autoCompleteOnEnter": false,
     "toggleAutomaticAutoComplete": false,
-    "lang": "js"
+    "lang": "js",
+    "fontFamily": "FiraCode",
+    "pageZoomFactor": 1,
   };
 
   _.each(_.keys(defaults), (key) => {
@@ -46,8 +49,17 @@ import remote from 'remote';
   global.Mancy.userData = remote.require('app').getPath('userData');
 })();
 
+function onLoadSettings() {
+  // font family
+  ReplFonts.setFontFamily(global.Mancy.preferences.fontFamily);
+  // page zoom factor
+  webFrame.setZoomFactor(global.Mancy.preferences.pageZoomFactor);
+
+}
+
 // react entry point
 (() => {
+  onLoadSettings();
   const repl = document.getElementById('node-repl-plus');
   React.render(<Repl />, repl);
   const suggestion = document.getElementById('node-repl-prompt-suggestions');

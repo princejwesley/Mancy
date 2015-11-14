@@ -3,9 +3,11 @@ import ReplActions from '../actions/ReplActions';
 import ReplLanguages from '../languages/ReplLanguages';
 import ReplActiveInputActions from '../actions/ReplActiveInputActions';
 import ReplStatusBarActions from '../actions/ReplStatusBarActions';
+import ReplFonts from '../common/ReplFonts';
 import Reflux from 'reflux';
 import _ from 'lodash';
 import ipc from 'ipc';
+import webFrame from 'web-frame';
 
 let open = false;
 const ReplPreferencesStore = Reflux.createStore({
@@ -64,6 +66,18 @@ const ReplPreferencesStore = Reflux.createStore({
     this.updatePreference((preferences) => {
       preferences.theme = name;
       document.body.className = name.toLowerCase().replace(/\s/, '-');
+    });
+  },
+  onChangeFontFamily(family) {
+    this.updatePreference((preferences) => {
+      preferences.fontFamily = family;
+      ReplFonts.setFontFamily(family);
+    });
+  },
+  onChangePageZoomFactor(zoom) {
+    this.updatePreference((preferences) => {
+      preferences.pageZoomFactor = zoom;
+      webFrame.setZoomFactor(zoom);
     });
   },
   onSetREPLMode(mode) {
