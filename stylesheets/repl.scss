@@ -39,6 +39,8 @@ body {
   margin: 0;
   font-size: $app-font-size;
   font-family: $app-font-family;
+  -webkit-font-feature-settings: 'liga' 1, 'kern' 1;
+  font-feature-settings: 'liga' 1, 'kern' 1;
   @include notSelectable();
 
   &:before {
@@ -56,7 +58,7 @@ body {
     left: 43vw;
     font-size: 2vh;
     color: rgba(192, 192, 192, 0.14);
-    font-family: 'Fenix', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
   }
 }
 

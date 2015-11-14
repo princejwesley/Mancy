@@ -6,6 +6,7 @@
   "main": "main/index.js",
   "scripts": {
     "preinstall": "npm prune",
+    "postinstall": "electron-rebuild",
     "test": "jest",
     "cov": "jest --coverage",
     "start": "gulp start",
@@ -40,6 +41,8 @@
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
     "electron-prebuilt": "^0.34.1",
+    "electron-rebuild": "^1.0.2",
+    "font-manager": "git@github.com:princejwesley/font-manager.git",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-cached": "^1.1.0",

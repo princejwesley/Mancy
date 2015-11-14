@@ -20,18 +20,18 @@ export default class ReplEntryMessage extends React.Component {
       <div className='repl-entry-message'>
         {
           this.props.commandCollapse && shortEntry
-            ? <pre key="short" className='repl-entry-message-command ellipsis'
+            ? <div key="short" className='repl-entry-message-command ellipsis'
                 dangerouslySetInnerHTML={{__html:shortEntry}}>
-              </pre>
-            : <pre key="long" className='repl-entry-message-command'
+              </div>
+            : <div key="long" className='repl-entry-message-command'
                 dangerouslySetInnerHTML={{__html:this.props.message.command.trim()}}>
-              </pre>
+              </div>
         }
         { this.props.collapse ?
             null :
-            <pre className='repl-entry-message-output'>
+            <div className='repl-entry-message-output'>
               {this.props.message.formattedOutput}
-            </pre>
+            </div>
         }
       </div>
     );
