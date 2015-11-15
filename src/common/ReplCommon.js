@@ -16,6 +16,18 @@ const urlPattern = /^[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0
 //http://stackoverflow.com/questions/8571501/how-to-check-whether-the-string-is-base64-encoded-or-not
 const base64Pattern = /^([a-z0-9+/]{4})*([a-z0-9+/]{4}|[a-z0-9+/]{3}=|[a-z0-9+/]{2}==)$/i;
 
+const typedArrays = [
+  Int8Array, Int16Array, Int32Array,
+  Uint8Array, Uint8ClampedArray, Uint16Array,
+  Uint32Array, Float32Array, Float64Array
+];
+
+const typedArraysLike = [
+  'Int8Array', 'Int16Array', 'Int32Array',
+  'Uint8Array', 'Uint8ClampedArray', 'Uint16Array',
+  'Uint32Array', 'Float32Array', 'Float64Array'
+];
+
 let ReplCommon = {
   times: (num, str) => {
     return new Array(num + 1).join(str);
@@ -206,7 +218,10 @@ let ReplCommon = {
     });
 
     return !invalid && data > 0;
-  }
+  },
+  isTypedArrayInstance: (o) => !!typedArrays.find((ta) => o instanceof ta),
+  isTypedArrayLike: (o) => typedArraysLike.indexOf(ReplCommon.type(o)) !== -1,
+  isTypedArray: (o) => ReplCommon.isTypedArrayInstance(o) || ReplCommon.isTypedArrayLike(o),
 };
 
 let esCodeGenOptions = {

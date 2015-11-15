@@ -72,17 +72,19 @@ let ReplOutputType = {
   boolean: (b) => {
     return <span className='literal'>{b.toString()}</span>;
   },
-  array: (a) => {
+  array: (a, meta = { type: 'Array', proto: Array.prototype }) => {
     let tokenize = (arr, result, range, mul=1) => {
       let len = result.length;
       if(arr.length < range) {
         let label = result.length
           ? ['[',len * range * mul, ' … ', (len * range * mul) - 1 + arr.length % range,']'].join('')
-          : ['Array[',arr.length,']'].join('');
-        result.push(<ReplOutputArray array={arr} label={label} start={len * range * mul} noIndex={false}/>);
+          : [meta.type, '[',arr.length,']'].join('');
+        result.push(<ReplOutputArray proto={meta.proto}
+          array={arr} label={label} start={len * range * mul} noIndex={false}/>);
       } else {
         let label = ['[', len * range * mul, ' … ', (len + 1) * range * mul - 1, ']'].join('');
-        result.push(<ReplOutputArray array={arr.splice(0, range)} label={label} start={len * range * mul} noIndex={false}/>);
+        result.push(<ReplOutputArray proto={meta.proto}
+          array={arr.splice(0, range)} label={label} start={len * range * mul} noIndex={false}/>);
         tokenize(arr, result, range, mul);
       }
     };
@@ -99,15 +101,21 @@ let ReplOutputType = {
 
     if(arrays.length > 1) {
       return <ReplOutputArray array={arrays}
-        label={['Array[',a.length,']'].join('')}
+        label={[meta.type,'[',a.length,']'].join('')}
+        proto={meta.proto}
         start={0} noIndex={true} length={a.length}/>
     } else {
       return arrays;
     }
   },
   object: (o) => {
-    if(Array.isArray(o)) {
+    if(Array.isArray(o)){
       return ReplOutputType.array(o);
+    }
+
+    if(ReplCommon.isTypedArray(o)) {
+      let arrayLike = ReplCommon.toArray(o);
+      return ReplOutputType.array(arrayLike, {type: ReplCommon.type(o), proto: o.__proto__});
     }
 
     if(_.isRegExp(o)) {

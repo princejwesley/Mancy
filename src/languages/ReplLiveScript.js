@@ -37,8 +37,12 @@ let register = () => {
 };
 
 let evaluate = (input, context, filename, cb) => {
-  let js = ls.compile(input, { bare: true }).toString();
-  return cb(null, vm.runInContext(js, context, filename));
+  try {
+    let js = ls.compile(input, { bare: true }).toString();
+    return cb(null, vm.runInContext(js, context, filename));
+  } catch(e) {
+    return cb(e);
+  }
 }
 
 let addMultilineHandler = ({rli}) => {
