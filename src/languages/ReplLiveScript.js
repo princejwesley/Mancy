@@ -1,0 +1,73 @@
+import ls from 'livescript';
+import path from 'path';
+import {EOL} from 'os';
+import nodeREPL from 'repl';
+import _ from 'lodash';
+import child_process from 'child_process';
+import vm from 'vm';
+import fs from 'fs';
+
+let nodeLineListener = () => {};
+let promptData = '';
+
+let loadFile = (module, filename) => {
+  let result = ls.compile(fs.readFileSync(fileName).toString(), { bare: false });
+  return module._compile(result.toString(), filename);
+};
+
+// register extensions
+let register = () => {
+  if (require.extensions) {
+    require.extensions['.ls'] = loadFile;
+  }
+
+  let fork = child_process.fork;
+  let binary = require.resolve('../../node_modules/livescript/bin/lsc');
+  child_process.fork = (path, args, options) => {
+    if(/\.tsx?$/.test(path)) {
+      if(!Array.isArray(args)) {
+        options = args || {};
+        args = [];
+      }
+      args = [path].concat(args);
+      path = binary;
+    }
+    return fork(path, args, options);
+  };
+};
+
+let evaluate = (input, context, filename, cb) => {
+  let js = ls.compile(input, { bare: true }).toString();
+  return cb(null, vm.runInContext(js, context, filename));
+}
+
+let addMultilineHandler = ({rli}) => {
+  nodeLineListener = rli.listeners('line')[0];
+  rli.removeListener('line', nodeLineListener);
+  rli.on('line', (cmd) => {
+    promptData += cmd + EOL;
+  });
+};
+
+
+/// export repl
+export default {
+  start: (options = {}) => {
+    register();
+    let opts = _.extend({eval: evaluate}, options);
+    let repl = nodeREPL.start(opts);
+    repl.on('exit', () => {
+      if(!repl.rli.closed) {
+        repl.outputStream.write(EOL);
+      }
+    });
+    repl.input.on('data', (d) => {
+      if(d === EOL) {
+        nodeLineListener(promptData);
+        promptData = '';
+      }
+    });
+    addMultilineHandler(repl);
+    return repl;
+  }
+};
