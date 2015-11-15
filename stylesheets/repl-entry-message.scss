@@ -11,6 +11,7 @@
     .repl-entry-message-command {
       @include highlight();
       min-height: $app-font-size;
+      white-space: pre;
     }
 
     .ellipsis {
