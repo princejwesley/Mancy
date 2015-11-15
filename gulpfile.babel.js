@@ -38,6 +38,7 @@ const resources = [
   '!src/**/*',
   'node_modules/coffee-script/bin/*',
   'node_modules/typescript/bin/*',
+  'node_modules/livescript/bin/*',
 ].concat(nodeResources);
 
 const PATHS = {

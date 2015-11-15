@@ -5,6 +5,13 @@ import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import ReplFontFamily from './ReplFontFamily';
 import ReplPageZoom from './ReplPageZoom';
 
+let langs = {
+  js: 'JavaScript',
+  ls: 'LiveScript',
+  ts: 'TypeScript',
+  coffee: 'CoffeeScript',
+};
+
 export default class ReplPreferences extends React.Component {
   constructor(props) {
     super(props);
@@ -111,17 +118,13 @@ export default class ReplPreferences extends React.Component {
               Language
             </div>
             <div className='preference-value'>
-              <fieldset>
-                <span className='radio-group'>
-                  <input type="radio" name="lang" checked={this.state.lang === 'js'} value="js" onClick={this.onLangChange} /> JavaScript
-                </span>
-                <span className='radio-group'>
-                  <input type="radio" name="lang" checked={this.state.lang === 'coffee'} value="coffee" onClick={this.onLangChange} /> CoffeeScript
-                </span>
-                <span className='radio-group'>
-                  <input type="radio" name="lang" checked={this.state.lang === 'ts'} value="ts" onClick={this.onLangChange} /> TypeScript
-                </span>
-              </fieldset>
+              <select onChange={this.onLangChange} title='Languages'>
+                {
+                  _.map(langs, (v, k) => {
+                    return <option selected={k === this.state.lang} value={k}>{v}</option>
+                  })
+                }
+              </select>
             </div>
           </div>
           <div className='preference'>
