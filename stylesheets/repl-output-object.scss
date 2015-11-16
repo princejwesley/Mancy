@@ -10,6 +10,10 @@
         font-size: 0.8em;
         color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
       }
+      .fa-calendar {
+        padding: 0px 5px;
+        color: if($theme == $dark-theme, $dark-app-date-icon-color, $lt-app-date-icon-color);
+      }
 
       .fa-download {
         padding: 0px 5px;

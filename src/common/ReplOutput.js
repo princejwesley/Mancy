@@ -20,6 +20,7 @@ import ReplOutputCrypto from '../components/ReplOutputCrypto';
 import ReplOutputHTML from '../components/ReplOutputHTML';
 import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplOutputChart from '../components/ReplOutputChart';
+import ReplOutputDate from '../components/ReplOutputDate';
 import ReplSourceFile from '../components/ReplSourceFile';
 import ReplContext from './ReplContext';
 
@@ -108,6 +109,9 @@ let ReplOutputType = {
       return arrays;
     }
   },
+  date: (d) => {
+    return <ReplOutputDate date={d} />
+  },
   object: (o) => {
     if(Array.isArray(o)){
       return ReplOutputType.array(o);
@@ -116,6 +120,10 @@ let ReplOutputType = {
     if(ReplCommon.isTypedArray(o)) {
       let arrayLike = ReplCommon.toArray(o);
       return ReplOutputType.array(arrayLike, {type: ReplCommon.type(o), proto: o.__proto__});
+    }
+
+    if(_.isDate(o)) {
+      return ReplOutputType.date(o);
     }
 
     if(_.isRegExp(o)) {
