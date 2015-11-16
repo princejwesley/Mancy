@@ -17,6 +17,7 @@
 
     .repl-preferences-head {
       height: 40px;
+      min-height: 40px;
       width: 100%;
       display:flex;
       background-color: if($theme == $dark-theme, $dark-app-preference-header-bg-color, $lt-app-preference-header-bg-color );
@@ -27,10 +28,10 @@
       }
       .close-preference {
         color: if($theme == $dark-theme, $dark-app-preference-close-color, $lt-app-preference-close-color );
-        position:absolute;
-        top: calc((40px - 1em) / 2);
-        right: 15px;
         cursor: pointer;
+        display: flex;
+        padding: 0px 10px;
+        align-self: center;
       }
     }
 
