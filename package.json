@@ -42,7 +42,7 @@
     "electron-packager": "5.1.0",
     "electron-prebuilt": "^0.34.1",
     "electron-rebuild": "^1.0.2",
-    "font-manager": "git@github.com:princejwesley/font-manager.git",
+    "font-manager": "https://github.com/princejwesley/font-manager.git",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-cached": "^1.1.0",
