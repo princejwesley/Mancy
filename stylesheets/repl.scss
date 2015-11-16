@@ -44,7 +44,7 @@ body {
   @include notSelectable();
 
   &:before {
-    content: ">_";
+    content: attr(data-watermark-logo);
     position: fixed;
     top: 30vh;
     left: 40vw;
@@ -52,12 +52,11 @@ body {
     font-family: 'Josefin Sans', sans-serif;
   }
   &:after {
-    content: "REPL for fun 🙈";
+    content: attr(data-watermark-msg);
     position: fixed;
     top: 48vh;
     left: 43vw;
     font-size: 2vh;
-    color: rgba(192, 192, 192, 0.14);
     font-family: 'Josefin Sans', sans-serif;
   }
 }

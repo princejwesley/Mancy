@@ -36,6 +36,7 @@ import webFrame from 'web-frame';
     "lang": "js",
     "fontFamily": "Droid Sans Mono",
     "pageZoomFactor": 1,
+    "watermark": true
   };
 
   _.each(_.keys(defaults), (key) => {
@@ -55,6 +56,11 @@ function onLoadSettings() {
   // page zoom factor
   webFrame.setZoomFactor(global.Mancy.preferences.pageZoomFactor);
 
+  // water mark
+  if(global.Mancy.preferences.watermark) {
+    document.body.dataset.watermarkLogo = ReplConstants.REPL_WATERMARK_LOGO;
+    document.body.dataset.watermarkMsg = ReplConstants.REPL_WATERMARK_MSG;
+  }
 }
 
 // react entry point

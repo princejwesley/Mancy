@@ -8,6 +8,7 @@ import Reflux from 'reflux';
 import _ from 'lodash';
 import ipc from 'ipc';
 import webFrame from 'web-frame';
+import ReplConstants from '../constants/ReplConstants';
 
 let open = false;
 const ReplPreferencesStore = Reflux.createStore({
@@ -36,6 +37,18 @@ const ReplPreferencesStore = Reflux.createStore({
     localStorage.setItem('preferences', JSON.stringify(preferences));
     ipc.send('application:sync-preference', preferences);
     this.trigger();
+  },
+  toggleWatermark(flag) {
+    this.updatePreference((preferences) => {
+      preferences.watermark = flag;
+      if(preferences.watermark) {
+        document.body.dataset.watermarkLogo = ReplConstants.REPL_WATERMARK_LOGO;
+        document.body.dataset.watermarkMsg = ReplConstants.REPL_WATERMARK_MSG;
+      } else {
+        document.body.dataset.watermarkLogo = '';
+        document.body.dataset.watermarkMsg = '';
+      }
+    });
   },
   toggleBabel(flag) {
     this.updatePreference((preferences) => {

@@ -20,7 +20,7 @@ export default class ReplPreferences extends React.Component {
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
-      'onLangChange'
+      'onLangChange', 'onWatermarkChange'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -48,6 +48,10 @@ export default class ReplPreferences extends React.Component {
 
   onBabelChange(e) {
     ReplPreferencesStore.toggleBabel(e.target.checked);
+  }
+
+  onWatermarkChange(e) {
+    ReplPreferencesStore.toggleWatermark(e.target.checked);
   }
 
   onModeChange(e) {
@@ -218,6 +222,16 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='checkbox-group'>
                 <input type="checkbox" name="toggle-auto-suggestion" checked={this.state.autoCompleteOnEnter} value="" onClick={this.onToggleAutoCompleteOnEnter} />
+              </span>
+            </div>
+          </div>
+          <div className='preference' title='Show/hide watermark'>
+            <div className='preference-name'>
+              Show watermark
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="toggle-watermark" checked={this.state.watermark} value="" onClick={this.onWatermarkChange} />
               </span>
             </div>
           </div>

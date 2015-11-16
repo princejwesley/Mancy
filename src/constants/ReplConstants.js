@@ -33,6 +33,8 @@ const ReplConstants = {
   },
   EXEC_TIMEOUT: 60000,
   IFRAME_MAX_HEIGHT: 500,
+  REPL_WATERMARK_LOGO: '>_',
+  REPL_WATERMARK_MSG: 'REPL for fun 🙈',
 };
 
 export default ReplConstants;
