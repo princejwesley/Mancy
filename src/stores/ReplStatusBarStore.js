@@ -2,6 +2,7 @@ import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import Reflux from 'reflux';
 
 let newRelease = null;
+let language = '';
 const ReplStatusBarStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplStatusBarActions);
@@ -13,7 +14,8 @@ const ReplStatusBarStore = Reflux.createStore({
     newRelease = release;
     this.trigger();
   },
-  onUpdateLanguage() {
+  onUpdateLanguage(lang) {
+    language = lang;
     this.trigger();
   },
   getStore() {
@@ -21,7 +23,7 @@ const ReplStatusBarStore = Reflux.createStore({
     return {
       runCommand: toggleShiftEnter,
       newRelease: newRelease,
-      lang: lang
+      lang: language || lang
     };
   }
 });

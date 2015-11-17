@@ -47,11 +47,11 @@ export class MenuManager extends EventEmitter {
       'application:open-documentation': app.openDocumentation,
       'application:report-issue': app.reportIssue,
       'application:about': app.aboutMancy,
-      'application:prompt-clear-all': app.promptClearAll,
-      'application:prompt-collapse-all': app.promptCollapseAll,
-      'application:prompt-expand-all': app.promptExpandAll,
-      'application:prompt-break': app.promptBreak,
-      'application:prompt-format': app.promptFormat,
+      'application:prompt-clear-all': app.forward,
+      'application:prompt-collapse-all': app.forward,
+      'application:prompt-expand-all': app.forward,
+      'application:prompt-break': app.forward,
+      'application:prompt-format': app.forward,
       'application:preferences': app.forward,
       'application:prompt-mode-magic': app.forward,
       'application:prompt-mode-sloppy': app.forward,
@@ -59,6 +59,7 @@ export class MenuManager extends EventEmitter {
       'application:view-theme-dark': app.forward,
       'application:view-theme-light': app.forward,
       'application:check-update': app.checkForUpdate,
+      'application:prompt-language': app.forward
     };
   }
 

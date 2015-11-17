@@ -79,6 +79,10 @@ export default class Repl extends React.Component {
     ipcRenderer.on('application:prompt-mode-magic', () => ReplStore.onSetREPLMode('Magic'));
     ipcRenderer.on('application:prompt-mode-sloppy', () => ReplStore.onSetREPLMode('Sloppy'));
     ipcRenderer.on('application:prompt-mode-strict', () => ReplStore.onSetREPLMode('Strict'));
+    ipcRenderer.on('application:prompt-language', (sender, value) =>  {
+      ReplLanguages.setREPL(value);
+      ReplStatusBarActions.updateLanguage(value);
+    });
 
     ipcRenderer.on('application:preferences', ReplPreferencesActions.openPreferences);
 

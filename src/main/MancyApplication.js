@@ -25,34 +25,8 @@ export default class MancyApplication extends EventEmitter {
 
   forward(item, focusedWindow) {
     if(!focusedWindow) { return; }
-    focusedWindow.webContents.send(item.command);
+    focusedWindow.webContents.send(item.command, item.value);
   }
-
-  promptClearAll(item, focusedWindow) {
-    if(!focusedWindow) { return; }
-    focusedWindow.webContents.send('application:prompt-clear-all');
-  }
-
-  promptCollapseAll(item, focusedWindow) {
-    if(!focusedWindow) { return; }
-    focusedWindow.webContents.send('application:prompt-collapse-all');
-  }
-
-  promptExpandAll(item, focusedWindow) {
-    if(!focusedWindow) { return; }
-    focusedWindow.webContents.send('application:prompt-expand-all');
-  }
-
-  promptBreak(item, focusedWindow) {
-    if(!focusedWindow) { return; }
-    focusedWindow.webContents.send('application:prompt-break');
-  }
-
-  promptFormat(item, focusedWindow) {
-    if(!focusedWindow) { return; }
-    focusedWindow.webContents.send('application:prompt-format');
-  }
-
 
   addPath(item, focusedWindow) {
     if(!focusedWindow) { return; }
@@ -162,16 +136,17 @@ export default class MancyApplication extends EventEmitter {
   rendererEvents() {
     let listenToSyncPreference = () => {
       ipcMain.on('application:sync-preference', (sender, preferences)  => {
-        let {mode, theme} = preferences;
+        let {mode, theme, lang} = preferences;
         let menu = Menu.getApplicationMenu();
-
         // sync views, prompts
         let viewMenu = menu.items[process.platform === 'darwin' ? 3 : 2];
         let themeMenu = _.find(viewMenu.submenu.items, (item) => item.label === 'Theme');
         let promptMenu = menu.items[process.platform === 'darwin' ? 4 : 3];
+        let langMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Language');
         let modeMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Mode');
 
         _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
+        _.find(langMenu.submenu.items, (m) => m.value === lang).checked = true;
         _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
       });
     };

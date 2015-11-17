@@ -88,6 +88,15 @@
           { "label" : "Sloppy", "type": "radio", "command": "application:prompt-mode-sloppy" },
           { "label" : "Strict", "type": "radio", "command": "application:prompt-mode-strict" }
         ]
+      },
+      {
+        "label": "Language",
+        "submenu": [
+          { "label" : "JavaScript", "value": "js", "type": "radio", "command": "application:prompt-language" },
+          { "label" : "CoffeeScript", "value": "coffee", "type": "radio", "command": "application:prompt-language" },
+          { "label" : "TypeScript", "value": "ts", "type": "radio", "command": "application:prompt-language" },
+          { "label" : "LiveScript", "value": "ls", "type": "radio", "command": "application:prompt-language" }
+        ]
       }
     ]
   },
