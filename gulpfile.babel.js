@@ -39,6 +39,7 @@ const resources = [
   'node_modules/coffee-script/bin/*',
   'node_modules/typescript/bin/*',
   'node_modules/livescript/bin/*',
+  'node_modules/font-manager/**/*',
 ].concat(nodeResources);
 
 const PATHS = {
@@ -269,7 +270,7 @@ gulp.task('packageAll', ['build'], (cb) => {
     try {
       await executable('darwin', 'all', electronVersion);
       await executable('win32', 'all', electronVersion);
-      await executable('linux', 'all', electronLinuxVersion);
+      await executable('linux', 'all', electronVersion);
       cb();
     } catch (err) {
       onError(err);

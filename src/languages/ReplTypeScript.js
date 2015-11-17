@@ -33,7 +33,7 @@ let langServiceHost = {
   getScriptSnapshot: (fileName) => ts.ScriptSnapshot.fromString(fileName === replFile ? code : fs.readFileSync(fileName).toString()),
   getCurrentDirectory: () => process.cwd(),
   getCompilationSettings: () => compileOptions,
-  getDefaultLibFileName: (options) => path.join(__dirname, '../../node_modules/typescript/lib/lib.core.es6.d.ts'),
+  getDefaultLibFileName: (options) => path.join(__dirname, '../node_modules/typescript/lib/lib.core.es6.d.ts'),
 }
 
 let service = ts.createLanguageService(langServiceHost, ts.createDocumentRegistry())
@@ -59,7 +59,7 @@ let register = () => {
   }
 
   let fork = child_process.fork;
-  let binary = require.resolve('../../node_modules/typescript/bin/tsc');
+  let binary = require.resolve(path.join(__dirname, '../node_modules/typescript/bin/tsc'));
   child_process.fork = (path, args, options) => {
     if(/\.tsx?$/.test(path)) {
       if(!Array.isArray(args)) {
