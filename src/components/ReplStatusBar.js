@@ -88,7 +88,7 @@ export default class ReplStatusBar extends React.Component {
         {
           this.state.newRelease
             ? <span className='console-release-notification' onClick={this.onDownload} title='Click to download'>
-                 <i className="fa fa-download"></i> Update
+                 <i className="fa fa-download"></i> {this.state.newRelease.release}
               </span>
             : null
         }
