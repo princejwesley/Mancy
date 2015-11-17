@@ -6,7 +6,7 @@ import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import ReplFonts from '../common/ReplFonts';
 import Reflux from 'reflux';
 import _ from 'lodash';
-import ipc from 'ipc';
+import {ipcRenderer} from 'electron';
 import webFrame from 'web-frame';
 import ReplConstants from '../constants/ReplConstants';
 
@@ -35,7 +35,7 @@ const ReplPreferencesStore = Reflux.createStore({
     global.Mancy.preferences = preferences;
     global.Mancy.preferences.shiftEnter = true;
     localStorage.setItem('preferences', JSON.stringify(preferences));
-    ipc.send('application:sync-preference', preferences);
+    ipcRenderer.send('application:sync-preference', preferences);
     this.trigger();
   },
   toggleWatermark(flag) {

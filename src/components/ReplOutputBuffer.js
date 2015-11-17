@@ -5,8 +5,8 @@ import ReplCommon from '../common/ReplCommon';
 import ReplOutputObject from './ReplOutputObject';
 import ReplOutputHTML from './ReplOutputHTML';
 import ReplOutputBufferExplorer from './ReplOutputBufferExplorer'
-import ipc from 'ipc';
-ipc.send
+import {ipcRenderer} from 'electron';
+
 export default class ReplOutputBuffer extends React.Component {
   constructor(props) {
     super(props);
@@ -43,7 +43,7 @@ export default class ReplOutputBuffer extends React.Component {
   }
 
   onDownload() {
-    ipc.send('application:download', this.props.buffer);
+    ipcRenderer.send('application:download', this.props.buffer);
   }
 
   render() {

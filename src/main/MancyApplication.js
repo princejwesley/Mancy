@@ -2,7 +2,7 @@ import app from 'app';
 import BrowserWindow from 'browser-window';
 import {readFileSync} from 'fs';
 import dialog from 'dialog';
-import ipc from 'ipc';
+import {ipcMain} from 'electron';
 import _ from 'lodash';
 import Menu from 'menu';
 import shell from 'shell';
@@ -161,7 +161,7 @@ export default class MancyApplication extends EventEmitter {
 
   rendererEvents() {
     let listenToSyncPreference = () => {
-      ipc.on('application:sync-preference', (sender, preferences)  => {
+      ipcMain.on('application:sync-preference', (sender, preferences)  => {
         let {mode, theme} = preferences;
         let menu = Menu.getApplicationMenu();
 
@@ -177,7 +177,7 @@ export default class MancyApplication extends EventEmitter {
     };
 
     let listenToCheckNewRelease = () => {
-      ipc.on('application:check-new-release', ({sender})  => {
+      ipcMain.on('application:check-new-release', ({sender})  => {
         if(this.latestRelease) {
           let release = this.latestRelease.release;
           if(`v${Config.version}` !== release) {

@@ -12,7 +12,7 @@ import ReplConsoleActions from '../actions/ReplConsoleActions';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import Reflux from 'reflux';
-import ipc from 'ipc';
+import {ipcRenderer} from 'electron';
 import {writeFile, readFile} from 'fs';
 import remote from 'remote';
 import ReplStreamHook from '../common/ReplStreamHook';
@@ -66,29 +66,29 @@ export default class Repl extends React.Component {
     ReplConsoleHook.on('console', this.onConsole);
     ReplConsoleHook.enable();
 
-    ipc.on('application:import', this.onImport);
-    ipc.on('application:export', this.onExport);
-    ipc.on('application:add-path', this.onAddPath);
+    ipcRenderer.on('application:import', this.onImport);
+    ipcRenderer.on('application:export', this.onExport);
+    ipcRenderer.on('application:add-path', this.onAddPath);
 
-    ipc.on('application:prompt-clear-all', this.onClearCommands);
-    ipc.on('application:prompt-expand-all', this.onExpandAll);
-    ipc.on('application:prompt-collapse-all', this.onCollapseAll);
-    ipc.on('application:prompt-break', this.onBreakPrompt);
-    ipc.on('application:prompt-format', this.onFormatPromptCode);
+    ipcRenderer.on('application:prompt-clear-all', this.onClearCommands);
+    ipcRenderer.on('application:prompt-expand-all', this.onExpandAll);
+    ipcRenderer.on('application:prompt-collapse-all', this.onCollapseAll);
+    ipcRenderer.on('application:prompt-break', this.onBreakPrompt);
+    ipcRenderer.on('application:prompt-format', this.onFormatPromptCode);
 
-    ipc.on('application:prompt-mode-magic', () => ReplStore.onSetREPLMode('Magic'));
-    ipc.on('application:prompt-mode-sloppy', () => ReplStore.onSetREPLMode('Sloppy'));
-    ipc.on('application:prompt-mode-strict', () => ReplStore.onSetREPLMode('Strict'));
+    ipcRenderer.on('application:prompt-mode-magic', () => ReplStore.onSetREPLMode('Magic'));
+    ipcRenderer.on('application:prompt-mode-sloppy', () => ReplStore.onSetREPLMode('Sloppy'));
+    ipcRenderer.on('application:prompt-mode-strict', () => ReplStore.onSetREPLMode('Strict'));
 
-    ipc.on('application:preferences', ReplPreferencesActions.openPreferences);
+    ipcRenderer.on('application:preferences', ReplPreferencesActions.openPreferences);
 
-    ipc.on('application:preference-theme-dark', () => ReplPreferencesActions.setTheme('Dark Theme'));
-    ipc.on('application:preference-theme-light', () => ReplPreferencesActions.setTheme('Light Theme'));
+    ipcRenderer.on('application:preference-theme-dark', () => ReplPreferencesActions.setTheme('Dark Theme'));
+    ipcRenderer.on('application:preference-theme-light', () => ReplPreferencesActions.setTheme('Light Theme'));
 
-    ipc.on('application:view-theme-dark', () => document.body.className = 'dark-theme');
-    ipc.on('application:view-theme-light', () => document.body.className = 'light-theme');
+    ipcRenderer.on('application:view-theme-dark', () => document.body.className = 'dark-theme');
+    ipcRenderer.on('application:view-theme-light', () => document.body.className = 'light-theme');
 
-    ipc.on('application:new-release', this.onNewRelease);
+    ipcRenderer.on('application:new-release', this.onNewRelease);
     this.checkNewRelease();
     ReplStore.onSetREPLMode(global.Mancy.preferences.mode);
     ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
@@ -164,12 +164,12 @@ export default class Repl extends React.Component {
   }
 
   checkNewRelease() {
-    setTimeout(() => ipc.send('application:check-new-release'), 2000);
+    setTimeout(() => ipcRenderer.send('application:check-new-release'), 2000);
   }
 
   loadPreferences() {
     let preferences = JSON.parse(localStorage.getItem('preferences'));
-    ipc.send('application:sync-preference', preferences);
+    ipcRenderer.send('application:sync-preference', preferences);
   }
 
   onNewRelease(release) {
@@ -191,7 +191,7 @@ export default class Repl extends React.Component {
         }
       }
 
-      ipc.send('application:message-box', {
+      ipcRenderer.send('application:message-box', {
         title: 'Load session error',
         buttons: ['Close'],
         type: 'error',
@@ -219,7 +219,7 @@ export default class Repl extends React.Component {
           message: `Session saved to ${filename}`
         });
       }
-      ipc.send('application:message-box', options);
+      ipcRenderer.send('application:message-box', options);
     });
   }
 
@@ -336,7 +336,7 @@ export default class Repl extends React.Component {
   onConsoleChange(type) {
     let currentWindow = remote.getCurrentWindow();
     if(!currentWindow.$focus && process.platform === 'darwin') {
-      ipc.send('application:dock-message-notification', currentWindow.id);
+      ipcRenderer.send('application:dock-message-notification', currentWindow.id);
     }
     if(this.state.showConsole) { return; }
     ReplStore.showBell();

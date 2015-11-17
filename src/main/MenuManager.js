@@ -1,6 +1,5 @@
 
 import app from 'app';
-import ipc from 'ipc';
 import Menu from 'menu';
 import dialog from 'dialog';
 import MenuItem from 'menu-item';

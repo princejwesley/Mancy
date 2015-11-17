@@ -1,11 +1,12 @@
 require('crash-reporter').start();
 var app = require('app');
-var path = require('path')
-var BrowserWindow = require('browser-window');
+var path = require('path');
+var electron = require('electron');
+var BrowserWindow = electron.BrowserWindow;
 var {MenuManager} = require('./MenuManager');
 var Config = require('../package.json');
 var _ = require('lodash');
-var ipc = require('ipc');
+var ipc = electron.ipcMain;
 var fs = require('fs');
 var dialog = require('dialog');
 
@@ -81,15 +82,15 @@ function onReady() {
   var options = {
     width: width * 0.75,
     height: height * 0.75,
-    'min-height': height * 0.5,
-    'min-width': width * 0.5,
+    minHeight: height * 0.5,
+    minWidth: width * 0.5,
     resizable: true,
-    'web-preferences': {
-			'overlay-scrollbars': true,
-      'plugins': true,
-      'experimental-features': true,
-      'experimental-canvas-features': true,
-      'webgl': true
+    webPreferences: {
+			overlayScrollbars: true,
+      plugins: true,
+      experimentalFeatures: true,
+      experimentalCanvasFeatures: true,
+      webgl: true
 		},
     show: false,
   }
@@ -101,7 +102,7 @@ function onReady() {
   windowCache[mainWindow.id] = mainWindow;
   let menuManager = menuManagerCache[mainWindow.id] = new MenuManager();
 
-  mainWindow.loadUrl('file://' + __dirname + '/../index.html');
+  mainWindow.loadURL('file://' + __dirname + '/../index.html');
   mainWindow.flashFrame(true);
   mainWindow.setTitle(`${_.capitalize(Config.name)} - REPL(${windowCount})`);
   windowCount += 1;
