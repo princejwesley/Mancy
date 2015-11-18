@@ -22,10 +22,11 @@
     }
 
     .repl-entry-message-output {
+      word-wrap: break-word;
+      white-space: pre-wrap;
       padding: 5px 0;
       @include highlight();
       position: relative;
-      display: flex;
 
       @include replSourceFile($theme);
 

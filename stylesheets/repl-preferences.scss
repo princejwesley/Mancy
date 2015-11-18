@@ -55,7 +55,7 @@
           .textbox {
             padding: 0px 8px;
           }
-          
+
           .radio-group {
             padding: 0px 5px;
           }
@@ -65,6 +65,10 @@
           }
 
         }
+      }
+
+      .statusbar-placeholder {
+        height: calc(#{$app-font-size} + 20px);
       }
 
       fieldset {

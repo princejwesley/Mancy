@@ -36,6 +36,7 @@ const ReplPreferencesStore = Reflux.createStore({
     global.Mancy.preferences.shiftEnter = true;
     localStorage.setItem('preferences', JSON.stringify(preferences));
     ipcRenderer.send('application:sync-preference', preferences);
+    ReplStatusBarActions.refresh();
     this.trigger();
   },
   toggleWatermark(flag) {
@@ -75,6 +76,12 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.autoCompleteOnEnter = flag;
     });
   },
+  toggleTranspile(flag) {
+    this.updatePreference((preferences) => {
+      preferences.transpile = flag;
+      ReplStatusBarActions.updateTranspile();
+    });
+  },
   onSetTheme(name) {
     this.updatePreference((preferences) => {
       preferences.theme = name;
@@ -103,6 +110,7 @@ const ReplPreferencesStore = Reflux.createStore({
     this.updatePreference((preferences) => {
       preferences.lang = lang;
       ReplLanguages.setREPL(lang);
+      global.Mancy.session.lang = lang;
       ReplStatusBarActions.updateLanguage();
       ReplActiveInputActions.breakPrompt();
     });

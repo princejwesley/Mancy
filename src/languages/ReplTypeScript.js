@@ -73,6 +73,24 @@ let register = () => {
   };
 };
 
+let transpile = (input, context, cb) => {
+  let original = code;
+  code += input;
+  buildNumber += 1;
+  let allDiagnostics = getDiagnostics();
+  code = original;
+
+  if(allDiagnostics.length) {
+    let diagnostic = allDiagnostics[0];
+    let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, EOL);
+    if(!diagnostic.file) { return cb(message); }
+    let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+    return cb(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+  }
+
+  return cb(null, ts.transpile(input));
+};
+
 let evaluate = (input, context, filename, cb) => {
   let original = code;
   code += input;
@@ -155,6 +173,7 @@ export default {
     });
     addMultilineHandler(repl);
     completion(repl);
+    repl.transpile = transpile;
     return repl;
   }
 };

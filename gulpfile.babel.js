@@ -33,6 +33,7 @@ const resources = [
   'README.md',
   'LICENSE',
   'icons/*',
+  'logos/*',
   '!**/__mocks__/*',
   '!**/__tests__/*',
   '!src/**/*',

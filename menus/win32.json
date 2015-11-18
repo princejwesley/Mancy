@@ -83,9 +83,9 @@
       {
         "label": "Mode",
         "submenu": [
-          { "label" : "Magic", "type": "radio", "command": "application:prompt-mode-magic" },
-          { "label" : "Sloppy", "type": "radio", "command": "application:prompt-mode-sloppy" },
-          { "label" : "Strict", "type": "radio", "command": "application:prompt-mode-strict" }
+          { "label" : "Magic", "type": "radio", "value": "Magic", "command": "application:prompt-mode" },
+          { "label" : "Sloppy", "type": "radio", "value": "Sloppy", "command": "application:prompt-mode" },
+          { "label" : "Strict", "type": "radio", "value": "Strict", "command": "application:prompt-mode" }
         ]
       },
       {

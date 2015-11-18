@@ -32,7 +32,8 @@ export default class ReplActiveInput extends React.Component {
       'onTabCompletion', 'autoComplete', 'onKeyDown', 'onClick',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
-      'onUndoRedo', 'onKeyPress', 'autoFillCharacters', 'insertCharacter'
+      'onUndoRedo', 'onKeyPress', 'autoFillCharacters', 'insertCharacter',
+      'shouldTranspile', 'talkToREPL'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -50,7 +51,7 @@ export default class ReplActiveInput extends React.Component {
 
     let cli = ReplLanguages.getREPL();
     //set desired repl mode
-    cli.replMode = repl[this.props.mode];
+    cli.replMode = repl[`REPL_MODE_${global.Mancy.session.mode.toUpperCase()}`];
     //bind write handle
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom
@@ -152,10 +153,10 @@ export default class ReplActiveInput extends React.Component {
 
   addEntryAction(formattedOutput, status, command, plainCode) {
     ReplActions.addEntry({
-      formattedOutput: formattedOutput,
-      status: status,
-      command: command,
-      plainCode: plainCode,
+      formattedOutput,
+      status,
+      command,
+      plainCode
     });
     this.removeSuggestion();
     this.promptInput = this.replFeed = null;
@@ -322,6 +323,53 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  shouldTranspile() {
+    return global.Mancy.preferences.transpile &&
+      (global.Mancy.session.lang !== 'js' ||
+        (global.Mancy.session.lang === 'js' && global.Mancy.preferences.babel))
+  }
+
+  talkToREPL() {
+    let cli = ReplLanguages.getREPL();
+    // managed by us (no react)
+    this.element.className += ' repl-active-input-running';
+
+    setTimeout(() => {
+      const text = this.element.innerText.replace(/\s{1,2}$/, '');
+      const transpile = this.shouldTranspile();
+      if(cli.bufferedCommand.length) {
+        cli.input.emit('data', '.break');
+        cli.input.emit('data', EOL);
+      }
+      cli.$lastExpression = ReplOutput.none();
+      cli.context = ReplContext.getContext();
+      this.promptInput = text;
+      let {local, output, input} = ReplInput.transform(text, transpile);
+
+      if(local) {
+        return this.addEntryAction(output, true, input, text);
+      }
+
+      if(transpile) {
+        if(global.Mancy.session.lang !== 'js') {
+          cli.transpile(output, cli.context, (err, result) => {
+            this.addEntryAction(ReplOutput.transpile(err, result),
+              !err, ReplCommon.highlight(text), text);
+          });
+        } else {
+          let err = _.isError(output);
+          this.addEntryAction(ReplOutput.transpile(err, output), !err,
+            ReplCommon.highlight(text), text);
+        }
+        return;
+      }
+
+      this.replFeed = output;
+      cli.input.emit('data', this.replFeed);
+      cli.input.emit('data', EOL);
+    }, 17);
+  }
+
   onKeyUp(e) {
     if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
     if( ReplDOMEvents.isKeyup(e)
@@ -360,29 +408,7 @@ export default class ReplActiveInput extends React.Component {
       ReplDOM.scrollToEnd();
       if(e.shiftKey && !global.Mancy.preferences.toggleShiftEnter) { return; }
 
-      let cli = ReplLanguages.getREPL();
-      // managed by us (no react)
-      this.element.className += ' repl-active-input-running';
-
-      setTimeout(() => {
-        const text = this.element.innerText.replace(/\s{1,2}$/, '');
-        if(cli.bufferedCommand.length) {
-          cli.input.emit('data', '.break');
-          cli.input.emit('data', EOL);
-        }
-        cli.$lastExpression = ReplOutput.none();
-        cli.context = ReplContext.getContext();
-        this.promptInput = text;
-        let {local, output, input} = ReplInput.transform(text);
-
-        if(local) {
-          return this.addEntryAction(output, true, input, text);
-        }
-
-        this.replFeed = output;
-        cli.input.emit('data', this.replFeed);
-        cli.input.emit('data', EOL);
-      }, 17);
+      this.talkToREPL();
     } else {
       if((!global.Mancy.preferences.toggleAutomaticAutoComplete &&
           ReplCommon.shouldTriggerAutoComplete(e) &&

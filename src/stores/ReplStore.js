@@ -12,7 +12,6 @@ let cache = {
   historyStaged: '',
   showConsole: false,
   showBell: false,
-  mode: 'REPL_MODE_MAGIC',
   reloadPrompt: false
 };
 
@@ -86,7 +85,6 @@ const ReplStore = Reflux.createStore({
   },
   onSetREPLMode(mode) {
     cache.reloadPrompt = true;
-    cache.mode = `REPL_MODE_${mode.toUpperCase()}`;
     this.trigger();
   },
   toggleConsole() {

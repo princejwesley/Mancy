@@ -34,7 +34,7 @@ export default class Repl extends React.Component {
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
       'onImport', 'onExport', 'onAddPath', 'loadPreferences',
-      'checkNewRelease', 'onNewRelease', 'resizeWindow'
+      'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -76,10 +76,9 @@ export default class Repl extends React.Component {
     ipcRenderer.on('application:prompt-break', this.onBreakPrompt);
     ipcRenderer.on('application:prompt-format', this.onFormatPromptCode);
 
-    ipcRenderer.on('application:prompt-mode-magic', () => ReplStore.onSetREPLMode('Magic'));
-    ipcRenderer.on('application:prompt-mode-sloppy', () => ReplStore.onSetREPLMode('Sloppy'));
-    ipcRenderer.on('application:prompt-mode-strict', () => ReplStore.onSetREPLMode('Strict'));
+    ipcRenderer.on('application:prompt-mode', (sender, value) => this.onSetREPLMode(value));
     ipcRenderer.on('application:prompt-language', (sender, value) =>  {
+      global.Mancy.session.lang = value;
       ReplLanguages.setREPL(value);
       ReplStatusBarActions.updateLanguage(value);
     });
@@ -94,7 +93,7 @@ export default class Repl extends React.Component {
 
     ipcRenderer.on('application:new-release', this.onNewRelease);
     this.checkNewRelease();
-    ReplStore.onSetREPLMode(global.Mancy.preferences.mode);
+    this.onSetREPLMode(global.Mancy.preferences.mode);
     ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
 
     this.resizeWindow();
@@ -236,6 +235,12 @@ export default class Repl extends React.Component {
     this.menu.popup(remote.getCurrentWindow());
   }
 
+  onSetREPLMode(mode) {
+    ReplStore.onSetREPLMode(mode);
+    ReplStatusBarActions.updateMode(mode);
+    global.Mancy.session.mode = mode;
+  }
+
   onPaste(e) {
     e.preventDefault();
     var text = e.clipboardData.getData("text/plain");
@@ -366,7 +371,6 @@ export default class Repl extends React.Component {
             historyIndex={this.state.historyIndex}
             historyStaged={this.state.historyStaged}
             command={this.state.command}
-            mode={this.state.mode}
             cursor= {this.state.cursor} />
         </div>
         {
@@ -384,7 +388,6 @@ export default class Repl extends React.Component {
         }
 
         <ReplStatusBar history={this.state.entries}
-          mode={this.state.mode}
           showConsole={this.state.showConsole}
           showBell={this.state.showBell}
           onToggleConsole={this.onToggleConsole}/>
