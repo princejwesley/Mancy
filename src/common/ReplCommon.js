@@ -3,6 +3,7 @@ import hl from 'highlight.js';
 import ReplConstants from '../constants/ReplConstants';
 import shell from 'shell';
 import fs from 'fs';
+import vm from 'vm';
 import {resolve} from 'path';
 import esprima from 'esprima';
 import escodegen from 'escodegen';
@@ -222,6 +223,13 @@ let ReplCommon = {
   isTypedArrayInstance: (o) => !!typedArrays.find((ta) => o instanceof ta),
   isTypedArrayLike: (o) => typedArraysLike.indexOf(ReplCommon.type(o)) !== -1,
   isTypedArray: (o) => ReplCommon.isTypedArrayInstance(o) || ReplCommon.isTypedArrayLike(o),
+  runInContext: (js, cb) => {
+    try {
+      cb(null, vm.runInContext(js, ReplContext.getContext(), 'repl'));
+    } catch(e) {
+      cb(e);
+    }
+  },
 };
 
 let esCodeGenOptions = {

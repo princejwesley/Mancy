@@ -45,6 +45,17 @@ let evaluate = (input, context, filename, cb) => {
   }
 }
 
+let transpile = (input, context, cb) => {
+  try {
+    let js = ls.compile(input, { bare: true }).toString();
+    let lines = js.split(/\r?\n/g);
+    lines.shift();
+    return cb(null, lines.join(EOL));
+  } catch(e) {
+    return cb(e);
+  }
+};
+
 let addMultilineHandler = ({rli}) => {
   nodeLineListener = rli.listeners('line')[0];
   rli.removeListener('line', nodeLineListener);
@@ -72,6 +83,7 @@ export default {
       }
     });
     addMultilineHandler(repl);
+    repl.transpile = transpile;
     return repl;
   }
 };

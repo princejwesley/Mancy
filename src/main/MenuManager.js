@@ -7,6 +7,7 @@ import _ from 'lodash';
 import EventEmitter from 'events';
 import MancyApplication from './MancyApplication';
 import Config from '../package.json';
+import {join} from 'path';
 
 let platformMenu = require(`../menus/${process.platform}.json`);
 let noop = () => {};
@@ -15,7 +16,7 @@ export class MenuManager extends EventEmitter {
 
   constructor() {
     super();
-    _.each(['bindMenuItems', 'systemMenuItems',
+    _.each(['bindMenuItems', 'systemMenuItems', 'addImages',
       'buildMenuSelectorActions', 'unhandledMenuItem'], (fun) => {
       this[fun] = this[fun].bind(this);
     });
@@ -27,6 +28,7 @@ export class MenuManager extends EventEmitter {
     let menuTemplate = _.cloneDeep(platformMenu);
     this.bindMenuItems(menuTemplate);
     this.systemMenuItems(menuTemplate);
+    this.addImages(menuTemplate);
     this.menu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(this.menu);
   }
@@ -53,9 +55,7 @@ export class MenuManager extends EventEmitter {
       'application:prompt-break': app.forward,
       'application:prompt-format': app.forward,
       'application:preferences': app.forward,
-      'application:prompt-mode-magic': app.forward,
-      'application:prompt-mode-sloppy': app.forward,
-      'application:prompt-mode-strict': app.forward,
+      'application:prompt-mode': app.forward,
       'application:view-theme-dark': app.forward,
       'application:view-theme-light': app.forward,
       'application:check-update': app.checkForUpdate,
@@ -90,6 +90,16 @@ export class MenuManager extends EventEmitter {
 
     dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
     return noop;
+  }
+
+  addImages(menuItems) {
+    if(process.platform !== 'darwin') { return; }
+    const nativeImage = require('electron').nativeImage;
+    let promptMenu = menuItems[4];
+    let langMenu = _.find(promptMenu.submenu, (item) => item.label === 'Language');
+    _.each(langMenu.submenu, (menu) => {
+      menu.icon = nativeImage.createFromPath(join(__dirname, '..', 'logos', `${menu.value}.png`))
+    });
   }
 
   systemMenuItems(menuItems) {

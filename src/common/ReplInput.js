@@ -10,7 +10,7 @@ let asyncWrapper = (code) => {
   return `(async function() { let result = (${code}); return result; }())`;
 };
 
-let cook = (plain) => {
+let cook = (plain, transpile) => {
   let tplain = plain.trim();
   let source = tplain.match(sourceMatcher);
   if(source) {
@@ -24,7 +24,7 @@ let cook = (plain) => {
 
   let output = plain;
 
-  if(global.Mancy.preferences.asyncWrap && global.Mancy.preferences.lang === 'js') {
+  if(!transpile && global.Mancy.preferences.asyncWrap && global.Mancy.preferences.lang === 'js') {
     // bare await
     let match = plain.match(awaitMatcher);
     if(match && match[1].indexOf('async') === -1) {
@@ -34,23 +34,23 @@ let cook = (plain) => {
 
   return {
     local: false,
-    output: global.Mancy.preferences.babel && global.Mancy.preferences.lang === 'js' ? babelTransfrom(output) : output
+    output: global.Mancy.preferences.babel && global.Mancy.preferences.lang === 'js' ? babelTransfrom(output, transpile) : output
   };
 };
 
-let babelTransfrom = (plain) => {
+let babelTransfrom = (plain, transpile = false) => {
   try {
     return babel
       .transform(plain, ReplConstants.BABEL_OPTIONS)
       .code;
   } catch(e) {
-    return plain;
+    return transpile ? e : plain;
   }
 }
 
 let ReplInput = {
-  transform: (plain) => {
-    return cook(plain);
+  transform: (plain, transpile = false) => {
+    return cook(plain, transpile);
   }
 };
 

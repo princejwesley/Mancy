@@ -11,7 +11,6 @@ export default class ReplPrompt extends React.Component {
       <div className='repl-prompt'>
         <ReplActiveIcon />
         <ReplActiveInput
-          mode={this.props.mode}
           history={this.props.history}
           historyIndex={this.props.historyIndex}
           historyStaged={this.props.historyStaged}

@@ -29,11 +29,9 @@ export default class ReplStatusBar extends React.Component {
   extractStatusInfo() {
     let history = this.props.history;
     let errors = history.filter((h) => !h.status);
-    let mode = this.props.mode.replace(/^.*_/,'').toLowerCase();
     return {
       commands: history.length - errors.length,
       errors: errors.length,
-      mode: mode
     };
   }
   onDownload(e) {
@@ -55,7 +53,7 @@ export default class ReplStatusBar extends React.Component {
   }
 
   render() {
-    let {commands, errors, mode} = this.extractStatusInfo();
+    let {commands, errors} = this.extractStatusInfo();
     let runHelp = this.state.runCommand ? '⇧ + ↲' : '↲';
     let langIcon = this.getLangIcon();
     return (
@@ -79,7 +77,7 @@ export default class ReplStatusBar extends React.Component {
           this.state.lang === 'js'
             ? <span className='repl-status-bar-mode' title='REPL mode'>
                 <i className="fa fa-tag"></i>
-                <span className='repl-status-bar-message'>{mode}</span>
+                <span className='repl-status-bar-message'>{this.state.mode}</span>
               </span>
             : null
         }

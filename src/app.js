@@ -36,7 +36,8 @@ import webFrame from 'web-frame';
     "lang": "js",
     "fontFamily": "Droid Sans Mono",
     "pageZoomFactor": 1,
-    "watermark": true
+    "watermark": true,
+    "transpile": false,
   };
 
   _.each(_.keys(defaults), (key) => {
@@ -48,6 +49,7 @@ import webFrame from 'web-frame';
   localStorage.setItem('preferences', JSON.stringify(preferences));
 
   global.Mancy.userData = remote.require('app').getPath('userData');
+  global.Mancy.session = { lang: preferences.lang, mode: preferences.mode };
 })();
 
 function onLoadSettings() {

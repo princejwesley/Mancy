@@ -34,7 +34,7 @@ app.on('browser-window-focus', function(event, window) {
 });
 
 app.on('ready', onReady);
-app.on('activate-with-no-open-windows', onReady);
+app.on('activate', onReady);
 
 ipc.on('application:message-box', function(event, options) {
   dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);

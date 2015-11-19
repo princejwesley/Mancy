@@ -22,10 +22,11 @@
     }
 
     .repl-entry-message-output {
+      word-wrap: break-word;
+      white-space: pre-wrap;
       padding: 5px 0;
       @include highlight();
       position: relative;
-      display: flex;
 
       @include replSourceFile($theme);
 
@@ -51,6 +52,14 @@
           padding-right: 10px;
           padding-top: 4px;
           color: if($theme == $dark-theme, $dark-app-entry-message-output-expand-collapse-color, $lt-app-entry-message-output-expand-collapse-color);
+        }
+        .fa-minus-square-o ~ img ~ span {
+          display: block;
+        }
+        .es5-img {
+          padding-right: 5px;
+          height: 1em;
+          width: 1em;
         }
       }
 

@@ -29,9 +29,10 @@
   },
   "keywords": [
     "REPL",
-    "Javascript",
+    "JavaScript",
     "CoffeeScript",
-    "TypeScript"
+    "TypeScript",
+    "LiveScript"
   ],
   "author": "Prince John Wesley <princejohnwesley@gmail.com>",
   "license": "MIT",

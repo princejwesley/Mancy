@@ -20,7 +20,7 @@ export default class ReplPreferences extends React.Component {
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
-      'onLangChange', 'onWatermarkChange'
+      'onLangChange', 'onWatermarkChange', 'onToggleTranspile'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -85,6 +85,10 @@ export default class ReplPreferences extends React.Component {
 
   onToggleAutomaticAutoComplete(e) {
     ReplPreferencesStore.toggleAutomaticAutoComplete(e.target.checked);
+  }
+
+  onToggleTranspile(e) {
+    ReplPreferencesStore.toggleTranspile(e.target.checked);
   }
 
   render() {
@@ -225,6 +229,17 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
+          <div className='preference' title='Show transpiled ES5 code'>
+            <div className='preference-name'>
+              Transpiled View
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="toggle-transpile"
+                  checked={this.state.transpile} value="" onClick={this.onToggleTranspile} />
+              </span>
+            </div>
+          </div>
           <div className='preference' title='Show/hide watermark'>
             <div className='preference-name'>
               Show watermark
@@ -235,6 +250,7 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
+          <div className='statusbar-placeholder'></div>
         </div>
       </div>
     );

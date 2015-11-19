@@ -22,6 +22,7 @@ import ReplOutputBuffer from '../components/ReplOutputBuffer';
 import ReplOutputChart from '../components/ReplOutputChart';
 import ReplOutputDate from '../components/ReplOutputDate';
 import ReplSourceFile from '../components/ReplSourceFile';
+import ReplOutputTranspile from '../components/ReplOutputTranspile';
 import ReplContext from './ReplContext';
 
 let Debug = require('vm').runInDebugContext('Debug');
@@ -296,6 +297,10 @@ let ReplOutput = {
         name={mod}
       />
     );
+  },
+  transpile: (output) => {
+    let html = ReplCommon.highlight(ReplCommon.format(output));
+    return <ReplOutputTranspile html={html} output={output} />
   }
 };
 
