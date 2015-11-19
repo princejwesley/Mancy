@@ -30,6 +30,7 @@ export default class ReplEntryMessage extends React.Component {
         { this.props.collapse ?
             null :
             <div className='repl-entry-message-output'>
+              {this.props.message.transpiledOutput}
               {this.props.message.formattedOutput}
             </div>
         }

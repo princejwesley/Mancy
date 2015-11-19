@@ -53,6 +53,14 @@
           padding-top: 4px;
           color: if($theme == $dark-theme, $dark-app-entry-message-output-expand-collapse-color, $lt-app-entry-message-output-expand-collapse-color);
         }
+        .fa-minus-square-o ~ img ~ span {
+          display: block;
+        }
+        .es5-img {
+          padding-right: 5px;
+          height: 1em;
+          width: 1em;
+        }
       }
 
       @include replOutput($theme);

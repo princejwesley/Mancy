@@ -298,8 +298,7 @@ let ReplOutput = {
       />
     );
   },
-  transpile: (err, output) => {
-    if(err) { return ReplOutput.transformObject(err); }
+  transpile: (output) => {
     let html = ReplCommon.highlight(ReplCommon.format(output));
     return <ReplOutputTranspile html={html} output={output} />
   }

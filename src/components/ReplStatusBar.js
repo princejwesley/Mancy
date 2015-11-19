@@ -81,10 +81,7 @@ export default class ReplStatusBar extends React.Component {
               </span>
             : null
         }
-        <span className='run-help'>Press <span className='run-command'>{runHelp}</span> to <span className='run'>
-          {this.state.transpile &&
-            (this.state.lang !== 'js' ||
-            (this.state.lang === 'js' && global.Mancy.preferences.babel))? 'transpile to ES5' : 'run'}</span></span>
+        <span className='run-help'>Press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
         <span className='placeholder'></span>
         {
           this.state.newRelease

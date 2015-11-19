@@ -33,7 +33,7 @@ export default class ReplActiveInput extends React.Component {
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
       'onUndoRedo', 'onKeyPress', 'autoFillCharacters', 'insertCharacter',
-      'shouldTranspile', 'talkToREPL'
+      'shouldTranspile', 'talkToREPL', 'transpileAndExecute'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -151,12 +151,13 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
-  addEntryAction(formattedOutput, status, command, plainCode) {
+  addEntryAction(formattedOutput, status, command, plainCode, transpiledOutput) {
     ReplActions.addEntry({
       formattedOutput,
       status,
       command,
-      plainCode
+      plainCode,
+      transpiledOutput
     });
     this.removeSuggestion();
     this.promptInput = this.replFeed = null;
@@ -329,6 +330,20 @@ export default class ReplActiveInput extends React.Component {
         (global.Mancy.session.lang === 'js' && global.Mancy.preferences.babel))
   }
 
+  transpileAndExecute(err, result) {
+    let text = this.promptInput;
+    if(err) {
+      this.addEntryAction(ReplOutput.some(err).highlight(),
+        !err, ReplCommon.highlight(text), text);
+    } else {
+      ReplCommon.runInContext(result, (err, output) => {
+        let formattedOutput = ReplOutput.some(err || output).highlight();
+        let transpiledOutput = err ? null : ReplOutput.transpile(result);
+        this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
+      });
+    }
+  }
+
   talkToREPL() {
     let cli = ReplLanguages.getREPL();
     // managed by us (no react)
@@ -352,14 +367,9 @@ export default class ReplActiveInput extends React.Component {
 
       if(transpile) {
         if(global.Mancy.session.lang !== 'js') {
-          cli.transpile(output, cli.context, (err, result) => {
-            this.addEntryAction(ReplOutput.transpile(err, result),
-              !err, ReplCommon.highlight(text), text);
-          });
+          cli.transpile(output, cli.context, this.transpileAndExecute);
         } else {
-          let err = _.isError(output);
-          this.addEntryAction(ReplOutput.transpile(err, output), !err,
-            ReplCommon.highlight(text), text);
+          this.transpileAndExecute(_.isError(output), output);
         }
         return;
       }

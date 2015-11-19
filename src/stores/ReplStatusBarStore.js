@@ -19,9 +19,6 @@ const ReplStatusBarStore = Reflux.createStore({
     language = lang;
     this.trigger();
   },
-  onUpdateTranspile() {
-    this.trigger();
-  },
   onUpdateMode(m) {
     mode = m.toLowerCase();
     this.trigger();
@@ -30,13 +27,12 @@ const ReplStatusBarStore = Reflux.createStore({
     this.trigger();
   },
   getStore() {
-    let {toggleShiftEnter, lang, transpile} = global.Mancy.preferences;
+    let {toggleShiftEnter, lang} = global.Mancy.preferences;
     return {
       runCommand: toggleShiftEnter,
-      newRelease: newRelease,
+      newRelease,
       lang: language || lang,
       mode,
-      transpile
     };
   }
 });

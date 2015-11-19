@@ -79,7 +79,6 @@ const ReplPreferencesStore = Reflux.createStore({
   toggleTranspile(flag) {
     this.updatePreference((preferences) => {
       preferences.transpile = flag;
-      ReplStatusBarActions.updateTranspile();
     });
   },
   onSetTheme(name) {

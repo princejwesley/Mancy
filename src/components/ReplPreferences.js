@@ -209,9 +209,9 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference' title='Toggle run/transpile mode (⇧ + ↲) / ↲(default)'>
+          <div className='preference' title='Toggle run mode (⇧ + ↲) / ↲(default)'>
             <div className='preference-name'>
-              Toggle run/transpile mode (⇧ + ↲) / ↲
+              Toggle run mode (⇧ + ↲) / ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -229,9 +229,9 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference' title='transpile to ES5'>
+          <div className='preference' title='Show transpiled ES5 code'>
             <div className='preference-name'>
-              Transpile Mode
+              Transpiled View
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
