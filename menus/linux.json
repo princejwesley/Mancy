@@ -117,6 +117,7 @@
       { "label": "Check for Updates…", "command": "application:check-update" },
       { "label": "View License", "command": "application:open-license" },
       { "label": "Repository", "command": "application:open-documentation" },
+      { "label": "Release Notes", "command": "application:release-notes" },
       { "label": "Report Issue…", "command": "application:report-issue" }
     ]
   }

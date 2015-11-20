@@ -135,6 +135,7 @@
     "role": "help",
     "submenu": [
       { "label": "Repository", "command": "application:open-documentation" },
+      { "label": "Release Notes", "command": "application:release-notes" },
       { "label": "Report Issue…", "command": "application:report-issue" }
     ]
   }

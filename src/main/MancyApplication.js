@@ -121,6 +121,10 @@ export default class MancyApplication extends EventEmitter {
     shell.openExternal(Config.bugs.url);
   }
 
+  releaseNotes() {
+    shell.openExternal(`${Config.homepage}/blob/master/CHANGELOG.md`);
+  }
+
   aboutMancy(item, focusedWindow) {
     let options = {
       title: 'About Mancy',
