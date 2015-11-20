@@ -365,7 +365,7 @@ export default class ReplActiveInput extends React.Component {
         return this.addEntryAction(output, true, input, text);
       }
 
-      if(transpile) {
+      if(transpile && !text.match(/^\s*\.load/)) {
         if(global.Mancy.session.lang !== 'js') {
           cli.transpile(output, cli.context, this.transpileAndExecute);
         } else {

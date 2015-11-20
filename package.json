@@ -70,7 +70,6 @@
     "escodegen": "^1.7.0",
     "esprima": "^2.6.0",
     "font-awesome": "^4.4.0",
-    "font-mfizz": "https://github.com/fizzed/font-mfizz.git",
     "github": "^0.2.4",
     "highlight.js": "^8.8.0",
     "is-css-color": "^1.0.0",

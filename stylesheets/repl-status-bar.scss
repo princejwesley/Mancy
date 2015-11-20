@@ -68,6 +68,10 @@
       color: if($theme == $dark-theme, $dark-app-status-bar-message-color, $lt-app-status-bar-message-color);
       padding: 0 5px;
     }
+    .repl-status-bar-img {
+      display: flex;
+      align-self: center;
+    }
 
     .console-notification {
       font-size: 0.8em;
