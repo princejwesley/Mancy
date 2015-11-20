@@ -36,6 +36,7 @@
     }
 
     .run-help {
+      pointer-events: none;
       padding: 0px 25px;
       color: if($theme == $dark-theme, $dark-app-status-bar-run-help-color, $lt-app-status-bar-run-help-color);
       .run-command {
@@ -65,6 +66,7 @@
 
     .repl-status-bar-count,
     .repl-status-bar-message {
+      pointer-events: none;
       color: if($theme == $dark-theme, $dark-app-status-bar-message-color, $lt-app-status-bar-message-color);
       padding: 0 5px;
     }
