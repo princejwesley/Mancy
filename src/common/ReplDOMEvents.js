@@ -21,6 +21,7 @@ let keyNameBindings = {
   'space': 32,
   'quote': 222,
   'backTick': 192,
+  'backSpace': 8,
 };
 
 let combined = _.extend({}, keyNameBindings, navigation);
@@ -54,6 +55,26 @@ ReplDOMEvents.hasAutoFillCharacters = (e) => {
   return autoFillCharacters.indexOf(e.keyCode) !== -1 || (e.shiftKey && e.keyCode === 57);
 };
 
+ReplDOMEvents.autoFillPairCharacters = {
+  '"' : '"',
+  "'" : "'",
+  '`' : '`',
+  '{' : '}',
+  '[' : ']',
+  '(' : ')'
+};
+
+ReplDOMEvents.autoCloseKeyIdentifiers = {
+  '"' : "U+0022",
+  "'" : "U+0027",
+  "[" : "U+005B",
+  "]" : "U+005D",
+  "{" : "U+007B",
+  "}" : "U+007D",
+  "(" : "U+0028",
+  ")" : "U+0029",
+  "`" : "U+0060",
+};
 
 ReplDOMEvents.duplicate = (e) => new e.constructor(e.type, e);
 

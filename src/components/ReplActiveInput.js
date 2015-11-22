@@ -33,7 +33,7 @@ export default class ReplActiveInput extends React.Component {
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
       'onUndoRedo', 'onKeyPress', 'autoFillCharacters', 'insertCharacter',
-      'shouldTranspile', 'talkToREPL', 'transpileAndExecute'
+      'shouldTranspile', 'talkToREPL', 'transpileAndExecute', 'ignoreCharacters'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -313,15 +313,34 @@ export default class ReplActiveInput extends React.Component {
     let close = [']', ')', '}'];
     let idx = open.indexOf(ch);
 
-    if(idx !== -1) { return this.insertCharacter(pos, close[idx]); }
-    if(pos === 1 || text[pos - 2] !== ch) { return this.insertCharacter(pos, ch); }
+    if(idx !== -1) { this.insertCharacter(pos, close[idx]); }
+    else if(pos === 1 || text[pos - 2] !== ch) { this.insertCharacter(pos, ch); }
+  }
 
-    // backtick or quotes
-    if(ReplDOMEvents.isBackTick(e) || ReplDOMEvents.isQuote(e)) {
-      if(text[pos - 2] === ch && text[pos] === ch) {
-        this.element.innerText = text.slice(0, pos) + text.slice(pos + 1);
-      }
+  ignoreCharacters(e) {
+    let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
+    let text = this.element.innerText;
+    let ignoreList = [ ']', ')', '}', "'", '"', '`' ];
+    if(!pos || ignoreList.indexOf(text[pos]) === -1 || text.length === pos) { return false; }
+
+    let open = text[pos - 1];
+    let close = text[pos];
+
+    if(ReplDOMEvents.autoFillPairCharacters[open] !== close) { return false; }
+
+    if(ReplDOMEvents.autoFillKeyIdentifiers[close] === e.nativeEvent.keyIdentifier) {
+      e.preventDefault();
+      e.stopPropagation();
+      ReplDOM.setCursorPositionRelativeTo(pos + 1, this.element);
+      return true;
     }
+
+    if(ReplDOMEvents.isBackSpace(e)) {
+      this.element.innerText = text.substring(0, pos - 1) + text.substring(pos + 1);
+      ReplDOM.setCursorPositionRelativeTo(pos - 1, this.element);
+      return true;
+    }
+    return false;
   }
 
   shouldTranspile() {
@@ -391,7 +410,6 @@ export default class ReplActiveInput extends React.Component {
       };
     }
 
-    this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
     if(ReplDOMEvents.isTab(e)
       || ReplDOMEvents.isEscape(e)
       || ReplDOMEvents.isNavigation(e)
@@ -459,7 +477,6 @@ export default class ReplActiveInput extends React.Component {
     this.keyPressFired = false;
 
     if((e.keyCode == 16) || e.ctrlKey || e.metaKey || e.altKey || (e.keyCode == 93) || (e.keyCode == 91)) { return; }
-    this.lastSelectedRange = window.getSelection().getRangeAt(0).cloneRange();
 
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     if(ReplDOMEvents.isEnter(e) && activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) {
@@ -505,7 +522,7 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    if(!ReplDOMEvents.isTab(e)) { return; }
+    if(this.ignoreCharacters(e) || !ReplDOMEvents.isTab(e)) { return; }
     e.preventDefault();
     if(activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
