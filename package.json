@@ -1,7 +1,7 @@
 {
   "name": "mancy",
   "private": true,
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "A GUI REPL for Javascript & more…",
   "main": "main/index.js",
   "scripts": {
@@ -41,7 +41,7 @@
     "babel-jest": "^5.3.0",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "^0.35.0",
+    "electron-prebuilt": "^0.35.1",
     "electron-rebuild": "^1.0.2",
     "font-manager": "https://github.com/princejwesley/font-manager.git",
     "gulp": "^3.9.0",
