@@ -378,7 +378,7 @@ export default class ReplActiveInput extends React.Component {
       cli.$lastExpression = ReplOutput.none();
       cli.context = ReplContext.getContext();
       this.promptInput = text;
-      let {local, output, input} = ReplInput.transform(text, transpile);
+      let {local, output, input} = ReplInput.transform(text);
 
       if(local) {
         return this.addEntryAction(output, true, input, text);
@@ -388,7 +388,7 @@ export default class ReplActiveInput extends React.Component {
         if(global.Mancy.session.lang !== 'js') {
           cli.transpile(output, cli.context, this.transpileAndExecute);
         } else {
-          this.transpileAndExecute(_.isError(output), output);
+          this.transpileAndExecute(_.isError(output) ? output : null, output);
         }
         return;
       }
