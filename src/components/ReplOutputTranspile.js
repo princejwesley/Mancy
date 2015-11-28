@@ -31,16 +31,16 @@ export default class ReplOutputTranspile extends React.Component {
             ? this.state.collapse
                 ? <span className='repl-entry-message-output-function'>
                     <i className='fa fa-plus-square-o' onClick={this.onToggleCollapse}></i>
-                    <img className='es5-img' src='../logos/js.png' title='ES5(transpiled)'/>
+                    <img className='es5-img' src='./logos/js.png' title='ES5(transpiled)'/>
                     <span dangerouslySetInnerHTML={{__html:this.shortEntry}}></span>
                   </span>
                 : <span className='repl-entry-message-output-function'>
                     <i className='fa fa-minus-square-o' onClick={this.onToggleCollapse}></i>
-                    <img className='es5-img' src='../logos/js.png' title='ES5(transpiled)'/>
+                    <img className='es5-img' src='./logos/js.png' title='ES5(transpiled)'/>
                     <span dangerouslySetInnerHTML={{__html:this.props.html}}></span>
                   </span>
             : <span className='repl-entry-message-output-function'>
-                <img className='es5-img' src='../logos/js.png' title='ES5(transpiled)'/>
+                <img className='es5-img' src='./logos/js.png' title='ES5(transpiled)'/>
                 <span dangerouslySetInnerHTML={{__html:this.props.html}} />
               </span>
         }
