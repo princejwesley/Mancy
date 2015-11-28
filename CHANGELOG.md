@@ -1,5 +1,5 @@
 
-## <img src="icons/mancy.png" width="25">&nbsp;[v2.1.0](http://mancy-re.pl)  (Unreleased)
+## <img src="icons/mancy.png" width="25">&nbsp;[v2.1.0](http://mancy-re.pl)  (Nov 28, 2015)
 
 -  Language Support
    - CoffeeScript
