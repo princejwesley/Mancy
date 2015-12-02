@@ -179,7 +179,7 @@ export default class Repl extends React.Component {
     ReplStatusBarActions.newRelease(release);
   }
 
-  onImport(filename) {
+  onImport(sender, filename) {
     readFile(filename, (err, data) => {
       if(!err) {
         try {
@@ -203,7 +203,7 @@ export default class Repl extends React.Component {
     });
   }
 
-  onExport(filename) {
+  onExport(sender, filename) {
     let {history} = ReplStore.getStore();
     let data = JSON.stringify(_.map(history, (h) => h.plainCode));
     writeFile(filename, data, { encoding: ReplConstants.REPL_ENCODING }, (err) => {
