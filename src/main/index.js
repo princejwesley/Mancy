@@ -34,7 +34,11 @@ app.on('browser-window-focus', function(event, window) {
 });
 
 app.on('ready', onReady);
-app.on('activate', onReady);
+app.on('activate', function(event, hasVisibleWindows) {
+  if(!hasVisibleWindows) {
+    onReady();
+  }
+});
 
 ipc.on('application:message-box', function(event, options) {
   dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
