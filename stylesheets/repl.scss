@@ -50,6 +50,7 @@ body {
     left: 40vw;
     font-size: 20vh;
     font-family: 'Josefin Sans', sans-serif;
+    pointer-events: none;
   }
   &:after {
     content: attr(data-watermark-msg);
@@ -58,6 +59,7 @@ body {
     left: 43vw;
     font-size: 2vh;
     font-family: 'Josefin Sans', sans-serif;
+    pointer-events: none;
   }
 }
 
