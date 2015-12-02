@@ -328,16 +328,10 @@ export default class ReplActiveInput extends React.Component {
 
     if(ReplDOMEvents.autoFillPairCharacters[open] !== close) { return false; }
 
-    if(ReplDOMEvents.autoFillKeyIdentifiers[close] === e.nativeEvent.keyIdentifier) {
+    if(ReplDOMEvents.autoCloseKeyIdentifiers[close] === e.nativeEvent.keyIdentifier) {
       e.preventDefault();
       e.stopPropagation();
       ReplDOM.setCursorPositionRelativeTo(pos + 1, this.element);
-      return true;
-    }
-
-    if(ReplDOMEvents.isBackSpace(e)) {
-      this.element.innerText = text.substring(0, pos - 1) + text.substring(pos + 1);
-      ReplDOM.setCursorPositionRelativeTo(pos - 1, this.element);
       return true;
     }
     return false;
