@@ -204,6 +204,26 @@ let ReplCommon = {
       return false;
     }
   },
+  isGridData: (v) => {
+    return !!_.find([_.isNumber, _.isString, _.isDate, _.isBoolean], (fun) => fun(v));
+  },
+  candidateForGrid: (o) => {
+    if(typeof o !== 'object') { return false; }
+
+    let keys = _.keys(o);
+    if(!keys.length) { return false; }
+    let [first, rest] = keys;
+    if(typeof o[first] !== 'object' || _.isNull(o[first])) { return false; }
+    let cols = _.keys(o[first]);
+    if(!_.all(_.values(o[first]), ReplCommon.isGridData)) { return false; }
+    if(!cols.length) { return false; }
+    return !_.find(rest, (e) => {
+      let cs = _.keys(o[e]);
+      return (cs.length != cols.length)
+        ||  !_.isEqual(cols, cs)
+        || !_.all(_.values(o[e]), ReplCommon.isGridData);
+    });
+  },
   candidateForChart: (o) => {
     if(typeof o !== 'object') { return false; }
 
@@ -213,7 +233,7 @@ let ReplCommon = {
     let invalid = _.find(keys, (k) => {
       let v = o[k];
       if(!Array.isArray(v)) { return true; }
-      if(_.find(v, (d) => !(typeof d === 'number' || _.isDate(d) || typeof d === 'string'))) { return true; }
+      if(_.find(v, (d) => !(typeof d === 'number' || _.isDate(d)))) { return true; }
       data += v.length;
       return false;
     });
