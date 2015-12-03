@@ -152,16 +152,25 @@ export default class ReplActiveInput extends React.Component {
   }
 
   addEntryAction(formattedOutput, status, command, plainCode, transpiledOutput) {
-    ReplActions.addEntry({
-      formattedOutput,
-      status,
-      command,
-      plainCode,
-      transpiledOutput
-    });
-    this.removeSuggestion();
-    this.promptInput = this.replFeed = null;
-    this.commandReady = false;
+    let addReplEntry = (output) => {
+      formattedOutput = output ? ReplOutput.some(output).highlight() : formattedOutput;
+      ReplActions.addEntry({
+        formattedOutput,
+        status,
+        command,
+        plainCode,
+        transpiledOutput
+      });
+      this.removeSuggestion();
+      this.promptInput = this.replFeed = null;
+      this.commandReady = this.force = false;
+    };
+
+    if(this.force && formattedOutput && formattedOutput.then) {
+      formattedOutput.then(addReplEntry).catch(addReplEntry);
+    } else {
+      addReplEntry();
+    }
   }
 
   prompt(preserveCursor) {
@@ -184,7 +193,7 @@ export default class ReplActiveInput extends React.Component {
       playStagedCommand();
     }
     else if(cli.bufferedCommand.length === 0 && this.commandReady) {
-      let {formattedOutput, error} = cli.$lastExpression.highlight(this.commandOutput);
+      let {formattedOutput, error} = this.force ? { formattedOutput: cli.$lastExpression.getValue() } : cli.$lastExpression.highlight(this.commandOutput);
       if(!this.replFeed) {
         ReplActions.overrideLastOutput(formattedOutput, !error);
         return;
@@ -350,7 +359,7 @@ export default class ReplActiveInput extends React.Component {
         !err, ReplCommon.highlight(text), text);
     } else {
       ReplCommon.runInContext(result, (err, output) => {
-        let formattedOutput = ReplOutput.some(err || output).highlight();
+        let formattedOutput = this.force && !err ? output : ReplOutput.some(err || output).highlight();
         let transpiledOutput = err ? null : ReplOutput.transpile(result);
         this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
       });
@@ -372,7 +381,8 @@ export default class ReplActiveInput extends React.Component {
       cli.$lastExpression = ReplOutput.none();
       cli.context = ReplContext.getContext();
       this.promptInput = text;
-      let {local, output, input} = ReplInput.transform(text);
+      let {local, output, input, force} = ReplInput.transform(text);
+      this.force = !!force;
 
       if(local) {
         return this.addEntryAction(output, true, input, text);

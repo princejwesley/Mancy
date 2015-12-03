@@ -220,6 +220,7 @@ class None {
   constructor() {
     return None.instance;
   }
+  getValue() { return void 0; }
   highlight(output) {
     let [first, ...rest] = output.split(EOL);
     return {
@@ -236,6 +237,7 @@ class Some {
   constructor(value) {
     this.value = value;
   }
+  getValue() { return this.value; }
   highlight(output) {
     if(_.isError(this.value)) {
       let [first, ...rest] = this.value.stack.split(EOL);

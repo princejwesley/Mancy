@@ -4,10 +4,11 @@ import ReplCommon from './ReplCommon';
 import ReplOutput from '../common/ReplOutput';
 let babel = require('babel-core');
 
-const awaitMatcher = /^(.*\s|^)(await\s.*)/;
+const awaitMatcher = /^(?:\s*(?:(?:let|var|const)\s)?\s*([^=]+)=\s*|^\s*)(await\s.*)/;
 const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
-let asyncWrapper = (code) => {
-  return `(async function() { let result = (${code}); return result; }())`;
+let asyncWrapper = (code, binder) => {
+  let assign = binder ? `root.${binder} = result;` : '';
+  return `(async function() { let result = (${code}); ${assign} return result; }())`;
 };
 
 let cook = (plain) => {
@@ -22,17 +23,19 @@ let cook = (plain) => {
     }
   }
 
-  let output = plain;
+  let output = plain, force = false;
 
   if(global.Mancy.preferences.asyncWrap && global.Mancy.preferences.lang === 'js') {
     // bare await
     let match = plain.match(awaitMatcher);
-    if(match && match[1].indexOf('async') === -1) {
-      output = `${match[1]}${asyncWrapper(plain.substring(match[1].length))}`;
+    if(match) {
+      output = `${asyncWrapper(match[2], match[1])}`;
+      force = true;
     }
   }
 
   return {
+    force,
     local: false,
     output: global.Mancy.preferences.babel && global.Mancy.preferences.lang === 'js' ? babelTransfrom(output) : output
   };
