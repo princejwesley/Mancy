@@ -1,5 +1,6 @@
 import React from 'react';
 import ReplConstants from '../constants/ReplConstants';
+import _ from 'lodash';
 
 export default class ReplOutputString extends React.Component {
   constructor(props) {
@@ -17,6 +18,10 @@ export default class ReplOutputString extends React.Component {
       this.suffix = str.slice(Math.max(limit/2, len - (limit/2)));
     }
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
   }
 
   onToggleCollapse() {

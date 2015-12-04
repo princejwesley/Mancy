@@ -1,5 +1,6 @@
 import React from 'react';
 import ReplOutputObject from './ReplOutputObject';
+import _ from 'lodash';
 
 export default class ReplOutputDate extends React.Component {
   constructor(props) {
@@ -8,6 +9,10 @@ export default class ReplOutputDate extends React.Component {
       collapse: true
     };
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
   }
 
   onToggleCollapse() {

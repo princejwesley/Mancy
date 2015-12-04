@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
 import ReplCommon from '../common/ReplCommon';
+import ReplOutputGridViewer from './ReplOutputGridViewer';
 
 export default class ReplOutputObject extends React.Component {
   constructor(props) {
@@ -13,6 +14,10 @@ export default class ReplOutputObject extends React.Component {
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
     this.getType = this.getType.bind(this);
     this.getAllProps = this.getAllProps.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
   }
 
   onToggleCollapse() {
@@ -91,6 +96,7 @@ export default class ReplOutputObject extends React.Component {
                    </div>
                  : null
               }
+              <ReplOutputGridViewer grid={this.props.object}/>
               </span>
             </span>
         }

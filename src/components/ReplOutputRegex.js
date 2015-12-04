@@ -16,6 +16,10 @@ export default class ReplOutputRegex extends React.Component {
     this.onHighlight = this.onHighlight.bind(this);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  }
+
   componentDidMount() {
     this.element = React.findDOMNode(this);
   }

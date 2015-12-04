@@ -2,6 +2,7 @@ import React from 'react';
 import {EOL} from 'os';
 import ReplCommon from '../common/ReplCommon';
 import ReplConstants from '../constants/ReplConstants';
+import _ from 'lodash';
 
 export default class ReplOutputTranspile extends React.Component {
   constructor(props) {
@@ -15,6 +16,10 @@ export default class ReplOutputTranspile extends React.Component {
     if(lines.length > 1 || lines[0].length > ReplConstants.COMMAND_TRUNCATE_LENGTH){
       this.shortEntry = ReplCommon.highlight(lines[0].slice(0, ReplConstants.COMMAND_TRUNCATE_LENGTH));
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
   }
 
   onToggleCollapse() {

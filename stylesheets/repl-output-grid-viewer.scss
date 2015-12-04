@@ -1,0 +1,50 @@
+@import 'themes';
+@import 'repl-common';
+
+@mixin replOutputGridViewer($theme) {
+  .repl-output-grid-viewer-container {
+    .data-explorer-label {
+      color: if($theme == $dark-theme, $dark-app-data-explorer-label-color, $lt-app-data-explorer-label-color);
+      padding: 0px 10px;
+    }
+
+    .repl-output-grid-viewer {
+      max-height: 300px;
+      overflow: auto;
+      display: flex;
+
+      .grid-viewer {
+        border-collapse: separate;
+        border-spacing: 0px;
+        border-radius: 5px;
+        margin: 0 auto;
+        border: 1px solid if($theme == $dark-theme, $dark-app-data-grid-border-color, $lt-app-data-grid-border-color);
+
+        .grid-caption {
+          min-width: 160px;
+          padding: 10px;
+        }
+        td, th {
+          text-align: center;
+          border: 1px solid if($theme == $dark-theme, $dark-app-data-grid-inner-border-color, $lt-app-data-grid-inner-border-color);
+          border-spacing: 0px;
+          border-right-style: solid;
+          border-bottom-style: solid;
+          border-top-style: none;
+          border-left-style: none;
+          padding: 5px;
+        }
+        td:last-child, th:last-child {
+          border-right-style: none;
+        }
+        tbody > tr:last-child th, tbody > tr:last-child td{
+          border-bottom-style: none;
+        }
+        th {
+          color: if($theme == $dark-theme, $dark-app-data-grid-header-color, $lt-app-data-grid-header-color);
+        }
+      }
+    }
+  }
+
+}

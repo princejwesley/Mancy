@@ -153,6 +153,9 @@ export default class ReplActiveInput extends React.Component {
 
   addEntryAction(formattedOutput, status, command, plainCode, transpiledOutput) {
     let addReplEntry = (output) => {
+      // handle ctrl + c
+      if(this.done) { return; }
+      this.element.className = 'repl-active-input';
       formattedOutput = output ? ReplOutput.some(output).highlight() : formattedOutput;
       ReplActions.addEntry({
         formattedOutput,
@@ -174,7 +177,6 @@ export default class ReplActiveInput extends React.Component {
   }
 
   prompt(preserveCursor) {
-    this.element.className = 'repl-active-input';
     let cli = ReplLanguages.getREPL();
     let addEntryAction = (formattedOutput, error, text) => {
       this.addEntryAction(formattedOutput, !error, ReplCommon.highlight(text), text);
@@ -201,6 +203,7 @@ export default class ReplActiveInput extends React.Component {
       addEntryAction(formattedOutput, error, this.promptInput);
       playStagedCommand();
     } else {
+      this.element.className = 'repl-active-input';
 //      $console.error('unhandled', this, cli.bufferedCommand);
     }
   }
@@ -263,6 +266,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   reloadPrompt(cmd, cursor, idx = -1, staged = '') {
+    this.done = true;
     ReplActions.reloadPrompt({
       command: cmd,
       cursor: cursor,
@@ -471,6 +475,11 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyDown(e) {
+    // execution in process
+    if(this.element.className !== 'repl-active-input' && !(e.ctrlKey && e.keyCode == ReplDOMEvents.C)) {
+      e.preventDefault();
+      return;
+    }
     if(this.keyPressFired && ((e.metaKey && !e.ctrlKey) || (!e.metaKey && e.ctrlKey)) && e.keyCode == 90) {
       // undo
       e.shiftKey ? this.undoManager.redo() : this.undoManager.undo();

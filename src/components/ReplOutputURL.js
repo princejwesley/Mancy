@@ -2,12 +2,18 @@ import React from 'react';
 import shell from 'shell';
 import ReplCommon from '../common/ReplCommon';
 import url from 'url';
+import _ from 'lodash';
 
 export default class ReplOutputURL extends React.Component {
   constructor(props) {
     super(props);
     this.openExternalFile = this.openExternalFile.bind(this);
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !_.isEqual(nextProps, this.props);
+  }
+
   openExternalFile() {
     let u = url.parse(this.props.url);
     if(u.protocol) {

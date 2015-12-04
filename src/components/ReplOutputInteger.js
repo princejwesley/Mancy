@@ -29,6 +29,10 @@ export default class ReplOutputInteger extends React.Component {
     });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  }
+
   setMode(mode) {
     this.setState({
       mode: mode

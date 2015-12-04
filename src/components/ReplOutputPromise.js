@@ -4,6 +4,7 @@ import ReplCommon from '../common/ReplCommon';
 import ReplOutput from '../common/ReplOutput';
 import ReplConstants from '../constants/ReplConstants';
 import ReplOutputObject from './ReplOutputObject';
+import _ from 'lodash';
 
 export default class ReplOutputPromise extends React.Component {
   constructor(props) {
@@ -21,6 +22,10 @@ export default class ReplOutputPromise extends React.Component {
 
   componentDidMount() {
     this.resolve();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
   }
 
   onToggleCollapse() {

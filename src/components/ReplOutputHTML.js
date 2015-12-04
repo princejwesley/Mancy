@@ -11,7 +11,11 @@ export default class ReplOutputHTML extends React.Component {
     };
     this.onToggleHTMLView = this.onToggleHTMLView.bind(this);
     this.onLoadIFrame = this.onLoadIFrame.bind(this);
-    this.id = md5(this.props.body.innerText + `-${Date.now()}`);      
+    this.id = md5(this.props.body.innerText + `-${Date.now()}`);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
   }
 
   componentDidMount() {

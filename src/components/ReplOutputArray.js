@@ -18,6 +18,10 @@ export default class ReplOutputArray extends React.Component {
     this.getPrototype = this.getPrototype.bind(this);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  }
+
   onToggleCollapse() {
     this.setState({
       collapse: !this.state.collapse

@@ -28,6 +28,10 @@ export default class ReplOutputChartViewer extends React.Component {
     this.flippedData = this.generateFlippedData(this.columns);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  }
+
   componentDidMount() {
     this.generateChart();
   }

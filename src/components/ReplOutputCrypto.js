@@ -12,6 +12,11 @@ export default class ReplOutputCrypto extends React.Component {
     this.encodeId = _.uniqueId('crpto-');
     this.decodeId = _.uniqueId('crpto-');
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  }
+
   toggleLock() {
     this.setState({
       lock: !this.state.lock

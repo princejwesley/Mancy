@@ -78,4 +78,10 @@ ReplDOMEvents.autoCloseKeyIdentifiers = {
 
 ReplDOMEvents.duplicate = (e) => new e.constructor(e.type, e);
 
+// keyCodes for alphabets A-Z
+let A = 'A'.charCodeAt(0);
+_.each('ABCDEFGHIJKLMNOPQRSTUVWXYZ', (c, pos) => {
+  ReplDOMEvents[c] = A + pos;
+});
+
 export default ReplDOMEvents;

@@ -18,6 +18,10 @@ export default class ReplOutputFunction extends React.Component {
     this.getAllProps = this.getAllProps.bind(this);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  }
+
   onToggleCollapse() {
     this.setState({
       collapse: !this.state.collapse

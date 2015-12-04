@@ -24,6 +24,10 @@ export default class ReplOutputBufferExplorer extends React.Component {
     this.pages = ((this.rows / 0x10) | 0) + ((this.rows % 0x10) > 0 ? 1 : 0);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  }
+
   getGridHeaderOffsets() {
     let labels = [
       '00', '01', '02', '03', '04', '05', '06', '07',
