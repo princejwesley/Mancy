@@ -78,7 +78,7 @@
     "md5": "^2.0.0",
     "react": "^0.13.3",
     "reflux": "^0.2.12",
-    "typescript": "^1.6.2"
+    "typescript": "1.6.2"
   },
   "repository": {
     "type": "git",

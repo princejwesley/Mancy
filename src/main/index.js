@@ -40,6 +40,10 @@ app.on('activate', function(event, hasVisibleWindows) {
   }
 });
 
+ipc.on('application:open-sync-resource', function(event, options) {
+  event.returnValue = dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), options) || [];
+});
+
 ipc.on('application:message-box', function(event, options) {
   dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
 });
@@ -102,9 +106,9 @@ function onReady() {
     options.icon = path.resolve(__dirname, '..', 'icons', 'mancy.png');
   }
   let mainWindow = new BrowserWindow(options);
-
-  windowCache[mainWindow.id] = mainWindow;
-  let menuManager = menuManagerCache[mainWindow.id] = new MenuManager();
+  let id = mainWindow.id;
+  windowCache[id] = mainWindow;
+  let menuManager = menuManagerCache[id] = new MenuManager();
 
   mainWindow.loadURL('file://' + __dirname + '/../index.html');
   mainWindow.flashFrame(true);
@@ -112,8 +116,7 @@ function onReady() {
   windowCount += 1;
 
   mainWindow.on('closed', function() {
-    delete windowCache[mainWindow.id];
-    delete menuManagerCache[mainWindow.id];
+    windowCache[id] = menuManagerCache[id] = null;
   });
 
   mainWindow.webContents.on('did-finish-load', function() {

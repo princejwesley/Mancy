@@ -125,6 +125,11 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.timeout = parseInt(timeout, 10) || 0;
     });
   },
+  onSelectLoadScript(script) {
+    this.updatePreference((preferences) => {
+      preferences.loadScript = script;
+    });
+  },
   getStore() {
     let preferences = JSON.parse(localStorage.getItem('preferences'));
     return _.extend({ open: open }, preferences);

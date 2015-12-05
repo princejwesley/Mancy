@@ -13,7 +13,7 @@ import fs from 'fs';
 const compileOptions = {
   noEmitOnError: true,
   module: ts.ModuleKind.CommonJS,
-  moduleResolution: ts.ModuleResolutionKind.NodeJS,
+  moduleResolution: ts.ModuleResolutionKind.NodeJs,
   experimentalDecorators: true,
   emitDecoratorMetadata: true, // ?
   newLine: process.platform === 'win32' ? ts.NewLineKind.CarriageReturnLineFeed : ts.NewLineKind.LineFeed,
@@ -47,7 +47,7 @@ let getDiagnostics = () => {
 };
 
 let loadFile = (module, filename) => {
-  let result = ts.transpile(fs.readFileSync(fileName).toString(), compileOptions);
+  let result = ts.transpile(fs.readFileSync(filename).toString(), compileOptions);
   return module._compile(JSON.stringify(result), filename);
 };
 

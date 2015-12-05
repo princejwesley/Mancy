@@ -4,6 +4,7 @@ import ReplPreferencesStore from '../stores/ReplPreferencesStore';
 import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import ReplFontFamily from './ReplFontFamily';
 import ReplPageZoom from './ReplPageZoom';
+import {ipcRenderer} from 'electron';
 
 let langs = {
   js: 'JavaScript',
@@ -20,7 +21,8 @@ export default class ReplPreferences extends React.Component {
       'onToggleView', 'onClose', 'onThemeChange', 'onBabelChange',
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
-      'onLangChange', 'onWatermarkChange', 'onToggleTranspile'
+      'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
+      'resetLoadScript'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -32,6 +34,25 @@ export default class ReplPreferences extends React.Component {
 
   componentWillUnmount() {
     this.unsubscribe();
+  }
+
+  selectLoadScript() {
+    let extensions = _.chain(require.extensions)
+      .keys()
+      .map((ext) => ext.substring(1))
+      .value();
+    let result = ipcRenderer.sendSync('application:open-sync-resource', {
+      filters: [{ name: 'Scripts', extensions }],
+      title: 'Select startup script',
+      properties: ['openFile']
+    });
+    if(result.length) {
+      ReplPreferencesStore.onSelectLoadScript(result[0]);
+    }
+  }
+
+  resetLoadScript() {
+    ReplPreferencesStore.onSelectLoadScript(null);
   }
 
   onToggleView() {
@@ -248,6 +269,16 @@ export default class ReplPreferences extends React.Component {
               <span className='checkbox-group'>
                 <input type="checkbox" name="toggle-watermark" checked={this.state.watermark} value="" onClick={this.onWatermarkChange} />
               </span>
+            </div>
+          </div>
+          <div className='preference' title='Startup script'>
+            <div className='preference-name'>
+              Startup script
+            </div>
+            <div className='preference-value'>
+              <div>{this.state.loadScript}</div>
+              <button type='button' name='startup-script' onClick={this.selectLoadScript}> Choose File</button>
+              <button type='button' name='reset-startup-script' disabled={!this.state.loadScript} onClick={this.resetLoadScript}> Reset</button>
             </div>
           </div>
           <div className='statusbar-placeholder'></div>

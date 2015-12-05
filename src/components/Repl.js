@@ -34,7 +34,7 @@ export default class Repl extends React.Component {
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
       'onImport', 'onExport', 'onAddPath', 'loadPreferences',
-      'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode'
+      'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -97,6 +97,14 @@ export default class Repl extends React.Component {
     ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
 
     this.resizeWindow();
+    this.loadStartupScript();
+  }
+
+  loadStartupScript() {
+    let script = global.Mancy.preferences.loadScript;
+    if(script) {
+      ReplActiveInputActions.playCommands([`.load ${script}`]);
+    }
   }
 
   resizeWindow() {

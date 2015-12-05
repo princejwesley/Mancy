@@ -202,9 +202,6 @@ export default class ReplActiveInput extends React.Component {
       }
       addEntryAction(formattedOutput, error, this.promptInput);
       playStagedCommand();
-    } else {
-      this.element.className = 'repl-active-input';
-//      $console.error('unhandled', this, cli.bufferedCommand);
     }
   }
 
