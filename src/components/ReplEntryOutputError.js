@@ -12,6 +12,9 @@ export default class ReplEntryOutputError extends React.Component {
     }
 
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
+
+    this.message = this.highlightMessage(this.props.message);
+    this.stacktrace = this.highlightException(this.props.trace);
   }
 
   onToggleCollapse() {
@@ -72,18 +75,22 @@ export default class ReplEntryOutputError extends React.Component {
     return (
       <span className='repl-entry-output-error'>
         {
-          this.state.collapse
+          !this.stacktrace.length
             ? <span className='repl-entry-output-error-message'>
-                <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
-                {this.highlightMessage(this.props.message)}
+                {this.message}
               </span>
-            : <span className='repl-entry-output-error-message'>
-                <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
-                {this.highlightMessage(this.props.message)}
-                <span className='repl-entry-output-error-stack' >
-                  {this.highlightException(this.props.trace)}
+            : this.state.collapse
+              ? <span className='repl-entry-output-error-message'>
+                  <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
+                  {this.message}
                 </span>
-              </span>
+              : <span className='repl-entry-output-error-message'>
+                  <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
+                  {this.message}
+                  <span className='repl-entry-output-error-stack' >
+                    {this.stacktrace}
+                  </span>
+                </span>
         }
       </span>
     );

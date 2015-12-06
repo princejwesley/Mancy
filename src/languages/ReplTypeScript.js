@@ -154,6 +154,27 @@ let completion = (repl) => {
   };
 };
 
+let loadAction = {
+  help: '?',
+  action: function(file) {
+    try {
+      let stats = fs.statSync(file);
+      if (stats && stats.isFile()) {
+        let self = this;
+        let data = fs.readFileSync(file, 'utf8');
+        this.displayPrompt();
+        nodeLineListener(data);
+        promptData = '';
+      } else {
+        this.outputStream.write('Failed to load:' + file + ' is not a file\n');
+      }
+    } catch (e) {
+      this.outputStream.write('Failed to load:' + file + '\n');
+    }
+    this.displayPrompt();
+  }
+};
+
 /// export repl
 export default {
   start: (options = {}) => {
@@ -174,6 +195,7 @@ export default {
     addMultilineHandler(repl);
     completion(repl);
     repl.transpile = transpile;
+    repl.defineCommand('load', loadAction);
     return repl;
   }
 };
