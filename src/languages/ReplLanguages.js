@@ -24,7 +24,15 @@ const setREPL = (name) => {
   return repl.getREPL();
 }
 
+const aliases = {
+  js: 'js', json: 'js', node: 'js',
+  coffee: 'coffee', litcoffee: 'coffee', 'coffee.md': 'coffee',
+  ls: 'ls',
+  ts: 'ts', tsx: 'ts'
+};
+
 export default {
   getREPL,
   setREPL,
+  getLangName: (ext) => aliases[ext]
 };
