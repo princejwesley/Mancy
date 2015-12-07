@@ -46,6 +46,7 @@ let createContext = () => {
     context[g] = context;
   });
 
+  context.console = require('console');
   _.each(['error', 'warn', 'info', 'log', 'debug'], (fun) => {
     context.console[fun] = ReplConsoleHook[fun];
   });

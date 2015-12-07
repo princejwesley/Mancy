@@ -61,10 +61,8 @@ export default class Repl extends React.Component {
     // hooks
     ReplStreamHook.on('stdout', this.onStdout);
     ReplStreamHook.on('stderr', this.onStderr);
-    ReplStreamHook.enable();
 
     ReplConsoleHook.on('console', this.onConsole);
-    ReplConsoleHook.enable();
 
     ipcRenderer.on('application:import', this.onImport);
     ipcRenderer.on('application:export', this.onExport);
@@ -324,7 +322,7 @@ export default class Repl extends React.Component {
     ReplStore.toggleConsole();
   }
 
-  onStdMessage({data, encoding, fd}, type) {
+  onStdMessage(data, type) {
     let {formattedOutput} = ReplOutput.some(data).highlight(data);
     ReplConsoleActions.addEntry({
       type: type,
@@ -358,7 +356,7 @@ export default class Repl extends React.Component {
 
   onConsoleChange(type) {
     let currentWindow = remote.getCurrentWindow();
-    if(!currentWindow.$focus && process.platform === 'darwin') {
+    if(!currentWindow.isFocused() && process.platform === 'darwin') {
       ipcRenderer.send('application:dock-message-notification', currentWindow.id);
     }
     if(this.state.showConsole) { return; }
