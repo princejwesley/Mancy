@@ -24,6 +24,7 @@ import ReplConstants from '../constants/ReplConstants';
 import ReplContext from '../common/ReplContext';
 import ReplCommon from '../common/ReplCommon';
 import ReplLanguages from '../languages/ReplLanguages';
+import {format} from 'util';
 
 export default class Repl extends React.Component {
   constructor(props) {
@@ -341,11 +342,17 @@ export default class Repl extends React.Component {
 
   onConsole({type, data}) {
     if(data.length === 0) { return; }
-    let results = _.reduce(data, function(result, datum) {
-      let {formattedOutput} = ReplOutput.some(datum).highlight(datum);
-      result.push(formattedOutput);
-      return result;
-    }, []);
+    let results;
+    if(data.length > 1 && typeof data[0] === 'string' && data[0].match(/%[%sdj]/)) {
+      results = [format.apply(null, data)];
+    }
+    else {
+      results = _.reduce(data, function(result, datum) {
+        let {formattedOutput} = ReplOutput.some(datum).highlight(datum);
+        result.push(formattedOutput);
+        return result;
+      }, []);
+    }
 
     ReplConsoleActions.addEntry({
       type: type,
