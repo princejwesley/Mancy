@@ -58,8 +58,6 @@ let createContext = () => {
     context[fun] = timers[fun];
   });
 
-  context.os = require('os');
-
   context.process.on('uncaughtException', function (err) {
     console.error(err);
   });
