@@ -126,6 +126,19 @@ let createContext = () => {
     context.process.env.PATH += ':/usr/local/bin';
   }
 
+  // load builtIns
+  let builtins = require('repl')._builtinLibs;
+  _.each(builtins, (name) => {
+    Object.defineProperty(context, name, {
+      get: () => (context[name] = require(name)),
+      set: (val) => {
+        delete context[name];
+        context[name] = val;
+      },
+      configurable: true
+    });
+  });
+
   return (cxt = context);
 };
 
