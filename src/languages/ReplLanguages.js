@@ -15,6 +15,11 @@ const getREPL = () => {
   return repl.getREPL();
 }
 
+// being used for repl mode
+const getREPLProvider = () => {
+  return langs.js.repl;
+}
+
 const setREPL = (name) => {
   if(!langs[name]) {
     throw new Error(`Unsupported lang ${name}`);
@@ -34,5 +39,6 @@ const aliases = {
 export default {
   getREPL,
   setREPL,
+  getREPLProvider,
   getLangName: (ext) => aliases[ext]
 };

@@ -43,6 +43,7 @@ const REPL = (repl) => {
   return {
     getREPL: () => nodeRepl,
     setREPL: () => ReplContext.hookContext((context) => { nodeRepl.context = context; }),
+    repl
   };
 };
 

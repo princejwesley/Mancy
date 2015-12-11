@@ -2,7 +2,6 @@ import React from 'react';
 import _ from 'lodash';
 import util from 'util';
 import ReplContext from '../common/ReplContext';
-import repl from 'repl';
 import {EOL} from 'os';
 import shell from 'shell';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
@@ -51,7 +50,7 @@ export default class ReplActiveInput extends React.Component {
 
     let cli = ReplLanguages.getREPL();
     //set desired repl mode
-    cli.replMode = repl[`REPL_MODE_${global.Mancy.session.mode.toUpperCase()}`];
+    cli.replMode = ReplLanguages.getREPLProvider()[`REPL_MODE_${(global.Mancy.session.mode || global.Mancy.session.mode).toUpperCase()}`];
     //bind write handle
     cli.output.write = this.addEntry.bind(this);
     //scroll to bottom
@@ -315,8 +314,6 @@ export default class ReplActiveInput extends React.Component {
   }
 
   autoFillCharacters(e, pos) {
-    if(!pos || !ReplDOMEvents.hasAutoFillCharacters(e)) { return; }
-
     let text = this.element.innerText;
     let ch = text[pos - 1];
     let open = ['[', '(', '{'];
@@ -324,7 +321,7 @@ export default class ReplActiveInput extends React.Component {
     let idx = open.indexOf(ch);
 
     if(idx !== -1) { this.insertCharacter(pos, close[idx]); }
-    else if(pos === 1 || text[pos - 2] !== ch) { this.insertCharacter(pos, ch); }
+    else if((pos === 1 || text[pos - 2] !== ch) && /['"`]/.test(ch)) { this.insertCharacter(pos, ch); }
   }
 
   ignoreCharacters(e) {
