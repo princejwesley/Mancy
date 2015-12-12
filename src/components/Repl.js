@@ -35,7 +35,7 @@ export default class Repl extends React.Component {
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
-      'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands',
+      'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands', 'onLoadScript',
       'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -66,10 +66,11 @@ export default class Repl extends React.Component {
 
     ReplConsoleHook.on('console', this.onConsole);
 
-    ipcRenderer.on('application:import', this.onImport);
-    ipcRenderer.on('application:export', this.onExport);
+    ipcRenderer.on('application:import-file', this.onImport);
+    ipcRenderer.on('application:export-file', this.onExport);
     ipcRenderer.on('application:add-path', this.onAddPath);
-    ipcRenderer.on('application:save-commands', this.onSaveCommands);
+    ipcRenderer.on('application:save-as', this.onSaveCommands);
+    ipcRenderer.on('application:load-file', this.onLoadScript);
 
     ipcRenderer.on('application:prompt-clear-all', this.onClearCommands);
     ipcRenderer.on('application:prompt-expand-all', this.onExpandAll);
@@ -101,17 +102,22 @@ export default class Repl extends React.Component {
     this.loadStartupScript();
   }
 
-  loadStartupScript() {
-    let script = global.Mancy.preferences.loadScript;
+  onLoadScript(sender, script) {
     if(script) {
       let ext = script.replace(/(?:.*)\.(\w+)$/, '$1');
       let lang = ReplLanguages.getLangName(ext);
       if(lang) {
         ReplLanguages.setREPL(lang);
         ReplActiveInputActions.playCommands([`.load ${script}`]);
-        setTimeout(() => ReplLanguages.setREPL(global.Mancy.preferences.lang), 200);
+        if(lang !== global.Mancy.preferences.lang) {
+          setTimeout(() => ReplLanguages.setREPL(global.Mancy.preferences.lang), 200);
+        }
       }
     }
+  }
+
+  loadStartupScript() {
+    this.onLoadScript(null, global.Mancy.preferences.loadScript);
   }
 
   resizeWindow() {
@@ -269,7 +275,7 @@ export default class Repl extends React.Component {
     });
   }
 
-  onAddPath(paths) {
+  onAddPath(sender, paths) {
     ReplCommon.addToPath(paths, ReplContext.getContext());
   }
 

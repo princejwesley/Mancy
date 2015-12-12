@@ -28,60 +28,42 @@ export default class MancyApplication extends EventEmitter {
     focusedWindow.webContents.send(item.command, item.value);
   }
 
-  addPath(item, focusedWindow) {
+  openDirectoryAction(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let path = dialog.showOpenDialog(focusedWindow, {
-      title: 'Add module path…',
+      title: item,
       properties: [
         'openDirectory'
       ]
     });
 
     if(path) {
-      focusedWindow.webContents.send('application:add-path', path);
+      focusedWindow.webContents.send(item.command, path);
     }
   }
 
-  exportToFile(item, focusedWindow) {
+  saveFileAction(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let filename = dialog.showSaveDialog(focusedWindow, {
-      title: 'Save session to file…',
-      filters: [
-        { name: 'Json Files', extensions: ['json'] },
-        { name: 'All Files', extensions: ['*'] }
-      ]
+      title: item,
+      filters: [{ name: 'All Files', extensions: ['*'] }]
     });
-
     if(filename) {
-      focusedWindow.webContents.send('application:export', filename);
+      focusedWindow.webContents.send(item.command, filename);
     }
   }
 
-  importFromFile(item, focusedWindow) {
+  openFileAction(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let filename = dialog.showOpenDialog(focusedWindow, {
-      title: 'Load session from file…',
-      filters: [
-        { name: 'Json Files', extensions: ['json'] },
-        { name: 'All Files', extensions: ['*'] }
-      ],
+      title: item,
+      filters: [{ name: 'All Files', extensions: ['*'] }],
       properties: [
         'openFile'
       ]
     });
-
     if(filename) {
-      focusedWindow.webContents.send('application:import', filename[0]);
-    }
-  }
-
-  saveAs(item, focusedWindow) {
-    if(!focusedWindow) { return; }
-    let filename = dialog.showSaveDialog(focusedWindow, {
-      title: 'Save Commands As…'
-    });
-    if(filename) {
-      focusedWindow.webContents.send('application:save-commands', filename);
+      focusedWindow.webContents.send(item.command, filename[0]);
     }
   }
 

@@ -36,9 +36,9 @@ export class MenuManager extends EventEmitter {
   buildMenuSelectorActions(app) {
     return {
       'application:new-window': app.openNewWindow,
-      'application:add-path': app.addPath,
-      'application:export-file': app.exportToFile,
-      'application:import-file': app.importFromFile,
+      'application:add-path': app.openDirectoryAction,
+      'application:export-file': app.saveFileAction,
+      'application:import-file': app.openFileAction,
       'application:quit': app.quitApplication,
       'window:close': app.closeWindow,
       'window:reload': app.windowReload,
@@ -61,7 +61,8 @@ export class MenuManager extends EventEmitter {
       'application:check-update': app.checkForUpdate,
       'application:prompt-language': app.forward,
       'application:release-notes': app.releaseNotes,
-      'application:save-as': app.saveAs,
+      'application:save-as': app.saveFileAction,
+      'application:load-file': app.openFileAction,
     };
   }
 

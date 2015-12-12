@@ -6,9 +6,10 @@
       { "type": "separator" },
       { "label": "Add module path…", "command": "application:add-path" },
       { "type": "separator" },
-      { "label": "Save session to file…", "command": "application:export-file" },
-      { "label": "Load session from file…", "command": "application:import-file" },
+      { "label": "Save Session To File…", "command": "application:export-file" },
+      { "label": "Load Session From File…", "command": "application:import-file" },
       { "type": "separator" },
+      { "label": "Load File…", "command": "application:load-file" },
       { "label": "Save Commands As…", "accelerator": "Shift+CmdOrCtrl+S", "command": "application:save-as" },
       { "type": "separator" },
       {
