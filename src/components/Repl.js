@@ -36,7 +36,7 @@ export default class Repl extends React.Component {
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
       'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands', 'onLoadScript',
-      'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript'
+      'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript', 'onInit'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -94,12 +94,17 @@ export default class Repl extends React.Component {
     ipcRenderer.on('application:view-theme-light', () => document.body.className = 'light-theme');
 
     ipcRenderer.on('application:new-release', this.onNewRelease);
+    this.onInit();
+  }
+
+  onInit() {
     this.checkNewRelease();
     this.onSetREPLMode(global.Mancy.preferences.mode);
     ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
 
     this.resizeWindow();
     this.loadStartupScript();
+    ipcRenderer.send('application:prompt-on-close', global.Mancy.preferences.promptOnClose);
   }
 
   onLoadScript(sender, script) {

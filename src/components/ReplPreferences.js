@@ -22,7 +22,7 @@ export default class ReplPreferences extends React.Component {
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
       'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
-      'resetLoadScript'
+      'resetLoadScript', 'onTogglePromptOnClose'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -110,6 +110,10 @@ export default class ReplPreferences extends React.Component {
 
   onToggleTranspile(e) {
     ReplPreferencesStore.toggleTranspile(e.target.checked);
+  }
+
+  onTogglePromptOnClose(e) {
+    ReplPreferencesStore.togglePromptOnClose(e.target.checked);
   }
 
   render() {
@@ -268,6 +272,16 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='checkbox-group'>
                 <input type="checkbox" name="toggle-watermark" checked={this.state.watermark} value="" onClick={this.onWatermarkChange} />
+              </span>
+            </div>
+          </div>
+          <div className='preference' title='Prompt on close window'>
+            <div className='preference-name'>
+              Prompt on close
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="prompt-on-close" checked={this.state.promptOnClose} value="" onClick={this.onTogglePromptOnClose} />
               </span>
             </div>
           </div>

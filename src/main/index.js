@@ -14,8 +14,25 @@ var windowCache = {};
 var dockNotificationCache = {};
 var menuManagerCache = {};
 var windowCount = 0;
+var promptOnClose = false;
+
+function onCloseWindow(e) {
+  var ret = promptOnClose;
+  if(promptOnClose) {
+    ret = !!dialog.showMessageBox(BrowserWindow.getFocusedWindow(), {
+      title: 'Close Window',
+      buttons: ['Close', 'Cancel'],
+      type: 'question',
+      message: 'Close Window',
+      detail: `Do you want to close this window?`
+    });
+  }
+  if(ret) {  e.preventDefault(); }
+  e.returnValue = !ret;
+}
 
 app.on('window-all-closed', function() {
+  promptOnClose = false;
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -31,6 +48,10 @@ app.on('browser-window-focus', function(event, window) {
   if (process.platform === 'darwin') {
     app.dock.setBadge('');
   }
+});
+
+ipc.on('application:prompt-on-close', function(event, flag) {
+  promptOnClose = flag;
 });
 
 app.on('ready', onReady);
@@ -118,6 +139,7 @@ function onReady() {
   mainWindow.on('closed', function() {
     windowCache[id] = menuManagerCache[id] = null;
   });
+  mainWindow.on('close', onCloseWindow);
 
   mainWindow.webContents.on('did-finish-load', function() {
     let totalActiveWindows = _.keys(windowCache).length;

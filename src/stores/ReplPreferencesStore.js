@@ -81,6 +81,12 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.transpile = flag;
     });
   },
+  togglePromptOnClose(flag) {
+    this.updatePreference((preferences) => {
+      preferences.promptOnClose = flag;
+      ipcRenderer.send('application:prompt-on-close', flag);
+    });
+  },
   onSetTheme(name) {
     this.updatePreference((preferences) => {
       preferences.theme = name;

@@ -38,7 +38,8 @@ import webFrame from 'web-frame';
     "pageZoomFactor": 1,
     "watermark": true,
     "transpile": false,
-    "loadScript": null
+    "loadScript": null,
+    "promptOnClose": false,
   };
 
   _.each(_.keys(defaults), (key) => {
