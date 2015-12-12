@@ -110,7 +110,10 @@ export default class Repl extends React.Component {
         ReplLanguages.setREPL(lang);
         ReplActiveInputActions.playCommands([`.load ${script}`]);
         if(lang !== global.Mancy.preferences.lang) {
-          setTimeout(() => ReplLanguages.setREPL(global.Mancy.preferences.lang), 200);
+          setTimeout(() => {
+            ReplLanguages.setREPL(global.Mancy.preferences.lang);
+            ReplStore.onReloadPrompt('');
+          }, 200);
         }
       }
     }
