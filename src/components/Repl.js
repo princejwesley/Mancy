@@ -115,6 +115,14 @@ export default class Repl extends React.Component {
             ReplStore.onReloadPrompt('');
           }, 200);
         }
+      } else {
+        let options = {
+          buttons: ['Close'],
+          title: 'Failed to load script',
+          type: 'error',
+          message: `Failed to load '${script}'. '${ext}' extension is not supported.`
+        };
+        ipcRenderer.send('application:message-box', options);
       }
     }
   }
