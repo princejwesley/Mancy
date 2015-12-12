@@ -314,7 +314,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   autoFillCharacters(e, pos) {
-    if(ReplDOMEvents.isBackSpace(e)) { return; }
+    if(!global.Mancy.preferences.autoCloseSymbol || ReplDOMEvents.isBackSpace(e)) { return; }
     let text = this.element.innerText;
     let ch = text[pos - 1];
     let open = ['[', '(', '{'];
@@ -326,6 +326,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   ignoreCharacters(e) {
+    if(!global.Mancy.preferences.autoCloseSymbol) { return false; }
     let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
     let text = this.element.innerText;
     let ignoreList = [ ']', ')', '}', "'", '"', '`' ];

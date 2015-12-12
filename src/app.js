@@ -40,6 +40,7 @@ import webFrame from 'web-frame';
     "transpile": false,
     "loadScript": null,
     "promptOnClose": false,
+    "autoCloseSymbol": false
   };
 
   _.each(_.keys(defaults), (key) => {
