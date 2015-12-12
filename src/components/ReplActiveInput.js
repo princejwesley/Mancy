@@ -314,6 +314,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   autoFillCharacters(e, pos) {
+    if(ReplDOMEvents.isBackSpace(e)) { return; }
     let text = this.element.innerText;
     let ch = text[pos - 1];
     let open = ['[', '(', '{'];
@@ -328,7 +329,7 @@ export default class ReplActiveInput extends React.Component {
     let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
     let text = this.element.innerText;
     let ignoreList = [ ']', ')', '}', "'", '"', '`' ];
-    if(!pos || ignoreList.indexOf(text[pos]) === -1 || text.length === pos) { return false; }
+    if(!pos || ReplDOMEvents.isBackSpace(e) || ignoreList.indexOf(text[pos]) === -1 || text.length === pos) { return false; }
 
     let open = text[pos - 1];
     let close = text[pos];

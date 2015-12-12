@@ -75,6 +75,16 @@ export default class MancyApplication extends EventEmitter {
     }
   }
 
+  saveAs(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    let filename = dialog.showSaveDialog(focusedWindow, {
+      title: 'Save Commands As…'
+    });
+    if(filename) {
+      focusedWindow.webContents.send('application:save-commands', filename);
+    }
+  }
+
   windowReload(item, focus) {
     if(!focus) { return; }
     focus.reload();

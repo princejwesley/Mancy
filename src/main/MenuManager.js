@@ -61,6 +61,7 @@ export class MenuManager extends EventEmitter {
       'application:check-update': app.checkForUpdate,
       'application:prompt-language': app.forward,
       'application:release-notes': app.releaseNotes,
+      'application:save-as': app.saveAs,
     };
   }
 

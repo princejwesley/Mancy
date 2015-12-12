@@ -14,6 +14,7 @@ import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import Reflux from 'reflux';
 import {ipcRenderer} from 'electron';
 import {writeFile, readFile} from 'fs';
+import {EOL} from 'os';
 import remote from 'remote';
 import ReplStreamHook from '../common/ReplStreamHook';
 import ReplConsoleHook from '../common/ReplConsoleHook';
@@ -34,7 +35,7 @@ export default class Repl extends React.Component {
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
-      'onImport', 'onExport', 'onAddPath', 'loadPreferences',
+      'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands',
       'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -68,6 +69,7 @@ export default class Repl extends React.Component {
     ipcRenderer.on('application:import', this.onImport);
     ipcRenderer.on('application:export', this.onExport);
     ipcRenderer.on('application:add-path', this.onAddPath);
+    ipcRenderer.on('application:save-commands', this.onSaveCommands);
 
     ipcRenderer.on('application:prompt-clear-all', this.onClearCommands);
     ipcRenderer.on('application:prompt-expand-all', this.onExpandAll);
@@ -190,6 +192,34 @@ export default class Repl extends React.Component {
 
   onNewRelease(release) {
     ReplStatusBarActions.newRelease(release);
+  }
+
+  onSaveCommands(sender, filename) {
+    let {history} = ReplStore.getStore();
+    let data = _.chain(history)
+      .map((h) => h.plainCode)
+      .filter((c) => !/^\s*\./.test(c))
+      .value()
+      .join(EOL);
+
+    writeFile(filename, data, { encoding: ReplConstants.REPL_ENCODING }, (err) => {
+      let options = { buttons: ['Close'] };
+      if(err) {
+        options = _.extend(options, {
+          title: 'Save Error',
+          type: 'error',
+          message: err.name || ' Error',
+          detail: err.toString()
+        });
+      } else {
+        options = _.extend(options, {
+          title: 'Commands saved',
+          type: 'info',
+          message: `Commands saved to ${filename}`
+        });
+      }
+      ipcRenderer.send('application:message-box', options);
+    });
   }
 
   onImport(sender, filename) {

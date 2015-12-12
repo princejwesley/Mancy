@@ -29,6 +29,8 @@
       { "label": "Save session to file…", "command": "application:export-file" },
       { "label": "Load session from file…", "command": "application:import-file" },
       { "type": "separator" },
+      { "label": "Save Commands As…", "accelerator": "Shift+CmdOrCtrl+S", "command": "application:save-as" },
+      { "type": "separator" },
       { "label": "Close Window", "accelerator": "Command+W", "role": "close"}
     ]
   },
