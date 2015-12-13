@@ -320,6 +320,12 @@ export default class Repl extends React.Component {
     }
     if(e.ctrlKey && ReplDOMEvents.isSpace(e)) {
       ReplActiveInputActions.performAutoComplete();
+      return;
+    }
+    if(e.ctrlKey && e.shiftKey && ReplDOMEvents.isNumber(e)) {
+      let num = e.which - ReplDOMEvents.zero;
+      ReplStore.onReloadPromptByIndex(num + 1, true);
+      return;
     }
   }
 

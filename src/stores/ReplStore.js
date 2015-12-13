@@ -42,6 +42,17 @@ const ReplStore = Reflux.createStore({
     resetButEntry();
     this.trigger();
   },
+  onReloadPromptByIndex(idx, reverse = false) {
+    let length = cache.entries.length;
+    let pos = reverse ? length - idx : idx;
+    if(pos >= 0 && pos < length) {
+      cache.reloadPrompt = true;
+      let command = cache.entries[pos].plainCode;
+      let cursor = command.length;
+      resetButEntry({ command, cursor });
+      this.trigger();
+    }
+  },
   onReloadPrompt(cmd) {
     cache.reloadPrompt = true;
     resetButEntry(cmd);

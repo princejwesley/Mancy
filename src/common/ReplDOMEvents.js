@@ -1,20 +1,20 @@
 import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
 
-let navigation = {
+const navigation = {
   'keyLeft': 37,
   'keyup': 38,
   'keyRight': 39,
   'keydown': 40,
 };
 
-let events = {
+const events = {
   'blurEvent': 'blur',
   'keydownEvent': 'keydown',
   'keyupEvent': 'keyup',
 };
 
-let keyNameBindings = {
+const keyNameBindings = {
   'tab': 9,
   'enter': 13,
   'escape': 27,
@@ -69,9 +69,13 @@ ReplDOMEvents.autoCloseKeyIdentifiers = {
 ReplDOMEvents.duplicate = (e) => new e.constructor(e.type, e);
 
 // keyCodes for alphabets A-Z
-let A = 'A'.charCodeAt(0);
+const A = 'A'.charCodeAt(0);
 _.each('ABCDEFGHIJKLMNOPQRSTUVWXYZ', (c, pos) => {
   ReplDOMEvents[c] = A + pos;
 });
+
+ReplDOMEvents.zero = '0'.charCodeAt(0); //48
+ReplDOMEvents.nine = ReplDOMEvents.zero + 9; //'9'.charCodeAt(0);
+ReplDOMEvents.isNumber = (e) => e.which >= ReplDOMEvents.zero && e.which <= ReplDOMEvents.nine;
 
 export default ReplDOMEvents;

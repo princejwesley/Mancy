@@ -472,7 +472,8 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyDown(e) {
     // execution in process
-    if(this.element.className !== 'repl-active-input' && !(e.ctrlKey && e.keyCode == ReplDOMEvents.C)) {
+    if(this.ignoreCharacters(e) ||
+      this.element.className !== 'repl-active-input' && !(e.ctrlKey || e.metaKey || e.shiftKey || e.altKey)) {
       e.preventDefault();
       return;
     }
@@ -531,7 +532,7 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    if(this.ignoreCharacters(e) || !ReplDOMEvents.isTab(e)) { return; }
+    if(!ReplDOMEvents.isTab(e)) { return; }
     e.preventDefault();
     if(activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);

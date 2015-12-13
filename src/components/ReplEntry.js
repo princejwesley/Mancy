@@ -20,8 +20,7 @@ export default class ReplEntry extends React.Component {
     ReplActions.toggleEntryView(this.props.index);
   }
   onReload() {
-    let command = this.props.log.plainCode.trim();
-    ReplActions.reloadPrompt({ command: command, cursor: command.length });
+    ReplActions.reloadPromptByIndex(this.props.index);
   }
   onRemove() {
     ReplActions.removeEntry(this.props.index, this.props.log);

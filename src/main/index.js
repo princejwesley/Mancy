@@ -9,6 +9,7 @@ var _ = require('lodash');
 var ipc = electron.ipcMain;
 var fs = require('fs');
 var dialog = require('dialog');
+const globalShortcut = electron.globalShortcut;
 
 var windowCache = {};
 var dockNotificationCache = {};

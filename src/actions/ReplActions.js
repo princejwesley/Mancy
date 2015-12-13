@@ -4,6 +4,7 @@ const ReplActions = Reflux.createActions([
   "addEntry",
   "removeEntry",
   "reloadPrompt",
+  "reloadPromptByIndex",
   "toggleCommandEntryView",
   "toggleEntryView",
   "setREPLMode",
