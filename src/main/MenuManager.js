@@ -17,7 +17,7 @@ export class MenuManager extends EventEmitter {
   constructor() {
     super();
     _.each(['bindMenuItems', 'systemMenuItems', 'addImages',
-      'buildMenuSelectorActions', 'unhandledMenuItem'], (fun) => {
+      'buildMenuSelectorActions'], (fun) => {
       this[fun] = this[fun].bind(this);
     });
   }
@@ -49,17 +49,7 @@ export class MenuManager extends EventEmitter {
       'application:open-documentation': app.openDocumentation,
       'application:report-issue': app.reportIssue,
       'application:about': app.aboutMancy,
-      'application:prompt-clear-all': app.forward,
-      'application:prompt-collapse-all': app.forward,
-      'application:prompt-expand-all': app.forward,
-      'application:prompt-break': app.forward,
-      'application:prompt-format': app.forward,
-      'application:preferences': app.forward,
-      'application:prompt-mode': app.forward,
-      'application:view-theme-dark': app.forward,
-      'application:view-theme-light': app.forward,
       'application:check-update': app.checkForUpdate,
-      'application:prompt-language': app.forward,
       'application:release-notes': app.releaseNotes,
       'application:save-as': app.saveFileAction,
       'application:load-file': app.openFileAction,
@@ -79,20 +69,8 @@ export class MenuManager extends EventEmitter {
         this.bindMenuItems(menuItem.submenu);
         continue;
       }
-      menuItem.click = this.menuSelectorActions[menuItem.command] || this.unhandledMenuItem(menuItem);
+      menuItem.click = this.menuSelectorActions[menuItem.command] || this.mancyApplication.forward;
     }
-  }
-
-  unhandledMenuItem(menuItem) {
-    let options = {
-      title: 'Unhandled Menu Item',
-      buttons: ['Close'],
-      type: 'error',
-      message: `${menuItem.label}`,
-    };
-
-    dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
-    return noop;
   }
 
   addImages(menuItems) {
