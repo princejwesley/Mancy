@@ -6,6 +6,7 @@ import ReplOutputObject from './ReplOutputObject';
 import ReplOutputHTML from './ReplOutputHTML';
 import ReplOutputBufferExplorer from './ReplOutputBufferExplorer'
 import {ipcRenderer} from 'electron';
+import ReplActions from '../actions/ReplActions';
 
 export default class ReplOutputBuffer extends React.Component {
   constructor(props) {
@@ -19,6 +20,7 @@ export default class ReplOutputBuffer extends React.Component {
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
     this.onToggleExplorerCollapse = this.onToggleExplorerCollapse.bind(this);
     this.onDownload = this.onDownload.bind(this);
+    this.bindObjectToContext = this.bindObjectToContext.bind(this);
 
     if(this.props.image) {
       let img = document.createElement('img');
@@ -50,6 +52,10 @@ export default class ReplOutputBuffer extends React.Component {
     ipcRenderer.send('application:download', this.props.buffer);
   }
 
+  bindObjectToContext() {
+    ReplActions.bindObjectToContext(this.props.buffer, ReplOutput.transformObject(this.props.buffer));
+  }
+
   render() {
     let label = ReplCommon.highlight(` Buffer (${this.props.buffer.length} bytes) {}`);
     return (
@@ -66,6 +72,7 @@ export default class ReplOutputBuffer extends React.Component {
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
               <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
               <i className='fa fa-download' onClick={this.onDownload}> </i>
+              <i className='fa fa-hashtag' title='Store as Global Variable' onClick={this.bindObjectToContext}></i>
               { this.props.image ? <ReplOutputHTML body={this.body}/> : null }
               <span className='object-rec'>
               {

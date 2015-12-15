@@ -20,13 +20,15 @@ var promptOnClose = false;
 function onCloseWindow(e) {
   var ret = promptOnClose;
   if(promptOnClose) {
-    ret = !!dialog.showMessageBox(BrowserWindow.getFocusedWindow(), {
-      title: 'Close Window',
-      buttons: ['Close', 'Cancel'],
-      type: 'question',
-      message: 'Close Window',
-      detail: `Do you want to close this window?`
-    });
+    try {
+      ret = !!dialog.showMessageBox(BrowserWindow.getFocusedWindow(), {
+        title: 'Close Window',
+        buttons: ['Close', 'Cancel'],
+        type: 'question',
+        message: 'Close Window',
+        detail: `Do you want to close this window?`
+      });
+    } catch(e) { ret = false; }
   }
   if(ret) {  e.preventDefault(); }
   e.returnValue = !ret;

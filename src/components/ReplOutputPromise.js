@@ -5,6 +5,7 @@ import ReplOutput from '../common/ReplOutput';
 import ReplConstants from '../constants/ReplConstants';
 import ReplOutputObject from './ReplOutputObject';
 import _ from 'lodash';
+import ReplActions from '../actions/ReplActions';
 
 export default class ReplOutputPromise extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ export default class ReplOutputPromise extends React.Component {
 
     this.resolve = this.resolve.bind(this);
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
+    this.bindObjectToContext = this.bindObjectToContext.bind(this);
   }
 
   componentDidMount() {
@@ -49,6 +51,10 @@ export default class ReplOutputPromise extends React.Component {
     });
   }
 
+  bindObjectToContext() {
+    ReplActions.bindObjectToContext(this.props.promise, ReplOutput.transformObject(this.props.promise));
+  }
+
   render() {
     let label = 'Promise {}';
 
@@ -63,6 +69,7 @@ export default class ReplOutputPromise extends React.Component {
           : <span className='repl-entry-message-output-object'>
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
               <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
+              <i className='fa fa-hashtag' title='Store as Global Variable' onClick={this.bindObjectToContext}></i>
               <span className='object-rec'>
               {
                 <div className='object-entry' key='promise-status'>

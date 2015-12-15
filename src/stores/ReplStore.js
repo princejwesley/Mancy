@@ -118,6 +118,16 @@ const ReplStore = Reflux.createStore({
       lastEntry.formattedOutput = output;
       this.trigger();
     }
-  }
+  },
+  onBindObjectToContext(output, formattedOutput) {
+    let variable = ReplCommon.getTempVarName();
+    ReplCommon.bindToReplContext(variable, output);
+    this.onAddEntry({
+      formattedOutput,
+      status: true,
+      command: ReplCommon.highlight(variable),
+      plainCode: variable,
+    });
+  },
 });
 export default ReplStore;

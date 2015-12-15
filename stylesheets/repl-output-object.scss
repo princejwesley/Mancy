@@ -10,6 +10,13 @@
         font-size: 0.8em;
         color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
       }
+      .fa-hashtag {
+        padding-left: 5px;
+        font-size: 70%;
+        cursor: pointer;
+        color: if($theme == $dark-theme, $dark-app-entry-message-output-bind-color, $lt-app-entry-message-output-bind-color);
+      }
+
       .fa-calendar {
         padding: 0px 5px;
         color: if($theme == $dark-theme, $dark-app-date-icon-color, $lt-app-date-icon-color);

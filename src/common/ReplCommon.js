@@ -29,6 +29,9 @@ const typedArraysLike = [
   'Uint32Array', 'Float32Array', 'Float64Array'
 ];
 
+// used to create temporary variable
+let tempCounter = 0;
+
 let ReplCommon = {
   times: (num, str) => {
     return new Array(num + 1).join(str);
@@ -250,6 +253,8 @@ let ReplCommon = {
       cb(e);
     }
   },
+  getTempVarName: () => `temp${++tempCounter}`,
+  bindToReplContext: (variable, value) => ReplContext.getContext()[variable] = value,
 };
 
 let esCodeGenOptions = {

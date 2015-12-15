@@ -15,6 +15,12 @@
         left: 0px;
         padding-right: 2px;
       }
+      .fa-hashtag {
+        padding-left: 5px;
+        font-size: 70%;
+        cursor: pointer;
+        color: if($theme == $dark-theme, $dark-app-entry-message-output-bind-color, $lt-app-entry-message-output-bind-color);
+      }
 
       .repl-regex-play-ground[contentEditable=true]:empty:not(:focus):before {
         content:attr(placeholder);

@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
 import ReplCommon from '../common/ReplCommon';
 import ReplOutputObject from './ReplOutputObject';
+import ReplActions from '../actions/ReplActions';
 
 export default class ReplOutputFunction extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class ReplOutputFunction extends React.Component {
     this.onToggleFunCollapse = this.onToggleFunCollapse.bind(this);
     this.getType = this.getType.bind(this);
     this.getAllProps = this.getAllProps.bind(this);
+    this.bindObjectToContext = this.bindObjectToContext.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -47,6 +49,10 @@ export default class ReplOutputFunction extends React.Component {
     });
   }
 
+  bindObjectToContext() {
+    ReplActions.bindObjectToContext(this.props.fun, ReplOutput.transformObject(this.props.fun));
+  }
+
   render() {
     let label = ReplCommon.highlight(this.getType());
     return (
@@ -60,6 +66,7 @@ export default class ReplOutputFunction extends React.Component {
           : <span className='repl-entry-message-output-object'>
               <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
               <span className='object-desc' dangerouslySetInnerHTML={{__html:label}}></span>
+              <i className='fa fa-hashtag' title='Store as Global Variable' onClick={this.bindObjectToContext}></i>
               <span className='object-rec'>
               {
                 _.map(this.getAllProps(), (key) => {

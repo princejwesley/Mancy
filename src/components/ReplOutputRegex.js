@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import ReplDOM from '../common/ReplDOM';
 import ReplDOMEvents from '../common/ReplDOMEvents';
+import ReplActions from '../actions/ReplActions';
 
 export default class ReplOutputRegex extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ export default class ReplOutputRegex extends React.Component {
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
     this.onHighlight = this.onHighlight.bind(this);
+    this.bindObjectToContext = this.bindObjectToContext.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -48,6 +50,10 @@ export default class ReplOutputRegex extends React.Component {
     ReplDOM.setCursorPositionRelativeTo(cursor, playGround);
   }
 
+  bindObjectToContext() {
+    ReplActions.bindObjectToContext(this.props.regex, ReplOutput.transformObject(this.props.regex));
+  }
+
   render() {
     return (
       <span className='repl-regex-fold'>
@@ -60,6 +66,7 @@ export default class ReplOutputRegex extends React.Component {
             : <span className='repl-regex'>
                 <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
                 <span className='regexp'>{this.props.regex.toString()}</span>
+                <i className='fa fa-hashtag' title='Store as Global Variable' onClick={this.bindObjectToContext}></i>
                 {
                   <div className='repl-regex-play-ground' placeholder='Test regex here'
                     onKeyUp={this.onKeyUp}

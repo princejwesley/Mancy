@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
 import ReplOutputObject from './ReplOutputObject';
 import ReplCommon from '../common/ReplCommon';
+import ReplActions from '../actions/ReplActions';
 
 export default class ReplOutputArray extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class ReplOutputArray extends React.Component {
     this.getArrayRecords = this.getArrayRecords.bind(this);
     this.getType = this.getType.bind(this);
     this.getPrototype = this.getPrototype.bind(this);
+    this.bindObjectToContext = this.bindObjectToContext.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -95,6 +97,10 @@ export default class ReplOutputArray extends React.Component {
     );
   }
 
+  bindObjectToContext() {
+    ReplActions.bindObjectToContext(this.props.array, ReplOutput.transformObject(this.props.array));
+  }
+
   render() {
     return (
       <span className='repl-entry-message-output-array-folds'>
@@ -107,6 +113,7 @@ export default class ReplOutputArray extends React.Component {
             : <span className='repl-entry-message-output-array'>
                 <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
                 <span className='array-desc'>{this.props.label}</span>
+                <i className='fa fa-hashtag' title='Store as Global Variable' onClick={this.bindObjectToContext}></i>
                 {this.getArrayRecords()}
               </span>
         }
