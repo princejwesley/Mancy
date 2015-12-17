@@ -13,6 +13,7 @@ import {writeFileSync} from 'fs';
 import {basename, extname, dirname, resolve, join} from 'path';
 import env from 'gulp-env';
 let execSync = require('child_process').execSync;
+import BabelPolyfill from "babel-polyfill";
 
 const $ = plugins();
 const electronVersion = require(resolve('node_modules', 'electron-prebuilt', 'package.json')).version;
@@ -181,7 +182,8 @@ const options = {
     source: 'src/**/*.js',
     target: 'build',
     config: {
-      stage: 0
+      "presets": ["es2015", "react", "stage-0"],
+      "plugins": ["add-module-exports"]
     }
   },
   sass: {
@@ -251,6 +253,10 @@ gulp.task('dev-env', () => {
 
 gulp.task('build', (cb) => {
   return runSequence('clean', 'copy', ['sass', 'react'], cb);
+});
+
+gulp.task('rebuild', (cb) => {
+  return runSequence('sass', 'react', cb);
 });
 
 gulp.task('package', ['build'], (cb) => {

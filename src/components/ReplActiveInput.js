@@ -151,11 +151,11 @@ export default class ReplActiveInput extends React.Component {
   }
 
   addEntryAction(formattedOutput, status, command, plainCode, transpiledOutput) {
-    let addReplEntry = (output) => {
+    let addReplEntry = (output, formatted = false) => {
       // handle ctrl + c
       if(this.done) { return; }
       this.element.className = 'repl-active-input';
-      formattedOutput = output ? ReplOutput.some(output).highlight() : formattedOutput;
+      formattedOutput = formatted ? output : ReplOutput.some(output).highlight().formattedOutput;
       ReplActions.addEntry({
         formattedOutput,
         status,
@@ -171,7 +171,7 @@ export default class ReplActiveInput extends React.Component {
     if(this.force && formattedOutput && formattedOutput.then) {
       formattedOutput.then(addReplEntry).catch(addReplEntry);
     } else {
-      addReplEntry();
+      addReplEntry(formattedOutput, true);
     }
   }
 
@@ -355,11 +355,11 @@ export default class ReplActiveInput extends React.Component {
   transpileAndExecute(err, result) {
     let text = this.promptInput;
     if(err) {
-      this.addEntryAction(ReplOutput.some(err).highlight(),
+      this.addEntryAction(ReplOutput.some(err).highlight().formattedOutput,
         !err, ReplCommon.highlight(text), text);
     } else {
       ReplCommon.runInContext(result, (err, output) => {
-        let formattedOutput = this.force && !err ? output : ReplOutput.some(err || output).highlight();
+        let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
         let transpiledOutput = err ? null : ReplOutput.transpile(result);
         this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
       });
