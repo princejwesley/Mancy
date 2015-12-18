@@ -279,13 +279,13 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference' title='Prompt on close window'>
+          <div className='preference' title='Warn before quit window'>
             <div className='preference-name'>
-              Prompt on close
+              Warn before quit
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="prompt-on-close" checked={this.state.promptOnClose} value="" onClick={this.onTogglePromptOnClose} />
+                <input type="checkbox" name="warn-before-quit" checked={this.state.promptOnClose} value="" onClick={this.onTogglePromptOnClose} />
               </span>
             </div>
           </div>
