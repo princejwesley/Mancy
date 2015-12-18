@@ -26,6 +26,13 @@ const nodeResources = (() => {
 })();
 
 const resources = [
+  'node_modules/coffee-script/bin/*',
+  'node_modules/typescript/bin/*',
+  'node_modules/livescript/bin/*',
+  'node_modules/font-manager/**/*',
+].concat(nodeResources);
+
+const resourcesInternal = [
   'fonts/**/*',
   'stylesheets/*',
   'menus/**/*',
@@ -38,11 +45,7 @@ const resources = [
   '!**/__mocks__/*',
   '!**/__tests__/*',
   '!src/**/*',
-  'node_modules/coffee-script/bin/*',
-  'node_modules/typescript/bin/*',
-  'node_modules/livescript/bin/*',
-  'node_modules/font-manager/**/*',
-].concat(nodeResources);
+];
 
 const PATHS = {
   APP: 'build',
@@ -218,20 +221,25 @@ gulp.task('clean', () => {
   return require('del').sync([PATHS.APP, PATHS.DIST]);
 });
 
-gulp.task('copy', () => {
+gulp.task('watchableCopy', () => {
   gulp.src(['src/languages/typescript/*'], { base: 'src/' })
     .pipe(gulp.dest(PATHS.APP));
+  return gulp.src(resourcesInternal, { base: '.' })
+    .pipe(gulp.dest(PATHS.APP));
+});
+
+gulp.task('copy', ['watchableCopy'], () => {
   return gulp.src(resources, { base: '.' })
     .pipe(gulp.dest(PATHS.APP));
 });
 
-gulp.task('watch',['build'], (cb) => {
+gulp.task('watch',['rebuild'], (cb) => {
   $.livereload.listen();
   gulp.watch(options.sass.source, ['sass']);
   gulp.watch(options.react.source, ['react']);
-  gulp.watch('package.json', ['copy']);
-  gulp.watch('README.md', ['copy']);
-  gulp.watch('index.html', ['copy']);
+  gulp.watch('package.json', ['watchableCopy']);
+  gulp.watch('README.md', ['watchableCopy']);
+  gulp.watch('index.html', ['watchableCopy']);
   cb();
 });
 
@@ -256,7 +264,7 @@ gulp.task('build', (cb) => {
 });
 
 gulp.task('rebuild', (cb) => {
-  return runSequence('sass', 'react', cb);
+  return runSequence('watchableCopy', 'sass', 'react', cb);
 });
 
 gulp.task('package', ['build'], (cb) => {
@@ -302,9 +310,9 @@ gulp.task('run', (cb) => {
   })();
 });
 
-gulp.task('start',['user-env'], (cb) => runSequence('build', 'run', cb));
+gulp.task('start',['user-env'], (cb) => runSequence('rebuild', 'run', cb));
 
-gulp.task('debug', ['build'], (cb) => runSequence('dev-env', 'run', cb));
+gulp.task('debug', ['rebuild'], (cb) => runSequence('dev-env', 'run', cb));
 
 gulp.task('release',['build'], (cb) => {
   (async function() {

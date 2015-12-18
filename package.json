@@ -6,7 +6,7 @@
   "main": "main/index.js",
   "scripts": {
     "preinstall": "npm prune",
-    "postinstall": "electron-rebuild",
+    "postinstall": "electron-rebuild && gulp clean && gulp copy",
     "test": "jest",
     "cov": "jest --coverage",
     "start": "gulp start",
