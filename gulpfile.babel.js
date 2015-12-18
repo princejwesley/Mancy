@@ -67,14 +67,14 @@ async function authenticate(api) {
   });
 }
 
-let zipExe = async (dists) => {
+let zipExe = async function(dists) {
   return Promise.all(_.map(dists, (dist) => {
     let name = basename(dist);
     return spawn('zip', [`${PATHS.DIST}/${name}.zip`, '-r', `${PATHS.DIST}/${name}`]);
   }));
 }
 
-let spawn = async (command, args, options) => {
+let spawn = async function(command, args, options) {
   let cb = (resolve, reject) => {
     let exe = ChildProcess.spawn(command, args, options);
     exe.stdout.on('data', (data) => $.util.log(data.toString('utf8').trim()));
@@ -85,7 +85,7 @@ let spawn = async (command, args, options) => {
   return new Promise(cb);
 }
 
-let executable = async (platform = 'all', arch = 'all', version = electronVersion) => {
+let executable = async function(platform = 'all', arch = 'all', version = electronVersion) {
   let cb = (resolve, reject) => {
     Electron({
       name: `${_.capitalize(Config.name)}`,
@@ -112,7 +112,7 @@ let executable = async (platform = 'all', arch = 'all', version = electronVersio
   return new Promise(cb);
 };
 
-let releaseCommit = async () => {
+let releaseCommit = async function() {
   let {v} = argv;
   if(['major', 'minor', 'patch'].indexOf(v) === -1) {
     v = 'patch';
@@ -127,7 +127,7 @@ let releaseCommit = async () => {
   await spawn('git', ['push']);
 };
 
-let createRelease = async (api) => {
+let createRelease = async function(api) {
   let {url} = Config.repository;
   let owner = basename(dirname(url));
   let repo = basename(url, extname(url));
@@ -151,7 +151,7 @@ let createRelease = async (api) => {
   return new Promise(cb);
 };
 
-let uploadAsset = async (api, id, dists) => {
+let uploadAsset = async function(api, id, dists) {
   let {url} = Config.repository;
   let owner = basename(dirname(url));
   let repo = basename(url, extname(url));
@@ -260,7 +260,7 @@ gulp.task('rebuild', (cb) => {
 });
 
 gulp.task('package', ['build'], (cb) => {
-  (async () => {
+  (async function() {
     try {
       let {platform, arch} = process;
       await executable(platform, arch, electronVersion);
@@ -287,7 +287,7 @@ gulp.task('packageAll', ['build'], (cb) => {
 });
 
 gulp.task('run', (cb) => {
-  (async () => {
+  (async function() {
     try {
       await spawn(
         process.platform !== 'win32'
@@ -307,7 +307,7 @@ gulp.task('start',['user-env'], (cb) => runSequence('build', 'run', cb));
 gulp.task('debug', ['build'], (cb) => runSequence('dev-env', 'run', cb));
 
 gulp.task('release',['build'], (cb) => {
-  (async () => {
+  (async function() {
     try {
       let github = new GitHubApi({
         version: "3.0.0",
