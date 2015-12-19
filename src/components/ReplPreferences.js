@@ -22,7 +22,8 @@ export default class ReplPreferences extends React.Component {
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
       'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
-      'resetLoadScript', 'onTogglePromptOnClose', 'onToggleAutoCloseSymbol'
+      'resetLoadScript', 'onTogglePromptOnClose', 'onToggleAutoCloseSymbol',
+      'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -118,6 +119,35 @@ export default class ReplPreferences extends React.Component {
 
   onToggleAutoCloseSymbol(e) {
     ReplPreferencesStore.toggleAutoCloseSymbol(e.target.checked);
+  }
+
+  onCloseNPMPath(e) {
+    let path = e.target.dataset.path;
+    ReplPreferencesStore.removeNPMPath(path);
+  }
+
+  resetNPMPath(e) {
+    ReplPreferencesStore.resetNPMPaths();
+  }
+
+  addNPMPath(e) {
+    let result = ipcRenderer.sendSync('application:open-sync-resource', {
+      title: 'Add node modules path',
+      properties: ['openDirectory']
+    });
+    if(result.length) {
+      ReplPreferencesStore.addNPMPath(result[0]);
+    }
+  }
+
+  onMoveNPMPathUp(e) {
+    let path = e.target.dataset.path;
+    ReplPreferencesStore.moveNPMPath(path, -1);
+  }
+
+  onMoveNPMPathDown(e) {
+    let path = e.target.dataset.path;
+    ReplPreferencesStore.moveNPMPath(path, 1);
   }
 
   render() {
@@ -306,7 +336,44 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <div>{this.state.loadScript}</div>
               <button type='button' name='startup-script' onClick={this.selectLoadScript}> Choose File</button>
-              <button type='button' name='reset-startup-script' disabled={!this.state.loadScript} onClick={this.resetLoadScript}> Reset</button>
+              {
+                this.state.loadScript
+                  ? <button type='button' name='reset-startup-script' onClick={this.resetLoadScript}> reset</button>
+                  : null
+              }
+            </div>
+          </div>
+          <div className='preference' title='Add node modules path'>
+            <div className='preference-name'>
+              Add node modules path
+            </div>
+            <div className='preference-value'>
+              {
+                _.map(this.state.npmPaths, (path, pos) => {
+                  return (
+                    <div>
+                      {path}
+                      <i className='fa fa-close close' data-path={path} onClick={this.onCloseNPMPath}></i>
+                      {
+                        pos !== 0
+                          ? <i className='fa fa-arrow-up' data-path={path} onClick={this.onMoveNPMPathUp}></i>
+                          : null
+                      }
+                      {
+                        pos < this.state.npmPaths.length - 1
+                          ? <i className='fa fa-arrow-down' data-path={path} onClick={this.onMoveNPMPathDown}></i>
+                          : null
+                      }
+                    </div>
+                  );
+                })
+              }
+              <button type='button' name='npm-path' onClick={this.addNPMPath}> Add</button>
+              {
+                this.state.npmPaths.length
+                  ? <button type='button' name='reset-npm-path' onClick={this.resetNPMPath}> reset</button>
+                  : null
+              }
             </div>
           </div>
           <div className='statusbar-placeholder'></div>

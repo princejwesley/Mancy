@@ -62,6 +62,18 @@
   opacity: 0.7;
 }
 
+.close {
+  color: $app-text-error-color;
+}
+
+.fa {
+  cursor: pointer;
+}
+
+button {
+  margin-right: 5px;
+}
+
 .read-error {
   color: $app-text-error-color;
 }

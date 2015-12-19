@@ -1,4 +1,3 @@
-require('crash-reporter').start();
 var app = require('app');
 var path = require('path');
 var electron = require('electron');

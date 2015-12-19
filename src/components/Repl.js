@@ -43,6 +43,7 @@ export default class Repl extends React.Component {
 
     this.loadPreferences();
     ReplCommon.addUserDataToPath(ReplContext.getContext());
+    ReplCommon.addToPath(global.Mancy.preferences.npmPaths, ReplContext.getContext());
 
     this.state = _.cloneDeep(ReplStore.getStore());
   }

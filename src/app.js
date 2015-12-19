@@ -39,8 +39,9 @@ import webFrame from 'web-frame';
     "watermark": true,
     "transpile": false,
     "loadScript": null,
-    "promptOnClose": false,
-    "autoCloseSymbol": false
+    "promptOnClose": true,
+    "autoCloseSymbol": false,
+    "npmPaths": []
   };
 
   _.each(_.keys(defaults), (key) => {

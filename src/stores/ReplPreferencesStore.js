@@ -9,6 +9,8 @@ import _ from 'lodash';
 import {ipcRenderer} from 'electron';
 import webFrame from 'web-frame';
 import ReplConstants from '../constants/ReplConstants';
+import ReplContext from '../common/ReplContext';
+import ReplCommon from '../common/ReplCommon';
 
 let open = false;
 const ReplPreferencesStore = Reflux.createStore({
@@ -139,6 +141,48 @@ const ReplPreferencesStore = Reflux.createStore({
   onSelectLoadScript(script) {
     this.updatePreference((preferences) => {
       preferences.loadScript = script;
+    });
+  },
+  addNPMPath(path) {
+    this.updatePreference((preferences) => {
+      let npmPaths = preferences.npmPaths;
+      if(npmPaths.indexOf(path) === -1) {
+        let paths = [path];
+        preferences.npmPaths = paths.concat(npmPaths);
+        ReplCommon.addToPath(paths, ReplContext.getContext());
+      }
+    });
+  },
+  removeNPMPath(path) {
+    this.updatePreference((preferences) => {
+      let npmPaths = preferences.npmPaths, idx;
+      if(npmPaths.length && (idx = npmPaths.indexOf(path)) !== -1) {
+        preferences.npmPaths.splice(idx, 1);
+        ReplCommon.removeFromPath([path], ReplContext.getContext());
+      }
+    });
+  },
+  moveNPMPath(path, adj = 1) {
+    this.updatePreference((preferences) => {
+      let npmPaths = preferences.npmPaths, idx;
+      if(npmPaths.length && (idx = npmPaths.indexOf(path)) !== -1
+        && (idx + adj) >= 0 && (idx + adj) < npmPaths.length) {
+        let x = npmPaths[idx];
+        let y = npmPaths[idx + adj];
+        ReplCommon.removeFromPath(npmPaths, ReplContext.getContext());
+        npmPaths[idx] = y;
+        npmPaths[idx + adj] = x;
+        ReplCommon.addToPath(npmPaths, ReplContext.getContext());
+      }
+    });
+  },
+  resetNPMPaths() {
+    this.updatePreference((preferences) => {
+      let npmPaths = preferences.npmPaths;
+      if(npmPaths.length) {
+        preferences.npmPaths = [];
+        ReplCommon.removeFromPath(npmPaths, ReplContext.getContext());
+      }
     });
   },
   getStore() {

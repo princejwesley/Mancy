@@ -64,6 +64,17 @@
             padding: 0px 6px;
           }
 
+          .fa {
+            padding-left: 5px;
+          }
+
+          .fa-arrow-up {
+            color: if($theme == $dark-theme, $dark-app-move-up-color, $lt-app-move-up-color );
+          }
+
+          .fa-arrow-down {
+            color: if($theme == $dark-theme, $dark-app-move-down-color, $lt-app-move-down-color );
+          }
         }
       }
 

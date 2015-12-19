@@ -83,9 +83,19 @@ let ReplCommon = {
     return code;
   },
   addToPath: (paths, context = this) => {
-    //TODO duplicate check
+    if(!paths || !paths.length) { return; }
     let newPaths = Array.isArray(paths) ? paths : [paths];
     context.module.paths = newPaths.concat(context.module.paths);
+  },
+  removeFromPath: (paths, context = this) => {
+    if(!paths || !paths.length) { return; }
+    let removePaths = Array.isArray(paths) ? paths : [paths];
+    _.each(removePaths, (p) => {
+      const idx = context.module.paths.indexOf(p);
+      if(p !== -1) {
+        context.module.paths.splice(p, 1);
+      }
+    });
   },
   escapseRegExp: (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
