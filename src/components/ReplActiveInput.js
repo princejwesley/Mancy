@@ -322,7 +322,7 @@ export default class ReplActiveInput extends React.Component {
     let idx = open.indexOf(ch);
 
     if(idx !== -1) { this.insertCharacter(pos, close[idx]); }
-    else if((pos === 1 || text[pos - 2] !== ch) && /['"`]/.test(ch)) { this.insertCharacter(pos, ch); }
+    else if((pos === 1 || (text[pos - 2] !== ch && '\\' !== text[pos - 2])) && /['"`]/.test(ch)) { this.insertCharacter(pos, ch); }
   }
 
   ignoreCharacters(e) {
@@ -335,9 +335,11 @@ export default class ReplActiveInput extends React.Component {
     let open = text[pos - 1];
     let close = text[pos];
 
-    if(ReplDOMEvents.autoFillPairCharacters[open] !== close) { return false; }
+    if(ReplDOMEvents.autoCloseKeyIdentifiers[close] !== e.nativeEvent.keyIdentifier) { return false; }
+    let left = text.substring(0, pos);
+    let counter = new RegExp(`[^${ReplDOMEvents.autoFillPairCharacters[close]}]+`, 'g');
 
-    if(ReplDOMEvents.autoCloseKeyIdentifiers[close] === e.nativeEvent.keyIdentifier) {
+    if(left.replace(counter, '').length % 2) {
       e.preventDefault();
       e.stopPropagation();
       ReplDOM.setCursorPositionRelativeTo(pos + 1, this.element);

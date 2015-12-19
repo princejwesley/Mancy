@@ -51,7 +51,10 @@ ReplDOMEvents.autoFillPairCharacters = {
   '`' : '`',
   '{' : '}',
   '[' : ']',
-  '(' : ')'
+  '(' : ')',
+  '}' : '{',
+  ']' : '[',
+  ')' : '('
 };
 
 ReplDOMEvents.autoCloseKeyIdentifiers = {
