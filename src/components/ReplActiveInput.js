@@ -362,7 +362,7 @@ export default class ReplActiveInput extends React.Component {
     } else {
       ReplCommon.runInContext(result, (err, output) => {
         let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
-        let transpiledOutput = err ? null : ReplOutput.transpile(result);
+        let transpiledOutput = err || !this.shouldTranspile() ? null : ReplOutput.transpile(result);
         this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
       });
     }
@@ -375,7 +375,6 @@ export default class ReplActiveInput extends React.Component {
 
     setTimeout(() => {
       const text = this.element.innerText.replace(/\s{1,2}$/, '');
-      const transpile = this.shouldTranspile();
       if(cli.bufferedCommand.length) {
         cli.input.emit('data', '.break');
         cli.input.emit('data', EOL);
@@ -390,7 +389,7 @@ export default class ReplActiveInput extends React.Component {
         return this.addEntryAction(output, true, input, text);
       }
 
-      if(transpile && !text.match(/^\s*\.load/)) {
+      if(!text.match(/^\s*\.load/)) {
         if(global.Mancy.session.lang !== 'js') {
           cli.transpile(output, cli.context, this.transpileAndExecute);
         } else {

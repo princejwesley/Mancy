@@ -51,7 +51,7 @@ let babelTransfrom = (plain) => {
       //'user strict;'
       .substring(global.Mancy.session.mode === 'Strict' ? 0 : USE_STRICT_LENGTH - 1);
   } catch(e) {
-    return plain;
+    return e;
   }
 }
 
