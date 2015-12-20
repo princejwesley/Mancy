@@ -48,8 +48,8 @@ let babelTransfrom = (plain) => {
     return babel
       .transform(plain, ReplConstants.BABEL_OPTIONS)
       .code
-      //'user strict;'
-      .substring(global.Mancy.session.mode === 'Strict' ? 0 : USE_STRICT_LENGTH - 1);
+      //remove 'user strict;' irrespective of the mode
+      .substring(USE_STRICT_LENGTH - 1);
   } catch(e) {
     return e;
   }
