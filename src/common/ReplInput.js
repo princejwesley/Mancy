@@ -6,6 +6,8 @@ let babel = require('babel-core');
 
 const awaitMatcher = /^(?:\s*(?:(?:let|var|const)\s)?\s*([^=]+)=\s*|^\s*)(await\s.*)/;
 const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
+const USE_STRICT_LENGTH = "'user strict;'".length;
+
 let asyncWrapper = (code, binder) => {
   let assign = binder ? `root.${binder} = result;` : '';
   return `(async function() { let result = (${code}); ${assign} return result; }())`;
@@ -47,7 +49,7 @@ let babelTransfrom = (plain) => {
       .transform(plain, ReplConstants.BABEL_OPTIONS)
       .code
       //'user strict;'
-      .substring(13);
+      .substring(global.Mancy.session.mode === 'Strict' ? 0 : USE_STRICT_LENGTH - 1);
   } catch(e) {
     return plain;
   }
