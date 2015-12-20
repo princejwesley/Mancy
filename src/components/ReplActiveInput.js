@@ -17,6 +17,8 @@ import ReplOutput from '../common/ReplOutput';
 import ReplInput from '../common/ReplInput';
 import ReplLanguages from '../languages/ReplLanguages';
 
+const BLOCK_SCOPED_ERR_MSG = 'Block-scoped declarations (let, const, function, class) not yet supported outside strict mode';
+
 export default class ReplActiveInput extends React.Component {
   constructor(props) {
     super(props);
@@ -32,13 +34,16 @@ export default class ReplActiveInput extends React.Component {
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
       'onUndoRedo', 'onKeyPress', 'autoFillCharacters', 'insertCharacter',
-      'shouldTranspile', 'talkToREPL', 'transpileAndExecute', 'ignoreCharacters'
+      'shouldTranspile', 'talkToREPL', 'transpileAndExecute', 'ignoreCharacters',
+      'canRetry'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
 
     this.activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     this.commandReady = false;
+    // retry on error for magic mode
+    this.retried = false;
     this.setDebouncedComplete();
     this.undoManager = new ReplUndo();
   }
@@ -354,21 +359,35 @@ export default class ReplActiveInput extends React.Component {
         (global.Mancy.session.lang === 'js' && global.Mancy.preferences.babel))
   }
 
+  canRetry(e) {
+    return e && e.message && !this.retried
+      && global.Mancy.session.mode === 'Magic'
+      && global.Mancy.session.lang === 'js'
+      && e.message === BLOCK_SCOPED_ERR_MSG
+      && (this.retried = true);
+  }
+
   transpileAndExecute(err, result) {
     let text = this.promptInput;
     if(err) {
-      this.addEntryAction(ReplOutput.some(err).highlight().formattedOutput,
-        !err, ReplCommon.highlight(text), text);
+      if(this.canRetry(e)) { this.talkToREPL(true); }
+      else {
+        this.addEntryAction(ReplOutput.some(err).highlight().formattedOutput,
+          !err, ReplCommon.highlight(text), text);
+      }
     } else {
       ReplCommon.runInContext(result, (err, output) => {
-        let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
-        let transpiledOutput = err || !this.shouldTranspile() ? null : ReplOutput.transpile(result);
-        this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
+        if(err && this.canRetry(err)) { this.talkToREPL(true); }
+        else {
+          let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
+          let transpiledOutput = err || !this.shouldTranspile() ? null : ReplOutput.transpile(result);
+          this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
+        }
       });
     }
   }
 
-  talkToREPL() {
+  talkToREPL(forceStrict = false) {
     let cli = ReplLanguages.getREPL();
     // managed by us (no react)
     this.element.className += ' repl-active-input-running';
@@ -388,6 +407,8 @@ export default class ReplActiveInput extends React.Component {
       if(local) {
         return this.addEntryAction(output, true, input, text);
       }
+
+      if(forceStrict) { output = `use strict;${output}` }
 
       if(!text.match(/^\s*\.load/)) {
         if(global.Mancy.session.lang !== 'js') {

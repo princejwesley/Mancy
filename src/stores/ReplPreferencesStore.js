@@ -115,6 +115,8 @@ const ReplPreferencesStore = Reflux.createStore({
   onSetREPLMode(mode) {
     this.updatePreference((preferences) => {
       preferences.mode = mode;
+      global.Mancy.session.mode = mode;
+      ReplStatusBarActions.updateMode(mode);
       ReplActions.setREPLMode(mode);
     });
   },
