@@ -148,5 +148,5 @@ let builtIns = () => {
   return systemVariables;
 };
 
-createContext();
-export default { createContext, getContext, builtIns, hookContext };
+const alphaNames = Object.getOwnPropertyNames(createContext());
+export default { createContext, getContext, builtIns, hookContext, alphaNames };

@@ -370,7 +370,7 @@ export default class ReplActiveInput extends React.Component {
   transpileAndExecute(err, result) {
     let text = this.promptInput;
     if(err) {
-      if(this.canRetry(e)) { this.talkToREPL(true); }
+      if(this.canRetry(err)) { this.talkToREPL(true); }
       else {
         this.addEntryAction(ReplOutput.some(err).highlight().formattedOutput,
           !err, ReplCommon.highlight(text), text);

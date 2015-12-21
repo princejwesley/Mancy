@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplConsoleStore from '../stores/ReplConsoleStore';
 import ReplDOM from '../common/ReplDOM';
 import ReplConsoleMessageFilters from './ReplConsoleMessageFilters';
+import ReplConsoleEnvironmentWatcher from './ReplConsoleEnvironmentWatcher';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 
 export default class ReplConsole extends React.Component {
@@ -20,7 +21,7 @@ export default class ReplConsole extends React.Component {
     _.each([
       'onConsoleChange', 'getTypedClassName',
       'onAll', 'onFilter', 'onClear', 'getDupCountStyle',
-      'getDupTooltip'
+      'getDupTooltip', 'onDrag'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -89,6 +90,28 @@ export default class ReplConsole extends React.Component {
     return `${count} ${type} messages`;
   }
 
+  onDrag(e) {
+    let replConsole = document.getElementsByClassName('repl-console')[0];
+    let replConsoleEnv = document.getElementsByClassName('repl-console-environment')[0];
+
+    let {clientY} = e;
+    let {height} = document.defaultView.getComputedStyle(replConsoleEnv);
+    let initHeight = parseInt(height, 10);
+
+    let startDrag = (e) => {
+      let adj = e.clientY - clientY;
+      replConsoleEnv.style.flex = `0 0  ${(initHeight - adj)}px`;
+    }
+
+    let stopDrag = (e) => {
+      document.documentElement.removeEventListener('mousemove', startDrag, false);
+      document.documentElement.removeEventListener('mouseup', stopDrag, false);
+    }
+
+    document.documentElement.addEventListener('mousemove', startDrag, false);
+    document.documentElement.addEventListener('mouseup', stopDrag, false);
+  }
+
   render() {
     //scroll to bottom
     ReplDOM.scrollToEnd(this.element);
@@ -103,6 +126,7 @@ export default class ReplConsole extends React.Component {
           onLog={this.onLog}
           onClear={this.onClear}
           onDebug={this.onDebug}/>
+        <div className='repl-console-message-list'>
         {
           _.map(this.state.entries, ({type, data, time, count}) => {
             return (
@@ -116,6 +140,11 @@ export default class ReplConsole extends React.Component {
             );
           })
         }
+        </div>
+        <div className="repl-console-environment-resizeable" onMouseDown={this.onDrag}>
+          <span className='repl-console-drag-lines'> </span>
+        </div>
+        <ReplConsoleEnvironmentWatcher />
         <div className="repl-status-bar-cover" key='cover'></div>
       </div>
     );

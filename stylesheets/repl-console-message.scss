@@ -3,6 +3,7 @@
 @import 'highlight';
 @import 'repl-output';
 @import 'repl-source-file';
+@import 'repl-console-environment-watcher';
 
 @mixin replConsoleMessage($theme) {
   .repl-console-message {
@@ -11,6 +12,9 @@
     white-space: pre-wrap;
     @include fullHeight();
     overflow: auto;
+
+    display: flex;
+    flex-direction: column;
 
     .repl-status-bar-cover, .repl-console-message-filters {
       @include notSelectable();
@@ -27,6 +31,33 @@
         display: flex;
         align-self: center;
         cursor: pointer;
+      }
+    }
+
+    .repl-console-message-list {
+      flex: 1;
+    }
+    @include replConsoleEnvironment($theme);
+    .repl-console-environment-resizeable {
+      display: flex;
+      height: 8px;
+      width: 100%;
+      position: relative;
+      background-color: if($theme == $dark-theme, $dark-app-console-resize-handle-color, $lt-app-console-resize-handle-color);
+      cursor: ns-resize;
+      align-items: center;
+
+      .repl-console-drag-lines {
+        @include notSelectable();
+        text-align: center;
+        flex: 1;
+
+        &:before {
+          content: '=';
+          text-align: center;
+          margin: 1px;
+          color: if($theme == $dark-theme, $dark-app-console-drag-lines-color, $lt-app-console-drag-lines-color);
+        }
       }
     }
 
