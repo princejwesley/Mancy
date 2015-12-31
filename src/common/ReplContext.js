@@ -35,10 +35,26 @@ let createContext = () => {
     '__filename',
     '__dirname'
   ];
+  // polyfills
+  let polyfills = [
+    "Array",
+    "Object",
+    "Math",
+    "Symbol",
+    "String",
+    "Number",
+    "Reflect",
+    "System",
+    "Error",
+  ];
 
   let circulars = [ '_', 'global', 'GLOBAL', 'root'];
 
   _.each(defaults, (g) => {
+    context[g] = global[g];
+  });
+
+  _.each(polyfills, (g) => {
     context[g] = global[g];
   });
 

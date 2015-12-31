@@ -70,6 +70,7 @@
     "yargs": "^3.26.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.3.14",
     "babel-runtime": "^6.3.13",
     "c3": "https://github.com/princejwesley/c3.git",
     "coffee-script": "https://github.com/princejwesley/coffeescript.git",
