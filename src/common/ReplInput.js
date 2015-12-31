@@ -45,9 +45,21 @@ let cook = (plain) => {
 
 let babelTransfrom = (plain) => {
   try {
-    return babel
+    let matchCommonJS = (opt) => opt === 'transform-es2015-modules-commonjs';
+    let strict = false;
+
+    if(global.Mancy.session.mode === 'Strict') {
+      strict = true;
+      if(_.findIndex(ReplConstants.BABEL_OPTIONS.plugins, matchCommonJS) === -1) {
+        ReplConstants.BABEL_OPTIONS.plugins.push('transform-es2015-modules-commonjs');
+      }
+    } else { _.remove(ReplConstants.BABEL_OPTIONS.plugins, matchCommonJS); }
+
+    let code = babel
       .transform(plain, ReplConstants.BABEL_OPTIONS)
       .code;
+
+    return strict ? code.substring(USE_STRICT_LENGTH - 1) : code;
   } catch(e) {
     return e;
   }

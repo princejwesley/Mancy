@@ -48,7 +48,7 @@
     "babel-plugin-transform-runtime": "^6.3.13",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "^0.36.0",
+    "electron-prebuilt": "^0.36.2",
     "electron-rebuild": "^1.0.2",
     "font-manager": "https://github.com/princejwesley/font-manager.git",
     "gulp": "^3.9.0",
