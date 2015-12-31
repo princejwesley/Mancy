@@ -47,9 +47,7 @@ let babelTransfrom = (plain) => {
   try {
     return babel
       .transform(plain, ReplConstants.BABEL_OPTIONS)
-      .code
-      //remove 'user strict;' irrespective of the mode
-      .substring(USE_STRICT_LENGTH - 1);
+      .code;
   } catch(e) {
     return e;
   }
