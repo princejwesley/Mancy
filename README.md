@@ -74,7 +74,7 @@ For more detailed documentation, [read here](https://github.com/princejwesley/Ma
 
 
 # <img src="icons/mancy.png" width="25">&nbsp;Installation
-
+-  `npm install -g mancy` (or)
 - Download from [latest release](https://github.com/princejwesley/Mancy/releases/latest) (or)
 - [Clone](https://github.com/princejwesley/Mancy/) and run `npm install` & `npm run package`. Executable file will be created inside `./dist/` directory.
 - To build native modules, make sure `node` >=4.x and `npm` >= 2.x installed.
