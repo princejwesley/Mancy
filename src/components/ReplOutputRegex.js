@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplDOM from '../common/ReplDOM';
 import ReplDOMEvents from '../common/ReplDOMEvents';
 import ReplActions from '../actions/ReplActions';
+import ReplOutput from '../common/ReplOutput';
 
 export default class ReplOutputRegex extends React.Component {
   constructor(props) {

@@ -2,7 +2,7 @@
 
 @mixin highlight() {
   .number {
-    color: #799FF3;
+    color: #0EAADC;
   }
 
   .built_in {
@@ -18,11 +18,11 @@
   }
 
   .literal, .boolean {
-    color: #99E229;
+    color: #7FC118;
   }
 
   .string {
-    color: orange;
+    color: #FE6F56;
   }
 
   .regexp {

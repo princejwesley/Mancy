@@ -1,4 +1,5 @@
 @import 'themes';
+@import 'repl-common';
 
 @keyframes spin {
   0% {
@@ -14,6 +15,7 @@
 
 @mixin statusBar($theme) {
   .repl-status-bar {
+    @include notSelectable();
     z-index: 101;
     position: fixed;
     bottom: 0;

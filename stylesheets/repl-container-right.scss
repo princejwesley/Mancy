@@ -5,7 +5,7 @@
 @mixin containerRight($theme) {
   .repl-container-right {
     display: flex;
-    max-width: 40vw;
+    max-width: 100vw;
     flex: 0 0 30vw;
     min-width: 8px;
     @include fullHeight();
@@ -17,6 +17,7 @@
     }
 
     .repl-console {
+      min-width: 280px;
       position: relative;
       top: 0;
       background-color: if($theme == $dark-theme, $dark-app-console-background-color, $lt-app-console-background-color);
