@@ -380,7 +380,7 @@ export default class ReplActiveInput extends React.Component {
         if(err && this.canRetry(err)) { this.talkToREPL(true); }
         else {
           let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
-          let transpiledOutput = err || !this.shouldTranspile() ? null : ReplOutput.transpile(result);
+          let transpiledOutput = !this.shouldTranspile() ? null : ReplOutput.transpile(result);
           this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
         }
       });

@@ -35,6 +35,7 @@ const ReplConstants = {
       "syntax-jsx",
       "transform-flow-strip-types",
       "transform-react-jsx",
+      "transform-runtime"
     ],
     "highlightCode": false,
     "filename": "repl",

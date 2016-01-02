@@ -24,7 +24,7 @@ import webFrame from 'web-frame';
 (() => {
   let preferences = JSON.parse(localStorage.getItem('preferences') || '{}');
   let defaults = {
-    "mode": "Magic",
+    "mode": "Strict",
     "theme": "Dark Theme",
     "timeout": ReplConstants.EXEC_TIMEOUT,
     "babel": false,
