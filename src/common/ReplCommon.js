@@ -258,7 +258,12 @@ let ReplCommon = {
   isTypedArray: (o) => ReplCommon.isTypedArrayInstance(o) || ReplCommon.isTypedArrayLike(o),
   runInContext: (js, cb) => {
     try {
-      cb(null, vm.runInContext(js, ReplContext.getContext(), 'repl'));
+      let {timeout} = global.Mancy.preferences;
+      let script = vm.createScript(js, {
+        filename: 'mancy-repl',
+        displayErrors: false,
+      });
+      cb(null, script.runInContext(ReplContext.getContext(), { displayErrors: false, timeout }));
     } catch(e) {
       cb(e);
     }
