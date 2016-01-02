@@ -16,6 +16,9 @@ var menuManagerCache = {};
 var windowCount = 0;
 var promptOnClose = false;
 
+// set application root path as current working directory
+process.chdir(app.getAppPath());
+
 function onCloseWindow(e) {
   var ret = promptOnClose;
   if(promptOnClose) {
