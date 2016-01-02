@@ -39,13 +39,6 @@
   "devDependencies": {
     "babel": "^6.3.13",
     "babel-jest": "^6.0.1",
-    "babel-polyfill": "^6.3.13",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-react": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13",
-    "babel-plugin-add-module-exports": "^0.1.1",
-    "babel-core": "^6.3.13",
-    "babel-plugin-transform-runtime": "^6.3.13",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
     "electron-prebuilt": "^0.36.2",
@@ -70,6 +63,12 @@
     "yargs": "^3.26.0"
   },
   "dependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "babel-plugin-add-module-exports": "^0.1.1",
+    "babel-plugin-transform-runtime": "^6.3.13",
+    "babel-core": "^6.3.13",
     "babel-polyfill": "^6.3.14",
     "babel-runtime": "^6.3.13",
     "c3": "https://github.com/princejwesley/c3.git",

@@ -21,6 +21,8 @@ const electronVersion = require(resolve('node_modules', 'electron-prebuilt', 'pa
 const nodeResources = (() => {
   let result = execSync('npm list --prod --parseable');
   return _.chain(result.toString().trim().split(/\r?\n/))
+    // remove app root path
+    .tap((r) => r.shift())
     .map((dep) => `${dep}/**/*.{js,css,json,svg,png,gif,woff2,otf,ttf,woff,eot,ts}`)
     .value();
 })();
@@ -42,9 +44,6 @@ const resourcesInternal = [
   'LICENSE',
   'icons/*',
   'logos/*',
-  '!**/__mocks__/*',
-  '!**/__tests__/*',
-  '!src/**/*',
 ];
 
 const PATHS = {
@@ -104,7 +103,8 @@ let executable = async function(platform = 'all', arch = 'all', version = electr
       out: PATHS.DIST,
       icon: `./${PATHS.ICON}/mancy`,
       overwrite: true,
-      asar: true
+      // should be false so that user can open files inside asar
+      asar: false
     }, (err, result) => {
       if(err) {
         return reject(err);
