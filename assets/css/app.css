@@ -1,0 +1,64 @@
+
+body {
+	font-family: 'Droid Sans Mono';
+}
+
+.navbar {
+	background-color: whitesmoke !important;
+}
+
+.nav  > li:nth-child(2) > a, .footer > a{
+	opacity:1;
+}
+
+.demo-image {
+	margin: auto;
+  display: block;
+}
+
+.logo {
+	text-transform: capitalize !important;
+}
+
+.fa-2x {
+	padding: 10px;
+	color: grey;
+}
+a {
+	text-transform: capitalize !important;
+	text-decoration: none;
+}
+
+.btn-download {
+	margin: auto;
+	display: table;
+  border-radius: 5px;
+}
+.btn {
+	color: grey !important;
+}
+h4 {
+	color: grey !important;
+	font-family: 'Droid Sans Mono';
+}
+.btn , .footer > p, .body-content > h4, .body-content > p {
+	font-size: 16px;
+	padding: 10px !important;
+}
+
+.glyphicon-heart {
+	color: hotpink;
+}
+
+.logo-with-desc {
+	width: 60%;
+}
+
+.toolitup-url {
+	text-transform: lowercase !important;
+}
+
+.footer {
+	margin-top: 20px;
+	border-top: 1px solid hotpink;
+}

@@ -1,19 +1,145 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="node_modules/font-awesome/css/font-awesome.min.css" media="screen"/>
-    <link rel="stylesheet" type="text/css" href="node_modules/c3/c3.min.css" media="screen"/>
-    <link rel="stylesheet" type="text/css" href="stylesheets/repl.css" media="screen"/>
+<html lang="en">
+<!-- author github.com/senthilporunan -->
+<head>
+  <title>Mancy - An Electron based NodeJS REPL Application</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="Mancy NodeJS Repl">
+  <meta name="robots" content="INDEX, FOLLOW, NOODP, NOARCHIVE" />
+  <meta name="robots" content="noimageindex" />
 
-  </head>
-  <body class="dark-theme" data-watermark-logo='' data-watermark-msg=''>
-    <div id="node-repl-plus"></div>
-    <div id="node-repl-prompt-suggestions"></div>
-    <div id="node-repl-preferences"></div>
+  <meta name="keywords" content="repl, mancy, nodejs, javascript, livescript, coffeescript, typescript, electron" >
 
-    <script src="node_modules/highlight.js/lib/highlight.js"></script>
-    <script src="node_modules/babel-polyfill/dist/polyfill.js"></script>
-    <script src="Startup.js"></script>
-  </body>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link type="text/plain" rel="author" href="http://http://www.mancy-re.pl/humans.txt" />
+  <link href="/assets/css/roboto.min.css" rel="stylesheet">
+  <link href="/assets/css/material.min.css" rel="stylesheet">
+  <link href="/assets/css/ripples.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+  <link href="/assets/css/app.css" rel="stylesheet">
+  <link rel="shortcut icon" href="/icons/mancy.ico" type="image/x-icon">
+  <link rel="icon" href="/icons/mancy.ico" type="image/x-icon">
+
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="container">
+      <div class="navbar-collapse collapse navbar-responsive-collapse">
+        <ul class="nav navbar-nav logo-with-desc">
+          <li>
+            <button class="btn btn-flat logo">
+              <span><img src="/icons/mancy.png" width="30px"> Mancy</span>
+            </button>
+          </li>
+          <li class="pull-right"><a href="#" class="btn" disabled="">An Electron based NodeJS REPL</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="https://github.com/princejwesley/Mancy/blob/master/README.md" class="btn btn-flat">Documentation</a></li>
+          <li><a href="https://github.com/princejwesley/Mancy" class="btn btn-flat"><img src="/images/github-32.png" width="20px"></a></li>
+          <li><a href="https://github.com/princejwesley/Mancy/releases" class="btn btn-flat">Download</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container body-content">
+    <h4 align="center">A cross platform NodeJS REPL application based on Electron and React frameworks</h4>
+    <div id="myCarousel" class="carousel slide" data-interval="4000" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="item active">
+            <img src="/images/babel.png" alt="babel">
+          </div>
+          <div class="item">
+            <img src="/images/base64-viz.png" alt="base64 visualization">
+          </div>
+          <div class="item">
+            <img src="/images/buffer-viz.png" alt="buffer visualization">
+          </div>
+          <div class="item">
+            <img src="/images/chart-area.png" alt="Area chart">
+          </div>
+          <div class="item">
+            <img src="/images/chart-area-spline.png" alt="Area spline chart">
+          </div>
+          <div class="item">
+            <img src="/images/chart-flip.png" alt="Flip chart view">
+          </div>
+          <div class="item">
+            <img src="/images/chart-pie.png" alt="Pie chart">
+          </div>
+          <div class="item">
+            <img src="/images/color-viz.png" alt="Color visualization">
+          </div>
+          <div class="item">
+            <img src="/images/integer-viz.png" alt="Integer visualization">
+          </div>
+          <div class="item">
+            <img src="/images/object-output.png" alt="Object output">
+          </div>
+          <div class="item">
+            <img src="/images/promise-pending.png" alt="promise view">
+          </div>
+          <div class="item">
+            <img src="/images/regex-viz.png" alt="regex visualization">
+          </div>
+          <div class="item">
+            <img src="/images/source-track.png" alt="source tracking">
+          </div>
+          <div class="item">
+            <img src="/images/source.png" alt="source">
+          </div>
+          <div class="item">
+            <img src="/images/timeout.png" alt="timeout">
+          </div>
+        </div>
+    </div>
+    <a class="btn btn-success btn-raised btn-download" style="color:whitesmoke !important;" href="https://github.com/princejwesley/Mancy/releases">
+      <i class="fa fa-download"></i>
+      Download
+    </a>
+  </div>
+
+  <div class="container">
+    <div class="footer">
+      <p class="pull-left">© 2015 toolitup.com. All rights reserved.</p>
+      <p class="pull-right">Made with <span class="glyphicon glyphicon-heart"></span> by <a class="toolitup-url" href="http://www.toolitup.com">toolitup.com</a></p>
+    </div>
+	<div id="disqus_thread"></div>
+  </div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script src="/assets/js/ripples.min.js"></script>
+  <script src="/assets/js/material.min.js"></script>
+  <script>
+      $(document).ready(function() {
+          // This command is used to initialize some elements and make them work properly
+          $.material.init();
+      });
+  </script>
+	  <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-68697499-1', 'auto');
+	  ga('send', 'pageview');
+
+		</script>
+
+	<script type="text/javascript">
+		/* * * CONFIGURATION VARIABLES * * */
+		var disqus_shortname = 'httpwwwmancyrepl';
+
+		/* * * DON'T EDIT BELOW THIS LINE * * */
+		(function() {
+			var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+		})();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</body>
 </html>
