@@ -35,7 +35,7 @@ export default class Repl extends React.Component {
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
-      'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands', 'onLoadScript',
+      'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands', 'onLoadScript', 'setTheme',
       'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript', 'onInit'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -87,15 +87,21 @@ export default class Repl extends React.Component {
     });
 
     ipcRenderer.on('application:preferences', ReplPreferencesActions.openPreferences);
+    ipcRenderer.on('application:focus', this.loadPreferences);
 
     ipcRenderer.on('application:preference-theme-dark', () => ReplPreferencesActions.setTheme('Dark Theme'));
     ipcRenderer.on('application:preference-theme-light', () => ReplPreferencesActions.setTheme('Light Theme'));
 
-    ipcRenderer.on('application:view-theme-dark', () => document.body.className = 'dark-theme');
-    ipcRenderer.on('application:view-theme-light', () => document.body.className = 'light-theme');
+    ipcRenderer.on('application:view-theme-dark', () => this.setTheme('Dark Theme'));
+    ipcRenderer.on('application:view-theme-light', () => this.setTheme('Light Theme'));
 
     ipcRenderer.on('application:new-release', this.onNewRelease);
     this.onInit();
+  }
+
+  setTheme(name) {
+    global.Mancy.session.theme = name;
+    document.body.className = _.kebabCase(name);
   }
 
   onInit() {
@@ -209,8 +215,7 @@ export default class Repl extends React.Component {
   }
 
   loadPreferences() {
-    let preferences = JSON.parse(localStorage.getItem('preferences'));
-    ipcRenderer.send('application:sync-preference', preferences);
+    ipcRenderer.send('application:sync-preference', global.Mancy.session);
   }
 
   onNewRelease(release) {

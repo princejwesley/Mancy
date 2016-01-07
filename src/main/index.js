@@ -36,6 +36,10 @@ function onCloseWindow(e) {
   e.returnValue = !ret;
 }
 
+function onFocusWindow(e) {
+  e.sender.webContents.send('application:focus');
+}
+
 app.on('window-all-closed', function() {
   promptOnClose = false;
   if (process.platform !== 'darwin') {
@@ -145,6 +149,7 @@ function onReady() {
     windowCache[id] = menuManagerCache[id] = null;
   });
   mainWindow.on('close', onCloseWindow);
+  mainWindow.on('focus', onFocusWindow);
 
   mainWindow.webContents.on('did-finish-load', function() {
     let totalActiveWindows = _.keys(windowCache).length;
