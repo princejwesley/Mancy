@@ -47,6 +47,15 @@ app.on('window-all-closed', function() {
   }
 });
 
+app.on('before-quit', function(e) {
+  onCloseWindow(e);
+  if(e.returnValue) {
+    promptOnClose = false;
+  } else {
+    e.preventDefault();
+  }
+});
+
 app.on('browser-window-blur', function(event, window) {
   window.$focus = false;
 });
