@@ -166,8 +166,17 @@ export class MenuManager extends EventEmitter {
   }
 
   forward(item, focusedWindow) {
-    if(!focusedWindow) { return; }
-    focusedWindow.webContents.send(item.command, item.value);
+    let callback = (browser) => browser.webContents.send(item.command, item.value);
+    if(!focusedWindow) {
+      let [window] = BrowserWindow.getAllWindows();
+      if(!window) {
+        app.emit('ready-action', callback);
+      } else {
+        window.show();
+        callback(window);
+      }
+    }
+    else { callback(focusedWindow); }
   }
 
   openDirectoryAction(item, focusedWindow) {

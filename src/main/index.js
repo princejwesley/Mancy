@@ -19,7 +19,7 @@ var promptOnClose = false;
 // set application root path as current working directory
 process.chdir(app.getAppPath());
 
-function onCloseWindow(e) {
+function onCloseWindow(e, detail) {
   var ret = promptOnClose;
   if(promptOnClose) {
     try {
@@ -28,7 +28,7 @@ function onCloseWindow(e) {
         buttons: ['Close', 'Cancel'],
         type: 'question',
         message: 'Close Window',
-        detail: `Do you want to close this window?`
+        detail: detail || `Do you want to close this window?`
       });
     } catch(e) { ret = false; }
   }
@@ -54,7 +54,7 @@ app.on('before-quit', function(e) {
   if(!window) {
     windows[0].show();
   }
-  onCloseWindow(e);
+  onCloseWindow(e, 'Do you want to quit?');
   if(e.returnValue) {
     promptOnClose = false;
   } else {
@@ -79,6 +79,7 @@ ipc.on('application:prompt-on-close', function(event, flag) {
 });
 
 app.on('ready', onReady);
+app.on('ready-action', onReady);
 app.on('activate', function(event, hasVisibleWindows) {
   if(!hasVisibleWindows) {
     onReady();
@@ -130,7 +131,7 @@ ipc.on('application:dock-message-notification', function(event, id) {
   }
 });
 
-function onReady() {
+function onReady(fun) {
   var {width, height} = require('screen').getPrimaryDisplay().workAreaSize;
   var options = {
     width: width * 0.75,
@@ -178,11 +179,14 @@ function onReady() {
       mainWindow.setPosition(nx, ny);
     }
     mainWindow.show();
-    mainWindow.focus();
     // Mac only
     if (process.platform === 'darwin') {
       mainWindow.showDefinitionForSelection(true);
       //mainWindow.setVisibleOnAllWorkspaces(true);
+    }
+
+    if(typeof fun === 'function') {
+      fun(mainWindow);
     }
   });
 }
