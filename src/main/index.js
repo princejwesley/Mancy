@@ -1,33 +1,33 @@
-var app = require('app');
-var path = require('path');
-var electron = require('electron');
-var BrowserWindow = electron.BrowserWindow;
-var {MenuManager} = require('./MenuManager');
-var Config = require('../package.json');
-var _ = require('lodash');
-var ipc = electron.ipcMain;
-var fs = require('fs');
-var dialog = require('dialog');
+const app = require('app');
+const path = require('path');
+const electron = require('electron');
+const BrowserWindow = electron.BrowserWindow;
+const {MenuManager} = require('./MenuManager');
+const Config = require('../package.json');
+const _ = require('lodash');
+const ipc = electron.ipcMain;
+const fs = require('fs');
+const dialog = require('dialog');
 const globalShortcut = electron.globalShortcut;
 
-var windowCache = {};
-var dockNotificationCache = {};
-var menuManagerCache = {};
-var windowCount = 0;
-var promptOnClose = false;
+const windowCache = {};
+const dockNotificationCache = {};
+const menuManagerCache = {};
+let windowCount = 0;
+let promptOnClose = false;
 
 // set application root path as current working directory
 process.chdir(app.getAppPath());
 
-function onCloseWindow(e, detail) {
+function onCloseWindow(e, title, detail) {
   var ret = promptOnClose;
   if(promptOnClose) {
     try {
       ret = !!dialog.showMessageBox(BrowserWindow.getFocusedWindow(), {
-        title: 'Close Window',
+        title: title || 'Close Window',
         buttons: ['Close', 'Cancel'],
         type: 'question',
-        message: 'Close Window',
+        message: title || 'Close Window',
         detail: detail || `Do you want to close this window?`
       });
     } catch(e) { ret = false; }
@@ -40,21 +40,21 @@ function onFocusWindow(e) {
   e.sender.webContents.send('application:focus');
 }
 
-app.on('window-all-closed', function() {
+app.on('window-all-closed', () => {
   promptOnClose = false;
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on('before-quit', function(e) {
+app.on('before-quit', (e) => {
   var windows = BrowserWindow.getAllWindows();
   if(!windows.length) { return; }
   var window = BrowserWindow.getFocusedWindow();
   if(!window) {
     windows[0].show();
   }
-  onCloseWindow(e, 'Do you want to quit?');
+  onCloseWindow(e, 'Quit Mancy', 'Do you want to quit?');
   if(e.returnValue) {
     promptOnClose = false;
   } else {
@@ -62,11 +62,9 @@ app.on('before-quit', function(e) {
   }
 });
 
-app.on('browser-window-blur', function(event, window) {
-  window.$focus = false;
-});
+app.on('browser-window-blur', (event, window) => window.$focus = false);
 
-app.on('browser-window-focus', function(event, window) {
+app.on('browser-window-focus', (event, window) => {
   window.$focus = true;
   dockNotificationCache[window.id] = 0;
   if (process.platform === 'darwin') {
@@ -74,19 +72,17 @@ app.on('browser-window-focus', function(event, window) {
   }
 });
 
-ipc.on('application:prompt-on-close', function(event, flag) {
-  promptOnClose = flag;
-});
+ipc.on('application:prompt-on-close', (event, flag) => promptOnClose = flag);
 
 app.on('ready', onReady);
 app.on('ready-action', onReady);
-app.on('activate', function(event, hasVisibleWindows) {
+app.on('activate', (event, hasVisibleWindows) => {
   if(!hasVisibleWindows) {
     onReady();
   }
 });
 
-ipc.on('application:open-sync-resource', function(event, options) {
+ipc.on('application:open-sync-resource', (event, options) => {
   event.returnValue = dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), options) || [];
 });
 
@@ -132,14 +128,15 @@ ipc.on('application:dock-message-notification', function(event, id) {
 });
 
 function onReady(fun) {
-  var {width, height} = require('screen').getPrimaryDisplay().workAreaSize;
-  var options = {
+  let {width, height} = require('screen').getPrimaryDisplay().workAreaSize;
+  let options = {
     width: width * 0.75,
     height: height * 0.75,
     minHeight: height * 0.5,
     minWidth: width * 0.5,
     resizable: true,
     webPreferences: {
+      overlayScrollbars: true,
       plugins: true,
       experimentalFeatures: true,
       experimentalCanvasFeatures: true,
@@ -155,25 +152,23 @@ function onReady(fun) {
   windowCache[id] = mainWindow;
   let menuManager = menuManagerCache[id] = new MenuManager();
 
-  mainWindow.loadURL('file://' + __dirname + '/../index.html');
+  mainWindow.loadURL(`file://${__dirname}/../index.html`);
   mainWindow.flashFrame(true);
   mainWindow.setTitle(`${_.capitalize(Config.name)} - REPL(${windowCount})`);
   windowCount += 1;
 
-  mainWindow.on('closed', function() {
-    windowCache[id] = menuManagerCache[id] = null;
-  });
+  mainWindow.on('closed',() => windowCache[id] = menuManagerCache[id] = null);
   mainWindow.on('close', onCloseWindow);
   mainWindow.on('focus', onFocusWindow);
 
-  mainWindow.webContents.on('did-finish-load', function() {
+  mainWindow.webContents.on('did-finish-load', () => {
     let totalActiveWindows = _.keys(windowCache).length;
     if(totalActiveWindows > 1) {
       let fixPos = (axis, adj) => {
         let naxis = axis + adj;
         return naxis <= 0 ? axis : naxis;
       };
-      let [x,y] = mainWindow.getPosition();
+      let [x, y] = mainWindow.getPosition();
       let adj = parseInt(Math.random() * 50) * (Math.random() > 0.3 ? -1: 1);
       let [nx, ny] = [fixPos(x, adj), fixPos(y, adj)];
       mainWindow.setPosition(nx, ny);
