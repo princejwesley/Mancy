@@ -48,6 +48,12 @@ app.on('window-all-closed', function() {
 });
 
 app.on('before-quit', function(e) {
+  var windows = BrowserWindow.getAllWindows();
+  if(!windows.length) { return; }
+  var window = BrowserWindow.getFocusedWindow();
+  if(!window) {
+    windows[0].show();
+  }
   onCloseWindow(e);
   if(e.returnValue) {
     promptOnClose = false;
@@ -133,7 +139,6 @@ function onReady() {
     minWidth: width * 0.5,
     resizable: true,
     webPreferences: {
-			overlayScrollbars: true,
       plugins: true,
       experimentalFeatures: true,
       experimentalCanvasFeatures: true,
@@ -180,6 +185,4 @@ function onReady() {
       //mainWindow.setVisibleOnAllWorkspaces(true);
     }
   });
-
-  menuManager.attachToWindow();
 }

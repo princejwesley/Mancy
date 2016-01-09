@@ -301,7 +301,7 @@ gulp.task('run', (cb) => {
         process.platform !== 'win32'
           ? './node_modules/.bin/electron'
           : '.\\node_modules\\.bin\\electron.cmd'
-        , [PATHS.APP]);
+        , [PATHS.APP, '--debug']);
       cb();
     } catch(err) {
       onError(err);

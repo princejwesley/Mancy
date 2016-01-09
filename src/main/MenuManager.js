@@ -5,10 +5,13 @@ import dialog from 'dialog';
 import MenuItem from 'menu-item';
 import _ from 'lodash';
 import EventEmitter from 'events';
-import MancyApplication from './MancyApplication';
 import Config from '../package.json';
 import {join} from 'path';
 import {ipcMain} from 'electron';
+import BrowserWindow from 'browser-window';
+import {readFileSync} from 'fs';
+import shell from 'shell';
+import GitHubApi from 'github';
 
 let platformMenu = require(`../menus/${process.platform}.json`);
 let noop = () => {};
@@ -17,7 +20,7 @@ export class MenuManager extends EventEmitter {
 
   constructor() {
     super();
-    _.each(['bindMenuItems', 'systemMenuItems', 'addImages',
+    _.each(['bindMenuItems', 'systemMenuItems', 'addImages', 'attachToWindow',
       'buildMenuSelectorActions', 'checkForUpdate', 'checkNewRelease'], (fun) => {
       this[fun] = this[fun].bind(this);
     });
@@ -44,11 +47,11 @@ export class MenuManager extends EventEmitter {
         }
       }
     });
+    this.attachToWindow();
   }
 
   attachToWindow() {
-    this.mancyApplication = new MancyApplication();
-    this.menuSelectorActions = this.buildMenuSelectorActions(this.mancyApplication);
+    this.menuSelectorActions = this.buildMenuSelectorActions();
     let menuTemplate = _.cloneDeep(platformMenu);
     this.bindMenuItems(menuTemplate);
     this.systemMenuItems(menuTemplate);
@@ -108,26 +111,26 @@ export class MenuManager extends EventEmitter {
     } catch(e) { cb(); }
   }
 
-  buildMenuSelectorActions(app) {
+  buildMenuSelectorActions() {
     return {
-      'application:new-window': app.openNewWindow,
-      'application:add-path': app.openDirectoryAction,
-      'application:export-file': app.saveFileAction,
-      'application:import-file': app.openFileAction,
-      'application:quit': app.quitApplication,
-      'window:close': app.closeWindow,
-      'window:reload': app.windowReload,
-      'window:toggle-full-screen': app.toggleFullScreen,
-      'application:minimize': app.minimizeWindow,
-      'application:maximize': app.maximizeWindow,
-      'application:open-license': app.showLicense,
-      'application:open-documentation': app.openDocumentation,
-      'application:report-issue': app.reportIssue,
-      'application:about': app.aboutMancy,
+      'application:new-window': this.openNewWindow,
+      'application:add-path': this.openDirectoryAction,
+      'application:export-file': this.saveFileAction,
+      'application:import-file': this.openFileAction,
+      'application:quit': this.quitApplication,
+      'window:close': this.closeWindow,
+      'window:reload': this.windowReload,
+      'window:toggle-full-screen': this.toggleFullScreen,
+      'application:minimize': this.minimizeWindow,
+      'application:maximize': this.maximizeWindow,
+      'application:open-license': this.showLicense,
+      'application:open-documentation': this.openDocumentation,
+      'application:report-issue': this.reportIssue,
+      'application:about': this.aboutMancy,
       'application:check-update': this.checkForUpdate,
-      'application:release-notes': app.releaseNotes,
-      'application:save-as': app.saveFileAction,
-      'application:load-file': app.openFileAction,
+      'application:release-notes': this.releaseNotes,
+      'application:save-as': this.saveFileAction,
+      'application:load-file': this.openFileAction,
     };
   }
 
@@ -144,7 +147,7 @@ export class MenuManager extends EventEmitter {
         this.bindMenuItems(menuItem.submenu);
         continue;
       }
-      menuItem.click = this.menuSelectorActions[menuItem.command] || this.mancyApplication.forward;
+      menuItem.click = this.menuSelectorActions[menuItem.command] || this.forward;
     }
   }
 
@@ -156,6 +159,114 @@ export class MenuManager extends EventEmitter {
     _.each(langMenu.submenu, (menu) => {
       menu.icon = nativeImage.createFromPath(join(__dirname, '..', 'logos', `${menu.value}.png`))
     });
+  }
+
+  openNewWindow() {
+    app.emit('ready');
+  }
+
+  forward(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    focusedWindow.webContents.send(item.command, item.value);
+  }
+
+  openDirectoryAction(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    let path = dialog.showOpenDialog(focusedWindow, {
+      title: item,
+      properties: [
+        'openDirectory'
+      ]
+    });
+
+    if(path) {
+      focusedWindow.webContents.send(item.command, path);
+    }
+  }
+
+  saveFileAction(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    let filename = dialog.showSaveDialog(focusedWindow, {
+      title: item,
+      filters: [{ name: 'All Files', extensions: ['*'] }]
+    });
+    if(filename) {
+      focusedWindow.webContents.send(item.command, filename);
+    }
+  }
+
+  openFileAction(item, focusedWindow) {
+    if(!focusedWindow) { return; }
+    let filename = dialog.showOpenDialog(focusedWindow, {
+      title: item,
+      filters: [{ name: 'All Files', extensions: ['*'] }],
+      properties: [
+        'openFile'
+      ]
+    });
+    if(filename) {
+      focusedWindow.webContents.send(item.command, filename[0]);
+    }
+  }
+
+  windowReload(item, focus) {
+    if(!focus) { return; }
+    focus.reload();
+  }
+
+  toggleFullScreen(item, focusedWindow) {
+    let isFullScreen = focusedWindow.isFullScreen();
+    focusedWindow.setFullScreen(!isFullScreen);
+  }
+
+  quitApplication() {
+    app.quit();
+  }
+
+  closeWindow(item, window) {
+    window.close();
+  }
+
+  minimizeWindow(item, window) {
+    window.minimize();
+  }
+
+  maximizeWindow(item, window) {
+    window.maximize();
+  }
+
+  showLicense(item, focusedWindow) {
+    let options = {
+      title: 'About License',
+      buttons: ['Close'],
+      type: 'info',
+      message: `${Config.license} License`,
+      detail: readFileSync(`${__dirname}/../LICENSE`).toString('utf8')
+    };
+    dialog.showMessageBox(focusedWindow || null, options);
+  }
+
+  openDocumentation() {
+    shell.openExternal(Config.homepage);
+  }
+
+  reportIssue() {
+    shell.openExternal(Config.bugs.url);
+  }
+
+  releaseNotes() {
+    shell.openExternal(`${Config.homepage}/blob/master/CHANGELOG.md`);
+  }
+
+  aboutMancy(item, focusedWindow) {
+    let options = {
+      title: 'About Mancy',
+      buttons: ['Close'],
+      type: 'info',
+      message: `${Config.description} (v${Config.version})`,
+      detail: `${Config.license} Copyright (c) 2015 ${Config.author}`
+    };
+    dialog.showMessageBox(focusedWindow || null, options);
   }
 
   systemMenuItems(menuItems) {
