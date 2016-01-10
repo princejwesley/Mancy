@@ -1,7 +1,7 @@
 {
   "name": "mancy",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A GUI REPL for Javascript & more…",
   "main": "main/index.js",
   "scripts": {
@@ -74,7 +74,7 @@
     "coffee-script": "https://github.com/princejwesley/coffeescript.git",
     "escodegen": "^1.7.0",
     "esprima": "^2.6.0",
-    "font-awesome": "^4.4.0",
+    "font-awesome": "^4.5.0",
     "font-manager": "0.2.0",
     "github": "^0.2.4",
     "highlight.js": "^8.8.0",
