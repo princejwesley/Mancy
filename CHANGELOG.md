@@ -1,3 +1,25 @@
+## <img src="icons/mancy.png" width="25">&nbsp;[v2.2.0](http://mancy-re.pl)  (Jan 10, 2016)
+
+- Grid view support [:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/grid-dark.png)[:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/grid-transpose.png)
+- await + sync support [:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/await-progress.png) [:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/await-resolved.png)
+- load scripts support
+- Prompt before quit preference
+- `load file..` & `save command as..` menu
+- Add node REPL builtins in context
+- Upgrade electron `0.36.2` and babel 6
+- Shortcut for previous commands <kbd>ctrl</kbd> + <kbd>shift</kbd>+ <kbd>0</kbd>..<kbd>9</kbd>
+- Global variable watcher [:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/global-env-dark.png)[:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/global-env-light.png)
+- Store as global variable support  [:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/store-as-global-before.png)[:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/store-as-global-after.png)
+- node REPL is used only for load files and auto completion
+- Add polyfills to REPL context
+- Add start up script preference.
+- Add npm modules path preferences with navigation support [:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/node-modules-preference.png)
+- `npm install -g mancy`
+
+and bug fixes.
+
+Note:
+- Some ES2015 features requires `strict` mode enabled.
 
 ## <img src="icons/mancy.png" width="25">&nbsp;[v2.1.0](http://mancy-re.pl)  (Nov 28, 2015)
 
