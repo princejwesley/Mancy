@@ -136,7 +136,7 @@ function onReady(fun) {
     minWidth: width * 0.5,
     resizable: true,
     webPreferences: {
-      overlayScrollbars: true,
+      blinkFeatures: 'OverlayScrollbars',
       plugins: true,
       experimentalFeatures: true,
       experimentalCanvasFeatures: true,
