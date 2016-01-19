@@ -402,6 +402,7 @@ export default class ReplActiveInput extends React.Component {
       cli.context = ReplContext.getContext();
       this.promptInput = text;
       let {local, output, input, force} = ReplInput.transform(text);
+      let out = output;
       this.force = !!force;
 
       if(local) {
@@ -414,7 +415,7 @@ export default class ReplActiveInput extends React.Component {
         if(global.Mancy.session.lang !== 'js') {
           cli.transpile(output, cli.context, this.transpileAndExecute);
         } else {
-          this.transpileAndExecute(_.isError(output) ? output : null, output);
+          this.transpileAndExecute(_.isError(out) ? out : null, out);
         }
         return;
       }

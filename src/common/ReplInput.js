@@ -6,11 +6,20 @@ let babel = require('babel-core');
 
 const awaitMatcher = /^(?:\s*(?:(?:let|var|const)\s)?\s*([^=]+)=\s*|^\s*)(await\s.*)/;
 const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
+const importMatcher = /^\s*import\s+(?:(?:{(.+?)})|(.+?))\s+from\s+(['"])(.+)\3/m;
 const USE_STRICT_LENGTH = "'user strict;'".length;
 
 let asyncWrapper = (code, binder) => {
   let assign = binder ? `root.${binder} = result;` : '';
   return `(async function() { let result = (${code}); ${assign} return result; }())`;
+};
+
+let importWrapper = (code, [prefix, bindings, asBinding, __, modname]) => {
+  if(asBinding) {
+    return code.replace(prefix, `import * as ${asBinding} from '${modname}';`);
+  }
+  let suffix = Array.join(bindings.replace(/\s+/,'').split(',').map(m => `root.${m} = require('${modname}').${m};\n`), '');
+  return code.replace(prefix,`${prefix};\n${suffix}; undefined`);
 };
 
 let cook = (plain) => {
@@ -27,12 +36,20 @@ let cook = (plain) => {
 
   let output = plain, force = false;
 
-  if(global.Mancy.preferences.asyncWrap && global.Mancy.preferences.lang === 'js') {
-    // bare await
-    let match = plain.match(awaitMatcher);
-    if(match) {
-      output = `${asyncWrapper(match[2], match[1])}`;
-      force = true;
+  if(global.Mancy.preferences.lang === 'js') {
+    if(global.Mancy.preferences.asyncWrap) {
+      // bare await
+      let match = plain.match(awaitMatcher);
+      if(match) {
+        output = `${asyncWrapper(match[2], match[1])}`;
+        force = true;
+      }
+    }
+    if(!force) {
+      let match = plain.match(importMatcher);
+      if(match) {
+        output = `${importWrapper(plain, match)}`;
+      }
     }
   }
 
