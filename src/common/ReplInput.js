@@ -6,7 +6,9 @@ let babel = require('babel-core');
 
 const awaitMatcher = /^(?:\s*(?:(?:let|var|const)\s)?\s*([^=]+)=\s*|^\s*)(await\s.*)/;
 const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
-const importMatcher = /^\s*import\s+(?:(?:{(.+?)})|(.+?))\s+from\s+(['"])(.+)\3/m;
+const importMatcher = /\bimport\s+(?:(?:{(.+?)})|(.+?))\s+from\s+(['"])(.+?)\3/g;
+const bindAsMatcher = /(.*)\s+as\s+(.*)/;
+const asDefaultMatcher = /(?:\*|default)\s+as/;
 const USE_STRICT_LENGTH = "'user strict;'".length;
 
 let asyncWrapper = (code, binder) => {
@@ -14,13 +16,22 @@ let asyncWrapper = (code, binder) => {
   return `(async function() { let result = (${code}); ${assign} return result; }())`;
 };
 
-let importWrapper = (code, [prefix, bindings, asBinding, __, modname]) => {
+let importToRequire = (prefix, bindings, asBinding, __, modname) => {
   if(asBinding) {
-    return code.replace(prefix, `import * as ${asBinding} from '${modname}';`);
+    return `var ${asBinding.replace(asDefaultMatcher, '')} = (require('${modname}').default || require('${modname}'));`;
   }
-  let suffix = Array.join(bindings.replace(/\s+/,'').split(',').map(m => `root.${m} = require('${modname}').${m};\n`), '');
-  return code.replace(prefix,`${prefix};\n${suffix}; undefined`);
+  let result = Array.join((bindings).trim()
+    .split(',')
+    .map(m => {
+      const asM = m.trim();
+      const asBound = asM.match(bindAsMatcher);
+      const [x, y] = asBound ? [asBound[1], asBound[2]] : [asM, asM];
+      const attr = x === 'default' || x === '*' ? '' : `.${x}`;
+      return `root.${y} = (require('${modname}').default || require('${modname}'))${attr};\n`
+    }), '');
+  return `${result}; void 0;`;
 };
+
 
 let cook = (plain) => {
   let tplain = plain.trim();
@@ -45,11 +56,8 @@ let cook = (plain) => {
         force = true;
       }
     }
-    if(!force) {
-      let match = plain.match(importMatcher);
-      if(match) {
-        output = `${importWrapper(plain, match)}`;
-      }
+    if(!force && plain.indexOf('import') !== -1) {
+      output = plain.replace(importMatcher, importToRequire);
     }
   }
 
@@ -75,6 +83,11 @@ let babelTransfrom = (plain) => {
     let code = babel
       .transform(plain, ReplConstants.BABEL_OPTIONS)
       .code;
+
+    // transform imports added by babel scripts into require
+    if(!strict && code.indexOf('import') !== -1) {
+      code = code.replace(importMatcher, importToRequire);
+    }
 
     return strict ? code.substring(USE_STRICT_LENGTH - 1) : code;
   } catch(e) {
