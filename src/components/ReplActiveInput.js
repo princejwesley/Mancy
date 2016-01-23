@@ -474,9 +474,9 @@ export default class ReplActiveInput extends React.Component {
         this.removeSuggestion();
       }
 
+      if(!this.keyPressFired) { return; }
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
       this.autoFillCharacters(e, pos);
-      if(!this.keyPressFired) { return; }
 
       this.element.innerHTML = ReplCommon.highlight(this.element.innerText);
       this.undoManager.add({
