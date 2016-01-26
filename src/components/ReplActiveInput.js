@@ -46,12 +46,13 @@ export default class ReplActiveInput extends React.Component {
     this.retried = false;
     this.setDebouncedComplete();
     this.undoManager = new ReplUndo();
+    this.replMode = global.Mancy.session.editor === 'REPL';
   }
 
   componentDidMount() {
     this.unsubscribe = ReplActiveInputStore.listen(this.onStoreChange);
     this.element = React.findDOMNode(this);
-    this.focus();
+    if(this.replMode) { this.focus(); }
 
     let cli = ReplLanguages.getREPL();
     //set desired repl mode
@@ -161,13 +162,18 @@ export default class ReplActiveInput extends React.Component {
       if(this.done) { return; }
       this.element.className = 'repl-active-input';
       formattedOutput = formatted ? output : ReplOutput.some(output).highlight().formattedOutput;
-      ReplActions.addEntry({
+      const entry = {
         formattedOutput,
         status,
         command,
         plainCode,
         transpiledOutput
-      });
+      };
+      if(this.replMode || this.history.idx === -1) {
+        ReplActions.addEntry(entry);
+      } else {
+        ReplActions.updateEntry(this.history.idx, entry);
+      }
       this.removeSuggestion();
       this.promptInput = this.replFeed = null;
       this.commandReady = this.force = false;
@@ -532,7 +538,7 @@ export default class ReplActiveInput extends React.Component {
       let pos = ReplDOM.getCursorPositionRelativeTo(this.element);
       let [left, right] = ReplCommon.divide(elementText, pos);
       let str = up ? left : right;
-      if(str.indexOf(EOL) === -1) {
+      if(global.Mancy.session.editor === 'REPL' && str.indexOf(EOL) === -1) {
         this.traverseHistory(up);
         e.preventDefault();
       }

@@ -8,6 +8,13 @@
   .repl-entry-message {
     @include entryLayout();
 
+    &.repl-notebook {
+      padding: 0px;
+      .repl-entry-message-output {
+        padding: 5px 0px 5px 25px;
+      }
+    }
+
     .repl-entry-message-command {
       @include highlight();
       min-height: $app-font-size;
