@@ -26,15 +26,17 @@ export class MenuManager extends EventEmitter {
     });
 
     ipcMain.on('application:sync-preference', (sender, preferences)  => {
-      let {mode, theme, lang} = preferences;
+      let {mode, theme, lang, editor} = preferences;
       let menu = Menu.getApplicationMenu();
       // sync views, prompts
       let viewMenu = menu.items[process.platform === 'darwin' ? 3 : 2];
       let themeMenu = _.find(viewMenu.submenu.items, (item) => item.label === 'Theme');
       let promptMenu = menu.items[process.platform === 'darwin' ? 4 : 3];
       let langMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Language');
-      let modeMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Mode');
+      let modeMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'REPL Mode');
+      let editorMenu = _.find(promptMenu.submenu.items, (item) => item.label === 'Editor Mode');
       _.find(modeMenu.submenu.items, (m) => m.label === mode).checked = true;
+      _.find(editorMenu.submenu.items, (m) => m.label === editor).checked = true;
       _.find(langMenu.submenu.items, (m) => m.value === lang).checked = true;
       _.find(themeMenu.submenu.items, (t) => t.label === theme).checked = true;
     });

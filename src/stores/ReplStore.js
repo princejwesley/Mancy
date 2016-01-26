@@ -2,6 +2,7 @@ import ReplActions from '../actions/ReplActions';
 import Reflux from 'reflux';
 import _ from 'lodash';
 import ReplCommon from '../common/ReplCommon';
+import md5 from 'md5';
 
 let cache = {
   entries: [],
@@ -35,9 +36,18 @@ const ReplStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplActions);
   },
+  onUpdateEntry(pos, entry) {
+    const tag = cache.entries[pos].tag;
+    cache.entries[pos] = _.extend({tag}, entry);
+    const idx = _.findIndex(cache.history, h => h.tag === tag);
+    // overwrite history! :(
+    if(idx !== -1) { cache.history[idx].plainCode = entry.plainCode }
+    this.trigger();
+  },
   onAddEntry(entry) {
-    cache.entries.push(entry);
-    cache.history.push({'plainCode': entry.plainCode})
+    const tag = `${md5(entry.plainCode)}-${Math.random()}`;
+    cache.entries.push(_.extend({tag}, entry));
+    cache.history.push({'plainCode': entry.plainCode, tag});
     cache.reloadPrompt = true;
     resetButEntry();
     this.trigger();
@@ -95,6 +105,10 @@ const ReplStore = Reflux.createStore({
     this.trigger();
   },
   onSetREPLMode(mode) {
+    cache.reloadPrompt = true;
+    this.trigger();
+  },
+  onSetEditorMode(mode) {
     cache.reloadPrompt = true;
     this.trigger();
   },

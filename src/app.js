@@ -24,6 +24,7 @@ import webFrame from 'web-frame';
 (() => {
   let preferences = JSON.parse(localStorage.getItem('preferences') || '{}');
   let defaults = {
+    "editor": "REPL",
     "mode": "Strict",
     "theme": "Dark Theme",
     "timeout": ReplConstants.EXEC_TIMEOUT,
@@ -53,7 +54,12 @@ import webFrame from 'web-frame';
   localStorage.setItem('preferences', JSON.stringify(preferences));
 
   global.Mancy.userData = remote.require('app').getPath('userData');
-  global.Mancy.session = { lang: preferences.lang, mode: preferences.mode, theme: preferences.theme };
+  global.Mancy.session = {
+    lang: preferences.lang,
+    mode: preferences.mode,
+    theme: preferences.theme,
+    editor: preferences.editor
+  };
 })();
 
 function onLoadSettings() {

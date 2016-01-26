@@ -9,7 +9,9 @@
       display: flex;
       margin: 0;
       padding: 5px;
-
+      &.repl-notebook {
+        padding: 0px;
+      }
       .repl-entry-icon,
       .repl-entry-status {
         @include notSelectable();
@@ -19,7 +21,7 @@
         color: if($theme == $dark-theme, $dark-app-entry-icon-color, $lt-app-entry-icon-color);
         @include arrowIcon();
         .fa {
-          cursor: pointer;          
+          cursor: pointer;
         }
       }
 

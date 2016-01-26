@@ -101,7 +101,14 @@
         "type": "separator"
       },
       {
-        "label": "Mode",
+        "label": "Editor Mode",
+        "submenu": [
+          { "label" : "REPL", "type": "radio", "value": "REPL", "command": "application:editor-mode" },
+          { "label" : "Notebook", "type": "radio", "value": "Notebook", "command": "application:editor-mode" }
+        ]
+      },
+      {
+        "label": "REPL Mode",
         "submenu": [
           { "label" : "Magic", "type": "radio", "value": "Magic", "command": "application:prompt-mode" },
           { "label" : "Sloppy", "type": "radio", "value": "Sloppy", "command": "application:prompt-mode" },

@@ -3,6 +3,7 @@ import ReplEntryIcon from './ReplEntryIcon';
 import ReplEntryMessage from './ReplEntryMessage';
 import ReplEntryStatus from './ReplEntryStatus';
 import ReplActions from '../actions/ReplActions';
+import ReplNotebook from './ReplNotebook';
 import clipboard from 'clipboard';
 import _ from 'lodash';
 
@@ -28,7 +29,16 @@ export default class ReplEntry extends React.Component {
   onCommandCollapse() {
     ReplActions.toggleCommandEntryView(this.props.index);
   }
-  render() {
+
+  renderNotebook() {
+    return (
+      <div className='repl-entry repl-notebook'>
+        <ReplNotebook message={this.props.log} index={this.props.index}/>
+      </div>
+    );
+  }
+
+  renderREPL() {
     return (
       <div className='repl-entry'>
         <ReplEntryIcon collapse={this.props.log.commandCollapsed}
@@ -41,5 +51,9 @@ export default class ReplEntry extends React.Component {
           onToggle={this.onToggle}/>
       </div>
     );
+  }
+
+  render() {
+    return global.Mancy.preferences.editor === 'REPL' ? this.renderREPL() : this.renderNotebook();
   }
 }

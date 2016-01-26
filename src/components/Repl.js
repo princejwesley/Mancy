@@ -36,7 +36,8 @@ export default class Repl extends React.Component {
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
       'onImport', 'onExport', 'onAddPath', 'loadPreferences', 'onSaveCommands', 'onLoadScript', 'setTheme',
-      'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript', 'onInit'
+      'checkNewRelease', 'onNewRelease', 'resizeWindow', 'onSetREPLMode', 'loadStartupScript', 'onInit',
+      'onSetEditorMode'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -80,6 +81,7 @@ export default class Repl extends React.Component {
     ipcRenderer.on('application:prompt-format', this.onFormatPromptCode);
 
     ipcRenderer.on('application:prompt-mode', (sender, value) => this.onSetREPLMode(value));
+    ipcRenderer.on('application:editor-mode', (sender, value) => this.onSetEditorMode(value));
     ipcRenderer.on('application:prompt-language', (sender, value) =>  {
       global.Mancy.session.lang = value;
       ReplLanguages.setREPL(value);
@@ -107,6 +109,7 @@ export default class Repl extends React.Component {
   onInit() {
     this.checkNewRelease();
     this.onSetREPLMode(global.Mancy.preferences.mode);
+    this.onSetEditorMode(global.Mancy.preferences.editor);
     ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
 
     this.resizeWindow();
@@ -310,6 +313,13 @@ export default class Repl extends React.Component {
     ReplStore.onSetREPLMode(mode);
     ReplStatusBarActions.updateMode(mode);
     global.Mancy.session.mode = mode;
+  }
+
+  onSetEditorMode(mode) {
+    let win = remote.getCurrentWindow();
+    win.setTitle(win.getTitle().replace(/REPL|Notebook/, mode));
+    ReplStore.onSetEditorMode(mode);
+    global.Mancy.session.editor = mode;
   }
 
   onPaste(e) {

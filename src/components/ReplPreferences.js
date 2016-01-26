@@ -22,7 +22,7 @@ export default class ReplPreferences extends React.Component {
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
       'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
-      'resetLoadScript', 'onTogglePromptOnClose', 'onToggleAutoCloseSymbol',
+      'resetLoadScript', 'onTogglePromptOnClose', 'onToggleAutoCloseSymbol', 'onEditorChange',
       'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -78,6 +78,10 @@ export default class ReplPreferences extends React.Component {
 
   onModeChange(e) {
     ReplPreferencesStore.onSetREPLMode(e.target.value);
+  }
+
+  onEditorChange(e) {
+    ReplPreferencesStore.onSetEditorMode(e.target.value);
   }
 
   onLangChange(e) {
@@ -192,6 +196,21 @@ export default class ReplPreferences extends React.Component {
                   })
                 }
               </select>
+            </div>
+          </div>
+          <div className='preference'>
+            <div className='preference-name'>
+              Editor mode
+            </div>
+            <div className='preference-value'>
+              <fieldset>
+                <span className='radio-group'>
+                  <input type="radio" name="editor" checked={this.state.editor === 'REPL'} value="REPL" onClick={this.onEditorChange} /> REPL
+                </span>
+                <span className='radio-group'>
+                  <input type="radio" name="editor" checked={this.state.editor === 'Notebook'} value="Notebook" onClick={this.onEditorChange} /> Notebook
+                </span>
+              </fieldset>
             </div>
           </div>
           <div className='preference'>
