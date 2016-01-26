@@ -8,6 +8,7 @@ const ReplActions = Reflux.createActions([
   "toggleCommandEntryView",
   "toggleEntryView",
   "setREPLMode",
+  "setEditorMode",
   "overrideLastOutput",
   "bindObjectToContext",
 ]);

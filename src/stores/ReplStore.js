@@ -98,6 +98,9 @@ const ReplStore = Reflux.createStore({
     cache.reloadPrompt = true;
     this.trigger();
   },
+  onSetEditorMode(mode) {
+    this.trigger();
+  },
   toggleConsole() {
     cache.showConsole = !cache.showConsole;
     cache.reloadPrompt = false;

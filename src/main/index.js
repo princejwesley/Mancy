@@ -160,6 +160,7 @@ function onReady(fun) {
   mainWindow.on('closed',() => windowCache[id] = menuManagerCache[id] = null);
   mainWindow.on('close', onCloseWindow);
   mainWindow.on('focus', onFocusWindow);
+  mainWindow.flashFrame(true);
 
   mainWindow.webContents.on('did-finish-load', () => {
     let totalActiveWindows = _.keys(windowCache).length;

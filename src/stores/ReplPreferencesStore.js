@@ -11,6 +11,7 @@ import webFrame from 'web-frame';
 import ReplConstants from '../constants/ReplConstants';
 import ReplContext from '../common/ReplContext';
 import ReplCommon from '../common/ReplCommon';
+import remote from 'remote';
 
 let open = false;
 const ReplPreferencesStore = Reflux.createStore({
@@ -118,6 +119,14 @@ const ReplPreferencesStore = Reflux.createStore({
       global.Mancy.session.mode = mode;
       ReplStatusBarActions.updateMode(mode);
       ReplActions.setREPLMode(mode);
+    });
+  },
+  onSetEditorMode(mode) {
+    this.updatePreference((preferences) => {
+      preferences.editor = mode;
+      global.Mancy.session.editor = mode;
+      let win = remote.getCurrentWindow();
+      win.webContents.send('application:editor-mode', mode);
     });
   },
   onSetLanguage(lang) {
