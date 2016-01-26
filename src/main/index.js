@@ -171,7 +171,7 @@ function onReady(fun) {
       let [x, y] = mainWindow.getPosition();
       let adj = parseInt(Math.random() * 50) * (Math.random() > 0.3 ? -1: 1);
       let [nx, ny] = [fixPos(x, adj), fixPos(y, adj)];
-      mainWindow.setPosition(nx, ny);
+      mainWindow.setPosition(nx, ny, true);
     }
     mainWindow.show();
     // Mac only
