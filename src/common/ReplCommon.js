@@ -256,6 +256,7 @@ let ReplCommon = {
   isTypedArrayInstance: (o) => !!typedArrays.find((ta) => o instanceof ta),
   isTypedArrayLike: (o) => typedArraysLike.indexOf(ReplCommon.type(o)) !== -1,
   isTypedArray: (o) => ReplCommon.isTypedArrayInstance(o) || ReplCommon.isTypedArrayLike(o),
+  isUint8Array: (o) => o instanceof Uint8Array || ReplCommon.type(o) === 'Uint8Array',
   runInContext: (js, cb) => {
     try {
       let {timeout} = global.Mancy.preferences;

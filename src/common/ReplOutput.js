@@ -118,6 +118,10 @@ let ReplOutputType = {
       return ReplOutputType.array(o);
     }
 
+    if(Buffer.isBuffer(o) || ReplCommon.isUint8Array(o)) {
+      return ReplOutputType['buffer'](o);
+    }
+
     if(ReplCommon.isTypedArray(o)) {
       let arrayLike = ReplCommon.toArray(o);
       return ReplOutputType.array(arrayLike, {type: ReplCommon.type(o), proto: o.__proto__});
@@ -154,10 +158,6 @@ let ReplOutputType = {
           return ReplOutputType['promise'](m.status(), m.promiseValue().value(), o);
         }
       }
-    }
-
-    if(Buffer.isBuffer(o)) {
-      return ReplOutputType['buffer'](o);
     }
 
     if(ReplCommon.candidateForChart(o)) {
