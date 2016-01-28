@@ -415,12 +415,13 @@ export default class ReplActiveInput extends React.Component {
         return this.addEntryAction(output, true, input, text);
       }
 
-      if(forceStrict || global.Mancy.session.mode === 'Strict') { output = `'use strict'; void 0; ${output}` }
-
       if(!text.match(/^\s*\.load/)) {
         if(global.Mancy.session.lang !== 'js') {
           cli.transpile(output, cli.context, this.transpileAndExecute);
         } else {
+          if(forceStrict || global.Mancy.session.mode === 'Strict') {
+            output = `'use strict'; void 0; ${output}`
+          }
           this.transpileAndExecute(_.isError(out) ? out : null, out);
         }
         return;
