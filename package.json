@@ -41,7 +41,7 @@
     "babel-jest": "^6.0.1",
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "0.36.5",
+    "electron-prebuilt": "0.36.6",
     "electron-rebuild": "^1.0.2",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",
@@ -84,7 +84,7 @@
     "md5": "^2.0.0",
     "react": "^0.13.3",
     "reflux": "^0.2.12",
-    "typescript": "1.6.2"
+    "typescript": "1.7.5"
   },
   "repository": {
     "type": "git",

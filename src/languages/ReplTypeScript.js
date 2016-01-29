@@ -27,10 +27,12 @@ let buildNumber = 0;
 let nodeLineListener = () => {};
 let promptData = '';
 
+let readTs = fileName => !fs.existsSync(fileName) ? undefined :
+  ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString());
 let langServiceHost = {
   getScriptFileNames: () => [replFile],
   getScriptVersion: (fileName) => fileName === replFile && buildNumber.toString(),
-  getScriptSnapshot: (fileName) => ts.ScriptSnapshot.fromString(fileName === replFile ? code : fs.readFileSync(fileName).toString()),
+  getScriptSnapshot: (fileName) => fileName === replFile ? ts.ScriptSnapshot.fromString(code) : readTs(fileName),
   getCurrentDirectory: () => process.cwd(),
   getCompilationSettings: () => compileOptions,
   getDefaultLibFileName: (options) => path.join(__dirname, '../node_modules/typescript/lib/lib.core.es6.d.ts'),
