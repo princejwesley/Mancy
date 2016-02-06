@@ -208,7 +208,7 @@ export default class ReplPreferences extends React.Component {
                   <input type="radio" name="editor" checked={this.state.editor === 'REPL'} value="REPL" onClick={this.onEditorChange} /> REPL
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="editor" checked={this.state.editor === 'Notebook'} value="Notebook" onClick={this.onEditorChange} /> Notebook
+                  <input type="radio" name="editor" checked={this.state.editor === 'Notebook'} value="Notebook" onClick={this.onEditorChange} /> Notebook<small>(beta)</small>
                 </span>
               </fieldset>
             </div>
