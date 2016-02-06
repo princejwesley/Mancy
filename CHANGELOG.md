@@ -1,3 +1,10 @@
+## <img src="icons/mancy.png" width="25">&nbsp;[v2.2.1](http://mancy-re.pl)  (Feb 07, 2016)
+
+- Upgrade typescript -> 1.7.5 & electron -> 0.36.7
+- notebook mode(experimental)
+
+and bug fixes.
+
 ## <img src="icons/mancy.png" width="25">&nbsp;[v2.2.0](http://mancy-re.pl)  (Jan 10, 2016)
 
 - Grid view support [:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/grid-dark.png)[:paperclip:](https://raw.githubusercontent.com/princejwesley/Mancy/master/images/grid-transpose.png)
