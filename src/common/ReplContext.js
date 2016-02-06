@@ -35,26 +35,10 @@ let createContext = () => {
     '__filename',
     '__dirname'
   ];
-  // polyfills
-  let polyfills = [
-    "Array",
-    "Object",
-    "Math",
-    "Symbol",
-    "String",
-    "Number",
-    "Reflect",
-    "System",
-    "Error",
-  ];
 
-  let circulars = [ '_', 'global', 'GLOBAL', 'root'];
+  let circulars = ['global', 'GLOBAL', 'root'];
 
   _.each(defaults, (g) => {
-    context[g] = global[g];
-  });
-
-  _.each(polyfills, (g) => {
     context[g] = global[g];
   });
 
@@ -78,27 +62,18 @@ let createContext = () => {
     console.error(err);
   });
 
-  let {createScript} = vm;
-  vm.createScript = (code, options) => {
-    try {
-      let {timeout} = getPreferences();
-      let cxt = createScript(code, options);
-      let runInContext = cxt.runInContext.bind(cxt);
-      cxt.runInContext = (contextifiedSandbox, options) => {
-        return runInContext(contextifiedSandbox, {
-          displayErrors: false,
-          timeout: timeout
-        });
-      };
-      global.Mancy.REPLError = null;
-      return cxt;
-    } catch(e) {
-      if(e instanceof SyntaxError) {
-        global.Mancy.REPLError = e;
-      }
-      throw e;
-    }
-  };
+  // load builtIns
+  let builtins = require('repl')._builtinLibs;
+  _.each(builtins, (name) => {
+    Object.defineProperty(context, name, {
+      get: () => (context[name] = require(name)),
+      set: (val) => {
+        delete context[name];
+        context[name] = val;
+      },
+      configurable: true
+    });
+  });
 
   let _load = module._load;
   module._load = (request, parent, isMain) => {
@@ -115,7 +90,6 @@ let createContext = () => {
       }
     }
   };
-
 
   let debuglog = util.debuglog;
   util.debuglog = (name) => {
@@ -140,18 +114,51 @@ let createContext = () => {
     context.process.env.PATH += ':/usr/local/bin';
   }
 
-  // load builtIns
-  let builtins = require('repl')._builtinLibs;
-  _.each(builtins, (name) => {
-    Object.defineProperty(context, name, {
-      get: () => (context[name] = require(name)),
-      set: (val) => {
-        delete context[name];
-        context[name] = val;
-      },
-      configurable: true
+  try {
+    let code =`
+      (() => {
+        'use strict';
+        let poly = require('core-js/shim');
+        Object.getOwnPropertyNames(poly).forEach(obj => {
+          if(!this[obj]) { this[obj] = poly[obj]; }
+          else {
+            Object.getOwnPropertyNames(poly[obj]).forEach(p => {
+              if(!this[obj][p]) { this[obj][p] = poly[obj][p]; }
+            });
+          }
+        });
+      })();
+    `
+    let script = vm.createScript(code, {
+      filename: 'mancy-repl',
+      displayErrors: false,
     });
-  });
+    script.runInContext(context, { displayErrors: false });
+  } catch(e) {
+    console.log(e);
+  }
+
+  let {createScript} = vm;
+  vm.createScript = (code, options) => {
+    try {
+      let {timeout} = getPreferences();
+      let cxt = createScript(code, options);
+      let runInContext = cxt.runInContext.bind(cxt);
+      cxt.runInContext = (contextifiedSandbox, options) => {
+        return runInContext(contextifiedSandbox, {
+          displayErrors: false,
+          timeout: timeout
+        });
+      };
+      global.Mancy.REPLError = null;
+      return cxt;
+    } catch(e) {
+      if(e instanceof SyntaxError) {
+        global.Mancy.REPLError = e;
+      }
+      throw e;
+    }
+  };
 
   return (cxt = context);
 };
