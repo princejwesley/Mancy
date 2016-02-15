@@ -38,7 +38,7 @@ const ReplConstants = {
       "transform-runtime"
     ],
     "highlightCode": false,
-    "filename": "repl",
+    "filename": __filename,
     "env": process.env,
     "retainLines": true,
     "ast": false,
