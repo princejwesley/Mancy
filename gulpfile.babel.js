@@ -23,6 +23,7 @@ const nodeResources = (() => {
   return _.chain(result.toString().trim().split(/\r?\n/))
     // remove app root path
     .tap((r) => r.shift())
+    .filter((dep) => dep.match(/node_modules/g).length == 1)
     .map((dep) => `${dep}/**/*.{js,css,json,svg,png,gif,woff2,otf,ttf,woff,eot,ts}`)
     .value();
 })();
