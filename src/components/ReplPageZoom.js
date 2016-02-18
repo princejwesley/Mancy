@@ -15,7 +15,7 @@ export default class ReplPageZoom extends React.Component {
   }
 
   getZoomPercentage(zoom) {
-    return `${parseInt(zoom * 100)}%`;
+    return `${(zoom * 100).toFixed()}%`;
   }
   render() {
     let zoom = global.Mancy.preferences.pageZoomFactor;
