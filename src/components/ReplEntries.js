@@ -10,9 +10,12 @@ export default class ReplEntries extends React.Component {
     return (
       <div className='repl-entries'>
         {
-          _.map(this.props.entries, (entry, pos) => {
-            return <ReplEntry log={entry} index={pos} key={entry.tag}/>;
-          })
+          _.chain(this.props.entries)
+            .filter(entry => entry.plainCode && entry.plainCode.trim().length)
+            .map((entry, pos) => {
+              return <ReplEntry log={entry} index={pos} key={entry.tag}/>;
+            })
+            .value()
         }
       </div>
     );
