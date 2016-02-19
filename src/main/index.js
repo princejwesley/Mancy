@@ -76,10 +76,10 @@ app.on('browser-window-focus', (event, window) => {
 ipc.on('application:prompt-on-close', (event, flag) => promptOnClose = flag);
 
 const langs =  {
-  'js' : 'js', 'javascript' : 'js',
+  'js' : 'js', 'javascript' : 'js', 'babel': 'js',
   'ts': 'ts', 'typescript': 'ts',
   'ls': 'ls', 'livescript': 'ls',
-  'coffee': 'coffee', 'coffeescript': 'coffee'
+  'coffee': 'coffee', 'coffeescript': 'coffee',
 };
 const modes = { 'magic': 'Magic', 'strict': 'Strict', 'sloppy': 'Sloppy' };
 const editors =  { 'notebook': 'Notebook', 'repl': 'REPL' };
@@ -98,6 +98,9 @@ const processParamHandler = (browser) => {
   const lang = argv.l || argv.lang;
   if(lang && langs[lang]) {
     browser.webContents.send('application:prompt-language', langs[lang]);
+    if(lang === 'babel') {
+      browser.webContents.send('application:transpile-babel');      
+    }
   }
 
   // repl mode option '-m' or '--mode'

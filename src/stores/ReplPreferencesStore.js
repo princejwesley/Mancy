@@ -36,7 +36,6 @@ const ReplPreferencesStore = Reflux.createStore({
     let preferences = JSON.parse(localStorage.getItem('preferences'));
     cb(preferences);
     global.Mancy.preferences = preferences;
-    global.Mancy.preferences.shiftEnter = true;
     localStorage.setItem('preferences', JSON.stringify(preferences));
     ipcRenderer.send('application:sync-preference', preferences);
     ReplStatusBarActions.refresh();
@@ -57,6 +56,7 @@ const ReplPreferencesStore = Reflux.createStore({
   toggleBabel(flag) {
     this.updatePreference((preferences) => {
       preferences.babel = flag;
+      global.Mancy.session.babel = flag;
     });
   },
   toggleAutomaticAutoComplete(flag) {

@@ -377,7 +377,7 @@ export default class ReplActiveInput extends React.Component {
   shouldTranspile() {
     return global.Mancy.preferences.transpile &&
       (global.Mancy.session.lang !== 'js' ||
-        (global.Mancy.session.lang === 'js' && global.Mancy.preferences.babel))
+        (global.Mancy.session.lang === 'js' && global.Mancy.session.babel))
   }
 
   canRetry(e) {

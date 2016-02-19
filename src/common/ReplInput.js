@@ -64,7 +64,7 @@ let cook = (plain) => {
   return {
     force,
     local: false,
-    output: global.Mancy.preferences.babel && global.Mancy.preferences.lang === 'js' ? babelTransfrom(output) : output
+    output: global.Mancy.session.babel && global.Mancy.preferences.lang === 'js' ? babelTransfrom(output) : output
   };
 };
 

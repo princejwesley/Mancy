@@ -91,6 +91,10 @@ export default class Repl extends React.Component {
     ipcRenderer.on('application:preferences', ReplPreferencesActions.openPreferences);
     ipcRenderer.on('application:focus', this.loadPreferences);
 
+    ipcRenderer.on('application:transpile-babel', () =>
+      global.Mancy.session.babel = true
+    );
+
     ipcRenderer.on('application:preference-theme-dark', () => ReplPreferencesActions.setTheme('Dark Theme'));
     ipcRenderer.on('application:preference-theme-light', () => ReplPreferencesActions.setTheme('Light Theme'));
 
