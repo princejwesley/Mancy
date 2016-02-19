@@ -132,19 +132,34 @@ export default class ReplActiveInput extends React.Component {
 
     if(stagedCommands.length) {
       let cli = ReplLanguages.getREPL();
-      this.promptInput = stagedCommands[0];
-      let {local, output, input} = ReplInput.transform(stagedCommands[0]);
+      let text = stagedCommands[0];
+      this.promptInput = text;
+      let {local, output, input, force} = ReplInput.transform(text);
+      this.force = !!force;
 
       cli.$lastExpression = ReplOutput.none();
       cli.context = ReplContext.getContext();
 
       if(local) {
-        this.addEntryAction(output, true, input, stagedCommands[0]);
+        this.addEntryAction(output, true, input, text);
         ReplActiveInputStore.tailStagedCommands();
         return;
       }
 
-      this.replFeed = output;
+      let out = output;
+      if(!text.match(/^\s*\.load/)) {
+        if(global.Mancy.session.lang !== 'js') {
+          cli.transpile(output, cli.context, this.transpileAndExecute);
+        } else {
+          if(global.Mancy.session.mode === 'Strict') {
+            output = `'use strict'; void 0; ${output}`
+          }
+          this.transpileAndExecute(_.isError(out) ? out : null, output);
+        }
+        return;
+      }
+
+      this.replFeed = text;
       cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
       return;
@@ -427,7 +442,7 @@ export default class ReplActiveInput extends React.Component {
         return;
       }
 
-      this.replFeed = output;
+      this.replFeed = text;
       cli.input.emit('data', this.replFeed);
       cli.input.emit('data', EOL);
     }, 17);

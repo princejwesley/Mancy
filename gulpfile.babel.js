@@ -244,22 +244,6 @@ gulp.task('watch',['rebuild'], (cb) => {
   cb();
 });
 
-gulp.task('user-env', () => {
-  env({
-    vars: {
-      NODE_MANCY_DEV_MODE: false
-    }
-  });
-});
-
-gulp.task('dev-env', () => {
-  env({
-    vars: {
-      NODE_MANCY_DEV_MODE: true
-    }
-  });
-});
-
 gulp.task('build', (cb) => {
   return runSequence('clean', 'copy', ['sass', 'react'], cb);
 });
@@ -311,9 +295,9 @@ gulp.task('run', (cb) => {
   })();
 });
 
-gulp.task('start',['user-env'], (cb) => runSequence('rebuild', 'run', cb));
+gulp.task('start',[], (cb) => runSequence('rebuild', 'run', cb));
 
-gulp.task('debug', ['rebuild'], (cb) => runSequence('dev-env', 'run', cb));
+gulp.task('debug', ['rebuild'], (cb) => runSequence('run', cb));
 
 gulp.task('release',['build'], (cb) => {
   (async function() {

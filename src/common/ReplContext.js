@@ -117,13 +117,14 @@ let createContext = () => {
   try {
     let code =`
       (() => {
-        'use strict';
-        let poly = require('core-js/shim');
-        Object.getOwnPropertyNames(poly).forEach(obj => {
+        var poly = require('core-js/shim');
+        Object.getOwnPropertyNames(poly).forEach(function(obj) {
           if(!this[obj]) { this[obj] = poly[obj]; }
           else {
-            Object.getOwnPropertyNames(poly[obj]).forEach(p => {
-              if(!this[obj][p]) { this[obj][p] = poly[obj][p]; }
+            Object.getOwnPropertyNames(poly[obj]).forEach(function(p) {
+              if(poly[obj][p] && !this[obj][p]) {
+                this[obj][p] = poly[obj][p];
+              }
             });
           }
         });

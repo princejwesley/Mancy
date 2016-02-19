@@ -9,6 +9,7 @@ const ipc = electron.ipcMain;
 const fs = require('fs');
 const dialog = require('dialog');
 const globalShortcut = electron.globalShortcut;
+const {argv} = require('optimist');
 
 const windowCache = {};
 const dockNotificationCache = {};
@@ -74,7 +75,53 @@ app.on('browser-window-focus', (event, window) => {
 
 ipc.on('application:prompt-on-close', (event, flag) => promptOnClose = flag);
 
-app.on('ready', onReady);
+const langs =  {
+  'js' : 'js', 'javascript' : 'js',
+  'ts': 'ts', 'typescript': 'ts',
+  'ls': 'ls', 'livescript': 'ls',
+  'coffee': 'coffee', 'coffeescript': 'coffee'
+};
+const modes = { 'magic': 'Magic', 'strict': 'Strict', 'sloppy': 'Sloppy' };
+const editors =  { 'notebook': 'Notebook', 'repl': 'REPL' };
+const themes = {
+  'dark': 'application:preference-theme-dark',
+  'light': 'application:preference-theme-light'
+};
+const processParamHandler = (browser) => {
+  // theme option '-t' or '--theme'
+  const theme = argv.t || argv.theme;
+  if(theme && themes[theme]) {
+    browser.webContents.send(themes[theme]);
+  }
+
+  // language option '-l' or '--lang'
+  const lang = argv.l || argv.lang;
+  if(lang && langs[lang]) {
+    browser.webContents.send('application:prompt-language', langs[lang]);
+  }
+
+  // repl mode option '-m' or '--mode'
+  const mode = argv.m || argv.mode;
+  if(mode && modes[mode]) {
+    browser.webContents.send('application:prompt-mode', modes[mode]);
+  }
+
+  // editor mode option '-e' or '--editor'
+  const editor = argv.e || argv.editor;
+  if(editor && editors[editor]) {
+    browser.webContents.send('application:editor-mode', editors[editor]);
+  }
+
+  // load script option '-s' or '--script'
+  const script = argv.s || argv.script;
+  if(script) {
+    browser.webContents.send('application:load-file', script);
+  }
+};
+
+app.on('ready', (label) => {
+  onReady(label !== 'new-window' ? processParamHandler : null);
+});
 app.on('ready-action', onReady);
 app.on('activate', (event, hasVisibleWindows) => {
   if(!hasVisibleWindows) {
@@ -150,7 +197,7 @@ function onReady(fun) {
   let mainWindow = new BrowserWindow(options);
   let id = mainWindow.id;
   windowCache[id] = mainWindow;
-  let menuManager = menuManagerCache[id] = new MenuManager();
+  let menuManager = menuManagerCache[id] = new MenuManager(argv);
 
   mainWindow.loadURL(`file://${__dirname}/../index.html`);
   mainWindow.flashFrame(true);

@@ -18,8 +18,9 @@ let noop = () => {};
 
 export class MenuManager extends EventEmitter {
 
-  constructor() {
+  constructor(argv) {
     super();
+    this.argv = argv;
     _.each(['bindMenuItems', 'systemMenuItems', 'addImages', 'attachToWindow',
       'buildMenuSelectorActions', 'checkForUpdate', 'checkNewRelease'], (fun) => {
       this[fun] = this[fun].bind(this);
@@ -164,7 +165,7 @@ export class MenuManager extends EventEmitter {
   }
 
   openNewWindow() {
-    app.emit('ready');
+    app.emit('ready', 'new-window');
   }
 
   forward(item, focusedWindow) {
@@ -281,7 +282,7 @@ export class MenuManager extends EventEmitter {
   }
 
   systemMenuItems(menuItems) {
-    if(process.env.NODE_MANCY_DEV_MODE && process.env.NODE_MANCY_DEV_MODE === 'true') {
+    if(this.argv.debug) {
       let devTools = {
         label: 'Toggle Developer Tools',
         accelerator: (() => process.platform == 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I')(),
