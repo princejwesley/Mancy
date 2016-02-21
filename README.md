@@ -55,6 +55,9 @@ A cross platform NodeJS REPL application based on electron and react frameworks.
 
 For more detailed documentation, [read here](https://github.com/princejwesley/Mancy/wiki/Version-II)
 
+## <img src="icons/mancy.png" width="30">&nbsp;[Wiki](http://github.com/princejwesley/Mancy/wiki)
+[wiki](http://github.com/princejwesley/Mancy/wiki) page has documentation for new features.
+
 ## <img src="icons/mancy.png" width="30">&nbsp;[Screenshots](http://mancy-re.pl)
 
 #### light theme
