@@ -102,6 +102,9 @@ export default class Repl extends React.Component {
     ipcRenderer.on('application:view-theme-light', () => this.setTheme('Light Theme'));
 
     ipcRenderer.on('application:new-release', this.onNewRelease);
+    ipcRenderer.on('application:sync-session',
+      _ => ipcRenderer.send('application:sync-preference', global.Mancy.session));
+
     this.onInit();
   }
 

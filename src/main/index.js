@@ -84,8 +84,8 @@ const langs =  {
 const modes = { 'magic': 'Magic', 'strict': 'Strict', 'sloppy': 'Sloppy' };
 const editors =  { 'notebook': 'Notebook', 'repl': 'REPL' };
 const themes = {
-  'dark': 'application:preference-theme-dark',
-  'light': 'application:preference-theme-light'
+  'dark': 'application:view-theme-dark',
+  'light': 'application:view-theme-light'
 };
 const processParamHandler = (browser) => {
   // theme option '-t' or '--theme'
@@ -99,7 +99,7 @@ const processParamHandler = (browser) => {
   if(lang && langs[lang]) {
     browser.webContents.send('application:prompt-language', langs[lang]);
     if(lang === 'babel') {
-      browser.webContents.send('application:transpile-babel');      
+      browser.webContents.send('application:transpile-babel');
     }
   }
 
@@ -119,6 +119,10 @@ const processParamHandler = (browser) => {
   const script = argv.s || argv.script;
   if(script) {
     browser.webContents.send('application:load-file', script);
+  }
+  // not so strict
+  if(theme || lang || mode || editor || script) {
+    browser.webContents.send('application:sync-session');    
   }
 };
 
