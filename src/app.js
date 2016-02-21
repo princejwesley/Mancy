@@ -54,12 +54,7 @@ import webFrame from 'web-frame';
   localStorage.setItem('preferences', JSON.stringify(preferences));
 
   global.Mancy.userData = remote.require('app').getPath('userData');
-  global.Mancy.session = {
-    lang: preferences.lang,
-    mode: preferences.mode,
-    theme: preferences.theme,
-    editor: preferences.editor
-  };
+  global.Mancy.session = _.clone(preferences);
 })();
 
 function onLoadSettings() {
