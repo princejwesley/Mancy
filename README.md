@@ -61,19 +61,19 @@ For more detailed documentation, [read here](https://github.com/princejwesley/Ma
 ## <img src="icons/mancy.png" width="30">&nbsp;[Screenshots](http://mancy-re.pl)
 
 #### light theme
-<img src="images/light-theme.png">
+<img src="images/light-theme-2.png">
 
 #### dark theme
-<img src="images/dark-theme.png">
+<img src="images/dark-theme-2.png">
 
 #### console section
-<img src="images/console-window.png">
+<img src="images/console-window-2.png">
 
 #### auto suggestion
-<img src="images/auto-suggestion.png">
+<img src="images/auto-suggestion-2.png">
 
 #### function source
-<img src="images/source.png">
+<img src="images/source-2.png">
 
 
 # <img src="icons/mancy.png" width="25">&nbsp;Installation
