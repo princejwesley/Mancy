@@ -85,7 +85,7 @@
     "optimist": "^0.6.1",
     "react": "^0.13.3",
     "reflux": "^0.2.12",
-    "typescript": "1.7.5"
+    "typescript": "^1.8.2"
   },
   "repository": {
     "type": "git",

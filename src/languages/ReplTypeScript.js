@@ -80,17 +80,22 @@ let transpile = (input, context, cb) => {
   code += input;
   buildNumber += 1;
   let allDiagnostics = getDiagnostics();
-  code = original;
 
   if(allDiagnostics.length) {
+    code = original;
     let diagnostic = allDiagnostics[0];
     let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, EOL);
     if(!diagnostic.file) { return cb(message); }
     let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-    return cb(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+    return cb(`${diagnostic.file.fileName} (${line},${character + 1}): ${message}`);
   }
 
-  return cb(null, ts.transpile(input));
+  let result = ts.transpile(input);
+  if(result !== input) {
+    result = result.replace(/(["'])use\sstrict\1;?/, '"use strict";\nvoid 0;\n');
+  }
+
+  return cb(null, result);
 };
 
 let evaluate = (input, context, filename, cb) => {
@@ -105,7 +110,7 @@ let evaluate = (input, context, filename, cb) => {
     if(!diagnostic.file) { return cb(message); }
     let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
     code = original;
-    return cb(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+    return cb(`${diagnostic.file.fileName} (${line},${character + 1}): ${message}`);
   }
   let js = ts.transpile(input);
   return cb(null, vm.runInContext(js, context, filename));
