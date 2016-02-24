@@ -22,7 +22,7 @@ const compileOptions = {
 
 let code = `/// <reference path="${path.resolve(__dirname, './typescript/node.d.ts')}" />
 `;
-const replFile = `Mancy.typescript.repl.${Date.now()}.ts`;
+const replFile = `Mancy.typescript.repl.ts`;
 let buildNumber = 0;
 let nodeLineListener = () => {};
 let promptData = '';
@@ -77,9 +77,13 @@ let register = () => {
 
 let transpile = (input, context, cb) => {
   let original = code;
-  code += input;
+  code += `\n${input}`;
   buildNumber += 1;
   let allDiagnostics = getDiagnostics();
+
+  if(global.Mancy.session.editor !== 'REPL') {
+    code = original;
+  }
 
   if(allDiagnostics.length) {
     code = original;
@@ -87,7 +91,8 @@ let transpile = (input, context, cb) => {
     let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, EOL);
     if(!diagnostic.file) { return cb(message); }
     let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-    return cb(`${diagnostic.file.fileName} (${line},${character + 1}): ${message}`);
+    let lineOffset = global.Mancy.session.editor === 'REPL' ? original.split(/\n/).length : 0;
+    return cb(`${diagnostic.file.fileName} (${line + 1 - lineOffset},${character + 1}): ${message}`);
   }
 
   let result = ts.transpile(input);
@@ -99,21 +104,10 @@ let transpile = (input, context, cb) => {
 };
 
 let evaluate = (input, context, filename, cb) => {
-  let original = code;
-  code += input;
-  buildNumber += 1;
-  let allDiagnostics = getDiagnostics();
-
-  if(allDiagnostics.length) {
-    let diagnostic = allDiagnostics[0];
-    let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, EOL);
-    if(!diagnostic.file) { return cb(message); }
-    let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-    code = original;
-    return cb(`${diagnostic.file.fileName} (${line},${character + 1}): ${message}`);
-  }
-  let js = ts.transpile(input);
-  return cb(null, vm.runInContext(js, context, filename));
+  this.transpile(input, context, filename, (err, js) => {
+    if(err) { return cb(err); };
+    cb(null, vm.runInContext(js, context, filename));
+  });
 }
 
 let addMultilineHandler = ({rli}) => {

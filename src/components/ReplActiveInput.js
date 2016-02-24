@@ -393,7 +393,7 @@ export default class ReplActiveInput extends React.Component {
     if(err) {
       if(this.canRetry(err)) { this.talkToREPL(true); }
       else {
-        this.addEntryAction(ReplOutput.some(err).highlight().formattedOutput,
+        this.addEntryAction(ReplOutput.none().highlight(err).formattedOutput,
           !err, ReplCommon.highlight(text), text);
       }
     } else {
