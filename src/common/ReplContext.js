@@ -114,30 +114,33 @@ let createContext = () => {
     context.process.env.PATH += ':/usr/local/bin';
   }
 
-  try {
-    let code =`
-      (() => {
-        var poly = require('core-js/shim');
-        Object.getOwnPropertyNames(poly).forEach(function(obj) {
-          if(!this[obj]) { this[obj] = poly[obj]; }
-          else {
-            Object.getOwnPropertyNames(poly[obj]).forEach(function(p) {
-              if(poly[obj][p] && !this[obj][p]) {
-                this[obj][p] = poly[obj][p];
-              }
-            });
-          }
-        });
-      })();
-    `
-    let script = vm.createScript(code, {
-      filename: 'mancy-repl',
-      displayErrors: false,
-    });
-    script.runInContext(context, { displayErrors: false });
-  } catch(e) {
-    console.log(e);
-  }
+  // TODO: revisit
+  // commented because of #101 issue
+
+  // try {
+  //   let code =`
+  //     (() => {
+  //       var poly = require('core-js/shim');
+  //       Object.getOwnPropertyNames(poly).forEach(function(obj) {
+  //         if(!this[obj]) { this[obj] = poly[obj]; }
+  //         else {
+  //           Object.getOwnPropertyNames(poly[obj]).forEach(function(p) {
+  //             if(poly[obj][p] && !this[obj][p]) {
+  //               this[obj][p] = poly[obj][p];
+  //             }
+  //           });
+  //         }
+  //       });
+  //     })();
+  //   `
+  //   let script = vm.createScript(code, {
+  //     filename: 'mancy-repl',
+  //     displayErrors: false,
+  //   });
+  //   script.runInContext(context, { displayErrors: false });
+  // } catch(e) {
+  //   console.log(e);
+  // }
 
   let {createScript} = vm;
   vm.createScript = (code, options) => {
