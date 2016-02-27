@@ -1,3 +1,22 @@
+## <img src="icons/mancy.png" width="25">&nbsp;[v2.2.2](http://mancy-re.pl)  (Feb 27, 2016)
+
+- Upgrade typescript -> 1.8.2 & electron -> 0.36.9
+- Run time option support
+```
+-s | --script   Script file to load
+-m | --mode     REPL mode (applicable only for JS).
+                  (Allowed values: 'magic', 'sloppy' or 'strict')
+-e | --editor   REPL or Notebook(experimental) mode
+                  (Allowed values: 'repl', or 'notebook')
+-t | --theme    Editor theme.
+                  (Allowed values: 'dark', or 'white')
+-l | --lang     Scripting language. (Allowed values: 'js', 'javascript', 'ts',
+                  'typescript', 'ls', 'livescript', 'coffee', 'coffeescript', 'babel')
+```
+
+and bug fixes.
+
+
 ## <img src="icons/mancy.png" width="25">&nbsp;[v2.2.1](http://mancy-re.pl)  (Feb 07, 2016)
 
 - Upgrade typescript -> 1.7.5 & electron -> 0.36.7
