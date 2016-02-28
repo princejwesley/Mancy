@@ -82,10 +82,10 @@
     "livescript": "^1.4.0",
     "lodash": "^3.10.1",
     "md5": "^2.0.0",
-    "optimist": "^0.6.1",
     "react": "^0.13.3",
     "reflux": "^0.2.12",
-    "typescript": "^1.8.2"
+    "typescript": "^1.8.2",
+    "yargs": "^3.32.0"
   },
   "repository": {
     "type": "git",

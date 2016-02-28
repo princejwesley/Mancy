@@ -9,7 +9,7 @@
 -e | --editor   REPL or Notebook(experimental) mode
                   (Allowed values: 'repl', or 'notebook')
 -t | --theme    Editor theme.
-                  (Allowed values: 'dark', or 'white')
+                  (Allowed values: 'dark', or 'light')
 -l | --lang     Scripting language. (Allowed values: 'js', 'javascript', 'ts',
                   'typescript', 'ls', 'livescript', 'coffee', 'coffeescript', 'babel')
 ```

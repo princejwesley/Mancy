@@ -9,7 +9,55 @@ const ipc = electron.ipcMain;
 const fs = require('fs');
 const dialog = require('dialog');
 const globalShortcut = electron.globalShortcut;
-const {argv} = require('optimist');
+const {argv} = require('yargs')
+                .usage('Usage: $0 [options]')
+                .boolean('d')
+                .alias('d', 'debug')
+                .describe('d', 'Run in debug mode')
+                .alias('e', 'editor')
+                .nargs('e', 1)
+                .describe('e', `REPL or Notebook(experimental) mode.
+Allowed values:
+  'repl', 'notebook'
+                `)
+                .example('$0 -e repl', 'Set editor mode as REPL')
+                .alias('j', 'js-flags')
+                .nargs('j', 1)
+                .describe('j', `js flags for nodejs.`)
+                .example('$0 --js-flags="--harmony_destructuring"', 'Enable destructuring harmony falg')
+                .alias('m', 'mode')
+                .nargs('m', 1)
+                .describe('m', `REPL mode (applicable only for --lang=js).
+Allowed values:
+  'magic', 'sloppy' or 'strict'
+                `)
+                .example('$0 -m strict', 'Set JS mode as strict')
+                .alias('l', 'lang')
+                .nargs('l', 1)
+                .describe('l', `Scripting language.
+Allowed values:
+  'js', 'javascript', 'babel'
+  'ts', 'typescript'
+  'ls', 'livescript'
+  'coffee', 'coffeescript'
+                `)
+                .example('$0 -l ts', 'Set language as typescript')
+                .alias('s', 'script')
+                .nargs('s', 1)
+                .describe('s', 'Start up script file to load.')
+                .example('$0 -s script.js', 'Load script.js on start up')
+                .alias('t', 'theme')
+                .nargs('t', 1)
+                .describe('t', `Editor theme.
+Allowed values:
+  dark', 'light'
+                `)
+                .example('$0 -t dark', 'Set dark theme')
+                .help('h')
+                .alias('h', 'help')
+                .epilog(`Made with ♥︎ by toolitup.com
+copyright 2015
+                  `);
 
 const windowCache = {};
 const dockNotificationCache = {};
@@ -19,6 +67,8 @@ let promptOnClose = false;
 
 // set application root path as current working directory
 process.chdir(app.getAppPath());
+
+app.commandLine.appendSwitch('js-flags', argv.jsFlags || argv.j);
 
 function onCloseWindow(e, title, detail) {
   var ret = promptOnClose;
@@ -122,7 +172,7 @@ const processParamHandler = (browser) => {
   }
   // not so strict
   if(theme || lang || mode || editor || script) {
-    browser.webContents.send('application:sync-session');    
+    browser.webContents.send('application:sync-session');
   }
 };
 
