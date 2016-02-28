@@ -222,7 +222,7 @@ class None {
   }
   getValue() { return void 0; }
   highlight(output) {
-    let [first, ...rest] = output.split(EOL);
+    let [first, ...rest] = (output.stack || output.toString()).split(EOL);
     return {
       formattedOutput:
         <ReplEntryOutputError message={first} trace={rest}>
