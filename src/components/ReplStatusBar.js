@@ -2,6 +2,7 @@ import React from 'react';
 import shell from 'shell';
 import ReplPreferencesActions from '../actions/ReplPreferencesActions';
 import ReplStatusBarStore from '../stores/ReplStatusBarStore';
+import ReplCommon from '../common/ReplCommon';
 import _ from 'lodash';
 
 export default class ReplStatusBar extends React.Component {
@@ -11,6 +12,7 @@ export default class ReplStatusBar extends React.Component {
     this.onDownload = this.onDownload.bind(this);
     this.onTriggerPreferences = this.onTriggerPreferences.bind(this);
     this.onStoreChange = this.onStoreChange.bind(this);
+    this.getActiveHandle = this.getActiveHandle.bind(this);
   }
 
   componentDidMount() {
@@ -44,10 +46,28 @@ export default class ReplStatusBar extends React.Component {
     ReplPreferencesActions.togglePreferences();
   }
 
+  getActiveHandle() {
+    let twoDigit = x => `${(x < 10 ? '0' : '')}${x}`;
+    let handles = process._getActiveHandles();
+    let now = new Date();
+    let [hh, mm, ss] = [now.getHours(), now.getMinutes(), now.getSeconds()];
+    let ts = `${twoDigit(hh)}:${twoDigit(mm)}:${twoDigit(ss)}`;
+    let msg = _.chain(handles)
+      .map(h => ReplCommon.type(h))
+      .sort()
+      .reduce((acc, h) => (acc[h] = acc[h] ? acc[h] + 1 : 1, acc), {})
+      .map((v, k) => `${k}(${v})`)
+      .tap(o => o.join(', '))
+      .value();
+    return [handles.length,
+      `Active handles(at ${ts}): ${msg}`]
+  }
+
   render() {
     let {commands, errors} = this.extractStatusInfo();
     let runHelp = this.state.runCommand ? '⇧ + ↲' : '↲';
     let imgURL = `./logos/${this.state.lang}.png`;
+    let [handleCount, handleMsg] = this.getActiveHandle();
     return (
       <div className='repl-status-bar'>
         <span className='repl-status-bar-preference' title='Preferences'>
@@ -60,6 +80,10 @@ export default class ReplStatusBar extends React.Component {
         <span className='repl-status-bar-errors' title='Error Outputs'>
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{errors}</span>
+        </span>
+        <span className='repl-status-bar-handles' title={handleMsg}>
+          <i className="fa fa-circle"></i>
+          <span className='repl-status-bar-count'>{handleCount}</span>
         </span>
         <span className='repl-status-bar-lang' title='REPL language'>
           <img className='repl-status-bar-img' src={imgURL}/>

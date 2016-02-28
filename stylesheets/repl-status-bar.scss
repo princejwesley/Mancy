@@ -66,6 +66,11 @@
       padding: 0 5px;
     }
 
+    .repl-status-bar-handles {
+      color: if($theme == $dark-theme, $dark-app-status-bar-handle-color, $lt-app-status-bar-handle-color);
+      padding: 0 5px;
+    }
+
     .repl-status-bar-count,
     .repl-status-bar-message {
       pointer-events: none;

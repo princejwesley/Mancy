@@ -221,7 +221,7 @@ class None {
     return None.instance;
   }
   getValue() { return void 0; }
-  highlight(output) {
+  highlight(output = '') {
     let [first, ...rest] = (output.stack || output.toString()).split(EOL);
     return {
       formattedOutput:
