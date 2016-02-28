@@ -29,6 +29,38 @@ interface WeakSetConstructor {}
 ************************************************/
 declare var process: NodeJS.Process;
 declare var global: NodeJS.Global;
+// ---------------------------------------------
+// Mancy REPL definitions
+// ---------------------------------------------
+declare var console: typeof console;
+declare var assert: assert;
+declare var buffer: buffer;
+declare var child_process: child_process;
+declare var cluster: cluster;
+declare var crypto: crypto;
+declare var dgram: dgram;
+declare var dns: dns;
+declare var domain: domain;
+declare var events: events;
+declare var fs: fs;
+declare var http: http;
+declare var https: https;
+declare var net: net;
+declare var os: os;
+declare var path: path;
+declare var punycode: punycode;
+declare var querystring: querystring;
+declare var readline: readline;
+declare var stream: stream;
+declare var string_decoder: string_decoder;
+declare var tls: tls;
+declare var tty: tty;
+declare var url: url;
+declare var util: util;
+declare var v8: v8;
+declare var vm: vm;
+declare var zlib: zlib;
+// ---------------------------------------------
 
 declare var __filename: string;
 declare var __dirname: string;
