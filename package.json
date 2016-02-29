@@ -42,7 +42,7 @@
     "del": "^2.0.2",
     "electron-packager": "5.1.0",
     "electron-prebuilt": "0.36.9",
-    "electron-rebuild": "^1.0.2",
+    "electron-rebuild": "https://github.com/princejwesley/electron-rebuild.git",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",
     "gulp-cached": "^1.1.0",
