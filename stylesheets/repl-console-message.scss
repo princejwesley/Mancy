@@ -36,6 +36,7 @@
 
     .repl-console-message-list {
       flex: 1;
+      overflow: auto;
     }
     @include replConsoleEnvironment($theme);
     .repl-console-environment-resizeable {
@@ -63,6 +64,7 @@
 
     .repl-console-message-entry {
       padding: 5px;
+      overflow: auto;
       border-bottom: 1px solid if($theme == $dark-theme, $dark-app-console-message-entry-border-color, $lt-app-console-message-entry-border-color);
 
       .fa {
