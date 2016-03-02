@@ -2,12 +2,14 @@
   {
     "label": "Undo",
     "accelerator": "CmdOrCtrl+Z",
-    "selector": "undo:"
+    "selector": "undo:",
+    "role": "undo"
   },
   {
     "label": "Redo",
     "accelerator": "Shift+CmdOrCtrl+Z",
-    "selector": "redo:"
+    "selector": "redo:",
+    "role": "redo"
   },
   {
     "type": "separator"
@@ -15,22 +17,26 @@
   {
     "label": "Cut",
     "accelerator": "CmdOrCtrl+X",
-    "selector": "cut:"
+    "selector": "cut:",
+    "role": "cut"
   },
   {
     "label": "Copy",
     "accelerator": "CmdOrCtrl+C",
-    "selector": "copy:"
+    "selector": "copy:",
+    "role": "copy"
   },
   {
     "label": "Paste",
     "accelerator": "CmdOrCtrl+V",
-    "selector": "paste:"
+    "selector": "paste:",
+    "role": "paste"
   },
   {
     "label": "Select All",
     "accelerator": "CmdOrCtrl+A",
-    "selector": "selectAll:"
+    "selector": "selectAll:",
+    "role": "selectAll"
   },
   {
     "type": "separator"
