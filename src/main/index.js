@@ -25,13 +25,6 @@ Allowed values:
                 .nargs('j', 1)
                 .describe('j', `js flags for nodejs.`)
                 .example('$0 --js-flags="--harmony_destructuring"', 'Enable destructuring harmony falg')
-                .alias('m', 'mode')
-                .nargs('m', 1)
-                .describe('m', `REPL mode (applicable only for --lang=js).
-Allowed values:
-  'magic', 'sloppy' or 'strict'
-                `)
-                .example('$0 -m strict', 'Set JS mode as strict')
                 .alias('l', 'lang')
                 .nargs('l', 1)
                 .describe('l', `Scripting language.
@@ -42,6 +35,17 @@ Allowed values:
   'coffee', 'coffeescript'
                 `)
                 .example('$0 -l ts', 'Set language as typescript')
+                .alias('m', 'mode')
+                .nargs('m', 1)
+                .describe('m', `REPL mode (applicable only for --lang=js).
+Allowed values:
+  'magic', 'sloppy' or 'strict'
+                `)
+                .example('$0 -m strict', 'Set JS mode as strict')
+                .alias('p', 'path')
+                .nargs('p', 1)
+                .describe('p', `Add npm path(s) with path delimiter`)
+                .example('$0 -p /Users/princejohnwesley/Projects/Playground/sample', 'Add npm path')
                 .alias('s', 'script')
                 .nargs('s', 1)
                 .describe('s', 'Start up script file to load.')
@@ -173,6 +177,12 @@ const processParamHandler = (browser) => {
   // not so strict
   if(theme || lang || mode || editor || script) {
     browser.webContents.send('application:sync-session');
+  }
+
+  // add path
+  const p = argv.p || argv.path;
+  if(p) {
+    browser.webContents.send('application:add-path', p.split(path.delimiter));
   }
 };
 
