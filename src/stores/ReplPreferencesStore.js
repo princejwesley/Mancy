@@ -93,6 +93,7 @@ const ReplPreferencesStore = Reflux.createStore({
   onSetTheme(name) {
     this.updatePreference((preferences) => {
       preferences.theme = name;
+      global.Mancy.session.theme = name;
       document.body.className = name.toLowerCase().replace(/\s/, '-');
     });
   },
@@ -189,6 +190,18 @@ const ReplPreferencesStore = Reflux.createStore({
         preferences.npmPaths = [];
         ReplCommon.removeFromPath(npmPaths, ReplContext.getContext());
       }
+    });
+  },
+  toggleFoldGutter(flag) {
+    this.updatePreference((preferences) => {
+      preferences.toggleFoldGutter = flag;
+      ReplActiveInputActions.setEditorOption({name: 'foldGutter', value: flag});
+    });
+  },
+  toggleLineNumberGutter(flag) {
+    this.updatePreference((preferences) => {
+      preferences.toggleLineNumberGutter = flag;
+      ReplActiveInputActions.setEditorOption({name: 'lineNumbers', value: flag});
     });
   },
   getStore() {

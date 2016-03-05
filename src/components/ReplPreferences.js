@@ -23,7 +23,8 @@ export default class ReplPreferences extends React.Component {
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
       'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
       'resetLoadScript', 'onTogglePromptOnClose', 'onEditorChange',
-      'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown'
+      'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown',
+      'onToggleLineNumberGutter', 'onToggleFoldGutter',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -119,6 +120,14 @@ export default class ReplPreferences extends React.Component {
 
   onTogglePromptOnClose(e) {
     ReplPreferencesStore.togglePromptOnClose(e.target.checked);
+  }
+
+  onToggleFoldGutter(e) {
+    ReplPreferencesStore.toggleFoldGutter(e.target.checked);
+  }
+
+  onToggleLineNumberGutter(e) {
+    ReplPreferencesStore.toggleLineNumberGutter(e.target.checked);    
   }
 
   onCloseNPMPath(e) {
@@ -261,13 +270,33 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
+          <div className='preference' title='Show line number gutter'>
+            <div className='preference-name'>
+              Show line number gutter
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="line" checked={this.state.toggleLineNumberGutter} value="" onClick={this.onToggleLineNumberGutter} />
+              </span>
+            </div>
+          </div>
+          <div className='preference' title='Code fold gutter'>
+            <div className='preference-name'>
+              Show fold gutter
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="fold" checked={this.state.toggleFoldGutter} value="" onClick={this.onToggleFoldGutter} />
+              </span>
+            </div>
+          </div>
           <div className='preference' title='Disable automatic auto complete'>
             <div className='preference-name'>
               Disable automatic auto complete
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
-                <input type="checkbox" name="await" checked={this.state.toggleAutomaticAutoComplete} value="" onClick={this.onToggleAutomaticAutoComplete} />
+                <input type="checkbox" name="auto" checked={this.state.toggleAutomaticAutoComplete} value="" onClick={this.onToggleAutomaticAutoComplete} />
               </span>
             </div>
           </div>

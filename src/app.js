@@ -41,6 +41,8 @@ import webFrame from 'web-frame';
     "transpile": false,
     "loadScript": null,
     "promptOnClose": true,
+    "toggleFoldGutter": true,
+    "toggleLineNumberGutter": true,
     "npmPaths": []
   };
 

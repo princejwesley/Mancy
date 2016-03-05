@@ -10,6 +10,7 @@ const ReplActiveInputActions = Reflux.createActions([
   "updateSuggestionDelay",
   "performAutoComplete",
   "setTheme",
+  "setEditorOption",
   "undo",
   "redo"
 ]);

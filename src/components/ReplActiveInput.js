@@ -58,7 +58,7 @@ export default class ReplActiveInput extends React.Component {
       'shouldTranspile', 'transpileAndExecute',
       'canRetry', 'onInputRead', 'onKeyTab', 'onKeyEnter',
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
-      'onChange', 'onTriggerAction',
+      'onChange', 'onTriggerAction', 'onSetEditorOption'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -74,14 +74,16 @@ export default class ReplActiveInput extends React.Component {
   componentDidMount() {
     this.unsubscribe = ReplActiveInputStore.listen(this.onStoreChange);
     this.element = React.findDOMNode(this);
-
+    const preferences = global.Mancy.preferences;
     this.editor = CodeMirror(this.element, {
       value: this.props.command,
       mode:  `text/${ReplLanguages.getLangQualifiedName(global.Mancy.session.lang)}`,
-      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+      gutters: preferences.toggleLineNumberGutter || preferences.toggleFoldGutter
+        ? ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        : [],
       theme: _.kebabCase(global.Mancy.session.theme),
       keyMap: 'sublime',
-      lineNumbers: true,
+      lineNumbers: preferences.toggleLineNumberGutter,
       lineWrapping:'true',
       styleActiveLine: true,
       styleSelectedText: true,
@@ -90,7 +92,7 @@ export default class ReplActiveInput extends React.Component {
       highlightSelectionMatches: true,
       autoCloseBrackets: true,
       autoFocus: true,
-      foldGutter: true,
+      foldGutter: preferences.toggleFoldGutter,
       foldOptions: {
         widget: '…'
       },
@@ -157,18 +159,21 @@ export default class ReplActiveInput extends React.Component {
     this.editor[action]();
   }
 
-  onStoreChange(cmd) {
+  onSetEditorOption({name, value}) {
+    this.editor.setOption(name, value);
+  }
 
-    if(cmd) { return this.onTriggerAction(cmd); }
+  onStoreChange(cmd) {
+    if(cmd) {
+      return cmd.action ?
+        this.onTriggerAction(cmd) :
+        this.onSetEditorOption(cmd);
+    }
 
     let { now, activeSuggestion, breakPrompt,
-          format, stagedCommands, autoComplete, theme } = ReplActiveInputStore.getStore();
+          format, stagedCommands, autoComplete } = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
     this.setDebouncedComplete();
-
-    if(theme) {
-      this.editor.setOption("theme", theme);
-    }
 
     if(autoComplete) {
       this.complete(this.autoComplete);
@@ -464,7 +469,7 @@ export default class ReplActiveInput extends React.Component {
     let cli = ReplLanguages.getREPL();
     // managed by us (no react)
     this.element.className += ' repl-active-input-running';
-    // this.editor.setOption("readOnly", true);
+    this.editor.setOption("readOnly", true);
 
     setTimeout(() => {
       const text = this.editor.getValue();
