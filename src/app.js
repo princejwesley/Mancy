@@ -41,7 +41,6 @@ import webFrame from 'web-frame';
     "transpile": false,
     "loadScript": null,
     "promptOnClose": true,
-    "autoCloseSymbol": false,
     "npmPaths": []
   };
 

@@ -327,4 +327,4 @@ gulp.task('release',['build'], (cb) => {
   })();
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['debug']);

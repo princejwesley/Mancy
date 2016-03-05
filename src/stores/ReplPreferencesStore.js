@@ -84,11 +84,6 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.transpile = flag;
     });
   },
-  toggleAutoCloseSymbol(flag) {
-    this.updatePreference((preferences) => {
-      preferences.autoCloseSymbol = flag;
-    });
-  },
   togglePromptOnClose(flag) {
     this.updatePreference((preferences) => {
       preferences.promptOnClose = flag;

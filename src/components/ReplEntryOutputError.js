@@ -38,8 +38,8 @@ export default class ReplEntryOutputError extends React.Component {
   }
 
   highlightException(stack) {
-    //top two stacks are ours
-    stack = stack.slice(2);
+    // revisit: top two stacks are ours ?
+    // stack = stack.slice(2);
     let output = [];
     let filler = (match, p1, p2, p3, p4) => {
       let openBrace = '', closeBrace = '';
