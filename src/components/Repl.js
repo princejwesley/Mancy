@@ -110,7 +110,9 @@ export default class Repl extends React.Component {
 
   setTheme(name) {
     global.Mancy.session.theme = name;
-    document.body.className = _.kebabCase(name);
+    let theme = _.kebabCase(name);
+    document.body.className = theme;
+    ReplActiveInputActions.setTheme(theme);
   }
 
   onInit() {

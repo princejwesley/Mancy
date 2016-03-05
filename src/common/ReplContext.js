@@ -60,6 +60,7 @@ let createContext = () => {
 
   context.process.on('uncaughtException', function (err) {
     context.console.error(err);
+    console.error(err);
   });
 
   // load builtIns

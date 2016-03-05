@@ -6,6 +6,7 @@ let now = false;
 let breakPrompt = false;
 let format = false;
 let autoComplete = false;
+let theme = null;
 let stagedCommands = [];
 
 const ReplActiveInputStore = Reflux.createStore({
@@ -53,17 +54,22 @@ const ReplActiveInputStore = Reflux.createStore({
       this.trigger();
     }
   },
+  onSetTheme(t) {
+    theme = t;
+    this.trigger();
+  },
   onUpdateSuggestionDelay() {
     this.trigger();
   },
   getStore() {
     return {
-      activeSuggestion: activeSuggestion,
-      now: now,
-      breakPrompt: breakPrompt,
-      format: format,
-      stagedCommands: stagedCommands,
-      autoComplete: autoComplete
+      activeSuggestion,
+      now,
+      breakPrompt,
+      format,
+      stagedCommands,
+      autoComplete,
+      theme
     }
   }
 });

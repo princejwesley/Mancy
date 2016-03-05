@@ -4,7 +4,7 @@
   .repl-prompt-suggestion-wrapper {
     position: absolute;
     background-color: if($theme == $dark-theme, $dark-app-suggestion-background-color, $lt-app-suggestion-background-color);
-
+    z-index: 100;
     .repl-prompt-suggestion-list {
       [data-selected='true'] {
         background-color: lighten(if($theme == $dark-theme, $dark-app-background-color, $lt-app-background-color), 10%);

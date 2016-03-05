@@ -36,9 +36,18 @@ const aliases = {
   ts: 'ts', tsx: 'ts'
 };
 
+const qualifiedNames = {
+  js: 'javascript', json: 'javascript', node: 'javascript',
+  coffee: 'x-coffeescript', litcoffee: 'x-coffeescript', 'coffee.md': 'x-coffeescript',
+  ls: 'x-liveScript',
+  ts: 'typescript', tsx: 'typescript'
+};
+
+
 export default {
   getREPL,
   setREPL,
   getREPLProvider,
-  getLangName: (ext) => aliases[ext]
+  getLangName: (ext) => aliases[ext],
+  getLangQualifiedName: (ext) => qualifiedNames[ext]
 };

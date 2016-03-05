@@ -5,6 +5,7 @@
 @import 'repl-status-bar';
 @import 'repl-suggestions';
 @import 'repl-preferences';
+@import 'repl-editor';
 
 html{
   height: 100%;
@@ -31,6 +32,7 @@ html{
   #node-repl-preferences {
     @include preferences($theme);
   }
+  @include replEditor($theme);  
 }
 
 body {

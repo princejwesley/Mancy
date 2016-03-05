@@ -22,7 +22,7 @@ export default class ReplPreferences extends React.Component {
       'onModeChange', 'onChangeTimeout', 'onChangeSuggestionDelay', 'onToggleShiftEnter',
       'onAsyncWrapChange', 'onToggleAutoCompleteOnEnter', 'onToggleAutomaticAutoComplete',
       'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
-      'resetLoadScript', 'onTogglePromptOnClose', 'onToggleAutoCloseSymbol', 'onEditorChange',
+      'resetLoadScript', 'onTogglePromptOnClose', 'onEditorChange',
       'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown'
     ], (field) => {
       this[field] = this[field].bind(this);
@@ -119,10 +119,6 @@ export default class ReplPreferences extends React.Component {
 
   onTogglePromptOnClose(e) {
     ReplPreferencesStore.togglePromptOnClose(e.target.checked);
-  }
-
-  onToggleAutoCloseSymbol(e) {
-    ReplPreferencesStore.toggleAutoCloseSymbol(e.target.checked);
   }
 
   onCloseNPMPath(e) {
@@ -335,16 +331,6 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='checkbox-group'>
                 <input type="checkbox" name="warn-before-quit" checked={this.state.promptOnClose} value="" onClick={this.onTogglePromptOnClose} />
-              </span>
-            </div>
-          </div>
-          <div className='preference' title='Enable/Disable Auto close symbols support'>
-            <div className='preference-name'>
-              Auto close symbols
-            </div>
-            <div className='preference-value'>
-              <span className='checkbox-group'>
-                <input type="checkbox" name="auto-close-symbol" checked={this.state.autoCloseSymbol} value="" onClick={this.onToggleAutoCloseSymbol} />
               </span>
             </div>
           </div>
