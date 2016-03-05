@@ -164,6 +164,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onStoreChange(cmd) {
+    this.focus();
     if(cmd) {
       return cmd.action ?
         this.onTriggerAction(cmd) :

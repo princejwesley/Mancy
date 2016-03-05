@@ -60,6 +60,7 @@ export default class Repl extends React.Component {
 
     window.addEventListener('contextmenu', this.onContextMenu, false);
     window.addEventListener('keydown', this.onKeydown, false);
+    window.onfocus = () => ReplActiveInputActions.focus();
 
     // hooks
     ReplStreamHook.on('stdout', this.onStdout);
@@ -222,6 +223,7 @@ export default class Repl extends React.Component {
     this.unsubscribe();
     window.removeEventListener('contextmenu', this.onContextMenu, false);
     window.removeEventListener('keydown', this.onKeydown, false);
+    window.onfocus = null;
 
     ReplStreamHook.removeListener('stdout', this.onStdout);
     ReplStreamHook.removeListener('stderr', this.onStderr);

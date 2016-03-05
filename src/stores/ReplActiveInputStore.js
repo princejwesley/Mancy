@@ -65,6 +65,9 @@ const ReplActiveInputStore = Reflux.createStore({
   onUndo() {
     this.trigger({action: 'undo'});
   },
+  onFocus() {
+    this.trigger();
+  },
   onRedo() {
     this.trigger({action: 'redo'});
   },

@@ -12,6 +12,7 @@ const ReplActiveInputActions = Reflux.createActions([
   "setTheme",
   "setEditorOption",
   "undo",
-  "redo"
+  "redo",
+  "focus",
 ]);
 export default ReplActiveInputActions;
