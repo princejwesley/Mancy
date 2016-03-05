@@ -24,7 +24,7 @@ export default class ReplPreferences extends React.Component {
       'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
       'resetLoadScript', 'onTogglePromptOnClose', 'onEditorChange',
       'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown',
-      'onToggleLineNumberGutter', 'onToggleFoldGutter',
+      'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -67,6 +67,10 @@ export default class ReplPreferences extends React.Component {
 
   onThemeChange(e) {
     ReplPreferencesStore.onSetTheme(e.target.value);
+  }
+
+  onKeyMapChange(e) {
+    ReplPreferencesStore.onSetKeyMap(e.target.value);
   }
 
   onBabelChange(e) {
@@ -127,7 +131,7 @@ export default class ReplPreferences extends React.Component {
   }
 
   onToggleLineNumberGutter(e) {
-    ReplPreferencesStore.toggleLineNumberGutter(e.target.checked);    
+    ReplPreferencesStore.toggleLineNumberGutter(e.target.checked);
   }
 
   onCloseNPMPath(e) {
@@ -268,6 +272,24 @@ export default class ReplPreferences extends React.Component {
               <span className='textbox'>
                 <input type="number" name="exec-timeout" placeholder="(0 for no timeout)" value={this.state.timeout} min="0" onChange={this.onChangeTimeout} />
               </span>
+            </div>
+          </div>
+          <div className='preference' title="key map">
+            <div className='preference-name'>
+              Key Map
+            </div>
+            <div className='preference-value'>
+              <fieldset>
+                <span className='radio-group'>
+                  <input type="radio" name="key-map" checked={this.state.keyMap === 'sublime'} value="sublime" onClick={this.onKeyMapChange} /> sublime
+                </span>
+                <span className='radio-group'>
+                  <input type="radio" name="key-map" checked={this.state.keyMap === 'vim'} value="vim" onClick={this.onKeyMapChange} /> vim
+                </span>
+                <span className='radio-group'>
+                  <input type="radio" name="key-map" checked={this.state.keyMap === 'emacs'} value="emacs" onClick={this.onKeyMapChange} /> emacs
+                </span>
+              </fieldset>
             </div>
           </div>
           <div className='preference' title='Show line number gutter'>

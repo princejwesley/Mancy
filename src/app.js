@@ -43,6 +43,7 @@ import webFrame from 'web-frame';
     "promptOnClose": true,
     "toggleFoldGutter": true,
     "toggleLineNumberGutter": true,
+    "keyMap": "sublime",
     "npmPaths": []
   };
 

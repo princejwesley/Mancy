@@ -53,6 +53,11 @@
     font-size: 0.9em;
   }
 
+  .CodeMirror-dialog  {
+    z-index: 4;
+    position: relative;
+  }
+
   .cm-s-light-theme {
     span.cm-meta { color: #FF1717; }
     span.cm-keyword { line-height: 1em; font-weight: bold; color: #BDBB0C; }
@@ -89,6 +94,16 @@
 
     .CodeMirror-selectedtext {
       background: #D6D8D2;
+    }
+
+    &.cm-fat-cursor {
+      .CodeMirror-cursor {
+        background: #EA6994;
+      }
+    }
+
+    .CodeMirror-cursor {
+      background: inherit;
     }
 
     .CodeMirror-activeline-background { background: rgba(245, 222, 179, 0.42); }
@@ -129,6 +144,12 @@
 
     .CodeMirror-cursor {
       border-left-color: inherit;
+    }
+
+    &.cm-fat-cursor {
+      .CodeMirror-cursor {
+        background: #E91E63;
+      }
     }
 
     .CodeMirror-selected {

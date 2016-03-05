@@ -82,7 +82,7 @@ export default class ReplActiveInput extends React.Component {
         ? ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         : [],
       theme: _.kebabCase(global.Mancy.session.theme),
-      keyMap: 'sublime',
+      keyMap: global.Mancy.session.keyMap,
       lineNumbers: preferences.toggleLineNumberGutter,
       lineWrapping:'true',
       styleActiveLine: true,

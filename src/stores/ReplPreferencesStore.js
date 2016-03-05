@@ -97,6 +97,13 @@ const ReplPreferencesStore = Reflux.createStore({
       document.body.className = name.toLowerCase().replace(/\s/, '-');
     });
   },
+  onSetKeyMap(keyMap) {
+    this.updatePreference((preferences) => {
+      preferences.keyMap = keyMap;
+      global.Mancy.session.keyMap = keyMap;
+      ReplActiveInputActions.setEditorOption({name: 'keyMap', value: keyMap});
+    });
+  },
   onChangeFontFamily(family) {
     this.updatePreference((preferences) => {
       preferences.fontFamily = family;
