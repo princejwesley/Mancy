@@ -84,7 +84,7 @@ export default class ReplActiveInput extends React.Component {
       theme: _.kebabCase(global.Mancy.session.theme),
       keyMap: global.Mancy.session.keyMap,
       lineNumbers: preferences.toggleLineNumberGutter,
-      lineWrapping:'true',
+      lineWrapping: true,
       styleActiveLine: true,
       styleSelectedText: true,
       selectionPointer: true,
