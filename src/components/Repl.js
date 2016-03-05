@@ -31,7 +31,7 @@ export default class Repl extends React.Component {
   constructor(props) {
     super(props);
     _.each([
-      'onStateChange', 'onPaste', 'onContextMenu',
+      'onStateChange', 'onContextMenu',
       'onKeydown', 'onBreakPrompt', 'onClearCommands',
       'onCollapseAll', 'onExpandAll', 'onDrag', 'onToggleConsole', 'onFormatPromptCode',
       'onStdout', 'onStderr', 'onStdMessage', 'onConsole', 'onConsoleChange', 'getPromptKey',
@@ -58,7 +58,6 @@ export default class Repl extends React.Component {
     //register events
     this.unsubscribe = ReplStore.listen(this.onStateChange);
 
-    window.addEventListener('paste', this.onPaste, false);
     window.addEventListener('contextmenu', this.onContextMenu, false);
     window.addEventListener('keydown', this.onKeydown, false);
 
@@ -173,9 +172,9 @@ export default class Repl extends React.Component {
   }
 
   setupContextMenu() {
-    let Menu = remote.require('menu');
+    const Menu = remote.require('menu');
     let contextMenu = _.cloneDeep(ContextMenu);
-    let actionTemplates = [
+    const actionTemplates = [
       {
         label: 'Clear All',
         accelerator: 'Ctrl+L',
@@ -203,14 +202,24 @@ export default class Repl extends React.Component {
       }
     ];
 
-    _.each(actionTemplates, (template) => contextMenu.push(template));
-
+    const undoRedo = [
+      {
+        "label": "Undo",
+        "accelerator": "CmdOrCtrl+Z",
+        click: (item) => ReplActiveInputActions.undo()
+      },
+      {
+        "label": "Redo",
+        "accelerator": "Shift+CmdOrCtrl+Z",
+        click: (item) => ReplActiveInputActions.redo()
+      },
+    ];
+    contextMenu = undoRedo.concat(contextMenu).concat(actionTemplates);
     this.menu = Menu.buildFromTemplate(contextMenu);
   }
 
   componentWillUnmount() {
     this.unsubscribe();
-    window.removeEventListener('paste', this.onPaste, false);
     window.removeEventListener('contextmenu', this.onContextMenu, false);
     window.removeEventListener('keydown', this.onKeydown, false);
 
@@ -329,13 +338,6 @@ export default class Repl extends React.Component {
     win.setTitle(win.getTitle().replace(/REPL|Notebook/, mode));
     ReplStore.onSetEditorMode(mode);
     global.Mancy.session.editor = mode;
-  }
-
-  onPaste(e) {
-    e.preventDefault();
-    var text = e.clipboardData.getData("text/plain");
-    document.execCommand("insertText", false, text);
-    ReplSuggestionActions.removeSuggestion();
   }
 
   onKeydown(e) {

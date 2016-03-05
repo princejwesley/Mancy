@@ -61,6 +61,12 @@ const ReplActiveInputStore = Reflux.createStore({
   onUpdateSuggestionDelay() {
     this.trigger();
   },
+  onUndo() {
+    this.trigger({action: 'undo'});
+  },
+  onRedo() {
+    this.trigger({action: 'redo'});
+  },
   getStore() {
     return {
       activeSuggestion,

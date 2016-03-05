@@ -58,7 +58,7 @@ export default class ReplActiveInput extends React.Component {
       'shouldTranspile', 'transpileAndExecute',
       'canRetry', 'onInputRead', 'onKeyTab', 'onKeyEnter',
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
-      'onChange',
+      'onChange', 'onTriggerAction',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -100,7 +100,7 @@ export default class ReplActiveInput extends React.Component {
 
     this.editor.on('inputRead', this.onInputRead);
     this.editor.on('change', this.onChange);
-    this.editor.on('blure', this.onBlur);
+    this.editor.on('blur', this.onBlur);
     this.editor.setOption("extraKeys", {
       Tab: this.onKeyTab,
       Enter: this.onKeyEnter,
@@ -141,7 +141,6 @@ export default class ReplActiveInput extends React.Component {
 
   focus() {
     const cm = this.editor;
-    console.log(this.props.cursor);
     cm.setCursor(this.props.cursor || {line: cm.lastLine()});
     cm.focus();
   }
@@ -154,7 +153,14 @@ export default class ReplActiveInput extends React.Component {
     setTimeout(() => this.removeSuggestion(), 200);
   }
 
-  onStoreChange() {
+  onTriggerAction({action}) {
+    this.editor[action]();
+  }
+
+  onStoreChange(cmd) {
+
+    if(cmd) { return this.onTriggerAction(cmd); }
+
     let { now, activeSuggestion, breakPrompt,
           format, stagedCommands, autoComplete, theme } = ReplActiveInputStore.getStore();
     this.activeSuggestion = activeSuggestion;
@@ -434,14 +440,12 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onChange(cm, change) {
-    console.log("something changed! (" + change.origin + ")", change);
     if(change.origin === '+delete' && ReplActiveInputStore.getStore().activeSuggestion) {
       this.onInputRead(cm, change);
     }
   }
 
   onInputRead(cm, change) {
-    console.log("onInputRead! (" + change.origin + ")", change);
     this.removeSuggestion();
     if(change.origin === 'paste' ||
       global.Mancy.preferences.toggleAutomaticAutoComplete ||
@@ -460,7 +464,7 @@ export default class ReplActiveInput extends React.Component {
     let cli = ReplLanguages.getREPL();
     // managed by us (no react)
     this.element.className += ' repl-active-input-running';
-    this.editor.setOption("readOnly", true);
+    // this.editor.setOption("readOnly", true);
 
     setTimeout(() => {
       const text = this.editor.getValue();
@@ -518,7 +522,6 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onKeyTab(cm) {
-    console.log('onkeytab')
     let {activeSuggestion} = ReplActiveInputStore.getStore();
     if(activeSuggestion) {
       this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
