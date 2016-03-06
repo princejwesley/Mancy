@@ -38,8 +38,8 @@
     }
 
     .run-help {
-      pointer-events: none;
       padding: 0px 25px;
+      cursor: default;
       color: if($theme == $dark-theme, $dark-app-status-bar-run-help-color, $lt-app-status-bar-run-help-color);
       .run-command {
         color: if($theme == $dark-theme, $dark-app-status-bar-run-color, $lt-app-status-bar-run-color);

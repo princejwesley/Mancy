@@ -66,6 +66,7 @@ export default class ReplStatusBar extends React.Component {
   render() {
     let {commands, errors} = this.extractStatusInfo();
     let runHelp = this.state.runCommand ? '⇧ + ↲' : '↲';
+    let runHelpMessage = this.state.runCommand ? 'press shift + enter to run' : 'press enter to run';
     let imgURL = `./logos/${this.state.lang}.png`;
     let [handleCount, handleMsg] = this.getActiveHandle();
     return (
@@ -96,7 +97,7 @@ export default class ReplStatusBar extends React.Component {
               </span>
             : null
         }
-        <span className='run-help'>Press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
+        <span className='run-help' title={runHelpMessage}>press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
         <span className='placeholder'></span>
         {
           this.state.newRelease
