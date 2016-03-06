@@ -20,7 +20,7 @@
   {
     "label": "Select All",
     "accelerator": "CmdOrCtrl+A",
-    "role": "selectAll"
+    "role": "selectall"
   },
   {
     "type": "separator"

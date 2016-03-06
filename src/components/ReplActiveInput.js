@@ -38,7 +38,6 @@ const addons = [
 ]
 addons.forEach( addon => require(`../node_modules/codemirror/addon/${addon}.js`))
 
-
 const BLOCK_SCOPED_ERR_MSG = 'Block-scoped declarations (let, const, function, class) not yet supported outside strict mode';
 
 export default class ReplActiveInput extends React.Component {
@@ -52,7 +51,7 @@ export default class ReplActiveInput extends React.Component {
     };
 
     _.each([
-      'onTabCompletion', 'autoComplete', 'onKeyDown', 'onClick',
+      'onTabCompletion', 'autoComplete', 'onKeyDown', 'onCursorMoved',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
       'shouldTranspile', 'transpileAndExecute',
@@ -91,6 +90,7 @@ export default class ReplActiveInput extends React.Component {
       matchBrackets: true,
       highlightSelectionMatches: true,
       autoCloseBrackets: true,
+      resetSelectionOnContextMenu: false,
       autoFocus: true,
       foldGutter: preferences.toggleFoldGutter,
       foldOptions: {
@@ -103,6 +103,7 @@ export default class ReplActiveInput extends React.Component {
     this.editor.on('inputRead', this.onInputRead);
     this.editor.on('change', this.onChange);
     this.editor.on('blur', this.onBlur);
+    this.editor.on('cursorActivity', this.onCursorMoved);
     this.editor.setOption("extraKeys", {
       Tab: this.onKeyTab,
       Enter: this.onKeyEnter,
@@ -151,8 +152,11 @@ export default class ReplActiveInput extends React.Component {
     setTimeout(() => this.removeSuggestion(), 200);
   }
 
-  onClick() {
-    setTimeout(() => this.removeSuggestion(), 200);
+  onCursorMoved() {
+    let {activeSuggestion} = ReplActiveInputStore.getStore();
+    if(activeSuggestion){
+      setTimeout(() => this.removeSuggestion(), 200);
+    }
   }
 
   onTriggerAction({action}) {
@@ -164,7 +168,6 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onStoreChange(cmd) {
-    this.focus();
     if(cmd) {
       return cmd.action ?
         this.onTriggerAction(cmd) :

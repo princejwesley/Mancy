@@ -215,6 +215,8 @@ export default class Repl extends React.Component {
         click: (item) => ReplActiveInputActions.redo()
       },
     ];
+    let selectAll = contextMenu.filter(({label}) => label === "Select All")[0];
+    selectAll.click = () => ReplActiveInputActions.selectAll();
     contextMenu = undoRedo.concat(contextMenu).concat(actionTemplates);
     this.menu = Menu.buildFromTemplate(contextMenu);
   }
