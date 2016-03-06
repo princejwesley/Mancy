@@ -61,7 +61,8 @@ export default class ReplActiveInput extends React.Component {
       'canRetry', 'onInputRead', 'onKeyTab', 'onKeyEnter',
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
       'onChange', 'onTriggerAction', 'onSetEditorOption',
-      'onContextmenu', 'getPopupMenu', 'onFormat',
+      'onContextmenu', 'getPopupMenu', 'onFormat', 'onFoldAll', 'onUnFoldAll',
+      'foldUnfoldAll'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -72,7 +73,6 @@ export default class ReplActiveInput extends React.Component {
     this.retried = false;
     this.setDebouncedComplete();
     this.replMode = global.Mancy.session.editor === 'REPL';
-    this.menu = Menu.buildFromTemplate(this.getPopupMenu());
   }
 
   componentDidMount() {
@@ -117,7 +117,9 @@ export default class ReplActiveInput extends React.Component {
       Down: this.onKeyDown,
       "Ctrl-Space": this.onPerformAutoComplete,
       "Shift-Enter": this.onKeyShiftEnter,
-      "Shift-Ctrl-F": this.onFormat
+      "Shift-Ctrl-F": this.onFormat,
+      "Ctrl-Q": this.onFoldAll,
+      "Shift-Ctrl-Q": this.onUnFoldAll,
     });
 
     if(this.replMode) { this.focus(); }
@@ -144,16 +146,20 @@ export default class ReplActiveInput extends React.Component {
 
   getPopupMenu() {
     return [
-      { "label": "Undo", "accelerator": "CmdOrCtrl+Z", click: e => this.onTriggerAction({action: 'undo'}) },
-      { "label": "Redo", "accelerator": "Shift+CmdOrCtrl+Z", click: e => this.onTriggerAction({action: 'redo'}) },
-      { "type": "separator" },
-      { "label": "Cut", "accelerator": "CmdOrCtrl+X", "role": "cut" },
-      { "label": "Copy", "accelerator": "CmdOrCtrl+C", "role": "copy" },
-      { "label": "Paste", "accelerator": "CmdOrCtrl+V", "role": "paste" },
-      { "label": "Select All", "accelerator": "CmdOrCtrl+A", "role": "selectall",
+      { label: "Undo", accelerator: "CmdOrCtrl+Z", click: e => this.onTriggerAction({action: 'undo'}) },
+      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", click: e => this.onTriggerAction({action: 'redo'}) },
+      { type: "separator" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", "role": "cut" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", "role": "copy" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", "role": "paste" },
+      { label: "Select All", accelerator: "CmdOrCtrl+A", "role": "selectall",
           click: e => this.onTriggerAction({action: 'selectAll'}) },
-      { "type": "separator" },
+      { type: "separator" },
       { label: 'Format', accelerator: 'Shift+Ctrl+F', click: this.onFormat },
+      { label: "Fold All", accelerator: "Ctrl+Q", click: this.onFoldAll,
+          enabled: global.Mancy.preferences.toggleFoldGutter && !!this.editor.getValue().length },
+      { label: "UnFold All", accelerator: "Shift+Ctrl+Q", click: this.onUnFoldAll,
+          enabled: global.Mancy.preferences.toggleFoldGutter && !!this.editor.getValue().length },
     ];
   }
 
@@ -162,6 +168,26 @@ export default class ReplActiveInput extends React.Component {
       () => this.complete(this.autoComplete),
       global.Mancy.preferences.suggestionDelay
     );
+  }
+
+  foldUnfoldAll(fold = true) {
+    const cm = this.editor;
+    const action = fold ? "fold" : "unfold";
+    cm.operation(() => {
+      const start = cm.firstLine();
+      const end = cm.lastLine();
+      for (let line = start; line <= end; line++) {
+        cm.foldCode(CodeMirror.Pos(line, 0), null, action);
+      }
+    });
+  }
+
+  onFoldAll() {
+    this.foldUnfoldAll(true);
+  }
+
+  onUnFoldAll() {
+    this.foldUnfoldAll(false);
   }
 
   focus() {
@@ -177,6 +203,7 @@ export default class ReplActiveInput extends React.Component {
   onContextmenu(cm, e) {
     e.stopPropagation();
     e.preventDefault();
+    this.menu = Menu.buildFromTemplate(this.getPopupMenu());
     this.menu.popup(remote.getCurrentWindow());
   }
 
