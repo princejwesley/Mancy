@@ -62,17 +62,16 @@ export default class ReplActiveInput extends React.Component {
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
       'onChange', 'onTriggerAction', 'onSetEditorOption',
       'onContextmenu', 'getPopupMenu', 'onFormat', 'onFoldAll', 'onUnFoldAll',
-      'foldUnfoldAll'
+      'foldUnfoldAll', 'isREPLMode'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
 
-    this.activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     this.commandReady = false;
     // retry on error for magic mode
     this.retried = false;
     this.setDebouncedComplete();
-    this.replMode = global.Mancy.session.editor === 'REPL';
+    this.id = `prompt-${(Math.random() * Math.pow(10, 9)) | 0}`;
   }
 
   componentDidMount() {
@@ -122,7 +121,7 @@ export default class ReplActiveInput extends React.Component {
       "Shift-Ctrl-Q": this.onUnFoldAll,
     });
 
-    if(this.replMode) { this.focus(); }
+    if(this.isREPLMode()) { this.focus(); }
 
     let cli = ReplLanguages.getREPL();
     //set desired repl mode
@@ -168,6 +167,10 @@ export default class ReplActiveInput extends React.Component {
       () => this.complete(this.autoComplete),
       global.Mancy.preferences.suggestionDelay
     );
+  }
+
+  isREPLMode() {
+    return global.Mancy.session.editor === 'REPL';
   }
 
   foldUnfoldAll(fold = true) {
@@ -239,7 +242,7 @@ export default class ReplActiveInput extends React.Component {
 
     let { now, activeSuggestion, breakPrompt,
           format, stagedCommands, autoComplete } = ReplActiveInputStore.getStore();
-    this.activeSuggestion = activeSuggestion;
+
     this.setDebouncedComplete();
 
     if(autoComplete) {
@@ -294,16 +297,15 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    if(now && activeSuggestion) {
-      this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+    if(now && activeSuggestion && activeSuggestion.id === this.id) {
+      let {suggestion} = activeSuggestion;
+      this.onSelectTabCompletion(suggestion.input + suggestion.expect);
       return;
     }
   }
 
   addEntryAction(formattedOutput, status, command, plainCode, transpiledOutput) {
     let addReplEntry = (output, formatted = false) => {
-      // handle ctrl + c
-      if(this.done) { return; }
       this.element.className = 'repl-active-input';
       formattedOutput = formatted ? output : ReplOutput.some(output).highlight().formattedOutput;
       const entry = {
@@ -313,7 +315,7 @@ export default class ReplActiveInput extends React.Component {
         plainCode,
         transpiledOutput
       };
-      if(this.replMode || this.history.idx === -1) {
+      if(this.isREPLMode() || this.history.idx === -1) {
         ReplActions.addEntry(entry);
       } else {
         ReplActions.updateEntry(this.history.idx, entry);
@@ -405,7 +407,7 @@ export default class ReplActiveInput extends React.Component {
           completeOn: ""
         });
       }
-      ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code});
+      ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code, id: this.id});
     } else {
       this.removeSuggestion();
     }
@@ -416,13 +418,12 @@ export default class ReplActiveInput extends React.Component {
   }
 
   reloadPrompt(cmd, cursor, idx = -1, staged = '') {
-    this.done = true;
-    ReplActions.reloadPrompt({
-      command: cmd,
-      cursor: cursor,
-      historyIndex: idx,
-      historyStaged: (idx === -1 ? cmd : staged)
-    });
+    const cm = this.editor;
+    cm.setOption('readOnly', false);
+    cm.setValue(cmd);
+    this.history.idx = idx;
+    this.history.staged = (idx === -1 ? cmd : staged);
+    cm.setCursor(cursor || {line: cm.lastLine()});
   }
 
   onTabCompletion(__, completion) {
@@ -531,7 +532,9 @@ export default class ReplActiveInput extends React.Component {
     let cli = ReplLanguages.getREPL();
     // managed by us (no react)
     this.element.className += ' repl-active-input-running';
-    this.editor.setOption("readOnly", true);
+    if(this.isREPLMode()) {
+      this.editor.setOption("readOnly", true);
+    }
 
     setTimeout(() => {
       const text = this.editor.getValue();
@@ -590,8 +593,9 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyTab(cm) {
     let {activeSuggestion} = ReplActiveInputStore.getStore();
-    if(activeSuggestion) {
-      this.onSelectTabCompletion(activeSuggestion.input + activeSuggestion.expect);
+    if(activeSuggestion && activeSuggestion.id === this.id) {
+      let {suggestion} = activeSuggestion;
+      this.onSelectTabCompletion(suggestion.input + suggestion.expect);
       return;
     }
     return CodeMirror.Pass;
@@ -654,7 +658,7 @@ export default class ReplActiveInput extends React.Component {
 
   render() {
     return (
-      <div className='repl-active-input'>
+      <div className='repl-active-input' id={this.id}>
       </div>
     );
   }

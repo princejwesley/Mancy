@@ -12,8 +12,8 @@ const ReplActiveInputStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplActiveInputActions);
   },
-  onTabCompleteSuggestion(suggestion) {
-    activeSuggestion = suggestion;
+  onTabCompleteSuggestion(suggestion, id) {
+    activeSuggestion = { suggestion, id };
     now = breakPrompt = format = autoComplete = false;
     this.trigger();
   },
@@ -26,8 +26,8 @@ const ReplActiveInputStore = Reflux.createStore({
     autoComplete = true;
     this.trigger();
   },
-  onFillTabCompleteSuggestion(suggestion) {
-    activeSuggestion = suggestion;
+  onFillTabCompleteSuggestion(suggestion, id) {
+    activeSuggestion = { suggestion, id };
     breakPrompt = format = autoComplete = false;
     now = true;
     this.trigger();

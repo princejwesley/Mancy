@@ -16,6 +16,7 @@ export default class ReplSuggestions extends React.Component {
     this.state = {
       suggestions: [],
       selected: -1,
+      id: null
     };
     this.onStateChange = this.onStateChange.bind(this);
     this.onWindowEvents = this.onWindowEvents.bind(this);
@@ -58,12 +59,12 @@ export default class ReplSuggestions extends React.Component {
       if(suggestionList) {
         suggestionList.scrollTop = (suggestionList.scrollHeight / this.state.suggestions.length) * next;
       }
-      ReplActiveInputActions.tabCompleteSuggestion(this.state.suggestions[next]);
+      ReplActiveInputActions.tabCompleteSuggestion(this.state.suggestions[next], this.state.id);
     }
   }
 
   onStateChange(data) {
-    let {suggestions, input} = data;
+    let {suggestions, input, id} = data;
     suggestions = _.map(suggestions, (suggestion) => {
       return {
         key: md5(suggestion.text),
@@ -77,11 +78,12 @@ export default class ReplSuggestions extends React.Component {
     let selected = suggestions.length ? 0 : -1;
     this.setState({
       suggestions: suggestions,
-      selected: selected
+      selected: selected,
+      id
     });
 
     if(selected !== -1) {
-      ReplActiveInputActions.tabCompleteSuggestion(suggestions[selected]);
+      ReplActiveInputActions.tabCompleteSuggestion(suggestions[selected], id);
     } else {
       ReplActiveInputActions.resetTabCompleteSuggestion();
     }
@@ -91,15 +93,17 @@ export default class ReplSuggestions extends React.Component {
     let clickAction = (e) => {
       this.setState({
         suggestions: this.state.suggestions,
-        selected: idx
+        selected: idx,
+        id: this.state.id
       });
-      ReplActiveInputActions.fillTabCompleteSuggestion(this.state.suggestions[idx]);
+      ReplActiveInputActions.fillTabCompleteSuggestion(this.state.suggestions[idx], this.state.id);
     };
     return clickAction;
   }
 
   render() {
-    let style = this.state.suggestions.length ? ReplDOM.getAutoCompletePosition() : null;
+    let style = this.state.suggestions.length && this.state.id
+      ? ReplDOM.getAutoCompletePosition(this.state.id) : null;
     return (
       <div className='repl-prompt-suggestion-wrapper' style={style}>
       {

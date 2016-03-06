@@ -129,10 +129,13 @@ let ReplDOM = {
     }
   },
   // for auto complete
-  getAutoCompletePosition: () => {
+  getAutoCompletePosition: (id) => {
     const viewport = ReplDOM.getViewportSize();
-    const cursorElement = document.getElementsByClassName('CodeMirror-cursor')[0];
+    const prompt = document.getElementById(id);
+    if(!prompt) { return; }
+    const cursorElement = prompt.getElementsByClassName('CodeMirror-cursor')[0];
     if(!cursorElement) { return; }
+
     const area = cursorElement.getBoundingClientRect();
     let y = area.bottom + 5;
     let x = area.left;

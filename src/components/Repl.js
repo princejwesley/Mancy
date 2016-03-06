@@ -351,7 +351,7 @@ export default class Repl extends React.Component {
       ReplActiveInputActions.performAutoComplete();
       return;
     }
-    if(e.ctrlKey && e.shiftKey && ReplDOMEvents.isNumber(e)) {
+    if(e.ctrlKey && e.shiftKey && global.Mancy.session.editor === 'REPL' && ReplDOMEvents.isNumber(e)) {
       let num = e.which - ReplDOMEvents.zero;
       ReplStore.onReloadPromptByIndex(num + 1, true);
       return;
