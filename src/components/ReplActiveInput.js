@@ -18,6 +18,9 @@ import ReplLanguages from '../languages/ReplLanguages';
 
 import CodeMirror from 'codemirror';
 
+const remote = require('electron').remote;
+const Menu = remote.Menu;
+
 // modes
 const modes = ['javascript', 'coffeescript', 'livescript']
 modes.forEach( mode => require(`../node_modules/codemirror/mode/${mode}/${mode}.js`))
@@ -51,13 +54,14 @@ export default class ReplActiveInput extends React.Component {
     };
 
     _.each([
-      'onTabCompletion', 'autoComplete', 'onKeyDown', 'onCursorMoved',
+      'onTabCompletion', 'autoComplete', 'onKeyDown', 'onCursorActivity',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
       'shouldTranspile', 'transpileAndExecute',
       'canRetry', 'onInputRead', 'onKeyTab', 'onKeyEnter',
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
-      'onChange', 'onTriggerAction', 'onSetEditorOption'
+      'onChange', 'onTriggerAction', 'onSetEditorOption',
+      'onContextmenu', 'getPopupMenu', 'onFormat',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -68,6 +72,7 @@ export default class ReplActiveInput extends React.Component {
     this.retried = false;
     this.setDebouncedComplete();
     this.replMode = global.Mancy.session.editor === 'REPL';
+    this.menu = Menu.buildFromTemplate(this.getPopupMenu());
   }
 
   componentDidMount() {
@@ -100,10 +105,11 @@ export default class ReplActiveInput extends React.Component {
       cursorBlinkRate: 530
     });
 
-    this.editor.on('inputRead', this.onInputRead);
-    this.editor.on('change', this.onChange);
-    this.editor.on('blur', this.onBlur);
-    this.editor.on('cursorActivity', this.onCursorMoved);
+    const eventActions = [
+      'inputRead', 'change', 'blur',
+      'cursorActivity', 'contextmenu'
+    ];
+    eventActions.forEach(e => this.editor.on(e, this[`on${_.capitalize(e)}`]));
     this.editor.setOption("extraKeys", {
       Tab: this.onKeyTab,
       Enter: this.onKeyEnter,
@@ -111,6 +117,7 @@ export default class ReplActiveInput extends React.Component {
       Down: this.onKeyDown,
       "Ctrl-Space": this.onPerformAutoComplete,
       "Shift-Enter": this.onKeyShiftEnter,
+      "Shift-Ctrl-F": this.onFormat
     });
 
     if(this.replMode) { this.focus(); }
@@ -135,6 +142,21 @@ export default class ReplActiveInput extends React.Component {
     cli.displayPrompt = this.displayPrompt;
   }
 
+  getPopupMenu() {
+    return [
+      { "label": "Undo", "accelerator": "CmdOrCtrl+Z", click: e => this.onTriggerAction({action: 'undo'}) },
+      { "label": "Redo", "accelerator": "Shift+CmdOrCtrl+Z", click: e => this.onTriggerAction({action: 'redo'}) },
+      { "type": "separator" },
+      { "label": "Cut", "accelerator": "CmdOrCtrl+X", "role": "cut" },
+      { "label": "Copy", "accelerator": "CmdOrCtrl+C", "role": "copy" },
+      { "label": "Paste", "accelerator": "CmdOrCtrl+V", "role": "paste" },
+      { "label": "Select All", "accelerator": "CmdOrCtrl+A", "role": "selectall",
+          click: e => this.onTriggerAction({action: 'selectAll'}) },
+      { "type": "separator" },
+      { label: 'Format', accelerator: 'Shift+Ctrl+F', click: this.onFormat },
+    ];
+  }
+
   setDebouncedComplete() {
     this.debouncedComplete = _.debounce(
       () => this.complete(this.autoComplete),
@@ -152,7 +174,13 @@ export default class ReplActiveInput extends React.Component {
     setTimeout(() => this.removeSuggestion(), 200);
   }
 
-  onCursorMoved() {
+  onContextmenu(cm, e) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.menu.popup(remote.getCurrentWindow());
+  }
+
+  onCursorActivity() {
     let {activeSuggestion} = ReplActiveInputStore.getStore();
     if(activeSuggestion){
       setTimeout(() => this.removeSuggestion(), 200);
@@ -165,6 +193,14 @@ export default class ReplActiveInput extends React.Component {
 
   onSetEditorOption({name, value}) {
     this.editor.setOption(name, value);
+  }
+
+  onFormat() {
+    const text = this.editor.getValue();
+    if(text.length) {
+      const formattedCode =  ReplCommon.format(text);
+      this.reloadPrompt(formattedCode);
+    }
   }
 
   onStoreChange(cmd) {
@@ -185,12 +221,7 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(format) {
-      const text = this.editor.getValue();
-      if(text.length) {
-        const formattedCode =  ReplCommon.format(text);
-        this.reloadPrompt(formattedCode);
-      }
-      return;
+      return this.onFormat();
     }
 
     if(breakPrompt) {

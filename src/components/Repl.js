@@ -195,29 +195,27 @@ export default class Repl extends React.Component {
         label: 'Break Prompt',
         accelerator: 'Ctrl+D',
         click: this.onBreakPrompt
-      },
-      {
-        label: 'Format',
-        accelerator: 'Shift+Ctrl+F',
-        click: this.onFormatPromptCode
       }
     ];
 
-    const undoRedo = [
-      {
-        "label": "Undo",
-        "accelerator": "CmdOrCtrl+Z",
-        click: (item) => ReplActiveInputActions.undo()
-      },
-      {
-        "label": "Redo",
-        "accelerator": "Shift+CmdOrCtrl+Z",
-        click: (item) => ReplActiveInputActions.redo()
-      },
-    ];
-    let selectAll = contextMenu.filter(({label}) => label === "Select All")[0];
-    selectAll.click = () => ReplActiveInputActions.selectAll();
-    contextMenu = undoRedo.concat(contextMenu).concat(actionTemplates);
+    contextMenu = contextMenu.concat(actionTemplates);
+    if(global.Mancy.session.editor === 'REPL') {
+      const undoRedo = [
+        {
+          "label": "Undo",
+          "accelerator": "CmdOrCtrl+Z",
+          click: (item) => ReplActiveInputActions.undo()
+        },
+        {
+          "label": "Redo",
+          "accelerator": "Shift+CmdOrCtrl+Z",
+          click: (item) => ReplActiveInputActions.redo()
+        },
+        { "type": "separator" },
+      ];
+      contextMenu = undoRedo.concat(contextMenu);
+    }
+
     this.menu = Menu.buildFromTemplate(contextMenu);
   }
 
