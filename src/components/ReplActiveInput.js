@@ -62,7 +62,7 @@ export default class ReplActiveInput extends React.Component {
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
       'onChange', 'onTriggerAction', 'onSetEditorOption',
       'onContextmenu', 'getPopupMenu', 'onFormat', 'onFoldAll', 'onUnFoldAll',
-      'foldUnfoldAll', 'isREPLMode'
+      'foldUnfoldAll', 'isREPLMode', 'resetSuggestionTimer',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -199,8 +199,15 @@ export default class ReplActiveInput extends React.Component {
     cm.focus();
   }
 
+  resetSuggestionTimer() {
+    if(this.suggestionTimerHandle) {
+      clearTimeout(this.suggestionTimerHandle);
+    }
+    this.suggestionTimerHandle = null;
+  }
+
   onBlur() {
-    setTimeout(() => this.removeSuggestion(), 200);
+    this.removeSuggestion();
   }
 
   onContextmenu(cm, e) {
@@ -213,7 +220,7 @@ export default class ReplActiveInput extends React.Component {
   onCursorActivity() {
     let {activeSuggestion} = ReplActiveInputStore.getStore();
     if(activeSuggestion){
-      setTimeout(() => this.removeSuggestion(), 200);
+      this.removeSuggestion();
     }
   }
 
@@ -414,7 +421,8 @@ export default class ReplActiveInput extends React.Component {
   }
 
   removeSuggestion() {
-    setTimeout(() => ReplSuggestionActions.removeSuggestion(), 200);
+    this.resetSuggestionTimer();
+    this.suggestionTimerHandle = setTimeout(() => ReplSuggestionActions.removeSuggestion(), 200);
   }
 
   reloadPrompt(cmd, cursor, idx = -1, staged = '') {
@@ -424,6 +432,7 @@ export default class ReplActiveInput extends React.Component {
     this.history.idx = idx;
     this.history.staged = (idx === -1 ? cmd : staged);
     cm.setCursor(cursor || {line: cm.lastLine()});
+    cm.focus();
   }
 
   onTabCompletion(__, completion) {
@@ -508,7 +517,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onChange(cm, change) {
-    if(change.origin === '+delete' && ReplActiveInputStore.getStore().activeSuggestion) {
+    if(change.origin === '+delete') {
       this.onInputRead(cm, change);
     }
   }
@@ -516,8 +525,7 @@ export default class ReplActiveInput extends React.Component {
   onInputRead(cm, change) {
     this.removeSuggestion();
     if(change.origin === 'paste' ||
-      global.Mancy.preferences.toggleAutomaticAutoComplete ||
-      !(change.text[0] || '').trim().length) { return; }
+      global.Mancy.preferences.toggleAutomaticAutoComplete) { return; }
     this.debouncedComplete();
   }
 
@@ -650,9 +658,18 @@ export default class ReplActiveInput extends React.Component {
     const cm = this.editor;
     const {line, ch} = cm.getCursor();
     const code = cm.getValue();
-    const beforeCursor = cm.doc.getRange({line: 0, ch: 0}, {line, ch});
+    const beforeCursor = cm.doc.getLine(line);
     ReplSuggestionActions.removeSuggestion();
+
+    // node repl patch
     let cli = ReplLanguages.getREPL();
+    cli.bufferedCommand = "";
+    cli.lines = [];
+    cli.lines.level = [];
+    if(line > 0) {
+      cli.bufferedCommand = cm.doc.getRange({line: 0, ch: 0}, {line: line - 1});
+      cli.bufferedCommand.split('\n').forEach(l => cli.memory(l))
+    }
     cli.complete(beforeCursor, callback);
   }
 
