@@ -48,10 +48,16 @@ export default class ReplActiveInput extends React.Component {
     super(props);
     this.history = {
       // read-only
-      log: this.props.history,
+      log: this.props.history || [],
       idx: this.props.historyIndex,
       staged: this.props.historyStaged
     };
+
+    this.contextCode = _.chain(this.history.log)
+      .filter(l => l.status)
+      .map(l => l.plainCode.split('\n'))
+      .flatten()
+      .value();
 
     _.each([
       'onTabCompletion', 'autoComplete', 'onKeyDown', 'onCursorActivity',
@@ -128,6 +134,11 @@ export default class ReplActiveInput extends React.Component {
     cli.replMode = ReplLanguages.getREPLProvider()[`REPL_MODE_${(global.Mancy.session.mode || global.Mancy.session.mode).toUpperCase()}`];
     //bind write handle
     cli.output.write = this.addEntry.bind(this);
+    cli.lines = [];
+    this.contextCode.forEach(l => cli.memory(l));
+    this.lines = _.clone(cli.lines);
+    this.levels = _.clone(cli.lines.level);
+
     //scroll to bottom
     ReplDOM.scrollToEnd(this.element);
 
@@ -489,18 +500,22 @@ export default class ReplActiveInput extends React.Component {
   }
 
   canRetry(e) {
-    return e && e.message && !this.retried
+    return e && e.message && (!this.retried
       && global.Mancy.session.mode === 'Magic'
       && global.Mancy.session.lang === 'js'
       && e.message === BLOCK_SCOPED_ERR_MSG
-      && (this.retried = true);
+      || this.wrapExpression
+    );
   }
 
   transpileAndExecute(err, result) {
     let text = this.promptInput;
     if(err) {
-      if(this.canRetry(err)) { this.execute(true); }
-      else {
+      if(this.canRetry(err)) {
+        this.wrapExpression = false;
+        this.retried = true;
+        this.execute(true);
+      } else {
         this.addEntryAction(ReplOutput.none().highlight(err).formattedOutput,
           !err, ReplCommon.highlight(text), text);
       }
@@ -545,7 +560,7 @@ export default class ReplActiveInput extends React.Component {
     }
 
     setTimeout(() => {
-      const text = this.editor.getValue();
+      let text = this.editor.getValue();
       if(cli.bufferedCommand.length) {
         cli.input.emit('data', '.break');
         cli.input.emit('data', EOL);
@@ -553,6 +568,13 @@ export default class ReplActiveInput extends React.Component {
       cli.$lastExpression = ReplOutput.none();
       cli.context = ReplContext.getContext();
       this.promptInput = text;
+      this.wrapExpression = !forceStrict && /^\s*\{/.test(text) && /\}\s*$/.test(text);
+      // all transpiled languages, () has same meaning
+      // no need to filter by lang
+      if(this.wrapExpression) {
+        text = `(${text})`;
+      }
+
       let {local, output, input, force} = ReplInput.transform(text);
       let out = output;
       this.force = !!force;
@@ -580,14 +602,20 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onRun() {
+    // preactions before execute
     this.removeSuggestion();
-    let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
-    if(activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) { return; }
     ReplDOM.scrollToEnd();
     this.execute();
   }
 
   onKeyEnter(cm) {
+    let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
+    if(activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) {
+      let {suggestion} = activeSuggestion;
+      this.onSelectTabCompletion(suggestion.input + suggestion.expect);
+      return;
+    }
+
     return !global.Mancy.preferences.toggleShiftEnter
       ? this.onRun()
       : CodeMirror.Pass;
@@ -658,19 +686,24 @@ export default class ReplActiveInput extends React.Component {
     const cm = this.editor;
     const {line, ch} = cm.getCursor();
     const code = cm.getValue();
-    const beforeCursor = cm.doc.getLine(line);
+    const beforeCursor = cm.doc.getLine(line).substring(0, ch);
     ReplSuggestionActions.removeSuggestion();
 
     // node repl patch
     let cli = ReplLanguages.getREPL();
     cli.bufferedCommand = "";
-    cli.lines = [];
-    cli.lines.level = [];
-    if(line > 0) {
-      cli.bufferedCommand = cm.doc.getRange({line: 0, ch: 0}, {line: line - 1});
-      cli.bufferedCommand.split('\n').forEach(l => cli.memory(l))
+    cli.lines = _.clone(this.lines);
+    cli.lines.level = _.clone(this.levels);
+    try {
+      // dont leak auto complete errors
+      if(line > 0) {
+        cli.bufferedCommand = cm.doc.getRange({line: 0, ch: 0}, {line: line - 1});
+        cli.bufferedCommand.split('\n').forEach(l => cli.memory(l));
+      }
+      cli.complete(beforeCursor, callback);
+    } catch(e) {
+      console.log('on autoComplete', e)
     }
-    cli.complete(beforeCursor, callback);
   }
 
   render() {

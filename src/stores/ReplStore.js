@@ -47,7 +47,7 @@ const ReplStore = Reflux.createStore({
   onAddEntry(entry) {
     const tag = `${md5(entry.plainCode)}-${Math.random()}`;
     cache.entries.push(_.extend({tag}, entry));
-    cache.history.push({'plainCode': entry.plainCode, tag});
+    cache.history.push({'plainCode': entry.plainCode, tag, status: entry.status});
     cache.reloadPrompt = true;
     resetButEntry();
     this.trigger();
