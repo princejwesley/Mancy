@@ -547,7 +547,7 @@ export default class ReplActiveInput extends React.Component {
   onPerformAutoComplete() {
     let {activeSuggestion} = ReplActiveInputStore.getStore();
     if(!activeSuggestion){
-      this.complete(this.onTabCompletion);
+      this.complete(this.onTabCompletion, true);
     }
   }
 
@@ -682,11 +682,13 @@ export default class ReplActiveInput extends React.Component {
       : navigateHistory(up, this.history.log[idx].plainCode, idx);
   }
 
-  complete(callback) {
+  complete(callback, allowEmpty = false) {
     const cm = this.editor;
     const {line, ch} = cm.getCursor();
     const code = cm.getValue();
     const beforeCursor = cm.doc.getLine(line).substring(0, ch);
+
+    if(!allowEmpty && !beforeCursor.trim().length) { return; }
     ReplSuggestionActions.removeSuggestion();
 
     // node repl patch

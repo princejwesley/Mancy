@@ -63,6 +63,8 @@ Allowed values:
 copyright 2015
                   `);
 
+// babel leaking __core-js_shared__
+const globalNames = Object.getOwnPropertyNames(global).filter(g => g !== '__core-js_shared__');
 const windowCache = {};
 const dockNotificationCache = {};
 const menuManagerCache = {};
@@ -194,6 +196,10 @@ app.on('activate', (event, hasVisibleWindows) => {
   if(!hasVisibleWindows) {
     onReady();
   }
+});
+
+ipc.on('application:global-context-names', (event, options) => {
+  event.returnValue = globalNames;
 });
 
 ipc.on('application:open-sync-resource', (event, options) => {
