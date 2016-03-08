@@ -122,8 +122,14 @@ export default class Repl extends React.Component {
     ReplPreferencesActions.setTheme(global.Mancy.preferences.theme);
 
     this.resizeWindow();
-    this.loadStartupScript();
+
     ipcRenderer.send('application:prompt-on-close', global.Mancy.preferences.promptOnClose);
+    // update history configuration
+    ipcRenderer.send('application:history-size', global.Mancy.preferences.historySize);
+
+    const history = ipcRenderer.sendSync('application:history');
+    ReplStore.onSavePersistentHistory(history);
+    this.loadStartupScript();
   }
 
   onLoadScript(sender, script) {
@@ -246,7 +252,8 @@ export default class Repl extends React.Component {
   }
 
   onSaveCommands(sender, filename) {
-    let {history} = ReplStore.getStore();
+    let {history, persistentHistorySize} = ReplStore.getStore();
+    history = history.slice(persistentHistorySize);
     let data = _.chain(history)
       .map((h) => h.plainCode)
       .filter((c) => !/^\s*\./.test(c))

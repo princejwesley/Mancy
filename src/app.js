@@ -7,6 +7,7 @@ import ReplFonts from './common/ReplFonts';
 import _ from 'lodash';
 import remote from 'remote';
 import webFrame from 'web-frame';
+import {ipcRenderer} from 'electron';
 
 (() => {
   // Temporary fix for node bug : https://github.com/nodejs/node/issues/3158
@@ -44,7 +45,9 @@ import webFrame from 'web-frame';
     "toggleFoldGutter": true,
     "toggleLineNumberGutter": true,
     "keyMap": "sublime",
-    "npmPaths": []
+    "npmPaths": [],
+    "historySize": 1000,
+    "historyAggressive": false
   };
 
   _.each(_.keys(defaults), (key) => {

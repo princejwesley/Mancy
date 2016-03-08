@@ -3,8 +3,10 @@ import Reflux from 'reflux';
 import _ from 'lodash';
 import ReplCommon from '../common/ReplCommon';
 import md5 from 'md5';
+import {ipcRenderer} from 'electron';
 
 let cache = {
+  persistentHistorySize: 0,
   entries: [],
   history: [],
   command: '',
@@ -36,6 +38,13 @@ const ReplStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplActions);
   },
+  onSavePersistentHistory(history = []) {
+    cache.persistentHistorySize = history.length;
+    cache.history = history.concat(cache.history).map(h => {
+      return { plainCode: h, status: false };
+    });
+    resetButEntry();
+  },
   onUpdateEntry(pos, entry) {
     const tag = cache.entries[pos].tag;
     cache.entries[pos] = _.extend({tag}, entry);
@@ -49,17 +58,22 @@ const ReplStore = Reflux.createStore({
     cache.entries.push(_.extend({tag}, entry));
     cache.history.push({'plainCode': entry.plainCode, tag, status: entry.status});
     cache.reloadPrompt = true;
+    if(global.Mancy.preferences.historyAggressive) {
+      ipcRenderer.send('application:history-save', [entry.plainCode]);
+    } else {
+      ipcRenderer.send('application:history-append', entry.plainCode);
+    }
     resetButEntry();
     this.trigger();
   },
   onReloadPromptByIndex(idx, reverse = false) {
-    let length = cache.entries.length;
+    let length = cache.history.length;
     let pos = reverse ? length - idx : idx;
     if(pos >= 0 && pos < length) {
       cache.reloadPrompt = true;
-      let command = cache.entries[pos].plainCode;
+      let command = cache.history[pos].plainCode;
       let cursor = command.length;
-      resetButEntry({ command, cursor });
+      resetButEntry({ command, cursor, historyIndex: pos });
       this.trigger();
     }
   },

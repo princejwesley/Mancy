@@ -90,6 +90,18 @@ const ReplPreferencesStore = Reflux.createStore({
       ipcRenderer.send('application:prompt-on-close', flag);
     });
   },
+  toggleHistoryAggressive(flag) {
+    this.updatePreference((preferences) => {
+      preferences.historyAggressive = flag;
+      ipcRenderer.send('application:history-aggressive', flag);
+    });
+  },
+  onSetHistorySize(size) {
+    this.updatePreference((preferences) => {
+      preferences.historySize = size;
+      ipcRenderer.send('application:history-size', size);     
+    });
+  },
   onSetTheme(name) {
     this.updatePreference((preferences) => {
       preferences.theme = name;
