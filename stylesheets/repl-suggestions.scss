@@ -6,6 +6,7 @@
     background-color: if($theme == $dark-theme, $dark-app-suggestion-background-color, $lt-app-suggestion-background-color);
     z-index: 100;
     .repl-prompt-suggestion-list {
+      font-size: 0.9em;
       [data-selected='true'] {
         background-color: lighten(if($theme == $dark-theme, $dark-app-background-color, $lt-app-background-color), 10%);
       }
@@ -21,11 +22,11 @@
       padding: 2px 0;
 
       .repl-prompt-suggestion {
-        display: flex;
-        flex: 1;
         min-height: calc(#{$app-font-size} + 8px);
         max-height: calc(#{$app-font-size} + 8px);
-        overflow: auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
         padding: 4px 2px;
         border-bottom: 1px solid if($theme == $dark-theme, $dark-app-suggestion-entry-border-color, $lt-app-suggestion-entry-border-color);
         cursor: pointer;
@@ -36,6 +37,8 @@
           border-radius: 100%;
           width: $app-font-size;
           height: $app-font-size;
+          min-height: calc(#{$app-font-size} + 8px);
+          max-height: calc(#{$app-font-size} + 8px);
           text-align: center;
           color: if($theme == $dark-theme, $dark-app-suggestion-type-color, $lt-app-suggestion-type-color);
           font-family: if($theme == $dark-theme, $dark-app-suggestion-type-font-family, $lt-app-suggestion-type-font-family);
@@ -43,14 +46,18 @@
         }
 
         .repl-prompt-suggestion-text {
+          width: $app-font-size;
+          height: $app-font-size;
           padding: 2px 8px;
           flex: 1;
 
           .repl-prompt-suggestion-highlight {
+            white-space: nowrap;
             color: if($theme == $dark-theme, $dark-app-suggestion-type-hightlight-color, $lt-app-suggestion-type-hightlight-color);
           }
 
           .repl-prompt-suggestion-expect {
+            white-space: nowrap;
             color: if($theme == $dark-theme, $dark-app-suggestion-type-expect-color, $lt-app-suggestion-type-expect-color);
           }
         }

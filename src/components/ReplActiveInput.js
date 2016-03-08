@@ -68,7 +68,7 @@ export default class ReplActiveInput extends React.Component {
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
       'onChange', 'onTriggerAction', 'onSetEditorOption',
       'onContextmenu', 'getPopupMenu', 'onFormat', 'onFoldAll', 'onUnFoldAll',
-      'foldUnfoldAll', 'isREPLMode', 'resetSuggestionTimer',
+      'foldUnfoldAll', 'isREPLMode', 'resetSuggestionTimer', 'getHistorySuggession',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -417,6 +417,8 @@ export default class ReplActiveInput extends React.Component {
     const text = cm.getValue();
     const {line, ch} = cm.getCursor();
     const code = cm.doc.getRange({line: 0, ch: 0}, {line, ch});
+
+    this.getHistorySuggession(code, suggestions);
     if(suggestions.length && completeEntry(suggestions, code)) {
       if(code === '.') {
         suggestions.push({
@@ -661,8 +663,8 @@ export default class ReplActiveInput extends React.Component {
   }
 
   traverseHistory(direction = -1) {
-    let len = this.history.log.length;
-    let up = direction === -1;
+    const len = this.history.log.length;
+    const up = direction === -1;
     if(!len) { return; }
     let idx = this.history.idx;
     if(idx === -1) {
@@ -680,6 +682,29 @@ export default class ReplActiveInput extends React.Component {
     (len <= idx || idx < 0)
       ? navigateHistory(up, this.history.staged, -1)
       : navigateHistory(up, this.history.log[idx].plainCode, idx);
+  }
+
+  getHistorySuggession(code, suggestion = []) {
+    if(!code) { return; }
+    // consider only recent history
+    const maxSize = ReplConstants.REPL_HISTORY_SUGGESTION;
+    const history = this.history.log || [];
+    const len = history.length;
+    const sz = code.length;
+    let cnt = 1, pos = len - 1, dups = {};
+    // reverse search
+    for(; pos >= 0 && cnt <= maxSize; pos -= 1, cnt += 1) {
+      let cmd = history[pos].plainCode;
+      if(cmd !== code && cmd.startsWith(code) && !dups[cmd]) {
+        suggestion.push({
+          type: ReplType.typeOf('history'),
+          text: cmd,
+          completeOn: cmd.substring(0, sz)
+        });
+        dups[cmd] = cmd;
+      }
+    }
+    return suggestion;
   }
 
   complete(callback, allowEmpty = false) {

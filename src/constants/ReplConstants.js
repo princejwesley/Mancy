@@ -9,6 +9,7 @@ const ReplConstants = {
     RESOLVED: 'fulfilled',
     REJECTED: 'rejected',
   },
+  REPL_HISTORY_SUGGESTION: 200,
   BABEL_OPTIONS: {
     "plugins": [
       "transform-es2015-classes",

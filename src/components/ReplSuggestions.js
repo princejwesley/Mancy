@@ -115,13 +115,13 @@ export default class ReplSuggestions extends React.Component {
                 return (
                   <li className='repl-prompt-suggestion' data-index={idx} key={suggestion.key}
                     data-selected={this.state.selected === idx}
-                    onClick={this.onClickSuggestion(idx)}>
+                    onClick={this.onClickSuggestion(idx)} title={(suggestion.input + suggestion.expect).trim()}>
                     <span className='repl-prompt-suggestion-type' title={suggestion.type}>
                       {suggestion.typeHint}
                     </span>
                     <span className='repl-prompt-suggestion-text'>
-                      <span className='repl-prompt-suggestion-highlight'>{suggestion.input}</span>
-                      <span className='repl-prompt-suggestion-expect'>{suggestion.expect}</span>
+                      <span className='repl-prompt-suggestion-highlight'>{suggestion.input.replace(/\n+/g, '')}</span>
+                      <span className='repl-prompt-suggestion-expect'>{suggestion.expect.replace(/\n+/g, '')}</span>
                     </span>
                   </li>
                 );

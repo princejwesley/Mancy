@@ -46,7 +46,7 @@ import {ipcRenderer} from 'electron';
     "toggleLineNumberGutter": true,
     "keyMap": "sublime",
     "npmPaths": [],
-    "historySize": 1000,
+    "historySize": ReplConstants.REPL_HISTORY_SIZE,
     "historyAggressive": false
   };
 

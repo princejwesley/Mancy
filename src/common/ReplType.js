@@ -36,6 +36,7 @@ const MEMBER_SET_ACCESSOR_ELEMENT = Symbol.for('setter');
 const PREIMITIVE_TYPE = Symbol.for('primitive type');
 const TYPE_PARAMETER_ELEMENT = Symbol.for('type parameter');
 
+const HISTORY = Symbol.for('history');
 
 let typeEval = (x) => {
   try { return eval(x); }
@@ -78,6 +79,7 @@ const typeNames = {
   [MEMBER_SET_ACCESSOR_ELEMENT]: 'setter',
   [PREIMITIVE_TYPE]: 'primitive type',
   [TYPE_PARAMETER_ELEMENT]: 'type parameter',
+  [HISTORY]: 'history',
 };
 
 // short names are repeated - tooltip helps
@@ -116,6 +118,7 @@ const typeNamesShort = {
   [MEMBER_SET_ACCESSOR_ELEMENT]: 's',
   [PREIMITIVE_TYPE]: 't',
   [TYPE_PARAMETER_ELEMENT]: 't',
+  [HISTORY]: 'h',
 };
 
 let typeOfNonJS = (x) => {
@@ -232,9 +235,13 @@ const typeOf = (x) => {
     return typeOfNonJS(x);
   }
   if(isES2015Keyword(x)) { return KEYWORD; }
+  var symbol = Symbol.for(x);
+  if(typeNames[symbol]) {
+    return symbol;
+  }
   var type = typeEval(x);
-  var typeIdentifier = typeof type;
-  var symbol = Symbol.for(typeIdentifier);
+  symbol = Symbol.for(typeof type);
+
   return typeNames[symbol] ? symbol : OBJECT;
 };
 
