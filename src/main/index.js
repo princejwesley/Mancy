@@ -63,6 +63,7 @@ Allowed values:
 copyright 2015
                   `);
 
+const HISTORY_FILE = path.join(app.getPath('userData'), '.mancy_history');
 // babel leaking __core-js_shared__
 const globalNames = Object.getOwnPropertyNames(global).filter(g => g !== '__core-js_shared__');
 const windowCache = {};
@@ -70,6 +71,9 @@ const dockNotificationCache = {};
 const menuManagerCache = {};
 let windowCount = 0;
 let promptOnClose = false;
+let history = [];
+let historySize = 0;
+let noAccessToHistory = false;
 
 // set application root path as current working directory
 process.chdir(app.getAppPath());
@@ -77,10 +81,16 @@ process.chdir(app.getAppPath());
 app.commandLine.appendSwitch('js-flags', argv.jsFlags || argv.j);
 
 function onCloseWindow(e, title, detail) {
-  var ret = promptOnClose;
+  // save history
+  const window = BrowserWindow.getFocusedWindow();
+  if(window.id && windowCache[window.id]) {
+    saveHistory(null, windowCache[window.id].history);
+    windowCache[window.id].history = [];
+  }
+  let ret = promptOnClose;
   if(promptOnClose) {
     try {
-      ret = !!dialog.showMessageBox(BrowserWindow.getFocusedWindow(), {
+      ret = !!dialog.showMessageBox(window, {
         title: title || 'Close Window',
         buttons: ['Close', 'Cancel'],
         type: 'question',
@@ -95,6 +105,29 @@ function onCloseWindow(e, title, detail) {
 
 function onFocusWindow(e) {
   e.sender.webContents.send('application:focus');
+}
+
+function initHistory() {
+  fs.readFile(HISTORY_FILE, (err, data) => {
+    if(err) {
+      if(err.code === 'ENOENT') {
+        history = [];
+        fs.writeFile(HISTORY_FILE, "[]", (err) => {
+          if(err) {
+            noAccessToHistory = true;
+            console.error(`Failed to write history file ${err.message}`);
+          }
+        });
+      } else { console.error(`Failed to read history file ${err.message}`); }
+    } else {
+      try {
+        history = JSON.parse(data.toString());
+      } catch(e) {
+        // corrupted history
+        history = []
+      }
+    }
+  });
 }
 
 app.on('window-all-closed', () => {
@@ -128,6 +161,60 @@ app.on('browser-window-focus', (event, window) => {
     app.dock.setBadge('');
   }
 });
+
+function updateHistorySize(event, size) {
+  if(size < 0) { return; }
+  historySize = size;
+  const sz = history.length;
+  // when size is 0, stop writing history,(turn off)
+  // dont erase it
+  if(sz > size) {
+    history = history.slice(sz - size);
+  }
+}
+
+ipc.on('application:history-size', updateHistorySize);
+
+ipc.on('application:history', (event) => event.returnValue = history);
+ipc.on('application:history-append', (event, cmd = '') => {
+  if(!cmd) { return; }
+  let {id} = BrowserWindow.getFocusedWindow();
+  let cache = windowCache[id];
+  if(!cache.history) { cache.history = []; }
+  cache.history.push(cmd);
+});
+
+ipc.on('application:history-aggressive', (event, flag) => {
+  if(!flag) { return; }
+  let {id} = BrowserWindow.getFocusedWindow();
+  let cache = windowCache[id];
+  if(cache.history && cache.history.length) {
+    saveHistory(null, cache.history);
+    cache.history = [];
+  }
+});
+
+function saveHistory(event, cmds = []) {
+  if(noAccessToHistory ||
+    historySize === 0 ||
+    !_.isArray(cmds) ||
+    cmds.length === 0
+  ) { return; }
+  // remove adjacent duplicates
+  history = _.uniq(history.concat(cmds), true);
+  // trim history
+  updateHistorySize(null, historySize);
+  // rewrite
+  fs.writeFile(HISTORY_FILE, JSON.stringify(history), (err) => {
+    if(err) {
+      noAccessToHistory = true;
+      console.error(`Failed to write history file ${err.message}`);
+    }
+  });
+}
+
+ipc.on('application:history-save', saveHistory);
+
 
 ipc.on('application:prompt-on-close', (event, flag) => promptOnClose = flag);
 
@@ -306,3 +393,5 @@ function onReady(fun) {
     }
   });
 }
+
+initHistory();

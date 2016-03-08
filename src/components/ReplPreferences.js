@@ -24,7 +24,8 @@ export default class ReplPreferences extends React.Component {
       'onLangChange', 'onWatermarkChange', 'onToggleTranspile', 'selectLoadScript',
       'resetLoadScript', 'onTogglePromptOnClose', 'onEditorChange',
       'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown',
-      'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange'
+      'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange', 'onChangeHistorySize',
+      'onToggleHistoryAggressive'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -132,6 +133,14 @@ export default class ReplPreferences extends React.Component {
 
   onToggleLineNumberGutter(e) {
     ReplPreferencesStore.toggleLineNumberGutter(e.target.checked);
+  }
+
+  onChangeHistorySize(e) {
+    ReplPreferencesStore.onSetHistorySize(e.target.value);
+  }
+
+  onToggleHistoryAggressive(e) {
+    ReplPreferencesStore.toggleHistoryAggressive(e.target.checked);
   }
 
   onCloseNPMPath(e) {
@@ -430,6 +439,26 @@ export default class ReplPreferences extends React.Component {
                   ? <button type='button' name='reset-npm-path' onClick={this.resetNPMPath}> reset</button>
                   : null
               }
+            </div>
+          </div>
+          <div className='preference' title='Persistent History size'>
+            <div className='preference-name'>
+              History size
+            </div>
+            <div className='preference-value'>
+              <span className='textbox'>
+                <input type="number" name="history-size" placeholder="(0 for no history)" value={this.state.historySize} min="0" onChange={this.onChangeHistorySize} />
+              </span>
+            </div>
+          </div>
+          <div className='preference' title='Persistent History on executing each command'>
+            <div className='preference-name'>
+              History on execute(aggressive)
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="history-aggressive" checked={this.state.historyAggressive} value="" onClick={this.onToggleHistoryAggressive} />
+              </span>
             </div>
           </div>
           <div className='statusbar-placeholder'></div>
