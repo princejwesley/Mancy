@@ -83,7 +83,7 @@ app.commandLine.appendSwitch('js-flags', argv.jsFlags || argv.j);
 function onCloseWindow(e, title, detail) {
   // save history
   const window = BrowserWindow.getFocusedWindow();
-  if(window.id && windowCache[window.id]) {
+  if(window && window.id && windowCache[window.id]) {
     saveHistory(null, windowCache[window.id].history);
     windowCache[window.id].history = [];
   }

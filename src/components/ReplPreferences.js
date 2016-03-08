@@ -140,7 +140,7 @@ export default class ReplPreferences extends React.Component {
   }
 
   onToggleHistoryAggressive(e) {
-    ReplPreferencesStore.toggleHistoryAggressive(e.target.checked);
+    ReplPreferencesStore.toggleHistoryAggressive(e.target.value === 'true');
   }
 
   onCloseNPMPath(e) {
@@ -451,14 +451,19 @@ export default class ReplPreferences extends React.Component {
               </span>
             </div>
           </div>
-          <div className='preference' title='Persistent History on executing each command'>
+          <div className='preference' title='Persistent History on executing each command or on close session'>
             <div className='preference-name'>
-              History on execute(aggressive)
+              History save mode
             </div>
             <div className='preference-value'>
-              <span className='checkbox-group'>
-                <input type="checkbox" name="history-aggressive" checked={this.state.historyAggressive} value="" onClick={this.onToggleHistoryAggressive} />
-              </span>
+              <fieldset>
+                <span className='radio-group'>
+                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === true} value="true" onClick={this.onToggleHistoryAggressive} /> aggressive
+                </span>
+                <span className='radio-group'>
+                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === false} value="false" onClick={this.onToggleHistoryAggressive} /> on session close
+                </span>
+              </fieldset>
             </div>
           </div>
           <div className='statusbar-placeholder'></div>
