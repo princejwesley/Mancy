@@ -104,7 +104,7 @@ let transpile = (input, context, cb) => {
 };
 
 let evaluate = (input, context, filename, cb) => {
-  this.transpile(input, context, filename, (err, js) => {
+  transpile(input, context, (err, js) => {
     if(err) { return cb(err); };
     cb(null, vm.runInContext(js, context, filename));
   });

@@ -51,11 +51,17 @@
 
   .CodeMirror-gutter-wrapper {
     font-size: 0.9em;
+    -webkit-filter: brightness(85%);
+    filter: brightness(85%);
   }
 
   .CodeMirror-dialog  {
     z-index: 4;
     position: relative;
+  }
+
+  .CodeMirror-linenumber:hover {
+    font-weight: bolder;
   }
 
   .cm-s-light-theme {
