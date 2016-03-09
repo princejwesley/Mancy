@@ -99,7 +99,7 @@ const ReplPreferencesStore = Reflux.createStore({
   onSetHistorySize(size) {
     this.updatePreference((preferences) => {
       preferences.historySize = size;
-      ipcRenderer.send('application:history-size', size);     
+      ipcRenderer.send('application:history-size', size);
     });
   },
   onSetTheme(name) {
@@ -107,6 +107,7 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.theme = name;
       global.Mancy.session.theme = name;
       document.body.className = name.toLowerCase().replace(/\s/, '-');
+      ReplActiveInputActions.setEditorOption({name: 'theme', value: _.kebabCase(name)});
     });
   },
   onSetKeyMap(keyMap) {

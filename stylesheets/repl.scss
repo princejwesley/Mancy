@@ -32,7 +32,7 @@ html{
   #node-repl-preferences {
     @include preferences($theme);
   }
-  @include replEditor($theme);  
+  @include replEditor($theme);
 }
 
 body {
@@ -48,8 +48,9 @@ body {
   &:before {
     content: attr(data-watermark-logo);
     position: fixed;
-    top: 30vh;
-    left: 40vw;
+    top: 40vh;
+    // 2 characters
+    left: calc((100vw - 20vh * 2 / 2)/2);
     font-size: 20vh;
     font-family: 'Josefin Sans', sans-serif;
     pointer-events: none;
@@ -57,10 +58,10 @@ body {
   &:after {
     content: attr(data-watermark-msg);
     position: fixed;
-    top: 48vh;
-    left: 43vw;
+    top: 56vh;
+    // 16 characters
+    left: calc((100vw - 2vh * 16 / 2)/2);
     font-size: 2vh;
-    font-family: 'Josefin Sans', sans-serif;
     pointer-events: none;
   }
 }
