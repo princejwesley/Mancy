@@ -165,7 +165,8 @@ export default class ReplActiveInput extends React.Component {
       { label: "Select All", accelerator: "CmdOrCtrl+A", "role": "selectall",
           click: e => this.onTriggerAction({action: 'selectAll'}) },
       { type: "separator" },
-      { label: 'Format', accelerator: 'Shift+Ctrl+F', click: this.onFormat },
+      { label: 'Format', accelerator: 'Shift+Ctrl+F', click: this.onFormat,
+        enabled: global.Mancy.session.lang === 'js' },
       { label: "Fold All", accelerator: "Ctrl+Q", click: this.onFoldAll,
           enabled: global.Mancy.preferences.toggleFoldGutter && !!this.editor.getValue().length },
       { label: "UnFold All", accelerator: "Shift+Ctrl+Q", click: this.onUnFoldAll,
@@ -206,7 +207,8 @@ export default class ReplActiveInput extends React.Component {
 
   focus() {
     const cm = this.editor;
-    cm.setCursor(this.props.cursor || {line: cm.lastLine()});
+    let end = cm.lastLine();
+    cm.setCursor({ line: end, ch: cm.doc.getLine(end).length });
     cm.focus();
   }
 
@@ -244,6 +246,7 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onFormat() {
+    if(global.Mancy.session.lang !== 'js') { return; }
     const text = this.editor.getValue();
     if(text.length) {
       const formattedCode =  ReplCommon.format(text);
@@ -317,7 +320,7 @@ export default class ReplActiveInput extends React.Component {
 
     if(now && activeSuggestion && activeSuggestion.id === this.id) {
       let {suggestion} = activeSuggestion;
-      this.onSelectTabCompletion(suggestion.input + suggestion.expect);
+      this.onSelectTabCompletion(suggestion.input, suggestion.expect);
       return;
     }
   }
@@ -441,10 +444,17 @@ export default class ReplActiveInput extends React.Component {
   reloadPrompt(cmd, cursor, idx = -1, staged = '') {
     const cm = this.editor;
     cm.setOption('readOnly', false);
-    cm.setValue(cmd);
+    let lastLine = cm.lastLine();
+    let endCursor = { line: lastLine, ch: cm.getLine(lastLine).length };
+    cm.replaceRange(cmd, { line: 0, ch: 0 }, endCursor);
+
     this.history.idx = idx;
     this.history.staged = (idx === -1 ? cmd : staged);
-    cm.setCursor(cursor || {line: cm.lastLine()});
+    if(!cursor) {
+      lastLine = cm.lastLine();
+      cursor = { line: lastLine, ch: cm.getLine(lastLine).length };
+    }
+    cm.setCursor(cursor);
     cm.focus();
   }
 
@@ -457,42 +467,29 @@ export default class ReplActiveInput extends React.Component {
       cm.replaceSelection(spaces);
       this.removeSuggestion();
     } else if(list.length === 1) {
-      this.onSelectTabCompletion(list[0]);
+      this.onSelectTabCompletion(input, list[0].substring(input.length));
     } else {
       this.autoComplete(__, completion);
     }
   }
 
-  onSelectTabCompletion(suggestion) {
-
-    let breakReplaceWord = (word) => {
-      let length = word.length;
-      let rword = ReplCommon.reverseString(word);
-      //extract prefix
-      let escapedKeys = ReplCommon.escapseRegExp(suggestion.replace(/[\w\s]+/g, ''));
-      let pattern = new RegExp(`^[\\w${escapedKeys}]+`);
-      let prefix = ReplCommon.reverseString(rword.replace(pattern, ''));
-      return { prefix: prefix, suffix: word.substring(prefix.length) };
-    }
+  onSelectTabCompletion(input, expect = "") {
     const cm = this.editor;
     let cursor = cm.getCursor();
-    const code = cm.getValue();
-    let left = cm.doc.getRange({line: 0, ch: 0}, cursor);
-    const right = code.substring(left.length);
-    let {prefix, suffix} = breakReplaceWord(left);
-    suffix = suggestion.substring(suggestion.indexOf(suffix));
-    left = prefix + suffix;
-    let suffixArr = suffix.split('\n');
-    let len = suffixArr.length;
-    if(len > 1) {
-      // revisit: mulitiple possible?
-      cursor.line += len - 1;
-      cursor.ch = suffixArr[len - 1].length;
-    } else {
-      cursor.ch += suffixArr[len - 1].length;
+    if(expect) {
+      cm.setSelection(cursor);
+      cm.replaceSelection(expect);
+      let lines = expect.split('\n');
+      if(lines.length > 1) {
+        cursor.line += lines.length - 1;
+        cursor.ch = lines[lines.length - 1].length;
+      } else {
+        cursor.ch += lines[0].length;
+      }
+      cm.setCursor(cursor);
+      this.removeSuggestion();
+      cm.focus();
     }
-    this.reloadPrompt(left + right, cursor);
-    this.removeSuggestion();
   }
 
   shouldTranspile() {
@@ -614,7 +611,7 @@ export default class ReplActiveInput extends React.Component {
     let activeSuggestion = ReplActiveInputStore.getStore().activeSuggestion;
     if(activeSuggestion && global.Mancy.preferences.autoCompleteOnEnter) {
       let {suggestion} = activeSuggestion;
-      this.onSelectTabCompletion(suggestion.input + suggestion.expect);
+      this.onSelectTabCompletion(suggestion.input, suggestion.expect);
       return;
     }
 
@@ -633,7 +630,7 @@ export default class ReplActiveInput extends React.Component {
     let {activeSuggestion} = ReplActiveInputStore.getStore();
     if(activeSuggestion && activeSuggestion.id === this.id) {
       let {suggestion} = activeSuggestion;
-      this.onSelectTabCompletion(suggestion.input + suggestion.expect);
+      this.onSelectTabCompletion(suggestion.input, suggestion.expect);
       return;
     }
     return CodeMirror.Pass;
@@ -694,7 +691,7 @@ export default class ReplActiveInput extends React.Component {
     let cnt = 1, pos = len - 1, dups = {};
     // reverse search
     for(; pos >= 0 && cnt <= maxSize; pos -= 1, cnt += 1) {
-      let cmd = history[pos].plainCode;
+      let cmd = history[pos].plainCode.trim();
       if(cmd !== code && cmd.startsWith(code) && !dups[cmd]) {
         suggestion.push({
           type: ReplType.typeOf('history'),
