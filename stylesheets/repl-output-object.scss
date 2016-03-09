@@ -1,6 +1,5 @@
 @import 'themes';
 @import 'repl-common';
-@import 'highlight';
 
 @mixin replOutputObjectFold($theme) {
   .repl-entry-message-output-object-folds {

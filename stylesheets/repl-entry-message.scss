@@ -16,7 +16,6 @@
     }
 
     .repl-entry-message-command {
-      @include highlight();
       min-height: $app-font-size;
       white-space: pre;
     }
@@ -32,7 +31,6 @@
       word-wrap: break-word;
       white-space: pre-wrap;
       padding: 5px 0;
-      @include highlight();
       position: relative;
 
       @include replSourceFile($theme);

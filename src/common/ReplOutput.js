@@ -55,7 +55,7 @@ let ReplOutputType = {
   primitive: (n, type) => {
     let prefix = `${type} {`;
     let suffix = '}';
-    let className = type === 'Number' ? 'number' : 'literal';
+    let className = type === 'Number' ? 'cm-number' : 'cm-literal';
     return (
       <span className='primitive-object'>
         {prefix}
@@ -69,10 +69,10 @@ let ReplOutputType = {
       // integers
       return <ReplOutputInteger int={n} />
     }
-    return <span className='number'>{n}</span>;
+    return <span className='cm-number'>{n}</span>;
   },
   boolean: (b) => {
-    return <span className='literal'>{b.toString()}</span>;
+    return <span className='cm-atom'>{b.toString()}</span>;
   },
   array: (a, meta = { type: 'Array', proto: Array.prototype }) => {
     let tokenize = (arr, result, range, mul=1) => {
@@ -166,7 +166,7 @@ let ReplOutputType = {
     return <ReplOutputObject object={o} label={getObjectLabels(o)} primitive={_.isString(o)}/>
   },
   'undefined': (u) => {
-    return <span className='literal'>undefined</span>;
+    return <span className='cm-atom'>undefined</span>;
   },
   'function': (f) => {
     let code = f.toString();
@@ -206,13 +206,13 @@ let ReplOutputType = {
     return <ReplOutputString str={s}/>;
   },
   symbol: (sy) => {
-    return <span className='literal'>{sy.toString()}</span>;
+    return <span className='cm-atom'>{sy.toString()}</span>;
   },
   regexp: (re) => {
     return <ReplOutputRegex regex={re} />;
   },
   'null': () => {
-    return <span className='literal'>null</span>;
+    return <span className='cm-atom'>null</span>;
   }
 };
 

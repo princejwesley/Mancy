@@ -1,10 +1,8 @@
 @import 'themes';
 @import 'repl-common';
-@import 'highlight';
 
 @mixin replPrompt($theme) {
   .repl-prompt {
-    @include highlight();
     margin: 0;
     padding: 5px;
     background-color: if($theme == $dark-theme, $dark-app-prompt-background-color, $lt-app-prompt-background-color);

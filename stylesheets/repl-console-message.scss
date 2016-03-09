@@ -88,7 +88,6 @@
       }
 
       .repl-console-message-entry-content {
-        @include highlight();
         @include replSourceFile($theme);
         @include replOutput($theme);
 

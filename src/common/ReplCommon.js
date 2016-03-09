@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import hl from 'highlight.js';
 import ReplConstants from '../constants/ReplConstants';
 import shell from 'shell';
 import fs from 'fs';
@@ -10,6 +9,11 @@ import escodegen from 'escodegen';
 import module from 'module';
 import ReplContext from '../common/ReplContext';
 import IsCSSColor from 'is-css-color';
+import CodeMirror from 'codemirror';
+import ReplLanguages from '../languages/ReplLanguages';
+
+// run mode
+require('../node_modules/codemirror/addon/runmode/runmode.js');
 
 const funPattern = /^\s*((?:function\s)?\s*[^)]+\))/;
 // http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -37,7 +41,15 @@ let ReplCommon = {
     return new Array(num + 1).join(str);
   },
   highlight: (code) => {
-    return hl.highlight(global.Mancy.preferences.lang, code, true).value;
+    const element = document.createElement('span');
+    CodeMirror.runMode(code,
+      `text/${ReplLanguages.getLangQualifiedName(global.Mancy.session.lang)}`,
+      element
+    );
+    const wrapper = document.createElement('div');
+    wrapper.appendChild(element);
+    element.className += ` cm-s-${_.kebabCase(global.Mancy.session.theme)}`;
+    return wrapper.innerHTML;
   },
   isExceptionMessage: (msg) => {
     return /Error:?/.test(msg);
@@ -282,10 +294,5 @@ let esCodeGenOptions = {
     quotes: 'auto'
   }
 };
-
-hl.configure({
-  tabReplace: ReplCommon.times(ReplConstants.TAB_WIDTH, ' '),
-  classPrefix: ''
-});
 
 export default ReplCommon;
