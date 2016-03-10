@@ -40,6 +40,7 @@
           min-height: calc(#{$app-font-size} + 8px);
           max-height: calc(#{$app-font-size} + 8px);
           text-align: center;
+          display: inline-block;
           color: if($theme == $dark-theme, $dark-app-suggestion-type-color, $lt-app-suggestion-type-color);
           font-family: if($theme == $dark-theme, $dark-app-suggestion-type-font-family, $lt-app-suggestion-type-font-family);
           background-color: if($theme == $dark-theme, $dark-app-suggestion-type-background-color, $lt-app-suggestion-type-background-color);

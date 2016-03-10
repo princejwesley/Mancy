@@ -417,7 +417,7 @@ export default class ReplActiveInput extends React.Component {
       return suggestions.length != 1 || !text.endsWith(suggestions[0].text);
     };
     let [list, completeOn] = completion;
-    let suggestions = _.chain(_.zip(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list), kinds))
+    let suggestions = _.chain(_.zip(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list, completeOn), kinds))
       .filter((zipped) => {
         return zipped[0] && zipped[0].length !== 0;
       })

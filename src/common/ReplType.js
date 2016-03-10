@@ -39,9 +39,9 @@ const TYPE_PARAMETER_ELEMENT = Symbol.for('type parameter');
 const HISTORY = Symbol.for('history');
 
 let typeEval = (x) => {
-  try { return eval(x); }
+  try { return /\w\./.test(x) ? PROPERTY : eval(x); }
   catch(e) {}
-  return getTypeName(KEYWORD);
+  return OBJECT;
 };
 
 const typeNames = {
@@ -177,59 +177,7 @@ const es2015Keywords = [
   "yield",
 ];
 
-const es5Keywords = [
-  "arguments",
-  "break",
-  "case",
-  "catch",
-  "class",
-  "const",
-  "continue",
-  "debugger",
-  "default",
-  "delete",
-  "do",
-  "else",
-  "enum",
-  "eval",
-  "export",
-  "extends",
-  "false",
-  "finally",
-  "for",
-  "function",
-  "if",
-  "implements",
-  "import",
-  "in",
-  "instanceof",
-  "interface",
-  "let",
-  "new",
-  "null",
-  "package",
-  "private",
-  "protected",
-  "public",
-  "return",
-  "static",
-  "super",
-  "switch",
-  "this",
-  "throw",
-  "true",
-  "try",
-  "typeof",
-  "var",
-  "void",
-  "while",
-  "with",
-  "yield",
-];
-
 const isES2015Keyword = (x) => es2015Keywords.indexOf(x) !== -1;
-const isES5Keyword = (x) => es5Keywords.indexOf(x) !== -1;
-
 const typeOf = (x) => {
   if(global.Mancy.preferences.lang !== 'js') {
     return typeOfNonJS(x);
@@ -240,6 +188,7 @@ const typeOf = (x) => {
     return symbol;
   }
   var type = typeEval(x);
+  if(typeNames[type]) { return type;}
   symbol = Symbol.for(typeof type);
 
   return typeNames[symbol] ? symbol : OBJECT;

@@ -21,6 +21,7 @@ const urlPattern = /^[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0
 //http://stackoverflow.com/questions/8571501/how-to-check-whether-the-string-is-base64-encoded-or-not
 const base64Pattern = /^([a-z0-9+/]{4})*([a-z0-9+/]{4}|[a-z0-9+/]{3}=|[a-z0-9+/]{2}==)$/i;
 
+const privatePattern = /^[_$]|\.[_$]/;
 const typedArrays = [
   Int8Array, Int16Array, Int32Array,
   Uint8Array, Uint8ClampedArray, Uint16Array,
@@ -115,14 +116,24 @@ let ReplCommon = {
   divide: (str, pos) => {
     return [str.substring(0, pos), str.substring(pos)];
   },
-  sortTabCompletion: (context, completion) => {
+  sortTabCompletion: (context, completion, completeOn) => {
     let keys = _.difference(_.keys(context), ReplContext.builtIns());
+    let sorted = _.sortBy(completion);
+    if(/[\.\]]/.test(completeOn)) {
+      // nested
+      let [right, left] = _.partition(sorted, (c) => privatePattern.test(c));
+      return left.concat(right);
+    }
+
     let user = [], sys = [];
-    _.each(_.sortBy(completion), (c) => {
+    _.each(sorted, c => {
       let container = keys.indexOf(c) == -1 ? sys : user;
       container.push(c);
     });
-    return user.concat(sys);
+    // only
+    let [right, left] = _.partition(sys, (c) => privatePattern.test(c));
+
+    return user.concat(left).concat(right);
   },
   getModuleSourcePath: (request, paths) => {
     return module._findPath(request, paths);
