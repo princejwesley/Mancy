@@ -165,8 +165,7 @@ export default class ReplActiveInput extends React.Component {
       { label: "Select All", accelerator: "CmdOrCtrl+A", "role": "selectall",
           click: e => this.onTriggerAction({action: 'selectAll'}) },
       { type: "separator" },
-      { label: 'Format', accelerator: 'Shift+Ctrl+F', click: this.onFormat,
-        enabled: global.Mancy.session.lang === 'js' },
+      { label: 'Format', accelerator: 'Shift+Ctrl+F', click: this.onFormat },
       { label: "Fold All", accelerator: "Ctrl+Q", click: this.onFoldAll,
           enabled: global.Mancy.preferences.toggleFoldGutter && !!this.editor.getValue().length },
       { label: "UnFold All", accelerator: "Shift+Ctrl+Q", click: this.onUnFoldAll,
@@ -246,11 +245,25 @@ export default class ReplActiveInput extends React.Component {
   }
 
   onFormat() {
-    if(global.Mancy.session.lang !== 'js') { return; }
     const text = this.editor.getValue();
-    if(text.length) {
+    let autoIndent = global.Mancy.session.lang !== 'js';
+    if(!text.trim().length) { return; }
+    if(!autoIndent) {
       const formattedCode =  ReplCommon.format(text);
-      this.reloadPrompt(formattedCode);
+      if(text !== formattedCode) {
+        this.reloadPrompt(formattedCode);
+        return;
+      } else { autoIndent = true; }
+    }
+
+    if(autoIndent) {
+      // auto indent
+      const cm = this.editor;
+      const start = cm.firstLine();
+      const end = cm.lastLine();
+      for (let line = start; line <= end; line++) {
+        cm.indentLine(line);
+      }
     }
   }
 
