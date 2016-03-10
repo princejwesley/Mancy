@@ -54,7 +54,7 @@ body {
     font-size: 20vh;
     font-family: 'Josefin Sans', sans-serif;
     pointer-events: none;
-    z-index: 100;
+    z-index: 10;
   }
   &:after {
     content: attr(data-watermark-msg);
@@ -64,7 +64,7 @@ body {
     left: calc((100vw - 2vh * 16 / 2)/2);
     font-size: 2vh;
     pointer-events: none;
-    z-index: 100;
+    z-index: 10;
   }
 }
 

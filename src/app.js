@@ -44,7 +44,7 @@ import {ipcRenderer} from 'electron';
     "promptOnClose": true,
     "toggleFoldGutter": true,
     "toggleLineNumberGutter": true,
-    "keyMap": "sublime",
+    "keyMap": "default",
     "npmPaths": [],
     "historySize": ReplConstants.REPL_HISTORY_SIZE,
     "historyAggressive": false

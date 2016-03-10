@@ -290,6 +290,9 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <fieldset>
                 <span className='radio-group'>
+                  <input type="radio" name="key-map" checked={this.state.keyMap === 'default'} value="default" onClick={this.onKeyMapChange} /> default
+                </span>
+                <span className='radio-group'>
                   <input type="radio" name="key-map" checked={this.state.keyMap === 'sublime'} value="sublime" onClick={this.onKeyMapChange} /> sublime
                 </span>
                 <span className='radio-group'>

@@ -112,8 +112,11 @@ export default class ReplActiveInput extends React.Component {
     });
 
     const eventActions = [
-      'inputRead', 'change', 'blur',
-      'cursorActivity', 'contextmenu'
+      'inputRead',
+      'change',
+      'blur',
+      'cursorActivity',
+      'contextmenu'
     ];
     eventActions.forEach(e => this.editor.on(e, this[`on${_.capitalize(e)}`]));
     this.editor.setOption("extraKeys", {
@@ -464,11 +467,6 @@ export default class ReplActiveInput extends React.Component {
 
     this.history.idx = idx;
     this.history.staged = (idx === -1 ? cmd : staged);
-    if(!cursor) {
-      lastLine = cm.lastLine();
-      cursor = { line: lastLine, ch: cm.getLine(lastLine).length };
-    }
-    cm.setCursor(cursor);
     cm.focus();
   }
 
@@ -491,16 +489,7 @@ export default class ReplActiveInput extends React.Component {
     const cm = this.editor;
     let cursor = cm.getCursor();
     if(expect) {
-      cm.setSelection(cursor);
-      cm.replaceSelection(expect);
-      let lines = expect.split('\n');
-      if(lines.length > 1) {
-        cursor.line += lines.length - 1;
-        cursor.ch = lines[lines.length - 1].length;
-      } else {
-        cursor.ch += lines[0].length;
-      }
-      cm.setCursor(cursor);
+      cm.replaceRange(expect, cursor, cursor);
       this.removeSuggestion();
       cm.focus();
     }
