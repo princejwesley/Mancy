@@ -112,6 +112,10 @@
       background: inherit;
     }
 
+    span.cm-matchhighlight {
+      outline: 1px solid #A5A3A3;
+    }
+
     .CodeMirror-activeline-background { background: rgba(245, 222, 179, 0.42); }
     .CodeMirror-matchingbracket { font-weight: bolder; color:#E0075E !important; }
 
@@ -129,7 +133,7 @@
     span.cm-variable-3 { color: #1C756D; }
     span.cm-property { color: #DE8787; }
     span.cm-operator { color: #9E9E9E; }
-    span.cm-comment { color: rbga(192, 192, 192, 0.78); }
+    span.cm-comment { color: rgba(192, 192, 192, 0.78); }
     span.cm-string { color: #FE6F56; }
     span.cm-string-2 { color: #f50; }
     span.cm-qualifier { color: #555; }
@@ -164,6 +168,10 @@
 
     .CodeMirror-selectedtext {
       background: rgb(84, 84, 83);
+    }
+
+    span.cm-matchhighlight {
+      outline: 1px solid #868484;
     }
 
     .CodeMirror-activeline-background { background: rgba(158, 158, 158, 0.13); }

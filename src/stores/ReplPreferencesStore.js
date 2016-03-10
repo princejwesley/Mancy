@@ -106,7 +106,8 @@ const ReplPreferencesStore = Reflux.createStore({
     this.updatePreference((preferences) => {
       preferences.theme = name;
       global.Mancy.session.theme = name;
-      document.body.className = name.toLowerCase().replace(/\s/, '-');
+      let theme = _.kebabCase(name);
+      document.body.className = `${theme} cm-s-${theme}`;
       ReplActiveInputActions.setEditorOption({name: 'theme', value: _.kebabCase(name)});
     });
   },

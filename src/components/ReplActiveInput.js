@@ -37,7 +37,8 @@ const addons = [
 	'fold/foldcode', 'fold/foldgutter',
 	'fold/brace-fold', 'fold/comment-fold',
 	'fold/indent-fold', 'fold/markdown-fold',
-	'comment/comment', 'comment/continueComment'
+	'comment/comment', 'comment/continueComment',
+  'scroll/annotateScrollbar'
 ]
 addons.forEach( addon => require(`../node_modules/codemirror/addon/${addon}.js`))
 
@@ -98,7 +99,7 @@ export default class ReplActiveInput extends React.Component {
       styleSelectedText: true,
       selectionPointer: true,
       matchBrackets: true,
-      highlightSelectionMatches: true,
+      highlightSelectionMatches: { annotateScrollbar: true },
       autoCloseBrackets: true,
       resetSelectionOnContextMenu: false,
       autoFocus: true,

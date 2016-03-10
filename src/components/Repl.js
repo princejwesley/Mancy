@@ -111,7 +111,8 @@ export default class Repl extends React.Component {
   setTheme(name) {
     global.Mancy.session.theme = name;
     let theme = _.kebabCase(name);
-    document.body.className = theme;
+    document.body.className = `${theme} cm-s-${theme}`;
+
     ReplActiveInputActions.setTheme(theme);
   }
 
@@ -473,10 +474,9 @@ export default class Repl extends React.Component {
   }
 
   render() {
-    const clazz = `repl-container cm-s-${_.kebabCase(global.Mancy.session.theme)}`;
     // force to recreate ReplPrompt
     return (
-      <div className={clazz}>
+      <div className="repl-container">
         <div className='repl-container-left'>
           <div className='repl-header' key='header-left'></div>
           <ReplEntries entries={this.state.entries} />
