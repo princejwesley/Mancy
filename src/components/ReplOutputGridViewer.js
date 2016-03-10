@@ -72,6 +72,13 @@ export default class ReplOutputGridViewer extends React.Component {
       ? [this.colHeaders, this.rowHeaders] : [this.rowHeaders, this.colHeaders];
 
     let data = this.state.transpose ? this.transposeGridData() : this.gridData();
+    const clazzMap = {
+      number: 'cm-number',
+      boolean: 'cm-atom',
+      object: 'cm-variable',
+      string: 'cm-string'
+    };
+
     return (
       <div className='repl-output-grid-viewer'>
         <table className='grid-viewer'>
@@ -100,7 +107,7 @@ export default class ReplOutputGridViewer extends React.Component {
                     {<th>{head}</th>}
                     {
                       _.map(data[pos], (cell) => {
-                        return <td className={typeof cell}>{this.getCellString(cell)}</td>
+                        return <td className={clazzMap[typeof cell]}>{this.getCellString(cell)}</td>
                       })
                     }
                   </tr>

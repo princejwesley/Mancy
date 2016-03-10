@@ -47,10 +47,7 @@ let ReplCommon = {
       `text/${ReplLanguages.getLangQualifiedName(global.Mancy.session.lang)}`,
       element
     );
-    const wrapper = document.createElement('div');
-    wrapper.appendChild(element);
-    element.className += ` cm-s-${_.kebabCase(global.Mancy.session.theme)}`;
-    return wrapper.innerHTML;
+    return element.innerHTML;
   },
   isExceptionMessage: (msg) => {
     return /Error:?/.test(msg);
