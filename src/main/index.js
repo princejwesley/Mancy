@@ -74,6 +74,7 @@ let promptOnClose = false;
 let history = [];
 let historySize = 0;
 let noAccessToHistory = false;
+const {Tray, Menu} = electron;
 
 // set application root path as current working directory
 process.chdir(app.getAppPath());
@@ -138,9 +139,9 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', (e) => {
-  var windows = BrowserWindow.getAllWindows();
+  let windows = BrowserWindow.getAllWindows();
   if(!windows.length) { return; }
-  var window = BrowserWindow.getFocusedWindow();
+  let window = BrowserWindow.getFocusedWindow();
   if(!window) {
     windows[0].show();
   }
@@ -275,7 +276,29 @@ const processParamHandler = (browser) => {
   }
 };
 
+function setUpTray() {
+  const appIcon = new Tray(path.join(__dirname, '..', 'icons', 'mancy-tray.png'));
+  const contextMenu = Menu.buildFromTemplate([{
+    label: 'New',
+    click: () => onReady()
+  }]);
+
+  appIcon.setToolTip('Mancy REPL');
+  appIcon.setContextMenu(contextMenu);
+  appIcon.on('click', () => {
+    if(!BrowserWindow.getFocusedWindow()) {
+      let windows = BrowserWindow.getAllWindows();
+      if(!windows.length) {
+        onReady();
+      } else {
+        windows[0].show();
+      }
+    }
+  })
+}
+
 app.on('ready', (label) => {
+  if(label) { setUpTray(); }
   onReady(label !== 'new-window' ? processParamHandler : null);
 });
 app.on('ready-action', onReady);
