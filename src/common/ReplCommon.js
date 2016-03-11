@@ -4,8 +4,6 @@ import shell from 'shell';
 import fs from 'fs';
 import vm from 'vm';
 import {resolve} from 'path';
-import esprima from 'esprima';
-import escodegen from 'escodegen';
 import module from 'module';
 import ReplContext from '../common/ReplContext';
 import IsCSSColor from 'is-css-color';
@@ -41,10 +39,26 @@ let ReplCommon = {
   times: (num, str) => {
     return new Array(num + 1).join(str);
   },
-  highlight: (code) => {
+  indent: (code, lang = global.Mancy.session.lang) => {
+    code = code.replace(/([;{])/g, '$1\n');
+    let cm = CodeMirror(document.createElement('span'), {
+      value: code,
+      mode: `text/${ReplLanguages.getLangQualifiedName(lang)}`
+    });
+    const start = cm.firstLine();
+    const end = cm.lastLine();
+    for (let line = start; line <= end; line++) {
+      cm.indentLine(line);
+    }
+    return cm.getValue();
+  },
+  highlight: (code, lang = global.Mancy.session.lang, indent = false) => {
+    if(indent) { code = ReplCommon.indent(code, lang) }
     const element = document.createElement('span');
+    // format
+
     CodeMirror.runMode(code,
-      `text/${ReplLanguages.getLangQualifiedName(global.Mancy.session.lang)}`,
+      `text/${ReplLanguages.getLangQualifiedName(lang)}`,
       element
     );
     return element.innerHTML;
@@ -83,15 +97,6 @@ let ReplCommon = {
       : process.env.USER;
   },
   beep: () => { shell.beep(); },
-  format: (code) => {
-    try {
-      // comments?
-      let syntax = esprima.parse(code, { comment: true, raw: true, tokens: true, range: true });
-      syntax = escodegen.attachComments(syntax, syntax.comments, syntax.tokens);
-      return escodegen.generate(syntax, esCodeGenOptions);
-    } catch(e) {}
-    return code;
-  },
   addToPath: (paths, context = this) => {
     if(!paths || !paths.length) { return; }
     let newPaths = Array.isArray(paths) ? paths : [paths];
@@ -291,16 +296,6 @@ let ReplCommon = {
   },
   getTempVarName: () => `temp${++tempCounter}`,
   bindToReplContext: (variable, value) => ReplContext.getContext()[variable] = value,
-};
-
-let esCodeGenOptions = {
-  comment: true,
-  format: {
-    indent: {
-      style: ReplCommon.times(ReplConstants.TAB_WIDTH, ' ')
-    },
-    quotes: 'auto'
-  }
 };
 
 export default ReplCommon;

@@ -28,6 +28,8 @@ const nodeResources = (() => {
     .value();
 })();
 
+const excludes = ['test', 'spec', 'htdocs', 'dist', 'example', 'samples'].map(e => `!**/${e}/*`);
+
 const resources = [
   'node_modules/coffee-script/bin/*',
   'node_modules/typescript/bin/tsc',
@@ -36,7 +38,9 @@ const resources = [
   'node_modules/typescript/lib/lib.core.es7.d.ts',
   'node_modules/livescript/bin/*',
   'node_modules/font-manager/**/*',
-].concat(nodeResources);
+  '!**/*.min.js',
+].concat(nodeResources).concat(excludes);
+
 
 const resourcesInternal = [
   'fonts/**/*',

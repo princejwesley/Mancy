@@ -250,24 +250,12 @@ export default class ReplActiveInput extends React.Component {
 
   onFormat() {
     const text = this.editor.getValue();
-    let autoIndent = global.Mancy.session.lang !== 'js';
     if(!text.trim().length) { return; }
-    if(!autoIndent) {
-      const formattedCode =  ReplCommon.format(text);
-      if(text !== formattedCode) {
-        this.reloadPrompt(formattedCode);
-        return;
-      } else { autoIndent = true; }
-    }
-
-    if(autoIndent) {
-      // auto indent
-      const cm = this.editor;
-      const start = cm.firstLine();
-      const end = cm.lastLine();
-      for (let line = start; line <= end; line++) {
-        cm.indentLine(line);
-      }
+    const cm = this.editor;
+    const start = cm.firstLine();
+    const end = cm.lastLine();
+    for (let line = start; line <= end; line++) {
+      cm.indentLine(line);
     }
   }
 

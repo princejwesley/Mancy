@@ -71,8 +71,6 @@
     "c3": "https://github.com/princejwesley/c3.git",
     "codemirror": "^5.12.0",
     "coffee-script": "https://github.com/princejwesley/coffeescript.git",
-    "escodegen": "^1.7.0",
-    "esprima": "^2.6.0",
     "font-awesome": "^4.5.0",
     "font-manager": "0.2.0",
     "github": "^0.2.4",

@@ -301,7 +301,7 @@ let ReplOutput = {
     );
   },
   transpile: (output) => {
-    let html = ReplCommon.highlight(ReplCommon.format(output));
+    let html = ReplCommon.highlight(output, 'js', true);
     return <ReplOutputTranspile html={html} output={output} />
   }
 };
