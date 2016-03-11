@@ -35,7 +35,7 @@ let langServiceHost = {
   getScriptSnapshot: (fileName) => fileName === replFile ? ts.ScriptSnapshot.fromString(code) : readTs(fileName),
   getCurrentDirectory: () => process.cwd(),
   getCompilationSettings: () => compileOptions,
-  getDefaultLibFileName: (options) => path.join(__dirname, '../node_modules/typescript/lib/lib.core.es6.d.ts'),
+  getDefaultLibFileName: (options) => path.join(__dirname, '../node_modules/typescript/lib/lib.core.es7.d.ts'),
 }
 
 let service = ts.createLanguageService(langServiceHost, ts.createDocumentRegistry())

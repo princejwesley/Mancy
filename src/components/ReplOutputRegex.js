@@ -62,11 +62,11 @@ export default class ReplOutputRegex extends React.Component {
           this.state.collapse
             ? <span className='repl-regex'>
                 <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
-                <span className='regexp'>{this.props.regex.toString()}</span>
+                <span className='cm-string-2'>{this.props.regex.toString()}</span>
               </span>
             : <span className='repl-regex'>
                 <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
-                <span className='regexp'>{this.props.regex.toString()}</span>
+                <span className='cm-string-2'>{this.props.regex.toString()}</span>
                 <i className='fa fa-hashtag' title='Store as Global Variable' onClick={this.bindObjectToContext}></i>
                 {
                   <div className='repl-regex-play-ground' placeholder='Test regex here'

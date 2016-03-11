@@ -23,14 +23,17 @@ const nodeResources = (() => {
   return _.chain(result.toString().trim().split(/\r?\n/))
     // remove app root path
     .tap((r) => r.shift())
-    .filter((dep) => dep.match(/node_modules/g).length == 1)
+    .filter((dep) => dep.match(/node_modules/g).length == 1 && !dep.match(/typescript/))
     .map((dep) => `${dep}/**/*.{js,css,json,svg,png,gif,woff2,otf,ttf,woff,eot,ts}`)
     .value();
 })();
 
 const resources = [
   'node_modules/coffee-script/bin/*',
-  'node_modules/typescript/bin/*',
+  'node_modules/typescript/bin/tsc',
+  'node_modules/typescript/lib/tsc.js',
+  'node_modules/typescript/lib/typescript.js',
+  'node_modules/typescript/lib/lib.core.es7.d.ts',
   'node_modules/livescript/bin/*',
   'node_modules/font-manager/**/*',
 ].concat(nodeResources);
