@@ -306,7 +306,8 @@ export default class Repl extends React.Component {
   }
 
   onExport(sender, filename) {
-    let {history} = ReplStore.getStore();
+    let {history, persistentHistorySize} = ReplStore.getStore();
+    history = history.slice(persistentHistorySize);
     let data = JSON.stringify(_.map(history, (h) => h.plainCode));
     writeFile(filename, data, { encoding: ReplConstants.REPL_ENCODING }, (err) => {
       let options = { buttons: ['Close'] };
