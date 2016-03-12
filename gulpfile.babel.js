@@ -28,7 +28,10 @@ const nodeResources = (() => {
     .value();
 })();
 
-const excludes = ['test', 'spec', 'htdocs', 'dist', 'example', 'samples'].map(e => `!**/${e}/*`);
+const excludes = [
+  'test', 'spec', 'htdocs', 'build',
+  'dist', 'example', 'samples'
+].map(e => `!**/${e}/*`);
 
 const resources = [
   'node_modules/coffee-script/bin/*',

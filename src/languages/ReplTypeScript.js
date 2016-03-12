@@ -49,7 +49,7 @@ let getDiagnostics = () => {
 };
 
 let loadFile = (module, filename) => {
-  let result = ts.transpile(fs.readFileSync(filename).toString(), compileOptions);
+  let result = ts.transpileModule(fs.readFileSync(filename).toString(), {compilerOptions: compileOptions});
   return module._compile(JSON.stringify(result), filename);
 };
 
