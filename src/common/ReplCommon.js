@@ -40,7 +40,7 @@ let ReplCommon = {
     return new Array(num + 1).join(str);
   },
   indent: (code, lang = global.Mancy.session.lang) => {
-    code = code.replace(/([;{])/g, '$1\n');
+    code = code.replace(/([;{])(?!\n)/g, '$1\n');
     let cm = CodeMirror(document.createElement('span'), {
       value: code,
       mode: `text/${ReplLanguages.getLangQualifiedName(lang)}`

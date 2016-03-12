@@ -55,8 +55,8 @@ export default class ReplActiveInput extends React.Component {
     };
 
     this.contextCode = _.chain(this.history.log)
-      .filter(l => l.status)
-      .map(l => l.plainCode.split('\n'))
+      .filter(l => l.status && !l.internal && l.js)
+      .map(l => l.js.split('\n'))
       .flatten()
       .value();
 
@@ -75,7 +75,7 @@ export default class ReplActiveInput extends React.Component {
     });
 
     this.commandReady = false;
-    // retry on error for magic mode
+    // retry on error for sloppy mode
     this.retried = false;
     this.setDebouncedComplete();
     this.id = `prompt-${(Math.random() * Math.pow(10, 9)) | 0}`;
@@ -149,6 +149,11 @@ export default class ReplActiveInput extends React.Component {
     //Hack: override display prompt
     this.displayPrompt = cli.displayPrompt;
     cli.displayPrompt = this.prompt;
+
+    let {stagedCommands} = ReplActiveInputStore.getStore();
+    if(stagedCommands.length) {
+      this.onStoreChange();
+    }
   }
 
   componentWillUnmount() {
@@ -289,37 +294,9 @@ export default class ReplActiveInput extends React.Component {
     }
 
     if(stagedCommands.length) {
-      let cli = ReplLanguages.getREPL();
-      let text = stagedCommands[0];
-      this.promptInput = text;
-      let {local, output, input, force} = ReplInput.transform(text);
-      this.force = !!force;
-
-      cli.$lastExpression = ReplOutput.none();
-      cli.context = ReplContext.getContext();
-
-      if(local) {
-        this.addEntryAction(output, true, input, text);
-        ReplActiveInputStore.tailStagedCommands();
-        return;
-      }
-
-      let out = output;
-      if(!text.match(/^\s*\.load/)) {
-        if(global.Mancy.session.lang !== 'js') {
-          cli.transpile(output, cli.context, this.transpileAndExecute);
-        } else {
-          if(global.Mancy.session.mode === 'Strict') {
-            output = `'use strict'; void 0; ${output}`
-          }
-          this.transpileAndExecute(_.isError(out) ? out : null, output);
-        }
-        return;
-      }
-
-      this.replFeed = text;
-      cli.input.emit('data', this.replFeed);
-      cli.input.emit('data', EOL);
+      this.editor.setValue(stagedCommands[0]);
+      this.execute();
+      ReplActiveInputStore.tailStagedCommands();
       return;
     }
 
@@ -330,17 +307,12 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
-  addEntryAction(formattedOutput, status, command, plainCode, transpiledOutput) {
+  addEntryAction(action) {
+    let {formattedOutput} = action;
     let addReplEntry = (output, formatted = false) => {
       this.element.className = 'repl-active-input';
       formattedOutput = formatted ? output : ReplOutput.some(output).highlight().formattedOutput;
-      const entry = {
-        formattedOutput,
-        status,
-        command,
-        plainCode,
-        transpiledOutput
-      };
+      const entry = _.extend({}, action, { formattedOutput });
       if(this.isREPLMode() || this.history.idx === -1) {
         ReplActions.addEntry(entry);
       } else {
@@ -357,24 +329,21 @@ export default class ReplActiveInput extends React.Component {
       addReplEntry(formattedOutput, true);
     }
   }
-
+  // revisit do we need this for .load?
   prompt(preserveCursor) {
     let cli = ReplLanguages.getREPL();
     let addEntryAction = (formattedOutput, error, text) => {
-      this.addEntryAction(formattedOutput, !error, ReplCommon.highlight(text), text);
-    };
-
-    let playStagedCommand = () => {
-      let {stagedCommands} = ReplActiveInputStore.getStore();
-      if(stagedCommands.length) {
-        ReplActiveInputStore.tailStagedCommands();
-      }
+      this.addEntryAction({
+        formattedOutput,
+        status: !error,
+        command: ReplCommon.highlight(text),
+        plainCode: text
+      });
     };
 
     if(cli.bufferedCommand.indexOf(this.replFeed) != -1 && global.Mancy.REPLError) {
       let {formattedOutput} = cli.$lastExpression.highlight(global.Mancy.REPLError.stack);
       addEntryAction(formattedOutput, true, this.promptInput);
-      playStagedCommand();
     }
     else if(cli.bufferedCommand.length === 0 && this.commandReady) {
       let {formattedOutput, error} = this.force ? { formattedOutput: cli.$lastExpression.getValue() } : cli.$lastExpression.highlight(this.commandOutput);
@@ -383,10 +352,10 @@ export default class ReplActiveInput extends React.Component {
         return;
       }
       addEntryAction(formattedOutput, error, this.promptInput);
-      playStagedCommand();
     }
   }
 
+  // autoComplete and load calls
   addEntry(buf) {
     let output = buf.toString() || '';
     if(output.length === 0 || output.indexOf('at REPLServer.complete') !== -1) { return; }
@@ -491,7 +460,7 @@ export default class ReplActiveInput extends React.Component {
 
   canRetry(e) {
     return e && e.message && (!this.retried
-      && global.Mancy.session.mode === 'Magic'
+      && global.Mancy.session.mode === 'Sloppy'
       && global.Mancy.session.lang === 'js'
       && e.message === BLOCK_SCOPED_ERR_MSG
       || this.wrapExpression
@@ -506,8 +475,13 @@ export default class ReplActiveInput extends React.Component {
         this.retried = true;
         this.execute(true);
       } else {
-        this.addEntryAction(ReplOutput.none().highlight(err).formattedOutput,
-          !err, ReplCommon.highlight(text), text);
+        this.addEntryAction({
+          formattedOutput: ReplOutput.none().highlight(err).formattedOutput,
+          status: !err,
+          command: ReplCommon.highlight(text),
+          plainCode: text,
+          js: result
+        });
       }
     } else {
       ReplCommon.runInContext(result, (err, output) => {
@@ -515,7 +489,14 @@ export default class ReplActiveInput extends React.Component {
         else {
           let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
           let transpiledOutput = !this.shouldTranspile() ? null : ReplOutput.transpile(result);
-          this.addEntryAction(formattedOutput, !err, ReplCommon.highlight(text), text, transpiledOutput);
+          this.addEntryAction({
+            formattedOutput,
+            status: !err,
+            command: ReplCommon.highlight(text),
+            plainCode: text,
+            transpiledOutput,
+            js: result
+          });
         }
       });
     }
@@ -570,7 +551,13 @@ export default class ReplActiveInput extends React.Component {
       this.force = !!force;
 
       if(local) {
-        return this.addEntryAction(output, true, input, text);
+        return this.addEntryAction({
+          formattedOutput: output,
+          status: true,
+          command: input,
+          plainCode: text,
+          internal: true
+        });
       }
 
       if(!text.match(/^\s*\.load/)) {

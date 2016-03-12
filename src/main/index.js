@@ -39,7 +39,7 @@ Allowed values:
                 .nargs('m', 1)
                 .describe('m', `REPL mode (applicable only for --lang=js).
 Allowed values:
-  'magic', 'sloppy' or 'strict'
+  'sloppy' or 'strict'
                 `)
                 .example('$0 -m strict', 'Set JS mode as strict')
                 .alias('p', 'path')
@@ -224,7 +224,7 @@ const langs =  {
   'ls': 'ls', 'livescript': 'ls',
   'coffee': 'coffee', 'coffeescript': 'coffee',
 };
-const modes = { 'magic': 'Magic', 'strict': 'Strict', 'sloppy': 'Sloppy' };
+const modes = { 'strict': 'Strict', 'sloppy': 'Sloppy' };
 const editors =  { 'notebook': 'Notebook', 'repl': 'REPL' };
 const themes = {
   'dark': 'application:view-theme-dark',

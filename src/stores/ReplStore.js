@@ -56,12 +56,13 @@ const ReplStore = Reflux.createStore({
   onAddEntry(entry) {
     const tag = `${md5(entry.plainCode)}-${Math.random()}`;
     cache.entries.push(_.extend({tag}, entry));
-    cache.history.push({'plainCode': entry.plainCode, tag, status: entry.status});
+    let {plainCode, internal, js, status} = entry;
+    cache.history.push({plainCode, internal, js, tag, status});
     cache.reloadPrompt = true;
     if(global.Mancy.preferences.historyAggressive) {
-      ipcRenderer.send('application:history-save', [entry.plainCode]);
+      ipcRenderer.send('application:history-save', [plainCode]);
     } else {
-      ipcRenderer.send('application:history-append', entry.plainCode);
+      ipcRenderer.send('application:history-append', plainCode);
     }
     resetButEntry();
     this.trigger();

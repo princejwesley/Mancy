@@ -49,9 +49,6 @@ const ReplActiveInputStore = Reflux.createStore({
   },
   tailStagedCommands() {
     stagedCommands.shift();
-    if(stagedCommands.length) {
-      this.trigger();
-    }
   },
   onSetTheme(t) {
     this.trigger({name: 'theme', value: t});

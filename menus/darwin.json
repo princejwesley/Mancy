@@ -110,7 +110,6 @@
       {
         "label": "REPL Mode",
         "submenu": [
-          { "label" : "Magic", "type": "radio", "value": "Magic", "command": "application:prompt-mode" },
           { "label" : "Sloppy", "type": "radio", "value": "Sloppy", "command": "application:prompt-mode" },
           { "label" : "Strict", "type": "radio", "value": "Strict", "command": "application:prompt-mode" }
         ]

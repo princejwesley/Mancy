@@ -26,7 +26,7 @@ import {ipcRenderer} from 'electron';
   let preferences = JSON.parse(localStorage.getItem('preferences') || '{}');
   let defaults = {
     "editor": "REPL",
-    "mode": "Strict",
+    "mode": "Sloppy",
     "theme": "Dark Theme",
     "timeout": ReplConstants.EXEC_TIMEOUT,
     "babel": false,
@@ -55,6 +55,8 @@ import {ipcRenderer} from 'electron';
       preferences[key] = defaults[key];
     }
   });
+
+  if(preferences.mode === 'Magic') { preferences.mode = 'Sloppy'; }
   global.Mancy = { preferences: preferences };
   localStorage.setItem('preferences', JSON.stringify(preferences));
 
