@@ -171,6 +171,11 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.loadScript = script;
     });
   },
+  onSetTypeScriptOptions(name, value) {
+    this.updatePreference((preferences) => {
+      preferences.typescript[name] = value;
+    });
+  },
   addNPMPath(path) {
     this.updatePreference((preferences) => {
       let npmPaths = preferences.npmPaths;

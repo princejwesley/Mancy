@@ -50,18 +50,30 @@
           margin: auto 0;
           flex-basis: 30%;
           font-weight: 900;
+          .lang-img {
+            position: relative;
+            &.ts-img {
+              top: 3px;
+            }
+            &.js-img {
+              top: 4px;
+            }
+          }
         }
         .preference-value {
+          padding: 0px 5px;
+          flex: 1;
           .textbox {
-            padding: 0px 8px;
           }
 
           .radio-group {
-            padding: 0px 5px;
+            padding-right: 10px;
           }
 
           .checkbox-group {
-            padding: 0px 6px;
+            padding-right: 6px;
+            display: inherit;
+            line-height: 1.75em;
           }
 
           .fa {

@@ -47,7 +47,21 @@ import {ipcRenderer} from 'electron';
     "keyMap": "default",
     "npmPaths": [],
     "historySize": ReplConstants.REPL_HISTORY_SIZE,
-    "historyAggressive": false
+    "historyAggressive": false,
+    "typescript": {
+      "noImplicitAny": false,
+      "ignoreSemanticError" : true,
+      "preserveConstEnums": true,
+      "allowUnusedLabels": true,
+      "noImplicitReturns": false,
+      "noFallthroughCasesInSwitch": true,
+      "allowUnreachableCode": false,
+      "forceConsistentCasingInFileNames": false,
+      "allowSyntheticDefaultImports": true,
+      "allowJs": true,
+      "noImplicitUseStrict": false,
+      "noEmitHelpers": true
+    }
   };
 
   _.each(_.keys(defaults), (key) => {

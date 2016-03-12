@@ -10,8 +10,8 @@ import fs from 'fs';
 //reference: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
 // and CoffeeScript
 
-const compileOptions = {
-  noEmitOnError: true,
+const compilerOptions = {
+  noEmitOnError: false,
   module: ts.ModuleKind.CommonJS,
   moduleResolution: ts.ModuleResolutionKind.NodeJs,
   experimentalDecorators: true,
@@ -34,23 +34,26 @@ let langServiceHost = {
   getScriptVersion: (fileName) => fileName === replFile && buildNumber.toString(),
   getScriptSnapshot: (fileName) => fileName === replFile ? ts.ScriptSnapshot.fromString(code) : readTs(fileName),
   getCurrentDirectory: () => process.cwd(),
-  getCompilationSettings: () => compileOptions,
+  getCompilationSettings: () => _.extend({}, compilerOptions, global.Mancy.preferences.typescript),
   getDefaultLibFileName: (options) => path.join(__dirname, '../node_modules/typescript/lib/lib.core.es7.d.ts'),
 }
 
 let service = ts.createLanguageService(langServiceHost, ts.createDocumentRegistry())
 
 let getDiagnostics = () => {
-  let emit = service.getEmitOutput(replFile);
   let allDiagnostics = service.getCompilerOptionsDiagnostics()
-    .concat(service.getSyntacticDiagnostics(replFile))
-    .concat(service.getSemanticDiagnostics(replFile));
+    .concat(service.getSyntacticDiagnostics(replFile));
+  if(!global.Mancy.preferences.typescript.ignoreSemanticError) {
+    allDiagnostics = allDiagnostics.concat(service.getSemanticDiagnostics(replFile));
+  }
   return allDiagnostics;
 };
 
 let loadFile = (module, filename) => {
-  let result = ts.transpileModule(fs.readFileSync(filename).toString(), {compilerOptions: compileOptions});
-  return module._compile(JSON.stringify(result), filename);
+  let {outputText, diagnostics} = ts.transpileModule(fs.readFileSync(filename).toString(),
+    {compilerOptions: _.extend({}, compilerOptions, global.Mancy.preferences.typescript), reportDiagnostics: true });
+  // revisit diagnostics result
+  return module._compile(JSON.stringify(outputText), filename);
 };
 
 // register extensions
@@ -80,9 +83,17 @@ let transpile = (input, context, cb) => {
   code += `\n${input}`;
   buildNumber += 1;
   let allDiagnostics = getDiagnostics();
+  let result;
 
   if(global.Mancy.session.editor !== 'REPL') {
     code = original;
+  }
+  if(!allDiagnostics.length) {
+    let {outputText, diagnostics} = ts.transpileModule(input, {
+      compilerOptions: _.extend({}, compilerOptions, global.Mancy.preferences.typescript), reportDiagnostics: true
+    });
+    allDiagnostics = diagnostics;
+    result = outputText;
   }
 
   if(allDiagnostics.length) {
@@ -95,9 +106,8 @@ let transpile = (input, context, cb) => {
     return cb(`${diagnostic.file.fileName} (${line + 1 - lineOffset},${character + 1}): ${message}`);
   }
 
-  let result = ts.transpile(input);
   if(result !== input) {
-    result = result.replace(/(["'])use\sstrict\1;?/, '"use strict";\nvoid 0;\n');
+    result = result.replace(/(["'])use\sstrict\1;?/, '"use strict";\nvoid 0;');
   }
 
   return cb(null, result);

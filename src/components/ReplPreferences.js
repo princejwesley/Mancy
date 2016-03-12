@@ -25,7 +25,7 @@ export default class ReplPreferences extends React.Component {
       'resetLoadScript', 'onTogglePromptOnClose', 'onEditorChange',
       'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown',
       'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange', 'onChangeHistorySize',
-      'onToggleHistoryAggressive'
+      'onToggleHistoryAggressive', 'showTypeScriptPreferences', 'onSetTypeScriptOptions'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -92,6 +92,9 @@ export default class ReplPreferences extends React.Component {
 
   onLangChange(e) {
     ReplPreferencesStore.onSetLanguage(e.target.value);
+    this.setState({
+      lang: e.target.value
+    });
   }
 
   onChangeTimeout(e) {
@@ -172,6 +175,96 @@ export default class ReplPreferences extends React.Component {
     ReplPreferencesStore.moveNPMPath(path, 1);
   }
 
+  onSetTypeScriptOptions(name) {
+    return e => ReplPreferencesStore.onSetTypeScriptOptions(name, e.target.checked);
+  }
+
+  showTypeScriptPreferences() {
+    const imgURL = `./logos/${this.state.lang}.png`;
+    let icon = <img className='lang-img ts-img' src={imgURL} title='TS Preferences'/>;
+    const config = [
+      { name: 'ignoreSemanticError', tip: 'Ignore semantic errors'},
+      { name: 'noImplicitAny', tip: "Raise error on expressions and declarations with an implied 'any' type"},
+      { name: 'preserveConstEnums', tip: 'Do not erase const enum declarations in generated code'},
+      { name: 'allowUnusedLabels', tip: 'Do not report errors on unused labels'},
+      { name: 'noImplicitReturns', tip: 'Report error when not all code paths in function return a value'},
+      { name: 'noFallthroughCasesInSwitch', tip: 'Report errors for fallthrough cases in switch statement'},
+      { name: 'allowUnreachableCode', tip: 'Do not report errors on unreachable code'},
+      { name: 'forceConsistentCasingInFileNames', tip: 'Disallow inconsistently-cased references to the same file'},
+      { name: 'allowSyntheticDefaultImports', tip: 'Allow default imports from modules with no default export'},
+      { name: 'allowJs', tip: 'Allow JavaScript files to be compiled'},
+      { name: 'noImplicitUseStrict', tip: 'Do not emit "use strict" directives in module output'},
+      { name: 'noEmitHelpers', tip: 'Do not generate custom helper functions like __extends in compiled output'},
+    ];
+    return (
+      <div class='typescript-preferences'>
+        <div className='preference'>
+          <div className='preference-name'>
+            Compiler Options {icon}
+          </div>
+          <div className='preference-value'>
+            {
+              _.map(config, (c, idx) => (
+                <span className='checkbox-group' title={c.tip}>
+                  <input type="checkbox" name={"ts-compile-" + idx} checked={this.state.typescript[c.name]} value=""
+                    onClick={this.onSetTypeScriptOptions(c.name)} /> {_.startCase(c.name)}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  showJavaScriptPreferences() {
+    const imgURL = `./logos/${this.state.lang}.png`;
+    let icon = <img className='lang-img js-img' src={imgURL} title='JS Preferences'/>;
+    return (
+      <div class='javascript-preferences'>
+        <div className='preference'>
+          <div className='preference-name'>
+            REPL Mode {icon}
+          </div>
+          <div className='preference-value'>
+            <fieldset>
+              <span className='radio-group'>
+                <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Sloppy'} value="Sloppy" onClick={this.onModeChange} /> Sloppy
+              </span>
+              <span className='radio-group'>
+                <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Strict'} value="Strict" onClick={this.onModeChange} /> Strict
+              </span>
+            </fieldset>
+          </div>
+        </div>
+        <div className='preference' title='enable babel transcompiler for javascript'>
+          <div className='preference-name'>
+            Babel Transform {icon}
+          </div>
+          <div className='preference-value'>
+            <span className='checkbox-group'>
+              <input type="checkbox" name="babel"
+                checked={this.state.babel} value=""
+                disabled={this.state.lang !== 'js'} onClick={this.onBabelChange} />
+            </span>
+          </div>
+        </div>
+        <div className='preference' title='await expression ￫ (async function(){ let result = (await expression); return result; }())'>
+          <div className='preference-name'>
+            Auto Async Wrapper {icon}
+          </div>
+          <div className='preference-value'>
+            <span className='checkbox-group'>
+              <input type="checkbox" name="await"
+                checked={this.state.asyncWrap} value=""
+                disabled={this.state.lang !== 'js'} onClick={this.onAsyncWrapChange} />
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     let clazz = `repl-preferences-panel ${this.state.open ? 'open' : ''}`;
     return (
@@ -204,21 +297,7 @@ export default class ReplPreferences extends React.Component {
           <ReplPageZoom/>
           <div className='preference'>
             <div className='preference-name'>
-              Language
-            </div>
-            <div className='preference-value'>
-              <select onChange={this.onLangChange} title='Languages'>
-                {
-                  _.map(langs, (v, k) => {
-                    return <option selected={k === this.state.lang} value={k}>{v}</option>
-                  })
-                }
-              </select>
-            </div>
-          </div>
-          <div className='preference'>
-            <div className='preference-name'>
-              Editor mode
+              Editor Mode
             </div>
             <div className='preference-value'>
               <fieldset>
@@ -233,46 +312,31 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference'>
             <div className='preference-name'>
-              REPL mode
+              Language
             </div>
             <div className='preference-value'>
-              <fieldset>
-                <span className='radio-group'>
-                  <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Sloppy'} value="Sloppy" onClick={this.onModeChange} /> Sloppy
-                </span>
-                <span className='radio-group'>
-                  <input type="radio" name="mode" disabled={this.state.lang !== 'js'} checked={this.state.mode === 'Strict'} value="Strict" onClick={this.onModeChange} /> Strict
-                </span>
-              </fieldset>
+              <select onChange={this.onLangChange} title='Languages'>
+                {
+                  _.map(langs, (v, k) => {
+                    return <option selected={k === this.state.lang} value={k}>{v}</option>
+                  })
+                }
+              </select>
             </div>
           </div>
-          <div className='preference' title='enable babel transcompiler for javascript'>
-            <div className='preference-name'>
-              Babel transform
-            </div>
-            <div className='preference-value'>
-              <span className='checkbox-group'>
-                <input type="checkbox" name="babel"
-                  checked={this.state.babel} value=""
-                  disabled={this.state.lang !== 'js'} onClick={this.onBabelChange} />
-              </span>
-            </div>
-          </div>
-          <div className='preference' title='await expression ￫ (async function(){ let result = (await expression); return result; }())'>
-            <div className='preference-name'>
-              Auto async wrapper
-            </div>
-            <div className='preference-value'>
-              <span className='checkbox-group'>
-                <input type="checkbox" name="await"
-                  checked={this.state.asyncWrap} value=""
-                  disabled={this.state.lang !== 'js'} onClick={this.onAsyncWrapChange} />
-              </span>
-            </div>
-          </div>
+          {
+            this.state.lang === 'ts'
+              ? this.showTypeScriptPreferences()
+              : null
+          }
+          {
+            this.state.lang === 'js'
+              ? this.showJavaScriptPreferences()
+              : null
+          }
           <div className='preference' title='(0 for no timeout)'>
             <div className='preference-name'>
-              Execution timeout(ms)
+              Execution Timeout(ms)
             </div>
             <div className='preference-value'>
               <span className='textbox'>
@@ -303,7 +367,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Show line number gutter'>
             <div className='preference-name'>
-              Show line number gutter
+              Show Line Number Gutter
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -313,7 +377,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Code fold gutter'>
             <div className='preference-name'>
-              Show fold gutter
+              Show Fold Gutter
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -323,7 +387,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Disable automatic auto complete'>
             <div className='preference-name'>
-              Disable automatic auto complete
+              Disable Automatic Auto Complete
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -333,7 +397,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='auto suggestion popup delay(ms)'>
             <div className='preference-name'>
-              Auto complete popup delay(ms)
+              Auto Complete Popup Delay(ms)
             </div>
             <div className='preference-value'>
               <span className='textbox'>
@@ -345,7 +409,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Toggle run mode (⇧ + ↲) / ↲(default)'>
             <div className='preference-name'>
-              Toggle run mode (⇧ + ↲) / ↲
+              Toggle Run Mode (⇧ + ↲) / ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -355,7 +419,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Auto suggest selection result on ↲'>
             <div className='preference-name'>
-              Auto suggest selection on ↲
+              Auto Suggest Selection on ↲
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -376,7 +440,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Show/hide watermark'>
             <div className='preference-name'>
-              Show watermark
+              Show Watermark
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -386,7 +450,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Warn before quit window'>
             <div className='preference-name'>
-              Warn before quit
+              Warn Before Quit
             </div>
             <div className='preference-value'>
               <span className='checkbox-group'>
@@ -396,7 +460,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Startup script'>
             <div className='preference-name'>
-              Startup script
+              Startup Script
             </div>
             <div className='preference-value'>
               <div>{this.state.loadScript}</div>
@@ -410,7 +474,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Add node modules path'>
             <div className='preference-name'>
-              Add node modules path
+              Add Node Modules Path
             </div>
             <div className='preference-value'>
               {
@@ -443,7 +507,7 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Persistent History size'>
             <div className='preference-name'>
-              History size
+              History Size
             </div>
             <div className='preference-value'>
               <span className='textbox'>
@@ -453,15 +517,15 @@ export default class ReplPreferences extends React.Component {
           </div>
           <div className='preference' title='Persistent History on executing each command or on close session'>
             <div className='preference-name'>
-              History save mode
+              History Save Mode
             </div>
             <div className='preference-value'>
               <fieldset>
                 <span className='radio-group'>
-                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === true} value="true" onClick={this.onToggleHistoryAggressive} /> aggressive
+                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === true} value="true" onClick={this.onToggleHistoryAggressive} /> Aggressive
                 </span>
                 <span className='radio-group'>
-                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === false} value="false" onClick={this.onToggleHistoryAggressive} /> on session close
+                  <input type="radio" name="history-aggressive" checked={this.state.historyAggressive === false} value="false" onClick={this.onToggleHistoryAggressive} /> On Session Close
                 </span>
               </fieldset>
             </div>
