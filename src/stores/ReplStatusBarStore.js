@@ -4,6 +4,7 @@ import Reflux from 'reflux';
 let newRelease = null;
 let language = '';
 let mode = '';
+let cursor = [1, 1];
 const ReplStatusBarStore = Reflux.createStore({
   init() {
     this.listenToMany(ReplStatusBarActions);
@@ -26,6 +27,10 @@ const ReplStatusBarStore = Reflux.createStore({
   onRefresh() {
     this.trigger();
   },
+  onCursorActivity(c) {
+    cursor = c;
+    this.trigger();
+  },
   getStore() {
     let {toggleShiftEnter, lang} = global.Mancy.preferences;
     return {
@@ -33,6 +38,7 @@ const ReplStatusBarStore = Reflux.createStore({
       newRelease,
       lang: language || lang,
       mode,
+      cursor
     };
   }
 });

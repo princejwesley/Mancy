@@ -86,22 +86,25 @@ export default class ReplStatusBar extends React.Component {
           <i className="fa fa-circle"></i>
           <span className='repl-status-bar-count'>{handleCount}</span>
         </span>
-        <span className='repl-status-bar-lang' title='REPL language'>
+        <span className='repl-status-bar-lang' title='REPL Language'>
           <img className='repl-status-bar-img' src={imgURL}/>
         </span>
         {
           this.state.lang === 'js'
-            ? <span className='repl-status-bar-mode' title='REPL mode'>
+            ? <span className='repl-status-bar-mode' title='REPL Mode'>
                 <i className="fa fa-tag"></i>
                 <span className='repl-status-bar-message'>{this.state.mode}</span>
               </span>
             : null
         }
         <span className='run-help' title={runHelpMessage}>press <span className='run-command'>{runHelp}</span> to <span className='run'>run</span></span>
+        <span className='repl-status-cursor-position' onClick={this.onDownload} title='Cursor Position'>
+          {this.state.cursor[0]}:{this.state.cursor[1]}
+        </span>
         <span className='placeholder'></span>
         {
           this.state.newRelease
-            ? <span className='console-release-notification' onClick={this.onDownload} title='Click to download'>
+            ? <span className='console-release-notification' onClick={this.onDownload} title='Click to Download'>
                  <i className="fa fa-download"></i> {this.state.newRelease.release}
               </span>
             : null
@@ -111,7 +114,7 @@ export default class ReplStatusBar extends React.Component {
             ? <i className="fa fa-bell console-notification"></i>
             : null
         }
-        <span className='repl-status-bar-console' onClick={this.props.onToggleConsole} title='toggle console'>
+        <span className='repl-status-bar-console' onClick={this.props.onToggleConsole} title='Toggle Console'>
           <span className="fa-stack">
             <i className="fa fa-terminal fa-stack-1x"></i>
             {

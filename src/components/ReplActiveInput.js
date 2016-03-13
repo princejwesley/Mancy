@@ -5,6 +5,7 @@ import ReplContext from '../common/ReplContext';
 import {EOL} from 'os';
 import shell from 'shell';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
+import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import ReplActions from '../actions/ReplActions';
 import ReplConstants from '../constants/ReplConstants';
 import ReplType from '../common/ReplType';
@@ -216,7 +217,9 @@ export default class ReplActiveInput extends React.Component {
   focus() {
     const cm = this.editor;
     let end = cm.lastLine();
-    cm.setCursor({ line: end, ch: cm.doc.getLine(end).length });
+    let ch = cm.doc.getLine(end).length;
+    cm.setCursor({ line: end, ch });
+    ReplStatusBarActions.cursorActivity([end + 1, ch + 1]);
     cm.focus();
   }
 
@@ -243,6 +246,8 @@ export default class ReplActiveInput extends React.Component {
     if(activeSuggestion){
       this.removeSuggestion();
     }
+    const {line, ch} = this.editor.getCursor();
+    ReplStatusBarActions.cursorActivity([line + 1, ch + 1]);
   }
 
   onTriggerAction({action}) {

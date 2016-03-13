@@ -91,6 +91,11 @@
       animation-direction: alternate;
     }
 
+    .repl-status-cursor-position {
+      color: if($theme == $dark-theme, $dark-app-status-bar-cursor-pos-color, $lt-app-status-bar-cursor-pos-color);
+      cursor: default;
+    }
+
     .console-release-notification {
       cursor: pointer;
       color: if($theme == $dark-theme, $dark-app-status-bar-console-release-notification-color, $lt-app-status-bar-console-release-notification-color);
@@ -99,12 +104,10 @@
 
     .repl-status-bar-console {
       color: if($theme == $dark-theme, $dark-app-status-bar-console-color, $lt-app-status-bar-console-color);
-      padding-right: 25px;
+      padding-right: 15px;
       cursor: pointer;
 
       .fa-stack {
-        font-size: 0.7em;
-
         .text-danger {
           color: if($theme == $dark-theme, $dark-app-entry-status-error-color, $lt-app-entry-status-error-color);
         }

@@ -5,6 +5,7 @@ const ReplStatusBarActions = Reflux.createActions([
   "newRelease",
   "updateLanguage",
   "updateMode",
-  "refresh"
+  "refresh",
+  "cursorActivity"
 ]);
 export default ReplStatusBarActions;
