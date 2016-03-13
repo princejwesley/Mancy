@@ -174,7 +174,7 @@ export default class Repl extends React.Component {
       } catch(e) {}
     }
     win.on('resize', () => {
-      let [width, height] = win.getSize();
+      let [width, height] = remote.getCurrentWindow().getSize();
       setSize(width, height);
     });
   }
