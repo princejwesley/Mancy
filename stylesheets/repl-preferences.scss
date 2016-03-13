@@ -44,6 +44,7 @@
         flex: 1;
         display: flex;
         padding: 10px 0px;
+        min-height: 20px;
         border-bottom: 1px solid if($theme == $dark-theme, $dark-app-preference-entry-border-color, $lt-app-preference-entry-border-color );
 
         .preference-name {
@@ -92,6 +93,7 @@
 
       .statusbar-placeholder {
         height: calc(#{$app-font-size} + 20px);
+        min-height: calc(#{$app-font-size} + 20px);
       }
 
       fieldset {

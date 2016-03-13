@@ -8,6 +8,7 @@
     background-color: if($theme == $dark-theme, $dark-app-prompt-background-color, $lt-app-prompt-background-color);
     display: flex;
     align-items: flex-start;
+    min-height: 25px;
 
     .repl-active-icon {
       @include notSelectable();
