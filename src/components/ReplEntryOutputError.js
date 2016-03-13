@@ -4,6 +4,8 @@ import ReplSourceFile from './ReplSourceFile';
 import ReplContext from '../common/ReplContext';
 import ReplCommon from '../common/ReplCommon';
 
+const STACK_TRACE_PRIMARY_PATTERN = /(?:at\s*)([^(]+)\(?([^:]+):(\d+):(\d+)\)?/;
+const STACK_TRACE_SECONDARY_PATTERN = /(?:at\s*)()([^:]+):(\d+):(\d+)/;
 export default class ReplEntryOutputError extends React.Component {
   constructor(props) {
     super(props);
@@ -66,7 +68,7 @@ export default class ReplEntryOutputError extends React.Component {
     };
 
     _.each(stack, (s) => {
-      s.replace(/(?:at\s*)([^(]+)\(?([^:]+):(\d+):(\d+)\)?/, filler);
+      s.replace(s.indexOf('(') !== -1 ? STACK_TRACE_PRIMARY_PATTERN : STACK_TRACE_SECONDARY_PATTERN, filler);
     });
     return output;
   }
