@@ -10,6 +10,7 @@ A cross platform NodeJS REPL application based on electron and react frameworks.
 - [CoffeeScript](http://coffeescript.org/)
 - [TypeScript](http://www.typescriptlang.org/)
 - [LiveScript](http://livescript.net/)
+- [ClojureScript](http://clojure.org/about/clojurescript)
 
 ## <img src="icons/mancy.png" width="25">&nbsp;[Features](http://mancy-re.pl)
 

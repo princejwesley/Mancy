@@ -23,7 +23,7 @@ const remote = require('electron').remote;
 const Menu = remote.Menu;
 
 // modes
-const modes = ['javascript', 'coffeescript', 'livescript']
+const modes = ['javascript', 'coffeescript', 'livescript', 'clojure']
 modes.forEach( mode => require(`../node_modules/codemirror/mode/${mode}/${mode}.js`))
 
 // keymaps

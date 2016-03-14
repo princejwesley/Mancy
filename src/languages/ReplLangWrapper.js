@@ -9,6 +9,7 @@ import jsREPL from 'repl';
 import coffeeREPL from 'coffee-script/repl';
 import tsREPL from './ReplTypeScript';
 import lsREPL from './ReplLiveScript';
+import cljsREPL from './ReplClojureScript';
 
 const REPL = (repl) => {
   let readable = new Readable();
@@ -78,5 +79,6 @@ export default {
   js: replJS,
   coffee: REPL(coffeeREPL),
   ts: REPL(tsREPL),
-  ls: REPL(lsREPL)
+  ls: REPL(lsREPL),
+  cljs: REPL(cljsREPL),
 };

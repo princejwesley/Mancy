@@ -296,6 +296,7 @@ let ReplCommon = {
   },
   getTempVarName: () => `temp${++tempCounter}`,
   bindToReplContext: (variable, value) => ReplContext.getContext()[variable] = value,
+  bindToReplContextGlobal: (variable, value) => ReplContext.getContext().global[variable] = value,
 };
 
 export default ReplCommon;

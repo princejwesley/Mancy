@@ -91,7 +91,8 @@ pre {
 }
 
 ::selection {
-  background-color: $app-text-selection-color;
+  background-color: $app-text-selection-background-color;
+  color: $app-text-selection-color;
 }
 
 .hide {

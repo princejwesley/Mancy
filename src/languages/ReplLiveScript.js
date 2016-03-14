@@ -24,7 +24,7 @@ let register = () => {
   let fork = child_process.fork;
   let binary = require.resolve(path.join(__dirname, '../node_modules/livescript/bin/lsc'));
   child_process.fork = (path, args, options) => {
-    if(/\.tsx?$/.test(path)) {
+    if(/\.ls?$/.test(path)) {
       if(!Array.isArray(args)) {
         options = args || {};
         args = [];
