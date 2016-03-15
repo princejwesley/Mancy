@@ -56,9 +56,15 @@
             position: relative;
             &.ts-img {
               top: 3px;
+              left: 0px;
             }
             &.js-img {
               top: 4px;
+              left: 0px;
+            }
+            &.cljs-img {
+              top: 5px;
+              left: -5px;
             }
           }
         }

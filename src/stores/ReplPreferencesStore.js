@@ -176,6 +176,13 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.typescript[name] = value;
     });
   },
+  onSetClojureScriptOptions(name, value) {
+    this.updatePreference((preferences) => {
+      preferences.clojurescript[name] = value;
+    });
+    ReplLanguages.getREPL(global.Mancy.preferences.lang)
+      .updateCompilerOptions();
+  },
   addNPMPath(path) {
     this.updatePreference((preferences) => {
       let npmPaths = preferences.npmPaths;

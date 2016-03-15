@@ -27,7 +27,13 @@ const setREPL = (name) => {
   }
   repl = langs[name];
   repl.setREPL();
-  return repl.getREPL();
+
+  const langREPL = repl.getREPL();
+  if(langREPL.updateCompilerOptions) {
+    langREPL.updateCompilerOptions();
+  }
+
+  return langREPL;
 }
 
 const aliases = {

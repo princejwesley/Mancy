@@ -5,17 +5,19 @@ import _ from 'lodash';
 import child_process from 'child_process';
 import vm from 'vm';
 import fs from 'fs';
-import ReplCommon from '../common/ReplCommon';
+import ReplContext from '../common/ReplContext';
 
 const {cljs, goog, compiler} = require('./clojurescript/clojurescript');
 let nodeLineListener = () => {};
 let promptData = '';
 let contextInitialized = false;
+let errMsg = null;
 
+// run once ?
 const preludeCode = `
-
+;; (enable-console-print!)
 `
-let code = preludeCode;
+
 let loadFile = (module, filename) => {
   let result = compiler.transpile(fs.readFileSync(fileName));
   return module._compile(result.toString(), filename);
@@ -28,36 +30,59 @@ let register = () => {
   }
 };
 
+let error = (...args) => {
+  let msg = args.join('\n');
+  if(errMsg) {
+    errMsg += msg;
+  } else {
+    errMsg = msg;
+  }
+}
+
+// set compiler warning options
+const warnings = () => {
+  let options = global.Mancy.preferences.clojurescript;
+  let entries = cljs.analyzer._STAR_cljs_warnings_STAR_.root.arr;
+  entries.forEach(e => {
+    if(e && e.arr && e.arr.length) {
+      e.arr.forEach((ev, idx) => {
+        if(idx % 2 === 0 && e.arr[idx].name in options) {
+          e.arr[idx + 1] = options[e.arr[idx].name];
+        }
+      });
+    }
+  });
+}
+
 const prelude = () => {
   if(!contextInitialized) {
     cljs.user = {};
-    ReplCommon.bindToReplContextGlobal('goog', goog);
-    ReplCommon.bindToReplContextGlobal('cljs', cljs);
+    let context = ReplContext.getContext();
+    context.global.goog = goog;
+    context.global.cljs = cljs;
+    cljs.core._STAR_print_fn_STAR_ = context.console.log;
+    cljs.core._STAR_print_err_fn_STAR_ = error;
     contextInitialized = true;
   }
+  errMsg = null;
 };
 
 let evaluate = (input, context, filename, cb) => {
   prelude();
-  let previous = code;
   try {
-    code += input;
-    let js = compiler.transpile(code);
-    return cb(null, vm.runInContext(js, context, filename));
+    let js = compiler.transpile(input);
+    return errMsg ? cb(errMsg) : cb(null, vm.runInContext(js, context, filename));
   } catch(e) {
-    code = previous;
     return cb(e);
   }
 }
 
 let transpile = (input, context, cb) => {
   prelude();
-  let previous = code;
   try {
-    code += input;
-    return cb(null, compiler.transpile(code));
+    let js = compiler.transpile(input);
+    return errMsg ? cb(errMsg) : cb(null, js);
   } catch(e) {
-    code = previous;
     return cb(e);
   }
 };
@@ -110,6 +135,7 @@ export default {
     });
     addMultilineHandler(repl);
     repl.transpile = transpile;
+    repl.updateCompilerOptions = warnings;
     repl.defineCommand('load', loadAction);
     return repl;
   }

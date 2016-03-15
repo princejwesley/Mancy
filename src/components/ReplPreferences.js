@@ -26,7 +26,8 @@ export default class ReplPreferences extends React.Component {
       'resetLoadScript', 'onTogglePromptOnClose', 'onEditorChange',
       'onCloseNPMPath', 'addNPMPath', 'resetNPMPath', 'onMoveNPMPathUp', 'onMoveNPMPathDown',
       'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange', 'onChangeHistorySize',
-      'onToggleHistoryAggressive', 'showTypeScriptPreferences', 'onSetTypeScriptOptions'
+      'onToggleHistoryAggressive', 'showTypeScriptPreferences', 'onSetTypeScriptOptions',
+      'showClojureScriptPreferences', 'showLangPreferences', 'onSetClojureScriptOptions',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -180,6 +181,68 @@ export default class ReplPreferences extends React.Component {
     return e => ReplPreferencesStore.onSetTypeScriptOptions(name, e.target.checked);
   }
 
+  onSetClojureScriptOptions(name) {
+    return e => ReplPreferencesStore.onSetClojureScriptOptions(name, e.target.checked);
+  }
+
+  showLangPreferences() {
+    if(this.state.lang === 'ts') { return this.showTypeScriptPreferences(); }
+    else if(this.state.lang === 'js') { return this.showJavaScriptPreferences(); }
+    else if(this.state.lang === 'cljs') { return this.showClojureScriptPreferences(); }
+
+    return null;
+  }
+
+  showClojureScriptPreferences() {
+    const imgURL = `./logos/${this.state.lang}.png`;
+    let icon = <img className='lang-img cljs-img' src={imgURL} title='ClojureScript Warning Options'/>;
+    const config = [
+      { name: 'preamble-missing', tip: 'missing preamble'},
+      { name: 'undeclared-var', tip: 'undeclared var'},
+      { name: 'undeclared-ns', tip: 'var references non-existent namespace'},
+      { name: 'undeclared-ns-form', tip: 'namespace reference in ns form that does not exist'},
+      { name: 'redef', tip: 'var redefinition'},
+      { name: 'dynamic', tip: 'dynamic binding of non-dynamic var'},
+      { name: 'fn-var', tip: 'var previously bound to fn changed to different type'},
+      { name: 'fn-arity', tip: 'invalid invoke arity'},
+      { name: 'fn-deprecated', tip: 'deprecated function usage'},
+      { name: 'protocol-deprecated', tip: 'deprecated protocol usage'},
+      { name: 'undeclared-protocol-symbol', tip: 'undeclared protocol referred'},
+      { name: 'invalid-protocol-symbol', tip: 'invalid protocol symbol'},
+      { name: 'multiple-variadic-overloads', tip: 'multiple variadic arities'},
+      { name: 'variadic-max-arity', tip: 'arity greater than variadic arity'},
+      { name: 'overload-arity', tip: 'duplicate arities'},
+      { name: 'extending-base-js-type', tip: 'JavaScript base type extension'},
+      { name: 'invoke-ctor', tip: 'type constructor invoked as function'},
+      { name: 'invalid-arithmetic', tip: 'invalid arithmetic'},
+      { name: 'protocol-invalid-method', tip: 'protocol method does not match declaration'},
+      { name: 'protocol-duped-method', tip: 'duplicate protocol method implementation'},
+      { name: 'protocol-multiple-impls', tip: 'protocol implemented multiple times'},
+      { name: 'single-segment-namespace', tip: 'single segment namespace'},
+    ];
+
+    return (
+      <div class='clojurescript-preferences'>
+        <div className='preference'>
+          <div className='preference-name'>
+            Warning Options {icon}
+          </div>
+          <div className='preference-value'>
+            {
+              _.map(config, (c, idx) => (
+                <span className='checkbox-group' title={c.tip}>
+                  <input type="checkbox" name={"cljs-compile-" + idx} checked={this.state.clojurescript[c.name]} value=""
+                    onClick={this.onSetClojureScriptOptions(c.name)} /> {_.startCase(c.name)}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    );
+
+  }
+
   showTypeScriptPreferences() {
     const imgURL = `./logos/${this.state.lang}.png`;
     let icon = <img className='lang-img ts-img' src={imgURL} title='TS Preferences'/>;
@@ -326,14 +389,7 @@ export default class ReplPreferences extends React.Component {
             </div>
           </div>
           {
-            this.state.lang === 'ts'
-              ? this.showTypeScriptPreferences()
-              : null
-          }
-          {
-            this.state.lang === 'js'
-              ? this.showJavaScriptPreferences()
-              : null
+            this.showLangPreferences()
           }
           <div className='preference' title='(0 for no timeout)'>
             <div className='preference-name'>
