@@ -87,7 +87,7 @@
           }
         }
 
-        @include stackTraceHighlight();
+        @include stackTraceHighlight($theme);
       }
 
       .promise-object {

@@ -1,27 +1,27 @@
-@mixin stackTraceHighlight() {
+@mixin stackTraceHighlight($theme) {
   .stack-error-at {
-    color: yellowgreen;
+    color: if($theme == $dark-theme, $dark-app-stack-error-at-color, $lt-app-stack-error-at-color);
   }
   .stack-error-function {
-    color: darkseagreen;
+    color: if($theme == $dark-theme, $dark-app-stack-error-function-color, $lt-app-stack-error-function-color);
   }
 
   .stack-error-file {
-    color: chocolate;
+    color: if($theme == $dark-theme, $dark-app-stack-error-file-color, $lt-app-stack-error-file-color);
   }
 
   .stack-error-row {
-    color: deepskyblue;
+    color: if($theme == $dark-theme, $dark-app-stack-error-row-color, $lt-app-stack-error-row-color);
   }
   .stack-error-column {
-    color: deepskyblue;
+    color: if($theme == $dark-theme, $dark-app-stack-error-column-color, $lt-app-stack-error-column-color);
   }
 
   .error-name {
-    color: #F75D5D;
+    color: if($theme == $dark-theme, $dark-app-stack-error-name-color, $lt-app-stack-error-name-color);
   }
 
   .error-description {
-    color: tan;
+    color: if($theme == $dark-theme, $dark-app-stack-error-description-color, $lt-app-stack-error-description-color);
   }
 }

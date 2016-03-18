@@ -472,7 +472,7 @@ export default class ReplActiveInput extends React.Component {
     );
   }
 
-  transpileAndExecute(err, result) {
+  transpileAndExecute(err, result, transform = x => x) {
     let text = this.promptInput;
     if(err) {
       if(this.canRetry(err)) {
@@ -492,7 +492,8 @@ export default class ReplActiveInput extends React.Component {
       ReplCommon.runInContext(result, (err, output) => {
         if(err && this.canRetry(err)) { this.execute(true); }
         else {
-          let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
+          let transformedOutput = transform(output);
+          let {formattedOutput} = this.force && !err ? { 'formattedOutput': transformedOutput } : ReplOutput.some(err || transformedOutput).highlight();
           let transpiledOutput = !this.shouldTranspile() ? null : ReplOutput.transpile(result);
           this.addEntryAction({
             formattedOutput,

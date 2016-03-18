@@ -13,13 +13,16 @@ let promptData = '';
 let contextInitialized = false;
 let errMsg = null;
 
-// run once ?
 const preludeCode = `
-;; (enable-console-print!)
 `
 
 let loadFile = (module, filename) => {
-  let result = compiler.transpile(fs.readFileSync(fileName));
+  let result = "", err;
+  compiler.compile(fs.readFileSync(fileName), (e, {value}) => {
+    result = value;
+    err = e.cause || e;
+  });
+  if(err) { throw err; }
   return module._compile(result.toString(), filename);
 };
 
@@ -60,18 +63,38 @@ const prelude = () => {
     let context = ReplContext.getContext();
     context.global.goog = goog;
     context.global.cljs = cljs;
-    cljs.core._STAR_print_fn_STAR_ = context.console.log;
-    cljs.core._STAR_print_err_fn_STAR_ = error;
+    // much like ;;  (enable-console-print!)
+    cljs.core[cljs.core.munge("*print-newline*")] = false;
+    cljs.core[cljs.core.munge("*print-fn*")] = context.console.log;
+    cljs.core[cljs.core.munge("*print-err-fn*")] = error;
+
     contextInitialized = true;
+    // call after *contextInitialized* set to true
+    evaluate(preludeCode, context, 'mancy-cljs.repl', () => {});
   }
   errMsg = null;
 };
 
+const postConditions = () => {
+  // Avoid user overrides what mancy overridden
+  let context = ReplContext.getContext();
+  cljs.core[cljs.core.munge("*print-newline*")] = false;
+  cljs.core[cljs.core.munge("*print-fn*")] = context.console.log;
+  cljs.core[cljs.core.munge("*print-err-fn*")] = error;
+}
+
 let evaluate = (input, context, filename, cb) => {
   prelude();
   try {
-    let js = compiler.transpile(input);
-    return errMsg ? cb(errMsg) : cb(null, vm.runInContext(js, context, filename));
+    let js, err;
+    compiler.compile(input, (e, code) => {
+      err = e && e.cause ? e.cause : e;
+      js = code && code.value ? code.value : code;
+    });
+    postConditions();
+    return errMsg || err
+      ? cb(errMsg || err)
+      : cb(null, compiler.clj2js(vm.runInContext(js, context, filename)));
   } catch(e) {
     return cb(e);
   }
@@ -80,8 +103,13 @@ let evaluate = (input, context, filename, cb) => {
 let transpile = (input, context, cb) => {
   prelude();
   try {
-    let js = compiler.transpile(input);
-    return errMsg ? cb(errMsg) : cb(null, js);
+    let js, err;
+    compiler.compile(input, (e, code) => {
+      err = e && e.cause ? e.cause : e;
+      js = code && code.value ? code.value : code;
+    });
+    postConditions();
+    return errMsg ? cb(errMsg) : cb(err, js, compiler.clj2js);
   } catch(e) {
     return cb(e);
   }
