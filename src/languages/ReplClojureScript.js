@@ -20,9 +20,9 @@ const preludeCode = `
 
 let loadFile = (module, filename) => {
   let result = "", err;
-  compiler.compile(fs.readFileSync(fileName), (e, {value}) => {
-    result = value;
-    err = e.cause || e;
+  compiler.compile(fs.readFileSync(fileName), (e, code) => {
+    err = e && e.cause ? e.cause : e;
+    result = code && code.value ? code.value : code;
   });
   if(err) { throw err; }
   return module._compile(result.toString(), filename);
@@ -96,7 +96,7 @@ let evaluate = (input, context, filename, cb) => {
     let js, err;
     compiler.compile(input, (e, code) => {
       err = e && e.cause ? e.cause : e;
-      js = code && code.value ? code.value : code;
+      js = (code && "value" in code ? code.value : code) || "";
     });
     postConditions();
     return errMsg || err
@@ -110,10 +110,11 @@ let evaluate = (input, context, filename, cb) => {
 let transpile = (input, context, cb) => {
   prelude();
   try {
-    let js, err;
+    let js, err, special;
     compiler.compile(input, (e, code) => {
       err = e && e.cause ? e.cause : e;
-      js = code && code.value ? code.value : code;
+      js = (code && "value" in code ? code.value : code) || "";
+      special = code && code.special;
     });
     postConditions();
     return errMsg ? cb(errMsg) : cb(err, js, compiler.clj2js);

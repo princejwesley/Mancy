@@ -152,7 +152,7 @@ const ReplPreferencesStore = Reflux.createStore({
       ReplLanguages.setREPL(lang);
       global.Mancy.session.lang = lang;
       ReplStatusBarActions.updateLanguage();
-      ReplActiveInputActions.breakPrompt();
+      ReplActiveInputActions.setMode(`text/${ReplLanguages.getLangQualifiedName(lang)}`);
     });
   },
   onSetSuggestionDelay(delay) {

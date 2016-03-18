@@ -53,6 +53,9 @@ const ReplActiveInputStore = Reflux.createStore({
   onSetTheme(t) {
     this.trigger({name: 'theme', value: t});
   },
+  onSetMode(m) {
+    this.trigger({name: 'mode', value: m});
+  },
   onUpdateSuggestionDelay() {
     this.trigger();
   },
