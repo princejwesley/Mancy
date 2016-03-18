@@ -58,5 +58,6 @@ export default {
   setREPL,
   getREPLProvider,
   getLangName: (ext) => aliases[ext],
-  getLangQualifiedName: (ext) => qualifiedNames[ext]
+  getLangQualifiedName: (ext) => qualifiedNames[ext],
+  setLookupPath: (paths) => langs.forEach(l => l.setLookupPath && l.setLookupPath(paths))
 };

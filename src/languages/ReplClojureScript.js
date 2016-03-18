@@ -13,6 +13,8 @@ let promptData = '';
 let contextInitialized = false;
 let errMsg = null;
 
+const srcPaths = [path.join(__dirname, 'clojurescript')];
+
 const preludeCode = `
 `
 
@@ -42,6 +44,10 @@ let error = (...args) => {
   }
 }
 
+let setLookupPath = (paths) => {
+  compiler.set_paths(compiler.js2clj(srcPaths.concat(paths)));
+}
+
 // set compiler warning options
 const warnings = () => {
   let options = global.Mancy.preferences.clojurescript;
@@ -68,6 +74,7 @@ const prelude = () => {
     cljs.core[cljs.core.munge("*print-fn*")] = context.console.log;
     cljs.core[cljs.core.munge("*print-err-fn*")] = error;
 
+    setLookupPath(ReplContext.getContext().module.paths);
     contextInitialized = true;
     // call after *contextInitialized* set to true
     evaluate(preludeCode, context, 'mancy-cljs.repl', () => {});
@@ -164,6 +171,7 @@ export default {
     addMultilineHandler(repl);
     repl.transpile = transpile;
     repl.updateCompilerOptions = warnings;
+    repl.setLookupPath = setLookupPath;
     repl.defineCommand('load', loadAction);
     return repl;
   }

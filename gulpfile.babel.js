@@ -193,7 +193,10 @@ let uploadAsset = async function(api, id, dists) {
 
 const options = {
   react: {
-    source: ['src/**/*.js', '!src/languages/clojurescript/clojurescript.js'],
+    source: ['src/**/*.js',
+      '!src/languages/clojurescript/cljs/*',
+      '!src/languages/clojurescript/clojure/*',
+      '!src/languages/clojurescript/clojurescript.js'],
     target: 'build',
     config: {
       "presets": ["es2015", "react", "stage-0"],
@@ -233,7 +236,7 @@ gulp.task('clean', () => {
 });
 
 gulp.task('watchableCopy', () => {
-  gulp.src(['src/languages/typescript/*', 'src/languages/clojurescript/*'], { base: 'src/' })
+  gulp.src(['src/languages/typescript/*', 'src/languages/clojurescript/**/*'], { base: 'src/' })
     .pipe(gulp.dest(PATHS.APP));
   return gulp.src(resourcesInternal, { base: '.' })
     .pipe(gulp.dest(PATHS.APP));
