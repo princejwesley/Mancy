@@ -67,8 +67,8 @@ export default class ReplOutputCljsVar extends React.Component {
                     : <span className='repl-cljs-meta'>
                         <i className='fa fa-minus-square-o' onClick={this.onToggleVCollapse}></i>
                         <span className='meta-label cm-keyword'>value</span>
-                        <div className='meta-record'>
-                          {ReplOutput.clojure(this.getValue()).view()}
+                        <div className='meta-records'>
+                          <span className='meta-key'>{ReplOutput.clojure(this.getValue()).view()}</span>
                         </div>
                       </span>
                 }

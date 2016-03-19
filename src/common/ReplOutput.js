@@ -173,11 +173,11 @@ let ReplOutputType = {
   },
   'function': (f) => {
     let code = f.toString();
-    let funElement = ReplCommon.highlight(code);
+    let funElement = ReplCommon.highlight(code, 'js');
     let expandable = false, shortElement = '';
     let idx = code.indexOf(EOL);
     if(idx !== -1) {
-      shortElement = ReplCommon.highlight(code.slice(0, idx));
+      shortElement = ReplCommon.highlight(code.slice(0, idx), 'js');
       expandable = true;
     }
     return <ReplOutputFunction html={funElement} fun={f} expandable={expandable} short={shortElement}/>
@@ -290,7 +290,8 @@ class ClojureWrapper {
   }
 
   'function'() {
-
+    // no meta info available to render differently
+    return ReplOutputType['function'](this.value);
   }
 
   'undefined'() {
