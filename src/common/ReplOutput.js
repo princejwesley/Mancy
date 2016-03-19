@@ -25,6 +25,9 @@ import ReplSourceFile from '../components/ReplSourceFile';
 import ReplOutputTranspile from '../components/ReplOutputTranspile';
 import ReplContext from './ReplContext';
 
+import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar';
+
+
 let Debug = require('vm').runInDebugContext('Debug');
 let makeMirror = (o) => Debug.MakeMirror(o, true);
 let BabelCoreJS = require("babel-runtime/core-js");
@@ -206,7 +209,7 @@ let ReplOutputType = {
     return <ReplOutputString str={s}/>;
   },
   symbol: (sy) => {
-    return <span className='cm-atom'>{sy.toString()}</span>;
+    return <span className='cm-variable'>{sy.toString()}</span>;
   },
   regexp: (re) => {
     return <ReplOutputRegex regex={re} />;
@@ -215,6 +218,116 @@ let ReplOutputType = {
     return <span className='cm-atom'>null</span>;
   }
 };
+
+// wrapper for clojure output
+class ClojureWrapper {
+  constructor(value, hint) {
+    this.value = value;
+    this.hint = hint;
+  }
+
+  toJS() {
+    const {cljs} = ReplContext.getContext();
+    return cljs.core.clj__GT_js(this.value)
+  }
+
+  core() {
+    return ReplContext.getContext().cljs.core;
+  }
+
+
+  string() {
+    return ReplOutputType.string(this.value);
+  }
+
+  number() {
+    return ReplOutputType.number(this.value);
+  }
+
+  boolean() {
+    return ReplOutputType.boolean(this.value);
+  }
+
+  keyword() {
+    return <span className='cm-atom'>{this.value.toString()}</span>;
+  }
+
+  symbol() {
+    return <span className='cm-variable'>{this.value.str}</span>;
+  }
+
+  list() {
+    const arr = this.toJS();
+    // list view
+  }
+
+  vector() {
+    const arr = this.toJS();
+    // vector view
+
+
+  }
+
+  map() {
+    const o = this.toJS();
+
+  }
+
+  lazySeq() {
+    // show as cljs html
+  }
+
+  seq() {
+
+  }
+
+  var() {
+    return <ReplOutputCljsVar core={this.core()} value={this.value}/>;
+  }
+
+  nil() {
+    return <span className='cm-atom'>nil</span>;
+  }
+
+  'function'() {
+
+  }
+
+  'undefined'() {
+    return this.nil();
+  }
+
+  object() {
+    const {cljs} = ReplContext.getContext();
+//    const views = [ 'keyword', 'symbol', 'list', 'vector', 'nil', 'map', 'seq' ];
+    const views = [ 'keyword', 'symbol', 'nil' ];
+
+    for(let v = 0; v < views.length; v++) {
+      if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
+        return this[views[v]]();
+      }
+    }
+
+    // if(this.value instanceof cljs.core.LazySeq) {
+    //   return this.lazySeq();
+    // }
+    //
+    if(this.value instanceof cljs.core.Var) {
+      return this.var();
+    }
+
+    return ReplOutputType.object(this.value);
+  }
+
+  specialForm() {
+
+    debugger;
+  }
+
+  view() {
+    return this.hint ? this.specialForm() : this[typeof this.value]();
+  }
+}
 
 class None {
   constructor() {
@@ -279,6 +392,9 @@ let ReplOutput = {
   },
   transformObject: (object) => {
     try {
+      if(object instanceof ClojureWrapper) {
+        return object.view();
+      }
       return ReplOutputType[typeof object](object);
     } catch(e) {
       return ReplOutput.accessError(e);
@@ -300,6 +416,10 @@ let ReplOutput = {
       />
     );
   },
+  clojure: (value, hint = null) => {
+    return new ClojureWrapper(value, hint);
+  },
+  isInstanceOfClojure: (object) => object instanceof ClojureWrapper,
   transpile: (output) => {
     let html = ReplCommon.highlight(output, 'js', true);
     return <ReplOutputTranspile html={html} output={output} />

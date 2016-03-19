@@ -6,6 +6,7 @@ import child_process from 'child_process';
 import vm from 'vm';
 import fs from 'fs';
 import ReplContext from '../common/ReplContext';
+import ReplOutput from '../common/ReplOutput';
 
 const {cljs, goog, compiler} = require('./clojurescript/clojurescript');
 let nodeLineListener = () => {};
@@ -17,13 +18,6 @@ const srcPaths = [path.join(__dirname, 'clojurescript')];
 
 const preludeCode = `
 `
-
-class ClojureWrapper {
-  constructor(value, hint) {
-    this.value = value;
-    this.hint = hint;
-  }
-}
 
 let loadFile = (module, filename) => {
   let result = "", err;
@@ -115,9 +109,9 @@ let evaluate = (input, context, filename, cb) => {
 }
 
 let transformer = (code) => {
-  return code instanceof ClojureWrapper
+  return ReplOutput.isInstanceOfClojure(code)
     ? code
-    : new ClojureWrapper(code, null);
+    : ReplOutput.clojure(code);
 };
 
 let transpile = (input, context, cb) => {
@@ -128,7 +122,7 @@ let transpile = (input, context, cb) => {
       err = e && e.cause ? e.cause : e;
       const hint = code && code.special;
       js = hint
-        ? new ClojureWrapper(code.value, code.special)
+        ? ReplOutput.clojure(code.value, code.special)
         : code && "value" in code ? code.value : code
     });
     postConditions();

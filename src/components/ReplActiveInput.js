@@ -492,7 +492,6 @@ export default class ReplActiveInput extends React.Component {
       const transpileCallback = (err, output) => {
         if(err && this.canRetry(err)) { this.execute(true); }
         else {
-          let text = this.promptInput;
           let transformedOutput = transform(output);
           let {formattedOutput} = this.force && !err ? { 'formattedOutput': transformedOutput } : ReplOutput.some(err || transformedOutput).highlight();
           let transpiledOutput = !this.shouldTranspile() ? null : ReplOutput.transpile(result);

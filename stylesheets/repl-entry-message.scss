@@ -17,7 +17,9 @@
 
     .repl-entry-message-command {
       min-height: $app-font-size;
-      white-space: pre;
+      word-wrap: break-word;
+      word-break: break-word;
+      white-space: pre-wrap;
     }
 
     .ellipsis {

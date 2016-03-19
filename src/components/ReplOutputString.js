@@ -38,15 +38,15 @@ export default class ReplOutputString extends React.Component {
             ? this.state.collapse
               ? <span className='repl-string'>
                   <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
-                  <span className='cm-string ellipsis'>'{this.prefix}</span>
-                  <span className='cm-string'>{this.suffix}'</span>
+                  <span className='cm-string ellipsis'>"{this.prefix}</span>
+                  <span className='cm-string'>{this.suffix}"</span>
                 </span>
               : <span className='repl-string'>
                   <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
-                  <span className='cm-string'>'{this.props.str}'</span>
+                  <span className='cm-string'>"{this.props.str}"</span>
                 </span>
             : <span className='repl-string'>
-                <span className='cm-string'>'{this.props.str}'</span>
+                <span className='cm-string'>"{this.props.str}"</span>
               </span>
         }
       </span>

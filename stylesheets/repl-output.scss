@@ -10,6 +10,8 @@
 @import 'repl-output-buffer-explorer';
 @import 'repl-output-chart-viewer';
 @import 'repl-output-grid-viewer';
+@import 'clojurescript/repl-output-cljs-var';
+@import 'clojurescript/repl-output-cljs-meta';
 
 @mixin replOutput($theme) {
   @include replOutputArrayFold($theme);
@@ -24,4 +26,6 @@
   @include replOutputCrypto($theme);
   @include replOutputChartViewer($theme);
   @include replOutputGridViewer($theme);
+  @include replOutputCljsVar($theme);
+  @include replOutputCljsMeta($theme);
 }
