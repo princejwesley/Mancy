@@ -489,9 +489,10 @@ export default class ReplActiveInput extends React.Component {
         });
       }
     } else {
-      ReplCommon.runInContext(result, (err, output) => {
+      const transpileCallback = (err, output) => {
         if(err && this.canRetry(err)) { this.execute(true); }
         else {
+          let text = this.promptInput;
           let transformedOutput = transform(output);
           let {formattedOutput} = this.force && !err ? { 'formattedOutput': transformedOutput } : ReplOutput.some(err || transformedOutput).highlight();
           let transpiledOutput = !this.shouldTranspile() ? null : ReplOutput.transpile(result);
@@ -501,10 +502,16 @@ export default class ReplActiveInput extends React.Component {
             command: ReplCommon.highlight(text),
             plainCode: text,
             transpiledOutput,
-            js: result
+            js: typeof result === 'string' ? result : "*Unavailable*"
           });
         }
-      });
+      };
+      // allow langs to wrap, skip execution for customization
+      if(typeof result === 'string') {
+        ReplCommon.runInContext(result, transpileCallback);
+      } else {
+        transpileCallback(null, result);
+      }
     }
   }
 

@@ -18,6 +18,13 @@ const srcPaths = [path.join(__dirname, 'clojurescript')];
 const preludeCode = `
 `
 
+class ClojureWrapper {
+  constructor(value, hint) {
+    this.value = value;
+    this.hint = hint;
+  }
+}
+
 let loadFile = (module, filename) => {
   let result = "", err;
   compiler.compile(fs.readFileSync(fileName), (e, code) => {
@@ -77,7 +84,7 @@ const prelude = () => {
     setLookupPath(ReplContext.getContext().module.paths);
     contextInitialized = true;
     // call after *contextInitialized* set to true
-    evaluate(preludeCode, context, 'mancy-cljs.repl', () => {});
+    // evaluate(preludeCode, context, 'mancy-cljs.repl', () => {});
   }
   errMsg = null;
 };
@@ -107,17 +114,25 @@ let evaluate = (input, context, filename, cb) => {
   }
 }
 
+let transformer = (code) => {
+  return code instanceof ClojureWrapper
+    ? code
+    : new ClojureWrapper(code, null);
+};
+
 let transpile = (input, context, cb) => {
   prelude();
   try {
-    let js, err, special;
+    let js, err;
     compiler.compile(input, (e, code) => {
       err = e && e.cause ? e.cause : e;
-      js = (code && "value" in code ? code.value : code) || "";
-      special = code && code.special;
+      const hint = code && code.special;
+      js = hint
+        ? new ClojureWrapper(code.value, code.special)
+        : code && "value" in code ? code.value : code
     });
     postConditions();
-    return errMsg ? cb(errMsg) : cb(err, js, compiler.clj2js);
+    return errMsg ? cb(errMsg) : cb(err, js, transformer);
   } catch(e) {
     return cb(e);
   }
