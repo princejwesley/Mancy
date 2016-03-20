@@ -64,12 +64,24 @@ const warnings = () => {
   });
 }
 
+const updateNS = (ns) => {
+  let nps = ns.split('.');
+  let context = ReplContext.getContext();
+  _.reduce(nps, (cxt, np) => {
+    if(!(np in cxt && typeof cxt[np] === "object")) {
+      cxt[np] = {};
+    }
+    return cxt[np];
+  }, context);
+};
+
 const prelude = () => {
   if(!contextInitialized) {
-    cljs.user = {};
     let context = ReplContext.getContext();
     context.global.goog = goog;
     context.global.cljs = cljs;
+    let ns = cljs.core.munge(compiler.clj2js(compiler.current_ns()));
+    updateNS(ns);
     // much like ;;  (enable-console-print!)
     cljs.core[cljs.core.munge("*print-newline*")] = false;
     cljs.core[cljs.core.munge("*print-fn*")] = context.console.log;
@@ -89,6 +101,9 @@ const postConditions = () => {
   cljs.core[cljs.core.munge("*print-newline*")] = false;
   cljs.core[cljs.core.munge("*print-fn*")] = context.console.log;
   cljs.core[cljs.core.munge("*print-err-fn*")] = error;
+
+  let ns = cljs.core.munge(compiler.clj2js(compiler.current_ns()));
+  updateNS(ns);
 }
 
 let evaluate = (input, context, filename, cb) => {

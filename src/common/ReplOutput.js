@@ -328,6 +328,10 @@ class ClojureWrapper {
     return this.seqBuilder(this.toWrappedArray(), { prefix: '#{', suffix: '}', type: 'set' });
   }
 
+  array() {
+    return this.seqBuilder(this.value, { prefix: '[', suffix: ']', type: '#js array' });
+  }
+
   var() {
     return <ReplOutputCljsVar core={this.core()} value={this.value}/>;
   }
@@ -347,7 +351,7 @@ class ClojureWrapper {
 
   object() {
     const {cljs} = ReplContext.getContext();
-    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map', 'seq' ];
+    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map', 'seq', 'array' ];
 
     for(let v = 0; v < views.length; v++) {
       if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
@@ -378,13 +382,8 @@ class ClojureWrapper {
     return this["find-doc"]();
   }
 
-  unHandled() {
-    console.error('unhandled form', this.hint, this.value);
-    return ReplOutputType.object(this.value);
-  }
-
   specialForm() {
-    let action = this[this.hint] || this.unHandled;
+    let action = this[this.hint] || this.object;
     return action.call(this);
   }
 
