@@ -312,7 +312,7 @@ class ClojureWrapper {
   }
 
   seq() {
-
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '(', suffix: ')', type: 'seq' });
   }
 
   list() {
@@ -346,8 +346,7 @@ class ClojureWrapper {
 
   object() {
     const {cljs} = ReplContext.getContext();
-//    const views = [ 'keyword', 'symbol', 'list', 'vector', 'nil', 'map', 'seq' ];
-    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map' ];
+    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map', 'seq' ];
 
     for(let v = 0; v < views.length; v++) {
       if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
