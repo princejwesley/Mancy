@@ -240,11 +240,21 @@ class ClojureWrapper {
     return arr;
   }
 
+  toWrappedArray2() {
+    let arr = [];
+    for(let val of this.value) {
+      for(let v2 of val) {
+        arr.push(v2);
+      }
+    }
+    return arr;
+  }
+
   core() {
     return ReplContext.getContext().cljs.core;
   }
 
-  seqBuilder(a, token = { prefix: '(', suffix: ')' }) {
+  seqBuilder(a, token = { prefix: '(', suffix: ')', type: 'list' }) {
     let tokenize = (arr, result, range, mul=1) => {
       let len = result.length;
       if(arr.length < range) {
@@ -298,12 +308,7 @@ class ClojureWrapper {
   }
 
   map() {
-    const o = this.toJS();
-
-  }
-
-  lazySeq() {
-    // show as cljs html
+    return this.seqBuilder(this.toWrappedArray2(), { prefix: '{', suffix: '}', type: 'map' });
   }
 
   seq() {
@@ -311,11 +316,15 @@ class ClojureWrapper {
   }
 
   list() {
-    return this.seqBuilder(this.toWrappedArray());
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '(', suffix: ')', type: 'list' });
   }
 
   vector() {
-    return this.seqBuilder(this.toWrappedArray(), { prefix: '[', suffix: ']' });
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '[', suffix: ']', type: 'vector' });
+  }
+
+  set() {
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '#{', suffix: '}', type: 'set' });
   }
 
   var() {
@@ -338,7 +347,7 @@ class ClojureWrapper {
   object() {
     const {cljs} = ReplContext.getContext();
 //    const views = [ 'keyword', 'symbol', 'list', 'vector', 'nil', 'map', 'seq' ];
-    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list' ];
+    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map' ];
 
     for(let v = 0; v < views.length; v++) {
       if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
@@ -346,10 +355,6 @@ class ClojureWrapper {
       }
     }
 
-    // if(this.value instanceof cljs.core.LazySeq) {
-    //   return this.lazySeq();
-    // }
-    //
     if(this.value instanceof cljs.core.Var) {
       return this.var();
     }

@@ -32,37 +32,58 @@ export default class ReplOutputCljsSeq extends React.Component {
 
   getShortSeq() {
     const arr = this.props.array;
+    const SHORT_LEN = 6;
     const element =
       <span className='array-desc'>
-        {this.props.token.prefix}
-        {this.getSeqRecords(Math.min(arr.length, 5))}
+        <span className='prefix cm-bracket'>{this.props.token.prefix}</span>
+        {this.getSeqRecords(Math.min(arr.length, SHORT_LEN))}
         {
-          arr.length > 5
+          arr.length > SHORT_LEN
             ? <span className='ellipsis' onClick={this.onToggleCollapse}></span>
             : null
         }
-        {this.props.token.suffix}
+        <span className='suffix cm-bracket'>{this.props.token.suffix}</span>
       </span>
 
-    return {short: arr.length <= 5, element: element};
+    return {short: arr.length <= SHORT_LEN, element: element};
+  }
+
+  buildMapData(arr, result = []) {
+    for(let pos = 0; pos + 1 < arr.length; pos += 2) {
+      const key = arr[pos];
+      const value = arr[pos + 1];
+      result.push(
+        <div className='array-entry' key={pos}>
+          <span className='map-key cm-atom'>{key.toString()}</span>
+          <span className='map-value'>
+            { value && value._isReactElement ? {value} : ReplOutput.clojure(value).view() }
+          </span>
+        </div>
+      );
+    }
+    return result;
   }
 
   getSeqRecords(len = -1) {
+    const clazz = `${len !== -1 ? 'inline' : ''}  array-rec`;
+    const type = this.props.token.type;
+    const mapType = type === 'map';
     let keys = this.getKeysButLength();
     keys = len !== -1 ? keys.slice(0, len) : keys;
-    const clazz = `${len !== -1 ? 'inline' : ''}  array-rec`
     return (
       <span className={clazz}>
       {
-        _.map(keys, (key) => {
-          let value = ReplOutput.readProperty(this.props.array, key);
-          let idx = parseInt(key, 10);
-          return (
-            <div className='array-entry' key={idx} title={"index: " + (this.props.start + idx)}>
-              { value && value._isReactElement ? {value} : ReplOutput.clojure(value).view() }
-            </div>
-          )
-        })
+        !mapType
+          ?  _.map(keys, (key) => {
+              let value = this.props.array[key];
+              let idx = parseInt(key, 10);
+              return (
+                <div className='array-entry' key={idx} title={type + ": " + (this.props.start + idx)}>
+                  { value && value._isReactElement ? {value} : ReplOutput.clojure(value).view() }
+                </div>
+              )
+            })
+          : this.buildMapData(this.props.array.slice(0, keys.length))
       }
       </span>
     );

@@ -17,6 +17,9 @@
 
       .array-desc {
         padding-left: 5px;
+        .ellipsis {
+          padding-left: 5px;
+        }
       }
 
       .array-rec {
@@ -24,12 +27,18 @@
         flex-direction: column;
         &.inline {
           display: inline-flex;
-          flex-direction: row;          
+          flex-direction: row;
+          .array-entry {
+            padding-left: 5px;
+            padding-right: 5px;
+          }
         }
         .array-entry {
           display: flex;
           padding-left: 10px;
-
+          .map-key {
+            padding-right: 12px;
+          }
           .array-idx {
             color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-idx-color, $lt-app-entry-message-output-arr-idx-color);
           }
