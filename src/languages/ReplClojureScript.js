@@ -8,13 +8,13 @@ import fs from 'fs';
 import ReplContext from '../common/ReplContext';
 import ReplOutput from '../common/ReplOutput';
 
-const {cljs, goog, compiler} = require('./clojurescript/clojurescript');
+const {cljs, goog, compiler} = require('../node_modules/cljs-mancy/mancy/clojurescript');
 let nodeLineListener = () => {};
 let promptData = '';
 let contextInitialized = false;
 let errMsg = null;
 
-const srcPaths = [path.join(__dirname, 'clojurescript')];
+const srcPaths = [path.join(__dirname, '..', 'node_modules', 'cljs-mancy', 'mancy')];
 
 const preludeCode = `
 `

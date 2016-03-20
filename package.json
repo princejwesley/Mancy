@@ -69,6 +69,7 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
     "c3": "https://github.com/princejwesley/c3.git",
+    "cljs-mancy": "https://github.com/princejwesley/cljs-mancy.git",
     "codemirror": "^5.12.0",
     "coffee-script": "https://github.com/princejwesley/coffeescript.git",
     "font-awesome": "^4.5.0",
