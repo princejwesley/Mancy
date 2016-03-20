@@ -56,7 +56,7 @@ $dark-app-console-message-dup-count-color: whitesmoke;
 $dark-app-entry-message-output-expand-collapse-color: #C5C1C3;
 
 $dark-app-entry-message-output-arr-idx-color: #EF7C90;
-$dark-app-entry-message-output-arr-fold-color: deepskyblue;
+$dark-app-entry-message-output-arr-fold-color: #C3B04A;
 $dark-app-entry-message-output-primitive-color: cadetblue;
 $dark-app-preference-background-color: #1D1C1C;
 $dark-app-preference-color: #D4D2D2;
@@ -107,3 +107,17 @@ $dark-app-move-down-color: #cccc4c;
 
 $dark-app-console-env-no-data-color: #ADACAC;
 $dark-app-console-env-data-heading-color: #464545;
+
+$dark-app-stack-error-at-color: #C3C3C3;
+$dark-app-stack-error-function-color: #C0CA33;
+$dark-app-stack-error-file-color: #D07B3F;
+$dark-app-stack-error-row-color: deepskyblue;
+$dark-app-stack-error-column-color: deepskyblue;
+$dark-app-stack-error-name-color: #E06353;
+$dark-app-stack-error-description-color: #FBED72;
+
+
+$dark-app-cljs-doc-desc-color: #FFF176;
+$dark-app-cljs-doc-header-color: #0698B9;
+$dark-app-cljs-tag-color: whitesmoke;
+$dark-app-cljs-tag-bg-color: #009688;

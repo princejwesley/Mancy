@@ -61,7 +61,31 @@ import {ipcRenderer} from 'electron';
       "allowJs": true,
       "noImplicitUseStrict": false,
       "noEmitHelpers": true
-    }
+    },
+    "clojurescript": {
+      "preamble-missing": true,
+      "undeclared-var": true,
+      "undeclared-ns": true,
+      "undeclared-ns-form": true,
+      "redef": true,
+      "dynamic": true,
+      "fn-var": true,
+      "fn-arity": true,
+      "fn-deprecated": true,
+      "protocol-deprecated": true,
+      "undeclared-protocol-symbol": true,
+      "invalid-protocol-symbol": true,
+      "multiple-variadic-overloads": true,
+      "variadic-max-arity": true,
+      "overload-arity": true,
+      "extending-base-js-type": true,
+      "invoke-ctor": true,
+      "invalid-arithmetic": true,
+      "protocol-invalid-method": true,
+      "protocol-duped-method": true,
+      "protocol-multiple-impls": true,
+      "single-segment-namespace": true,
+    },
   };
 
   _.each(_.keys(defaults), (key) => {

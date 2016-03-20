@@ -152,7 +152,7 @@ const ReplPreferencesStore = Reflux.createStore({
       ReplLanguages.setREPL(lang);
       global.Mancy.session.lang = lang;
       ReplStatusBarActions.updateLanguage();
-      ReplActiveInputActions.breakPrompt();
+      ReplActiveInputActions.setMode(`text/${ReplLanguages.getLangQualifiedName(lang)}`);
     });
   },
   onSetSuggestionDelay(delay) {
@@ -175,6 +175,13 @@ const ReplPreferencesStore = Reflux.createStore({
     this.updatePreference((preferences) => {
       preferences.typescript[name] = value;
     });
+  },
+  onSetClojureScriptOptions(name, value) {
+    this.updatePreference((preferences) => {
+      preferences.clojurescript[name] = value;
+    });
+    ReplLanguages.getREPL(global.Mancy.preferences.lang)
+      .updateCompilerOptions();
   },
   addNPMPath(path) {
     this.updatePreference((preferences) => {

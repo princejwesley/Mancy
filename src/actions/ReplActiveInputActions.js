@@ -15,5 +15,6 @@ const ReplActiveInputActions = Reflux.createActions([
   "redo",
   "selectAll",
   "focus",
+  "setMode"
 ]);
 export default ReplActiveInputActions;

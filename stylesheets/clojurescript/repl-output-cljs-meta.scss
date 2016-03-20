@@ -1,0 +1,33 @@
+@import '../themes';
+@import '../repl-common';
+
+@mixin replOutputCljsMeta($theme) {
+
+  .repl-cljs-meta-fold {
+    flex: 1;
+    padding-left: 10px;
+    .repl-cljs-meta {
+      word-break: break-all;
+      .fa-minus-square-o, .fa-plus-square-o {
+        color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+        padding-right: 6px;
+        position: relative;
+        top: 1px;
+      }
+      .meta-label {
+
+      }
+      .meta-records {
+        padding-left: 10px;
+        .meta-record {
+          .meta-key {
+            padding-right: 12px;
+          }
+          .meta-value {
+
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+@import '../themes';
+@import '../repl-common';
+
+@mixin replOutputCljsVal($theme) {
+
+  .repl-cljs-val {
+    flex: 1;
+    display: inline-flex;
+    flex-direction: row;
+
+    .prefix {
+      padding-right: 6px;
+    }
+
+    .suffix {
+      padding-left: 6px;
+    }
+
+    .value {
+      font-weight: 900;
+    }
+
+    .tag {
+      background-color: if($theme == $dark-theme, $dark-app-cljs-tag-bg-color, $lt-app-cljs-tag-bg-color);
+      color: if($theme == $dark-theme, $dark-app-cljs-tag-color, $lt-app-cljs-tag-color);
+      border-radius: 4px;
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-top: 1px;
+      padding-bottom: 1px;
+      font-size: 0.8em;
+      height: 80%;
+      position: relative;
+      top: 3px;
+      font-weight: 900;
+      margin-left: 6px;
+      cursor: default;
+    }
+  }
+}

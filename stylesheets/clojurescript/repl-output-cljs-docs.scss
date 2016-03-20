@@ -1,0 +1,30 @@
+@import '../themes';
+@import '../repl-common';
+
+@mixin replOutputCljsDocs($theme) {
+
+  .repl-cljs-docs-fold {
+    flex: 1;
+    .repl-cljs-doc-list {
+      .title { padding-left: 6px; }
+    }
+    .repl-cljs-doc {
+      padding-left: 12px;
+      .doc-header {
+        padding-left: 6px;
+        font-weight: 900;
+        color:if($theme == $dark-theme, $dark-app-cljs-doc-header-color, $lt-app-cljs-doc-header-color);
+      }
+      .doc-body {
+        .doc-definition {
+
+        }
+        .doc-description {
+          padding-top: 6px;
+          padding-bottom: 6px;
+          color: if($theme == $dark-theme, $dark-app-cljs-doc-desc-color, $lt-app-cljs-doc-desc-color);
+        }
+      }
+    }
+  }
+}

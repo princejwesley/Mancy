@@ -37,7 +37,7 @@ export default class ReplOutputArray extends React.Component {
 
   getKeysButLength() {
     let keys = Object.getOwnPropertyNames(this.props.array);
-    return keys.slice(0, keys.length - 1);
+    return keys.slice(0, keys.length);
   }
 
   getPrototype() {

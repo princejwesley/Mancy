@@ -25,6 +25,13 @@ import ReplSourceFile from '../components/ReplSourceFile';
 import ReplOutputTranspile from '../components/ReplOutputTranspile';
 import ReplContext from './ReplContext';
 
+import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar';
+import ReplOutputCljsSeq from '../components/clojurescript/ReplOutputCljsSeq';
+import ReplOutputCljsVal from '../components/clojurescript/ReplOutputCljsVal';
+import ReplOutputCljsDoc from '../components/clojurescript/ReplOutputCljsDoc';
+import ReplOutputCljsDocs from '../components/clojurescript/ReplOutputCljsDocs';
+import ReplOutputCljsSource from '../components/clojurescript/ReplOutputCljsSource';
+
 let Debug = require('vm').runInDebugContext('Debug');
 let makeMirror = (o) => Debug.MakeMirror(o, true);
 let BabelCoreJS = require("babel-runtime/core-js");
@@ -170,11 +177,11 @@ let ReplOutputType = {
   },
   'function': (f) => {
     let code = f.toString();
-    let funElement = ReplCommon.highlight(code);
+    let funElement = ReplCommon.highlight(code, 'js');
     let expandable = false, shortElement = '';
     let idx = code.indexOf(EOL);
     if(idx !== -1) {
-      shortElement = ReplCommon.highlight(code.slice(0, idx));
+      shortElement = ReplCommon.highlight(code.slice(0, idx), 'js');
       expandable = true;
     }
     return <ReplOutputFunction html={funElement} fun={f} expandable={expandable} short={shortElement}/>
@@ -206,7 +213,7 @@ let ReplOutputType = {
     return <ReplOutputString str={s}/>;
   },
   symbol: (sy) => {
-    return <span className='cm-atom'>{sy.toString()}</span>;
+    return <span className='cm-variable'>{sy.toString()}</span>;
   },
   regexp: (re) => {
     return <ReplOutputRegex regex={re} />;
@@ -215,6 +222,206 @@ let ReplOutputType = {
     return <span className='cm-atom'>null</span>;
   }
 };
+
+// wrapper for clojure output
+class ClojureWrapper {
+  constructor(value, hint) {
+    this.value = value;
+    this.hint = hint;
+  }
+
+  toJS() {
+    const {cljs} = ReplContext.getContext();
+    return cljs.core.clj__GT_js(this.value)
+  }
+
+  toWrappedArray() {
+    let arr = [];
+    for(let val of this.value) {
+      arr.push(val);
+    }
+    return arr;
+  }
+
+  toWrappedArray2() {
+    let arr = [];
+    for(let val of this.value) {
+      for(let v2 of val) {
+        arr.push(v2);
+      }
+    }
+    return arr;
+  }
+
+  core() {
+    return ReplContext.getContext().cljs.core;
+  }
+
+  seqBuilder(a, token = { prefix: '(', suffix: ')', type: 'list' }) {
+    let tokenize = (arr, result, range, mul=1) => {
+      let len = result.length;
+      if(arr.length < range) {
+        result.push(<ReplOutputCljsSeq token={token}
+          array={arr} start={len * range * mul}/>);
+      } else {
+        result.push(<ReplOutputCljsSeq token={token}
+          array={arr.splice(0, range)} start={len * range * mul}/>);
+        tokenize(arr, result, range, mul);
+      }
+    };
+
+    let arr = _.clone(a);
+    let arrays = [];
+    tokenize(arr, arrays, 100);
+
+    if(arrays.length > 100) {
+      let arr1000 = [];
+      tokenize(arrays, arr1000, 100, 100);
+      arrays = arr1000;
+    }
+
+    if(arrays.length > 1) {
+      return <ReplOutputCljsSeq array={arrays}
+        token={token}
+        start={0} length={a.length}/>
+    } else {
+      return arrays;
+    }
+  }
+
+
+  string() {
+    return ReplOutputType.string(this.value);
+  }
+
+  number() {
+    return ReplOutputType.number(this.value);
+  }
+
+  boolean() {
+    return ReplOutputType.boolean(this.value);
+  }
+
+  keyword() {
+    return <span className='cm-atom'>{this.value.toString()}</span>;
+  }
+
+  symbol() {
+    return <span className='cm-variable'>{this.value.str}</span>;
+  }
+
+  volatile() {
+    const token = { prefix: '{', suffix: '}', type: 'cljs.core.Volatile'}
+    return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
+  }
+
+  atom() {
+    const token = { prefix: '{', suffix: '}', type: 'cljs.core.Atom'}
+    return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
+  }
+
+  map() {
+    return this.seqBuilder(this.toWrappedArray2(), { prefix: '{', suffix: '}', type: 'map' });
+  }
+
+  seq() {
+    const {cljs} = ReplContext.getContext();
+    const isQueue = this.value instanceof cljs.core.PersistentQueue;
+    const seqInfo = isQueue ? { prefix: '[', 'suffix': ']', type: 'queue' } : { prefix: '(', suffix: ')', type: 'seq' };
+    return this.seqBuilder(this.toWrappedArray(), seqInfo);
+  }
+
+  list() {
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '(', suffix: ')', type: 'list' });
+  }
+
+  vector() {
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '[', suffix: ']', type: 'vector' });
+  }
+
+  set() {
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '#{', suffix: '}', type: 'set' });
+  }
+
+  array() {
+    return this.seqBuilder(this.value, { prefix: '[', suffix: ']', type: '#js array' });
+  }
+
+  var() {
+    return <ReplOutputCljsVar core={this.core()} value={this.value}/>;
+  }
+
+  nil() {
+    return <span className='cm-atom'>nil</span>;
+  }
+
+  'function'() {
+    // no meta info available to render differently
+    return ReplOutputType['function'](this.value);
+  }
+
+  'undefined'() {
+    return this.nil();
+  }
+
+  object() {
+    const {cljs} = ReplContext.getContext();
+    const views = [
+      'keyword', 'symbol', 'nil',
+      'vector', 'list', 'set', 'map',
+      'array', 'volatile', 'seq'
+    ];
+
+    for(let v = 0; v < views.length; v++) {
+      if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
+        return this[views[v]]();
+      }
+    }
+
+    if(this.value instanceof cljs.core.Var) {
+      return this.var();
+    }
+
+    if(this.value instanceof cljs.core.Atom) {
+      return this.atom();
+    }
+
+    return ReplOutputType.object(this.value);
+  }
+
+  "find-doc"() {
+    let value = this.value.replace(/^-+\s/, '');
+    let docs = this.value.split(/^-+\s/m).filter(x => !!x.length);
+    let result = _.map(docs, (doc, idx) => {
+      let [name, definition, ...description] = doc.split('\n');
+      return (<ReplOutputCljsDoc name={name} open={idx === 0}
+              definition={ReplCommon.highlight(definition)}
+              description={description.join('\n')} />);
+    });
+    return <ReplOutputCljsDocs docs={result} />;
+  }
+
+  doc() {
+    return this["find-doc"]();
+  }
+
+  source() {
+    let value = this.value || '\n';
+    let short = <ReplOutputString str={value.slice(0, value.indexOf('\n'))}
+      limit={ReplConstants.OUTPUT_TRUNCATE_LENGTH / 2}/>;
+
+    return <ReplOutputCljsSource short={short} source={ReplCommon.highlight(this.value)}/>
+  }
+
+  specialForm() {
+    let action = this[this.hint] || this.object;
+    return action.call(this);
+  }
+
+  view() {
+    return this.hint ? this.specialForm() : this[typeof this.value]();
+  }
+}
 
 class None {
   constructor() {
@@ -279,6 +486,9 @@ let ReplOutput = {
   },
   transformObject: (object) => {
     try {
+      if(object instanceof ClojureWrapper) {
+        return object.view();
+      }
       return ReplOutputType[typeof object](object);
     } catch(e) {
       return ReplOutput.accessError(e);
@@ -300,6 +510,10 @@ let ReplOutput = {
       />
     );
   },
+  clojure: (value, hint = null) => {
+    return new ClojureWrapper(value, hint);
+  },
+  isInstanceOfClojure: (object) => object instanceof ClojureWrapper,
   transpile: (output) => {
     let html = ReplCommon.highlight(output, 'js', true);
     return <ReplOutputTranspile html={html} output={output} />

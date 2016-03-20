@@ -33,6 +33,7 @@ Allowed values:
   'ts', 'typescript'
   'ls', 'livescript'
   'coffee', 'coffeescript'
+  'cljs', 'clojurescript'
                 `)
                 .example('$0 -l ts', 'Set language as typescript')
                 .alias('m', 'mode')
@@ -223,6 +224,7 @@ const langs =  {
   'ts': 'ts', 'typescript': 'ts',
   'ls': 'ls', 'livescript': 'ls',
   'coffee': 'coffee', 'coffeescript': 'coffee',
+  'cljs': 'cljs', 'clojurescript': 'cljs',
 };
 const modes = { 'strict': 'Strict', 'sloppy': 'Sloppy' };
 const editors =  { 'notebook': 'Notebook', 'repl': 'REPL' };

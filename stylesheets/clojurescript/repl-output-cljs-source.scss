@@ -1,0 +1,16 @@
+@import '../themes';
+@import '../repl-common';
+
+@mixin replOutputCljsSource($theme) {
+
+  .repl-cljs-source-fold {
+    flex: 1;
+    .repl-cljs-source {
+      word-break: break-all;
+      .fa { padding-right: 6px; }
+      .repl-cljs-source-code {
+
+      }
+    }
+  }
+}

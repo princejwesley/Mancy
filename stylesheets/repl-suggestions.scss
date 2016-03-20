@@ -24,9 +24,7 @@
       .repl-prompt-suggestion {
         min-height: calc(#{$app-font-size} + 8px);
         max-height: calc(#{$app-font-size} + 8px);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
+        display: flex;
         padding: 4px 2px;
         border-bottom: 1px solid if($theme == $dark-theme, $dark-app-suggestion-entry-border-color, $lt-app-suggestion-entry-border-color);
         cursor: pointer;
@@ -47,9 +45,12 @@
         }
 
         .repl-prompt-suggestion-text {
-          width: $app-font-size;
-          height: $app-font-size;
+          width: 100%;
+          height: 100%;
           padding: 2px 8px;
+          display: inline-block;
+          text-overflow: ellipsis;
+          overflow: hidden;
           flex: 1;
 
           .repl-prompt-suggestion-highlight {

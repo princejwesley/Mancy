@@ -23,7 +23,7 @@ const remote = require('electron').remote;
 const Menu = remote.Menu;
 
 // modes
-const modes = ['javascript', 'coffeescript', 'livescript']
+const modes = ['javascript', 'coffeescript', 'livescript', 'clojure']
 modes.forEach( mode => require(`../node_modules/codemirror/mode/${mode}/${mode}.js`))
 
 // keymaps
@@ -472,7 +472,7 @@ export default class ReplActiveInput extends React.Component {
     );
   }
 
-  transpileAndExecute(err, result) {
+  transpileAndExecute(err, result, transform = x => x) {
     let text = this.promptInput;
     if(err) {
       if(this.canRetry(err)) {
@@ -489,10 +489,11 @@ export default class ReplActiveInput extends React.Component {
         });
       }
     } else {
-      ReplCommon.runInContext(result, (err, output) => {
+      const transpileCallback = (err, output) => {
         if(err && this.canRetry(err)) { this.execute(true); }
         else {
-          let {formattedOutput} = this.force && !err ? { 'formattedOutput': output } : ReplOutput.some(err || output).highlight();
+          let transformedOutput = transform(output);
+          let {formattedOutput} = this.force && !err ? { 'formattedOutput': transformedOutput } : ReplOutput.some(err || transformedOutput).highlight();
           let transpiledOutput = !this.shouldTranspile() ? null : ReplOutput.transpile(result);
           this.addEntryAction({
             formattedOutput,
@@ -500,10 +501,16 @@ export default class ReplActiveInput extends React.Component {
             command: ReplCommon.highlight(text),
             plainCode: text,
             transpiledOutput,
-            js: result
+            js: typeof result === 'string' ? result : "*Unavailable*"
           });
         }
-      });
+      };
+      // allow langs to wrap, skip execution for customization
+      if(typeof result === 'string') {
+        ReplCommon.runInContext(result, transpileCallback);
+      } else {
+        transpileCallback(null, result);
+      }
     }
   }
 

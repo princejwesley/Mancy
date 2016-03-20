@@ -1,4 +1,4 @@
-import {js, coffee, ts, ls} from './ReplLangWrapper';
+import {js, coffee, ts, ls, cljs} from './ReplLangWrapper';
 
 // node repl wrappers
 const langs = {
@@ -6,6 +6,7 @@ const langs = {
   coffee,
   ts,
   ls,
+  cljs,
 };
 
 let repl = langs.js;
@@ -26,21 +27,29 @@ const setREPL = (name) => {
   }
   repl = langs[name];
   repl.setREPL();
-  return repl.getREPL();
+
+  const langREPL = repl.getREPL();
+  if(langREPL.updateCompilerOptions) {
+    langREPL.updateCompilerOptions();
+  }
+
+  return langREPL;
 }
 
 const aliases = {
   js: 'js', json: 'js', node: 'js',
   coffee: 'coffee', litcoffee: 'coffee', 'coffee.md': 'coffee',
   ls: 'ls',
-  ts: 'ts', tsx: 'ts'
+  ts: 'ts', tsx: 'ts',
+  cljs: 'cljs',
 };
 
 const qualifiedNames = {
   js: 'javascript', json: 'javascript', node: 'javascript',
   coffee: 'x-coffeescript', litcoffee: 'x-coffeescript', 'coffee.md': 'x-coffeescript',
   ls: 'x-liveScript',
-  ts: 'typescript', tsx: 'typescript'
+  ts: 'typescript', tsx: 'typescript',
+  cljs: 'x-clojure'
 };
 
 
@@ -49,5 +58,6 @@ export default {
   setREPL,
   getREPLProvider,
   getLangName: (ext) => aliases[ext],
-  getLangQualifiedName: (ext) => qualifiedNames[ext]
+  getLangQualifiedName: (ext) => qualifiedNames[ext],
+  setLookupPath: (paths) => langs.forEach(l => l.setLookupPath && l.setLookupPath(paths))
 };

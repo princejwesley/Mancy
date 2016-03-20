@@ -1,0 +1,23 @@
+@import '../themes';
+@import '../repl-common';
+
+@mixin replOutputCljsVar($theme) {
+
+  .repl-cljs-var-fold {
+    flex: 1;
+    .repl-cljs-var {
+      word-break: break-all;
+      .fa-play {
+        font-size: 0.8em;
+        color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+        padding-right: 3px;
+      }
+      .fa-play.fa-rotate-90 {
+        position: relative;
+        top: 2px;
+        padding-top: 5px;
+        padding-right: 3px;
+      }
+    }
+  }
+}

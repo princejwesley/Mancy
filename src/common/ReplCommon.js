@@ -101,6 +101,7 @@ let ReplCommon = {
     if(!paths || !paths.length) { return; }
     let newPaths = Array.isArray(paths) ? paths : [paths];
     context.module.paths = newPaths.concat(context.module.paths);
+    ReplLanguages.setLookupPath(context.module.paths);
   },
   removeFromPath: (paths, context = this) => {
     if(!paths || !paths.length) { return; }
@@ -111,6 +112,7 @@ let ReplCommon = {
         context.module.paths.splice(p, 1);
       }
     });
+    ReplLanguages.setLookupPath(context.module.paths);
   },
   escapseRegExp: (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
