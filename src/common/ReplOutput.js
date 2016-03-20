@@ -27,7 +27,8 @@ import ReplContext from './ReplContext';
 
 import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar';
 import ReplOutputCljsSeq from '../components/clojurescript/ReplOutputCljsSeq';
-
+import ReplOutputCljsDoc from '../components/clojurescript/ReplOutputCljsDoc';
+import ReplOutputCljsDocs from '../components/clojurescript/ReplOutputCljsDocs';
 
 let Debug = require('vm').runInDebugContext('Debug');
 let makeMirror = (o) => Debug.MakeMirror(o, true);
@@ -361,9 +362,30 @@ class ClojureWrapper {
     return ReplOutputType.object(this.value);
   }
 
-  specialForm() {
+  "find-doc"() {
+    let value = this.value.replace(/^-+\s/, '');
+    let docs = this.value.split(/^-+\s/m).filter(x => !!x.length);
+    let result = _.map(docs, (doc, idx) => {
+      let [name, definition, ...description] = doc.split('\n');
+      return (<ReplOutputCljsDoc name={name} open={idx === 0}
+              definition={ReplCommon.highlight(definition)}
+              description={description.join('\n')} />);
+    });
+    return <ReplOutputCljsDocs docs={result} />;
+  }
 
-    debugger;
+  doc() {
+    return this["find-doc"]();
+  }
+
+  unHandled() {
+    console.error('unhandled form', this.hint, this.value);
+    return ReplOutputType.object(this.value);
+  }
+
+  specialForm() {
+    let action = this[this.hint] || this.unHandled;
+    return action.call(this);
   }
 
   view() {

@@ -12,6 +12,7 @@
 @import 'repl-output-grid-viewer';
 @import 'clojurescript/repl-output-cljs-var';
 @import 'clojurescript/repl-output-cljs-meta';
+@import 'clojurescript/repl-output-cljs-docs';
 
 @mixin replOutput($theme) {
   @include replOutputArrayFold($theme);
@@ -28,4 +29,5 @@
   @include replOutputGridViewer($theme);
   @include replOutputCljsVar($theme);
   @include replOutputCljsMeta($theme);
+  @include replOutputCljsDocs($theme);
 }
