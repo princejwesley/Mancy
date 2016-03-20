@@ -98,15 +98,18 @@ export default class ReplOutputCljsSeq extends React.Component {
           short
             ? <span className='repl-entry-message-output-array' title={title}>
                 {element}
+                <span className='cljs-tag'>{this.props.token.type}</span>
               </span>
             : this.state.collapse
               ? <span className='repl-entry-message-output-array' title={title}>
                   <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
                   {element}
+                  <span className='cljs-tag'>{this.props.token.type}</span>
                 </span>
               : <span className='repl-entry-message-output-array' title={title}>
                   <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
                   {element}
+                  <span className='cljs-tag'>{this.props.token.type}</span>
                   {this.getSeqRecords()}
                 </span>
         }

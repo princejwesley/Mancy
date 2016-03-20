@@ -15,6 +15,21 @@
         color: if($theme == $dark-theme, $dark-app-entry-message-output-bind-color, $lt-app-entry-message-output-bind-color);
       }
 
+      .cljs-tag {
+        background-color: if($theme == $dark-theme, $dark-app-cljs-tag-bg-color, $lt-app-cljs-tag-bg-color);
+        color: if($theme == $dark-theme, $dark-app-cljs-tag-color, $lt-app-cljs-tag-color);
+        border-radius: 4px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        font-size: 0.8em;
+        height: 80%;
+        font-weight: 900;
+        margin-left: 6px;
+        cursor: default;
+      }
+
       .array-desc {
         padding-left: 5px;
         .ellipsis {
