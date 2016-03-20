@@ -27,6 +27,7 @@ import ReplContext from './ReplContext';
 
 import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar';
 import ReplOutputCljsSeq from '../components/clojurescript/ReplOutputCljsSeq';
+import ReplOutputCljsVal from '../components/clojurescript/ReplOutputCljsVal';
 import ReplOutputCljsDoc from '../components/clojurescript/ReplOutputCljsDoc';
 import ReplOutputCljsDocs from '../components/clojurescript/ReplOutputCljsDocs';
 import ReplOutputCljsSource from '../components/clojurescript/ReplOutputCljsSource';
@@ -309,6 +310,16 @@ class ClojureWrapper {
     return <span className='cm-variable'>{this.value.str}</span>;
   }
 
+  volatile() {
+    const token = { prefix: '{', suffix: '}', type: 'cljs.core.Volatile'}
+    return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
+  }
+
+  atom() {
+    const token = { prefix: '{', suffix: '}', type: 'cljs.core.Atom'}
+    return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
+  }
+
   map() {
     return this.seqBuilder(this.toWrappedArray2(), { prefix: '{', suffix: '}', type: 'map' });
   }
@@ -355,7 +366,11 @@ class ClojureWrapper {
 
   object() {
     const {cljs} = ReplContext.getContext();
-    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map', 'array', 'seq'];
+    const views = [
+      'keyword', 'symbol', 'nil',
+      'vector', 'list', 'set', 'map',
+      'array', 'volatile', 'seq'
+    ];
 
     for(let v = 0; v < views.length; v++) {
       if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
@@ -365,6 +380,10 @@ class ClojureWrapper {
 
     if(this.value instanceof cljs.core.Var) {
       return this.var();
+    }
+
+    if(this.value instanceof cljs.core.Atom) {
+      return this.atom();
     }
 
     return ReplOutputType.object(this.value);

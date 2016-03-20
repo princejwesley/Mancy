@@ -1,0 +1,23 @@
+@import '../themes';
+@import '../repl-common';
+
+@mixin replOutputCljsVal($theme) {
+
+  .repl-cljs-val {
+    flex: 1;
+    display: inline-flex;
+    flex-direction: row;
+
+    .prefix {
+      padding-right: 6px;
+    }
+
+    .suffix {
+      padding-left: 6px;
+    }
+
+    .value {
+      font-weight: 900;
+    }
+  }
+}

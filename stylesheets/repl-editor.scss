@@ -66,7 +66,7 @@
 
   &.cm-s-light-theme {
     .cm-meta { color: #FF1717; }
-    .cm-keyword { line-height: 1em; font-weight: bold; color: #BDBB0C; }
+    .cm-keyword { font-weight: bold; color: #BDBB0C; }
     .cm-atom { color: #7FC118; }
     .cm-number { color: #0EAADC; }
     .cm-def { color: #009688; }
@@ -124,7 +124,7 @@
 
   &.cm-s-dark-theme {
     .cm-meta { color: #FF1717; }
-    .cm-keyword { line-height: 1em; font-weight: bold; color: #BDBB0C; }
+    .cm-keyword { font-weight: bold; color: #BDBB0C; }
     .cm-atom { color: #7FC118; }
     .cm-number { color: #0EAADC; }
     .cm-def { color: #009688; }

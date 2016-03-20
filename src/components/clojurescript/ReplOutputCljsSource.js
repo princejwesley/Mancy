@@ -1,7 +1,5 @@
 import React from 'react';
-import ReplOutputCljsMeta from './ReplOutputCljsMeta';
 import _ from 'lodash';
-import ReplOutput from '../../common/ReplOutput';
 
 export default class ReplOutputCljsVar extends React.Component {
   constructor(props) {
