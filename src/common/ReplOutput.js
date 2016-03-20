@@ -29,6 +29,7 @@ import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar';
 import ReplOutputCljsSeq from '../components/clojurescript/ReplOutputCljsSeq';
 import ReplOutputCljsDoc from '../components/clojurescript/ReplOutputCljsDoc';
 import ReplOutputCljsDocs from '../components/clojurescript/ReplOutputCljsDocs';
+import ReplOutputCljsSource from '../components/clojurescript/ReplOutputCljsSource';
 
 let Debug = require('vm').runInDebugContext('Debug');
 let makeMirror = (o) => Debug.MakeMirror(o, true);
@@ -313,7 +314,10 @@ class ClojureWrapper {
   }
 
   seq() {
-    return this.seqBuilder(this.toWrappedArray(), { prefix: '(', suffix: ')', type: 'seq' });
+    const {cljs} = ReplContext.getContext();
+    const isQueue = this.value instanceof cljs.core.PersistentQueue;
+    const seqInfo = isQueue ? { prefix: '[', 'suffix': ']', type: 'queue' } : { prefix: '(', suffix: ')', type: 'seq' };
+    return this.seqBuilder(this.toWrappedArray(), seqInfo);
   }
 
   list() {
@@ -351,7 +355,7 @@ class ClojureWrapper {
 
   object() {
     const {cljs} = ReplContext.getContext();
-    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map', 'seq', 'array' ];
+    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list', 'set', 'map', 'array', 'seq'];
 
     for(let v = 0; v < views.length; v++) {
       if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
@@ -380,6 +384,14 @@ class ClojureWrapper {
 
   doc() {
     return this["find-doc"]();
+  }
+
+  source() {
+    let value = this.value || '\n';
+    let short = <ReplOutputString str={value.slice(0, value.indexOf('\n'))}
+      limit={ReplConstants.OUTPUT_TRUNCATE_LENGTH / 2}/>;
+
+    return <ReplOutputCljsSource short={short} source={ReplCommon.highlight(this.value)}/>
   }
 
   specialForm() {

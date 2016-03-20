@@ -13,6 +13,7 @@
 @import 'clojurescript/repl-output-cljs-var';
 @import 'clojurescript/repl-output-cljs-meta';
 @import 'clojurescript/repl-output-cljs-docs';
+@import 'clojurescript/repl-output-cljs-source';
 
 @mixin replOutput($theme) {
   @include replOutputArrayFold($theme);
@@ -30,4 +31,5 @@
   @include replOutputCljsVar($theme);
   @include replOutputCljsMeta($theme);
   @include replOutputCljsDocs($theme);
+  @include replOutputCljsSource($theme);
 }
