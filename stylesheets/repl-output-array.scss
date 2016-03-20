@@ -22,7 +22,10 @@
       .array-rec {
         display: flex;
         flex-direction: column;
-
+        &.inline {
+          display: inline-flex;
+          flex-direction: row;          
+        }
         .array-entry {
           display: flex;
           padding-left: 10px;

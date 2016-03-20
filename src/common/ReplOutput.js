@@ -26,6 +26,7 @@ import ReplOutputTranspile from '../components/ReplOutputTranspile';
 import ReplContext from './ReplContext';
 
 import ReplOutputCljsVar from '../components/clojurescript/ReplOutputCljsVar';
+import ReplOutputCljsSeq from '../components/clojurescript/ReplOutputCljsSeq';
 
 
 let Debug = require('vm').runInDebugContext('Debug');
@@ -231,8 +232,48 @@ class ClojureWrapper {
     return cljs.core.clj__GT_js(this.value)
   }
 
+  toWrappedArray() {
+    let arr = [];
+    for(let val of this.value) {
+      arr.push(val);
+    }
+    return arr;
+  }
+
   core() {
     return ReplContext.getContext().cljs.core;
+  }
+
+  seqBuilder(a, token = { prefix: '(', suffix: ')' }) {
+    let tokenize = (arr, result, range, mul=1) => {
+      let len = result.length;
+      if(arr.length < range) {
+        result.push(<ReplOutputCljsSeq token={token}
+          array={arr} start={len * range * mul}/>);
+      } else {
+        result.push(<ReplOutputCljsSeq token={token}
+          array={arr.splice(0, range)} start={len * range * mul}/>);
+        tokenize(arr, result, range, mul);
+      }
+    };
+
+    let arr = _.clone(a);
+    let arrays = [];
+    tokenize(arr, arrays, 100);
+
+    if(arrays.length > 100) {
+      let arr1000 = [];
+      tokenize(arrays, arr1000, 100, 100);
+      arrays = arr1000;
+    }
+
+    if(arrays.length > 1) {
+      return <ReplOutputCljsSeq array={arrays}
+        token={token}
+        start={0} length={a.length}/>
+    } else {
+      return arrays;
+    }
   }
 
 
@@ -256,18 +297,6 @@ class ClojureWrapper {
     return <span className='cm-variable'>{this.value.str}</span>;
   }
 
-  list() {
-    const arr = this.toJS();
-    // list view
-  }
-
-  vector() {
-    const arr = this.toJS();
-    // vector view
-
-
-  }
-
   map() {
     const o = this.toJS();
 
@@ -279,6 +308,14 @@ class ClojureWrapper {
 
   seq() {
 
+  }
+
+  list() {
+    return this.seqBuilder(this.toWrappedArray());
+  }
+
+  vector() {
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '[', suffix: ']' });
   }
 
   var() {
@@ -301,7 +338,7 @@ class ClojureWrapper {
   object() {
     const {cljs} = ReplContext.getContext();
 //    const views = [ 'keyword', 'symbol', 'list', 'vector', 'nil', 'map', 'seq' ];
-    const views = [ 'keyword', 'symbol', 'nil' ];
+    const views = [ 'keyword', 'symbol', 'nil', 'vector', 'list' ];
 
     for(let v = 0; v < views.length; v++) {
       if(cljs.core[`${views[v]}_QMARK_`](this.value)) {
