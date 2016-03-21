@@ -235,6 +235,13 @@ class ClojureWrapper {
     return cljs.core.clj__GT_js(this.value)
   }
 
+  typeStr() {
+    if(this.value && this.value.constructor && this.value.constructor.cljs$lang$ctorStr) {
+      return this.value.constructor.cljs$lang$ctorStr
+    }
+    return ''
+  }
+
   toWrappedArray() {
     let arr = [];
     for(let val of this.value) {
@@ -257,7 +264,7 @@ class ClojureWrapper {
     return ReplContext.getContext().cljs.core;
   }
 
-  seqBuilder(a, token = { prefix: '(', suffix: ')', type: 'list' }) {
+  seqBuilder(a, token = { prefix: '(', suffix: ')', type: 'list', arity: 1 }) {
     let tokenize = (arr, result, range, mul=1) => {
       let len = result.length;
       if(arr.length < range) {
@@ -311,40 +318,46 @@ class ClojureWrapper {
   }
 
   volatile() {
-    const token = { prefix: '{', suffix: '}', type: 'cljs.core.Volatile'}
+    const token = { prefix: '{', suffix: '}', type: this.typeStr() || 'cljs.core.Volatile',}
     return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
   }
 
   atom() {
-    const token = { prefix: '{', suffix: '}', type: 'cljs.core.Atom'}
+    const token = { prefix: '{', suffix: '}', type: this.typeStr() || 'cljs.core.Atom'}
     return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
   }
 
   map() {
-    return this.seqBuilder(this.toWrappedArray2(), { prefix: '{', suffix: '}', type: 'map' });
+    return this.seqBuilder(this.toWrappedArray2(), { prefix: '{', suffix: '}',
+      type: this.typeStr() || 'map', arity: 2 });
   }
 
   seq() {
     const {cljs} = ReplContext.getContext();
     const isQueue = this.value instanceof cljs.core.PersistentQueue;
-    const seqInfo = isQueue ? { prefix: '[', 'suffix': ']', type: 'queue' } : { prefix: '(', suffix: ')', type: 'seq' };
+    const seqInfo = isQueue? { prefix: '[', 'suffix': ']', type: 'queue' }
+      : { prefix: '(', suffix: ')', type: this.typeStr() || 'seq', arity: 1 };
     return this.seqBuilder(this.toWrappedArray(), seqInfo);
   }
 
   list() {
-    return this.seqBuilder(this.toWrappedArray(), { prefix: '(', suffix: ')', type: 'list' });
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '(', suffix: ')',
+      type: this.typeStr() || 'list', arity: 1 });
   }
 
   vector() {
-    return this.seqBuilder(this.toWrappedArray(), { prefix: '[', suffix: ']', type: 'vector' });
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '[', suffix: ']',
+      type: this.typeStr() || 'vector', arity: 1 });
   }
 
   set() {
-    return this.seqBuilder(this.toWrappedArray(), { prefix: '#{', suffix: '}', type: 'set' });
+    return this.seqBuilder(this.toWrappedArray(), { prefix: '#{', suffix: '}',
+     type: this.typeStr() || 'set', arity: 1 });
   }
 
   array() {
-    return this.seqBuilder(this.value, { prefix: '[', suffix: ']', type: '#js array' });
+    return this.seqBuilder(this.value, { prefix: '[', suffix: ']',
+      type: this.typeStr() || '#js array', arity: 1 });
   }
 
   var() {

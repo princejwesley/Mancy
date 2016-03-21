@@ -4,6 +4,7 @@ const ReplConstants = {
   TAB_WIDTH: 2,
   COMMAND_TRUNCATE_LENGTH: 80,
   OUTPUT_TRUNCATE_LENGTH: 80,
+  CLJS_SEQ_TRUNCATE_LENGTH: 4,
   PROMISE: {
     PENDING: 'pending',
     RESOLVED: 'fulfilled',

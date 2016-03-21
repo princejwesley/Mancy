@@ -1,9 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import ReplOutput from '../../common/ReplOutput';
-import ReplOutputObject from '../ReplOutputObject';
-import ReplCommon from '../../common/ReplCommon';
-import ReplActions from '../../actions/ReplActions';
+import ReplConstants from '../../constants/ReplConstants';
 
 export default class ReplOutputCljsSeq extends React.Component {
   constructor(props) {
@@ -32,7 +30,7 @@ export default class ReplOutputCljsSeq extends React.Component {
 
   getShortSeq() {
     const arr = this.props.array;
-    const SHORT_LEN = 6;
+    const SHORT_LEN = ReplConstants.CLJS_SEQ_TRUNCATE_LENGTH;
     const element =
       <span className='array-desc'>
         <span className='prefix cm-bracket'>{this.props.token.prefix}</span>
@@ -67,7 +65,7 @@ export default class ReplOutputCljsSeq extends React.Component {
   getSeqRecords(len = -1) {
     const clazz = `${len !== -1 ? 'inline' : ''}  array-rec`;
     const type = this.props.token.type;
-    const mapType = type === 'map';
+    const mapType = this.props.token.arity === 2;
     let keys = this.getKeysButLength();
     keys = len !== -1 ? keys.slice(0, len) : keys;
     return (
