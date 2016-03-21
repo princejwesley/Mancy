@@ -168,11 +168,15 @@ let ReplCommon = {
   },
   type: (obj) => {
     //http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
-    let name = Object.prototype.toString.call(obj).slice(8, -1);
-    if(name === 'Object' && obj && obj.constructor && obj.constructor.name) {
-      return obj.constructor.name;
+    // supports cljs type
+    if(obj && obj.constructor) {
+      if(obj.constructor.name) { return obj.constructor.name; }
+      // account for cljs types
+      if(obj.constructor.cljs$lang$ctorStr) {
+        return obj.constructor.cljs$lang$ctorStr;
+      }
     }
-    return name;
+    return Object.prototype.toString.call(obj).slice(8, -1);
   },
   funType: (fun) => {
     let code = fun.toString();
