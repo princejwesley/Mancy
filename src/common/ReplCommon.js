@@ -178,10 +178,15 @@ let ReplCommon = {
     }
     return Object.prototype.toString.call(obj).slice(8, -1);
   },
-  funType: (fun) => {
+  funType: (fun = '') => {
     let code = fun.toString();
     let result = code.match(funPattern);
     if(result && result.length == 2) {
+      //cljs sugar
+      if(fun.cljs$lang$type && fun.cljs$lang$ctorStr) {
+        let ctor = fun.cljs$lang$ctorStr.replace(/^.*\//,'')
+        return result[1].replace(/^.*\(/, `function ${ctor}(`);
+      }
       return result[1];
     }
     return /^\s*function/.test(code) ? 'function ()' : '()';
