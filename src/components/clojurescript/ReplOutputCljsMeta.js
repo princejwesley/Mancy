@@ -59,7 +59,7 @@ export default class ReplOutputCljsMeta extends React.Component {
   }
 
   render() {
-    const value = this.props.value;
+    const value = this.props.value || {};
     const core = this.props.core;
     const iMeta = value._meta;
     const meta = value.meta;

@@ -31,6 +31,7 @@ import ReplOutputCljsVal from '../components/clojurescript/ReplOutputCljsVal';
 import ReplOutputCljsDoc from '../components/clojurescript/ReplOutputCljsDoc';
 import ReplOutputCljsDocs from '../components/clojurescript/ReplOutputCljsDocs';
 import ReplOutputCljsSource from '../components/clojurescript/ReplOutputCljsSource';
+import ReplOutputCljsWrapper from '../components/clojurescript/ReplOutputCljsWrapper';
 
 let Debug = require('vm').runInDebugContext('Debug');
 let makeMirror = (o) => Debug.MakeMirror(o, true);
@@ -296,6 +297,10 @@ class ClojureWrapper {
     }
   }
 
+  wrap(view) {
+    return <ReplOutputCljsWrapper view={view} value={this.value} core={this.core()} />
+  }
+
 
   string() {
     return ReplOutputType.string(this.value);
@@ -366,7 +371,7 @@ class ClojureWrapper {
   }
 
   var() {
-    return <ReplOutputCljsVar core={this.core()} value={this.value}/>;
+    return <ReplOutputCljsVar value={this.value}/>;
   }
 
   nil() {
@@ -441,7 +446,7 @@ class ClojureWrapper {
   }
 
   view() {
-    return this.hint ? this.specialForm() : this[typeof this.value]();
+    return this.wrap(this.hint ? this.specialForm() : this[typeof this.value]());
   }
 }
 

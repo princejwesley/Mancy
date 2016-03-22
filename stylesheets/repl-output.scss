@@ -15,6 +15,7 @@
 @import 'clojurescript/repl-output-cljs-meta';
 @import 'clojurescript/repl-output-cljs-docs';
 @import 'clojurescript/repl-output-cljs-source';
+@import 'clojurescript/repl-output-cljs-wrapper';
 
 @mixin replOutput($theme) {
   @include replOutputArrayFold($theme);
@@ -34,4 +35,5 @@
   @include replOutputCljsMeta($theme);
   @include replOutputCljsDocs($theme);
   @include replOutputCljsSource($theme);
+  @include replOutputCljsWrapper($theme);
 }

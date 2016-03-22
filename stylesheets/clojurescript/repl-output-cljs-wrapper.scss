@@ -1,0 +1,17 @@
+@import '../themes';
+@import '../repl-common';
+
+@mixin replOutputCljsWrapper($theme) {
+
+  .repl-cljs-wrapper {
+    flex: 1;
+    flex-direction: column;
+
+    .repl-cljs-annotate {
+      .fa {
+        padding-right: 6px; 
+        color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
+      }
+    }
+  }
+}
