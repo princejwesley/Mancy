@@ -509,7 +509,7 @@ export default class ReplActiveInput extends React.Component {
       };
       // allow langs to wrap, skip execution for customization
       if(typeof result === 'string') {
-        ReplCommon.runInContext(result, transpileCallback);
+        ReplCommon.runInContext(this.getWrappedExpression(result), transpileCallback);
       } else {
         transpileCallback(null, result);
       }
@@ -586,6 +586,13 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  getWrappedExpression(text) {
+    if(/^\s*\{/.test(text) && /\}\s*$/.test(text)) {
+      return `(${text})`;
+    }
+    return text;
+  }
+
   execute(forceStrict = false) {
     let cli = ReplLanguages.getREPL();
     // managed by us (no react)
@@ -603,9 +610,10 @@ export default class ReplActiveInput extends React.Component {
       cli.$lastExpression = ReplOutput.none();
       cli.context = ReplContext.getContext();
       this.promptInput = text;
-      this.wrapExpression = !forceStrict && /^\s*\{/.test(text) && /\}\s*$/.test(text);
-      // all transpiled languages, () has same meaning
-      // no need to filter by lang
+      this.wrapExpression = !forceStrict
+        && global.Mancy.session.lang !== 'cljs'
+        && /^\s*\{/.test(text) && /\}\s*$/.test(text);
+
       if(this.wrapExpression) {
         text = `(${text})`;
       }
