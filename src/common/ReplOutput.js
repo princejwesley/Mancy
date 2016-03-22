@@ -318,46 +318,51 @@ class ClojureWrapper {
   }
 
   volatile() {
-    const token = { prefix: '{', suffix: '}', type: this.typeStr() || 'cljs.core.Volatile',}
+    const token = { prefix: '{', suffix: '}', type: this.typeStr() || 'cljs.core.Volatile', keywordPrefix: ':val'}
     return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
   }
 
   atom() {
-    const token = { prefix: '{', suffix: '}', type: this.typeStr() || 'cljs.core.Atom'}
+    const token = { prefix: '{', suffix: '}', type: this.typeStr() || 'cljs.core.Atom', keywordPrefix: ':val'}
     return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.state).view()} token={token} />
+  }
+
+  uuid() {
+    const token = { prefix: '{', suffix: '}', type: this.typeStr() || 'cljs.core.UUID', keywordPrefix: ':uuid'}
+    return <ReplOutputCljsVal value={ReplOutput.clojure(this.value.uuid).view()} token={token} />
   }
 
   map() {
     return this.seqBuilder(this.toWrappedArray2(), { prefix: '{', suffix: '}',
-      type: this.typeStr() || 'map', arity: 2 });
+      type: this.typeStr() || 'Map', arity: 2 });
   }
 
   seq() {
     const {cljs} = ReplContext.getContext();
     const isQueue = this.value instanceof cljs.core.PersistentQueue;
-    const seqInfo = isQueue? { prefix: '[', 'suffix': ']', type: 'queue' }
+    const seqInfo = isQueue? { prefix: '[', 'suffix': ']', type: 'Queue' }
       : { prefix: '(', suffix: ')', type: this.typeStr() || 'seq', arity: 1 };
     return this.seqBuilder(this.toWrappedArray(), seqInfo);
   }
 
   list() {
     return this.seqBuilder(this.toWrappedArray(), { prefix: '(', suffix: ')',
-      type: this.typeStr() || 'list', arity: 1 });
+      type: this.typeStr() || 'List', arity: 1 });
   }
 
   vector() {
     return this.seqBuilder(this.toWrappedArray(), { prefix: '[', suffix: ']',
-      type: this.typeStr() || 'vector', arity: 1 });
+      type: this.typeStr() || 'Vector', arity: 1 });
   }
 
   set() {
     return this.seqBuilder(this.toWrappedArray(), { prefix: '#{', suffix: '}',
-     type: this.typeStr() || 'set', arity: 1 });
+     type: this.typeStr() || 'Set', arity: 1 });
   }
 
   array() {
     return this.seqBuilder(this.value, { prefix: '[', suffix: ']',
-      type: this.typeStr() || '#js array', arity: 1 });
+      type: this.typeStr() || '#js Array', arity: 1 });
   }
 
   var() {
@@ -391,12 +396,16 @@ class ClojureWrapper {
       }
     }
 
-    if(this.value instanceof cljs.core.Var) {
-      return this.var();
-    }
+    const instancesOf = [
+      { type: cljs.core.Var, action: 'var' },
+      { type: cljs.core.Atom, action: 'atom' },
+      { type: cljs.core.UUID, action: 'uuid' },
+    ];
 
-    if(this.value instanceof cljs.core.Atom) {
-      return this.atom();
+    for(let i = 0; i < instancesOf.length; i++) {
+      if(this.value instanceof instancesOf[i].type) {
+        return this[instancesOf[i].action]();
+      }
     }
 
     return ReplOutputType.object(this.value);

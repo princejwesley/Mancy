@@ -9,7 +9,9 @@ export default class ReplOutputCljsSeq extends React.Component {
     this.state = {
       collapse: true
     }
-
+    const type = this.props.token.type;
+    const parts = type.split(/[\s.]/);
+    this.type = parts[parts.length - 1];
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
   }
 
@@ -62,9 +64,10 @@ export default class ReplOutputCljsSeq extends React.Component {
     return result;
   }
 
+
   getSeqRecords(len = -1) {
     const clazz = `${len !== -1 ? 'inline' : ''}  array-rec`;
-    const type = this.props.token.type;
+    const type = this.type;
     const mapType = this.props.token.arity === 2;
     let keys = this.getKeysButLength();
     keys = len !== -1 ? keys.slice(0, len) : keys;
@@ -96,18 +99,18 @@ export default class ReplOutputCljsSeq extends React.Component {
           short
             ? <span className='repl-entry-message-output-array' title={title}>
                 {element}
-                <span className='cljs-tag'>{this.props.token.type}</span>
+                <span className='cljs-tag' title={this.props.token.type}>{this.type}</span>
               </span>
             : this.state.collapse
               ? <span className='repl-entry-message-output-array' title={title}>
                   <i className='fa fa-play' onClick={this.onToggleCollapse}></i>
                   {element}
-                  <span className='cljs-tag'>{this.props.token.type}</span>
+                  <span className='cljs-tag' title={this.props.token.type}>{this.type}</span>
                 </span>
               : <span className='repl-entry-message-output-array' title={title}>
                   <i className='fa fa-play fa-rotate-90' onClick={this.onToggleCollapse}></i>
                   {element}
-                  <span className='cljs-tag'>{this.props.token.type}</span>
+                  <span className='cljs-tag' title={this.props.token.type}>{this.type}</span>
                   {this.getSeqRecords()}
                 </span>
         }

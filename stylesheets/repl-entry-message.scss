@@ -35,6 +35,7 @@
       white-space: pre-wrap;
       padding: 5px 0;
       position: relative;
+      cursor: default;
 
       @include replSourceFile($theme);
 
