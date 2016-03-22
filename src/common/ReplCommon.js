@@ -173,7 +173,7 @@ let ReplCommon = {
       if(obj.constructor.name) { return obj.constructor.name; }
       // account for cljs types
       if(obj.constructor.cljs$lang$ctorStr) {
-        return obj.constructor.cljs$lang$ctorStr;
+        return obj.constructor.cljs$lang$ctorStr.replace(/\//g, '.');
       }
     }
     return Object.prototype.toString.call(obj).slice(8, -1);

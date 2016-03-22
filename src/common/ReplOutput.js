@@ -237,7 +237,7 @@ class ClojureWrapper {
 
   typeStr() {
     if(this.value && this.value.constructor && this.value.constructor.cljs$lang$ctorStr) {
-      return this.value.constructor.cljs$lang$ctorStr
+      return this.value.constructor.cljs$lang$ctorStr.replace(/\//g, '.');
     }
     return ''
   }

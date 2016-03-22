@@ -79,6 +79,7 @@ const prelude = () => {
   if(!contextInitialized) {
     let context = ReplContext.getContext();
     context.global.goog = goog;
+    context.global.goog.global = context;
     context.global.cljs = cljs;
     let ns = cljs.core.munge(compiler.clj2js(compiler.current_ns()));
     updateNS(ns);
