@@ -21,6 +21,17 @@ import {ipcRenderer} from 'electron';
   };
 })();
 
+const addNewPreferences = (defaults, preferences) => {
+  _.each(_.keys(defaults), (key) => {
+    if(!(key in preferences)) {
+      preferences[key] = defaults[key];
+    }
+    else if(typeof preferences[key] === 'object') {
+      addNewPreferences(defaults[key], preferences[key]);
+    }
+  });
+};
+
 // preferences & user data path
 (() => {
   let preferences = JSON.parse(localStorage.getItem('preferences') || '{}');
@@ -85,14 +96,14 @@ import {ipcRenderer} from 'electron';
       "protocol-duped-method": true,
       "protocol-multiple-impls": true,
       "single-segment-namespace": true,
+      "parinfer": {
+        "mode": "off",
+        "previewCursorScope": false
+      }
     },
   };
 
-  _.each(_.keys(defaults), (key) => {
-    if(!(key in preferences)) {
-      preferences[key] = defaults[key];
-    }
-  });
+  addNewPreferences(defaults, preferences);
 
   if(preferences.mode === 'Magic') { preferences.mode = 'Sloppy'; }
   global.Mancy = { preferences: preferences };

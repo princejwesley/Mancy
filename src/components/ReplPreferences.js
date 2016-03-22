@@ -28,6 +28,7 @@ export default class ReplPreferences extends React.Component {
       'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange', 'onChangeHistorySize',
       'onToggleHistoryAggressive', 'showTypeScriptPreferences', 'onSetTypeScriptOptions',
       'showClojureScriptPreferences', 'showLangPreferences', 'onSetClojureScriptOptions',
+      'onParinferModeChange', 'onParinferPreviewChange',
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -177,6 +178,14 @@ export default class ReplPreferences extends React.Component {
     ReplPreferencesStore.moveNPMPath(path, 1);
   }
 
+  onParinferModeChange(e) {
+    ReplPreferencesStore.onParinferModeChange(e.target.value);
+  }
+
+  onParinferPreviewChange(e) {
+    ReplPreferencesStore.onParinferPreviewChange(e.target.checked);
+  }
+
   onSetTypeScriptOptions(name) {
     return e => ReplPreferencesStore.onSetTypeScriptOptions(name, e.target.checked);
   }
@@ -223,6 +232,36 @@ export default class ReplPreferences extends React.Component {
 
     return (
       <div class='clojurescript-preferences'>
+        <div className='preference'>
+          <div className='preference-name' title='Parinfer Editor Mode'>
+            Parinfer Mode {icon}
+          </div>
+          <div className='preference-value'>
+            <fieldset>
+              <span className='radio-group' title='Turn Off Parinfer'>
+                <input type="radio" name="parinfer" checked={this.state.clojurescript.parinfer.mode === 'off'}
+                  value="off" onClick={this.onParinferModeChange} /> Off
+              </span>
+              <span className='radio-group'>
+                <input type="radio" name="parinfer" checked={this.state.clojurescript.parinfer.mode === 'indent'}
+                  value="indent" onClick={this.onParinferModeChange} /> Indent Mode
+              </span>
+              <span className='radio-group'>
+                <input type="radio" name="parinfer" checked={this.state.clojurescript.parinfer.mode === 'paren'}
+                  value="paren" onClick={this.onParinferModeChange} /> Parent Mode
+              </span>
+            </fieldset>
+            {
+              this.state.clojurescript.parinfer.mode === 'indent'
+                ? <span className='checkbox-group' title="it shows the cursor's scope on an empty line by inserting close-parens after it">
+                    <input type="checkbox" name="previewCursorScope"
+                      checked={this.state.clojurescript.parinfer.previewCursorScope} value=""
+                      onClick={this.onParinferPreviewChange} /> Preview Cursor Scope
+                  </span>
+                : null
+            }
+          </div>
+        </div>
         <div className='preference'>
           <div className='preference-name'>
             Warning Options {icon}

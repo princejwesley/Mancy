@@ -183,6 +183,16 @@ const ReplPreferencesStore = Reflux.createStore({
     ReplLanguages.getREPL(global.Mancy.preferences.lang)
       .updateCompilerOptions();
   },
+  onParinferPreviewChange(flag) {
+    this.updatePreference((preferences) => {
+      preferences.clojurescript.parinfer.previewCursorScope = flag;
+    });
+  },
+  onParinferModeChange(value) {
+    this.updatePreference((preferences) => {
+      preferences.clojurescript.parinfer.mode = value;
+    });
+  },
   addNPMPath(path) {
     this.updatePreference((preferences) => {
       let npmPaths = preferences.npmPaths;

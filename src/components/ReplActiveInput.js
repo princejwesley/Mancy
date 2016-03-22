@@ -21,6 +21,7 @@ import CodeMirror from 'codemirror';
 
 const remote = require('electron').remote;
 const Menu = remote.Menu;
+const parinfer = require('parinfer');
 
 // modes
 const modes = ['javascript', 'coffeescript', 'livescript', 'clojure']
@@ -65,10 +66,10 @@ export default class ReplActiveInput extends React.Component {
       'onTabCompletion', 'autoComplete', 'onKeyDown', 'onCursorActivity',
       'onKeyUp', 'onStoreChange', 'prompt', 'setDebouncedComplete',
       'addEntry', 'removeSuggestion', 'onBlur', 'addEntryAction',
-      'shouldTranspile', 'transpileAndExecute',
+      'shouldTranspile', 'transpileAndExecute', 'parinferize',
       'canRetry', 'onInputRead', 'onKeyTab', 'onKeyEnter',
       'onKeyShiftEnter', 'onRun', 'execute', 'onPerformAutoComplete',
-      'onChange', 'onTriggerAction', 'onSetEditorOption',
+      'onChange', 'onTriggerAction', 'onSetEditorOption', 'onBeforeChange',
       'onContextmenu', 'getPopupMenu', 'onFormat', 'onFoldAll', 'onUnFoldAll',
       'foldUnfoldAll', 'isREPLMode', 'resetSuggestionTimer', 'getHistorySuggession',
     ], (field) => {
@@ -114,6 +115,7 @@ export default class ReplActiveInput extends React.Component {
 
     const eventActions = [
       'inputRead',
+      'beforeChange',
       'change',
       'blur',
       'cursorActivity',
@@ -514,9 +516,59 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  onBeforeChange(cm, change) {
+    if(change.origin === 'setValue'
+      && cm.getValue() === change.text.join('\n')
+    ) {
+      change.cancel();
+    }
+  }
+
   onChange(cm, change) {
     if(change.origin === '+delete') {
       this.onInputRead(cm, change);
+    }
+
+    if(global.Mancy.session.lang === 'cljs' && change.origin !== 'setValue') {
+      this.parinferize(change);
+    }
+  }
+
+  getCursorDx(change) {
+    let lines = change.text;
+    let len = lines[lines.length - 1].length;
+    return len + (lines.length > 1 ? 0 : change.from.ch) - change.to.ch;
+  }
+
+  parinferize(change) {
+    const {mode, previewCursorScope} = global.Mancy.preferences.clojurescript.parinfer;
+    if(mode === 'off') { return; }
+
+    const cm = this.editor;
+    const code = cm.getValue();
+    const {line, ch} = cm.getCursor();
+    const hasSelection = cm.somethingSelected();
+    const selections = cm.listSelections();
+    const options = { cursorLine: line, cursorX: ch };
+    const action = parinfer[`${mode}Mode`];
+
+    if(mode === 'indent') {
+      options.previewCursorScope = previewCursorScope;
+    } else {
+      options.cursorDx = this.getCursorDx(change);
+    }
+
+    const {error, text, cursorX} = action(code, options);
+
+    if(error || text === code) { return; }
+
+    // beforeChange breaks the loop
+    cm.setValue(text);
+    if(hasSelection) {
+      cm.setSelections(selections);
+    } else {
+      cm.setCursor({line: line, ch: cursorX});
+      ReplStatusBarActions.cursorActivity([line + 1, cursorX + 1]);
     }
   }
 
