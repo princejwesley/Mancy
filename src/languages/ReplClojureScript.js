@@ -15,9 +15,32 @@ let contextInitialized = false;
 let errMsg = null;
 
 const srcPaths = [path.join(__dirname, '..', 'node_modules', 'cljs-mancy', 'mancy')];
+// const preludeCode = `
+// `
 
-const preludeCode = `
-`
+class ClJSHistory {
+  constructor() {
+    this.ignore = false;
+  }
+  setError(e) {
+    if(!this.ignore) {
+      cljs.core._STAR_e = e;
+    }
+    this.ignore = false;
+  }
+  setIgnore() { this.ignore = true; }
+  setResult(result) {
+    if(!this.ignore) {
+      cljs.core._STAR_3 = cljs.core._STAR_2;
+      cljs.core._STAR_2 = cljs.core._STAR_1;
+      cljs.core._STAR_1 = result;
+    }
+    this.ignore = false;
+  }
+}
+
+const HISTORY_PATTERN = /^\s*\*[1-3e]\s*$/;
+const history = new ClJSHistory();
 
 let loadFile = (module, filename) => {
   let result = "", err;
@@ -115,24 +138,34 @@ let evaluate = (input, context, filename, cb) => {
       err = e && e.cause ? e.cause : e;
       js = (code && "value" in code ? code.value : code) || "";
     });
+
+    err = errMsg || err;
     postConditions();
-    return errMsg || err
-      ? cb(errMsg || err)
+    return err
+      ? cb(err)
       : cb(null, compiler.clj2js(vm.runInContext(js, context, filename)));
   } catch(e) {
     return cb(e);
   }
 }
 
-let transformer = (code) => {
-  return ReplOutput.isInstanceOfClojure(code)
-    ? code
-    : ReplOutput.clojure(code);
+let transformer = (err, output) => {
+  if(err) {
+    history.setError(err);
+    return null;
+  }
+  history.setResult(output);
+  return ReplOutput.isInstanceOfClojure(output)
+    ? output
+    : ReplOutput.clojure(output);
 };
 
 let transpile = (input, context, cb) => {
   prelude();
   try {
+    if(input.match(HISTORY_PATTERN)) {
+      history.setIgnore();
+    }
     let js, err;
     compiler.compile(input, (e, code) => {
       err = e && e.cause ? e.cause : e;
@@ -141,7 +174,9 @@ let transpile = (input, context, cb) => {
         ? ReplOutput.clojure(code.value, code.special)
         : code && "value" in code ? code.value : code
     });
-    postConditions();
+
+    err = errMsg || err;
+    postConditions(err, js);
     return errMsg ? cb(errMsg) : cb(err, js, transformer);
   } catch(e) {
     return cb(e);

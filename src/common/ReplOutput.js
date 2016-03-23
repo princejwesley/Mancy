@@ -122,6 +122,12 @@ let ReplOutputType = {
     return <ReplOutputDate date={d} />
   },
   object: (o) => {
+
+    if(_.isError(o)) {
+      let [first, ...rest] = o.stack.split(EOL);
+      return <ReplEntryOutputError message={first} trace={rest}></ReplEntryOutputError>;
+    }
+
     if(Array.isArray(o)){
       return ReplOutputType.array(o);
     }
@@ -473,16 +479,6 @@ class Some {
   }
   getValue() { return this.value; }
   highlight(output) {
-    if(_.isError(this.value)) {
-      let [first, ...rest] = this.value.stack.split(EOL);
-      return {
-        formattedOutput:
-          <ReplEntryOutputError message={first} trace={rest}>
-          </ReplEntryOutputError>,
-        error: false
-      };
-    }
-
     return {
       formattedOutput: ReplOutput.transformObject(this.value) || this.value,
       error: false
