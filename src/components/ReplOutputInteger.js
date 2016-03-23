@@ -42,7 +42,9 @@ export default class ReplOutputInteger extends React.Component {
 
   onToggleCollapse() {
     this.setState({
-      collapse: !this.state.collapse
+      collapse: !this.state.collapse,
+      mode: 'dec',
+      type: 'signed'
     });
   }
 
@@ -83,7 +85,7 @@ export default class ReplOutputInteger extends React.Component {
     let hide = this.hide();
     let outOfRange = this.isOutOfRange();
     let clazz = `mode-group ${ hide ? 'hide' : 'show'}`;
-    let tips = outOfRange ? '' : 'Click to toggle number converter';
+    let tips = outOfRange ? '' : 'Click to Toggle Base/Sign Converter';
     let numClazz = `cm-number ${outOfRange ? '' : 'toggle-number'}`;
     return (
       <span className='repl-integer'>

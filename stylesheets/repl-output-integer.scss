@@ -5,6 +5,9 @@
   .repl-integer {
     .toggle-number {
       cursor: pointer;
+      border-bottom: 1px dotted grey;
+      border-bottom-right-radius: 2px;
+      border-bottom-left-radius: 2px;
     }
     .mode-group {
       opacity: 0.5;
