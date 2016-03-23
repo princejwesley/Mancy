@@ -3,6 +3,9 @@
 @mixin replOutputInteger($theme) {
 
   .repl-integer {
+    .toggle-number {
+      cursor: pointer;
+    }
     .mode-group {
       opacity: 0.5;
       margin: 3px 5px;

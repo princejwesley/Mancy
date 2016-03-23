@@ -13,11 +13,12 @@ export default class ReplOutputInteger extends React.Component {
     super(props);
     this.state = {
       mode: 'dec',
-      type: 'signed'
+      type: 'signed',
+      collapse: 'true'
     };
 
     _.each([
-      'setMode', 'toIntString', 'getClazz', 'getTypedClazz', 'onSignedMode', 'onUnsignedMode'
+      'setMode', 'toIntString', 'getClazz', 'getTypedClazz', 'onSignedMode', 'onUnsignedMode', 'onToggleCollapse'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -36,6 +37,12 @@ export default class ReplOutputInteger extends React.Component {
   setMode(mode) {
     this.setState({
       mode: mode
+    });
+  }
+
+  onToggleCollapse() {
+    this.setState({
+      collapse: !this.state.collapse
     });
   }
 
@@ -64,11 +71,23 @@ export default class ReplOutputInteger extends React.Component {
     return `mode ${this.state.type === m ? 'selected' : ''}`;
   }
 
+  isOutOfRange() {
+    return this.props.int > -1 && this.props.int < 2;
+  }
+
+  hide() {
+    return this.state.collapse || this.isOutOfRange();
+  }
+
   render() {
-    let clazz = `mode-group ${(this.props.int > -1 && this.props.int < 2) ? 'hide' : 'show'}`;
+    let hide = this.hide();
+    let outOfRange = this.isOutOfRange();
+    let clazz = `mode-group ${ hide ? 'hide' : 'show'}`;
+    let tips = outOfRange ? '' : 'Click to toggle number converter';
+    let numClazz = `cm-number ${outOfRange ? '' : 'toggle-number'}`;
     return (
       <span className='repl-integer'>
-        <span className='number'>{this.toIntString(this.props.int)}</span>
+        <span className={numClazz} title={tips} onClick={this.onToggleCollapse}>{this.toIntString(this.props.int)}</span>
         <span className={clazz}>
           <span className={this.getClazz('bin')} data-token='m' title='binary' onClick={this.onBinMode}>b</span>
           <span className={this.getClazz('oct')} data-token='o' title='octal' onClick={this.onOctMode}>o</span>
