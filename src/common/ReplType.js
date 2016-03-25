@@ -36,6 +36,19 @@ const MEMBER_SET_ACCESSOR_ELEMENT = Symbol.for('setter');
 const PREIMITIVE_TYPE = Symbol.for('primitive type');
 const TYPE_PARAMETER_ELEMENT = Symbol.for('type parameter');
 
+//cljs
+const NAMESPACE = Symbol.for('namespace');
+const NIL = Symbol.for('nil');
+const VECTOR = Symbol.for('vector');
+const LIST = Symbol.for('list');
+const SET = Symbol.for('set');
+const MAP = Symbol.for('map');
+const ARRAY = Symbol.for('array');
+const VOLATILE = Symbol.for('volatile');
+const SEQ = Symbol.for('seq');
+const ATOM = Symbol.for('atom');
+const UUID = Symbol.for('uuid');
+
 const HISTORY = Symbol.for('history');
 
 let typeEval = (x) => {
@@ -79,6 +92,17 @@ const typeNames = {
   [MEMBER_SET_ACCESSOR_ELEMENT]: 'setter',
   [PREIMITIVE_TYPE]: 'primitive type',
   [TYPE_PARAMETER_ELEMENT]: 'type parameter',
+  [NAMESPACE]: 'namespace',
+  [NIL]: 'nil',
+  [VECTOR]: 'vector',
+  [LIST]: 'list',
+  [SET]: 'set',
+  [MAP]: 'map',
+  [ARRAY]: 'array',
+  [VOLATILE]: 'volatile',
+  [SEQ]: 'seq',
+  [ATOM]: 'atom',
+  [UUID]: 'uuid',
   [HISTORY]: 'history',
 };
 
@@ -118,6 +142,17 @@ const typeNamesShort = {
   [MEMBER_SET_ACCESSOR_ELEMENT]: 's',
   [PREIMITIVE_TYPE]: 't',
   [TYPE_PARAMETER_ELEMENT]: 't',
+  [NAMESPACE]: 'N',
+  [NIL]: 'u',
+  [VECTOR]: 'v',
+  [LIST]: 'l',
+  [SET]: 's',
+  [MAP]: 'm',
+  [ARRAY]: 'a',
+  [VOLATILE]: 'v',
+  [SEQ]: 's',
+  [ATOM]: 'a',
+  [UUID]: '#',
   [HISTORY]: 'h',
 };
 

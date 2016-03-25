@@ -13,6 +13,7 @@ let nodeLineListener = () => {};
 let promptData = '';
 let contextInitialized = false;
 let errMsg = null;
+let namespaces = {'cljs.core': true, 'js': true};
 
 const srcPaths = [path.join(__dirname, '..', 'node_modules', 'cljs-mancy', 'mancy')];
 // const preludeCode = `
@@ -104,7 +105,9 @@ const prelude = () => {
     context.global.goog = goog;
     context.global.goog.global = context;
     context.global.cljs = cljs;
-    let ns = cljs.core.munge(compiler.clj2js(compiler.current_ns()));
+    let ns = compiler.clj2js(compiler.current_ns());
+    namespaces[ns] = true;
+    ns = cljs.core.munge(ns);
     updateNS(ns);
     // much like ;;  (enable-console-print!)
     cljs.core[cljs.core.munge("*print-newline*")] = false;
@@ -126,7 +129,9 @@ const postConditions = () => {
   cljs.core[cljs.core.munge("*print-fn*")] = context.console.log;
   cljs.core[cljs.core.munge("*print-err-fn*")] = error;
 
-  let ns = cljs.core.munge(compiler.clj2js(compiler.current_ns()));
+  let ns = compiler.clj2js(compiler.current_ns());
+  namespaces[ns] = true;
+  ns = cljs.core.munge(ns);
   updateNS(ns);
 }
 
@@ -176,7 +181,7 @@ let transpile = (input, context, cb) => {
     });
 
     err = errMsg || err;
-    postConditions(err, js);
+    postConditions();
     return errMsg ? cb(errMsg) : cb(err, js, transformer);
   } catch(e) {
     return cb(e);
@@ -212,6 +217,84 @@ let loadAction = {
   }
 };
 
+let namespaceCompletion = (prefix) => {
+  return Object.keys(namespaces)
+          .filter(n => n.startsWith(prefix) && n !== prefix)
+          .map(n => ({suggestion: n, type:'namespace'}));
+};
+
+const types = [
+  'keyword', 'symbol', 'nil',
+  'vector', 'list', 'set', 'map',
+  'array', 'volatile', 'seq'
+];
+
+const instancesOfTypes = [
+  { type: cljs.core.Var, name: 'var' },
+  { type: cljs.core.Atom, name: 'atom' },
+  { type: cljs.core.UUID, name: 'uuid' },
+];
+
+let typeOfCljs = (o) => {
+
+  for(let t = 0; t < types.length; t++) {
+    if(cljs.core[`${types[t]}_QMARK_`](o)) {
+      return types[t];
+    }
+  }
+  for(let i = 0; i < instancesOfTypes.length; i++) {
+    if(o instanceof instancesOfTypes[i].type) {
+      return instancesOfTypes[i].name;
+    }
+  }
+  return typeof o;
+}
+
+let complete = (context, ns, prefix = '') => {
+  return Object.keys(context)
+          .map(n => cljs.core.demunge(n))
+          .filter(n => n.startsWith(prefix) && n !== prefix)
+          .map(n => ({suggestion: `${ns ? ns + '/' + n : n}`, type: typeOfCljs(context[n]) }));
+};
+
+let cljsCompletion = (prefix) => {
+  const [ns, head] = prefix.split('/');
+  let context = ReplContext.getContext();
+  if(namespaces[ns]) {
+    //existing namespaces
+    if(ns !== 'js') {
+      ns.split('.').forEach(n => context[n] && (context = context[n]))
+    }
+    return complete(context, ns, head);
+  }
+  // try inside cljs.core
+  return complete(context.cljs.core, '', prefix)
+}
+
+// simple auto completion
+let completion = (repl) => {
+  repl.complete = (input, cb) => {
+    prelude();
+    try {
+      const tokens = input.split(/\s+/);
+      const prefix = tokens[tokens.length - 1].replace(/\s*[\[()\]]*(.+)\s*/, '$1')
+
+      const nsSuggestions = namespaceCompletion(prefix);
+      const cljsSuggestions = cljsCompletion(prefix);
+      const completeList = _.sortBy(nsSuggestions.concat(cljsSuggestions), 'suggestion')
+      const {suggestions, kinds} = completeList.reduce((acc, s) => {
+        acc.suggestions.push(s.suggestion);
+        acc.kinds.push(s.type);
+        return acc;
+      }, { suggestions:[], kinds: []})
+
+      cb(null, [suggestions, prefix, kinds]);
+    } catch(e) {
+      cb(null, [[],""]);
+    }
+  };
+};
+
 /// export repl
 export default {
   start: (options = {}) => {
@@ -230,6 +313,7 @@ export default {
       }
     });
     addMultilineHandler(repl);
+    completion(repl);
     repl.transpile = transpile;
     repl.updateCompilerOptions = warnings;
     repl.setLookupPath = setLookupPath;
