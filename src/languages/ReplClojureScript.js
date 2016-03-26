@@ -278,6 +278,10 @@ let completion = (repl) => {
     try {
       const tokens = input.split(/\s+/);
       const prefix = tokens[tokens.length - 1].replace(/\s*[\[()\]]*(.+)\s*/, '$1')
+      if(_.isEmpty(prefix)) {
+        cb(null, [[],""]);
+        return;
+      }
 
       const nsSuggestions = namespaceCompletion(prefix);
       const cljsSuggestions = cljsCompletion(prefix);

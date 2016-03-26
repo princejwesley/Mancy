@@ -86,6 +86,7 @@ export default class Repl extends React.Component {
       global.Mancy.session.lang = value;
       ReplLanguages.setREPL(value);
       ReplStatusBarActions.updateLanguage(value);
+      ReplActiveInputActions.setMode(`text/${ReplLanguages.getLangQualifiedName(value)}`);
     });
 
     ipcRenderer.on('application:preferences', ReplPreferencesActions.openPreferences);
