@@ -3,6 +3,7 @@ import _ from 'lodash';
 import ReplOutput from '../common/ReplOutput';
 import ReplCommon from '../common/ReplCommon';
 import ReplOutputGridViewer from './ReplOutputGridViewer';
+import ReplOutputChartViewer from './ReplOutputChartViewer';
 import ReplActions from '../actions/ReplActions';
 
 export default class ReplOutputObject extends React.Component {
@@ -104,6 +105,7 @@ export default class ReplOutputObject extends React.Component {
                  : null
               }
               <ReplOutputGridViewer grid={this.props.object}/>
+              <ReplOutputChartViewer chart={this.props.object}/>
               </span>
             </span>
         }

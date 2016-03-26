@@ -19,7 +19,6 @@ import ReplOutputURL from '../components/ReplOutputURL';
 import ReplOutputCrypto from '../components/ReplOutputCrypto';
 import ReplOutputHTML from '../components/ReplOutputHTML';
 import ReplOutputBuffer from '../components/ReplOutputBuffer';
-import ReplOutputChart from '../components/ReplOutputChart';
 import ReplOutputDate from '../components/ReplOutputDate';
 import ReplSourceFile from '../components/ReplSourceFile';
 import ReplOutputTranspile from '../components/ReplOutputTranspile';
@@ -174,9 +173,6 @@ let ReplOutputType = {
       }
     }
 
-    if(ReplCommon.candidateForChart(o)) {
-      return <ReplOutputChart chart={o}/>;
-    }
     return <ReplOutputObject object={o} label={getObjectLabels(o)} primitive={_.isString(o)}/>
   },
   'undefined': (u) => {

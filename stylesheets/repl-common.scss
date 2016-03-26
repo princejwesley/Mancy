@@ -82,3 +82,7 @@ button {
 small {
   font-size: 8px;
 }
+
+[disabled="true"] {
+  cursor: not-allowed !important;
+}

@@ -3,6 +3,7 @@ import ReplOutput from '../../common/ReplOutput';
 import ReplCommon from '../../common/ReplCommon';
 import ReplOutputCljsMeta from './ReplOutputCljsMeta';
 import ReplOutputGridViewer from '../ReplOutputGridViewer'
+import ReplOutputChartViewer from '../ReplOutputChartViewer'
 
 export default class ReplOutputCljsWrapper extends React.Component {
   constructor(props) {
@@ -18,8 +19,7 @@ export default class ReplOutputCljsWrapper extends React.Component {
       this.jsValue = this.props.core.clj__GT_js(value);
       try{ this.hasGrid = ReplCommon.candidateForGrid(this.jsValue); }
       catch(e) { this.hasGrid = false; }
-      //todo
-      this.hasChart = false;
+      this.hasChart = ReplCommon.candidateForChart(this.jsValue);
     }
     this.hasExtra = this.hasMeta || this.hasGrid || this.hasChart;
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
@@ -45,6 +45,14 @@ export default class ReplOutputCljsWrapper extends React.Component {
     : null);
   }
 
+  getChart() {
+    return ((!this.state.collapse && this.hasChart)
+      ? <div className='repl-cljs-chart-annotate'>
+          <ReplOutputChartViewer chart={this.jsValue} chartViewable="true"/>
+        </div>
+    : null);
+  }
+
   render() {
     const clazz = `fa fa-${this.state.collapse ? 'plus' : 'minus'}-square-o`;
     return (
@@ -56,6 +64,7 @@ export default class ReplOutputCljsWrapper extends React.Component {
                 {this.props.view}
                 {this.getMeta()}
                 {this.getGrid()}
+                {this.getChart()}
               </span>
             : this.props.view
         }

@@ -11,29 +11,42 @@ export default class ReplOutputChartViewer extends React.Component {
       type: 'bar',
       flip: false,
       rotate: false,
-      spline: false
+      spline: false,
+      chartCollapse: true,
     };
     _.each([
       'generateChart', 'generateFlippedData', 'onToggleSpline',
       'onToggleFlip', 'onToggleRotate', 'onClickBarChart',
       'onClickLineChart', 'onClickAreaChart', 'onClickPieChart',
-      'isLineChart', 'isAreaChart', 'isSplineChart', 'generateColumnData'
+      'isLineChart', 'isAreaChart', 'isSplineChart', 'generateColumnData',
+      'onToggleChartCollapse'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
+    this.init();
+  }
 
-    this.id = `chart-${_.uniqueId()}-${Date.now()}`;
-    let keys = _.keys(this.props.chart);
-    this.columns = this.generateColumnData(this.props.chart);
-    this.flippedData = this.generateFlippedData(this.columns);
+  init() {
+    this.chartViewable = this.props.chartViewable || ReplCommon.candidateForChart(this.props.chart);
+    if(this.chartViewable) {
+      this.id = `chart-${_.uniqueId()}-${Date.now()}`;
+      let keys = _.keys(this.props.chart);
+      this.columns = this.generateColumnData(this.props.chart);
+      this.flippedData = this.generateFlippedData(this.columns);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+    return this.chartViewable && !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
   }
 
   componentDidMount() {
-    this.generateChart();
+  }
+
+  onToggleChartCollapse() {
+    this.setState({
+      chartCollapse: !this.state.chartCollapse
+    });
   }
 
   generateColumnData(source) {
@@ -152,11 +165,14 @@ export default class ReplOutputChartViewer extends React.Component {
     return this.isLineChart() || this.isAreaChart();
   }
 
-  render() {
+  renderChart() {
     let barClazz = `fa fa-bar-chart ${this.state.type === 'bar' ? 'selected' : ''}`;
     let areaClazz = `fa fa-area-chart ${this.isAreaChart() ? 'selected' : ''}`;
     let lineClazz = `fa fa-line-chart ${this.isLineChart() ? 'selected' : ''}`;
     let pieClazz = `fa fa-pie-chart ${this.state.type === 'pie' ? 'selected' : ''}`;
+
+    // render graph
+    setTimeout(() => this.generateChart(), 100);
 
     return (
       <span className='repl-output-data-chart-viewer'>
@@ -189,6 +205,22 @@ export default class ReplOutputChartViewer extends React.Component {
           <span className='placeholder'></span>
         </span>
       </span>
+    );
+  }
+
+  render() {
+    if(!this.chartViewable) { return null; }
+    return (
+      this.state.chartCollapse
+        ? <span className='repl-output-chart-viewer-container'>
+            <i className='fa fa-plus-square-o' onClick={this.onToggleChartCollapse}></i>
+            <span className='data-explorer-label'>Chart Viewer</span>
+          </span>
+        : <span className='repl-output-chart-viewer-container'>
+            <i className='fa fa-minus-square-o' onClick={this.onToggleChartCollapse}></i>
+            <span className='data-explorer-label'>Chart Viewer</span>
+            {this.renderChart()}
+          </span>
     );
   }
 }
