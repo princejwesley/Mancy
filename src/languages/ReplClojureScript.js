@@ -250,8 +250,11 @@ let typeOfCljs = (o) => {
   return typeof o;
 }
 
+let getProperties = (o) => Object.getOwnPropertyNames(o)
+  //.concat(Object.getOwnPropertySymbols(o));
+
 let complete = (context, ns, prefix = '') => {
-  return Object.keys(context)
+  return getProperties(context)
           .map(n => cljs.core.demunge(n))
           .filter(n => n.startsWith(prefix) && n !== prefix)
           .map(n => ({suggestion: `${ns ? ns + '/' + n : n}`, type: typeOfCljs(context[n]) }));
