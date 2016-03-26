@@ -35,6 +35,7 @@ const excludes = [
 
 const resources = [
   'node_modules/coffee-script/bin/*',
+  'node_modules/typescript/package.json',
   'node_modules/typescript/bin/tsc',
   'node_modules/typescript/lib/tsc.js',
   'node_modules/typescript/lib/typescript.js',
