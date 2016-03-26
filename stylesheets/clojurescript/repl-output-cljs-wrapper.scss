@@ -9,9 +9,13 @@
 
     .repl-cljs-annotate {
       .fa {
-        padding-right: 6px; 
+        padding-right: 6px;
         color: if($theme == $dark-theme, $dark-app-entry-message-output-arr-fold-color, $lt-app-entry-message-output-arr-fold-color);
       }
+    }
+    .repl-cljs-grid-annotate {
+      display: flex;
+      padding-left: 12px;
     }
   }
 }

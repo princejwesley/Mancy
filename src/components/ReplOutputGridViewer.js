@@ -11,9 +11,11 @@ export default class ReplOutputGridViewer extends React.Component {
       transpose: false
     }
 
-    this.gridViewable = false;
-    try{ this.gridViewable = ReplCommon.candidateForGrid(this.props.grid); }
-    catch(e) {}
+    this.gridViewable = this.props.gridViewable || false;
+    if(!this.gridViewable) {
+      try{ this.gridViewable = ReplCommon.candidateForGrid(this.props.grid); }
+      catch(e) {}
+    }
 
     _.each([
       'onToggleCollapse', 'onToggleTranspose', 'renderGrid', 'transposeGridData',

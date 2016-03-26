@@ -5,7 +5,7 @@
   .repl-output-chart-viewer-container {
     .data-explorer-label {
       color: if($theme == $dark-theme, $dark-app-data-explorer-label-color, $lt-app-data-explorer-label-color);
-      padding: 0px 10px;
+      padding: 0px 0px 0px 5px;
     }
 
     .repl-output-data-chart-viewer {

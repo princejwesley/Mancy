@@ -1,6 +1,8 @@
 import React from 'react';
 import ReplOutput from '../../common/ReplOutput';
+import ReplCommon from '../../common/ReplCommon';
 import ReplOutputCljsMeta from './ReplOutputCljsMeta';
+import ReplOutputGridViewer from '../ReplOutputGridViewer'
 
 export default class ReplOutputCljsWrapper extends React.Component {
   constructor(props) {
@@ -12,8 +14,11 @@ export default class ReplOutputCljsWrapper extends React.Component {
     if(this.props.value) {
       const value = this.props.value;
       this.hasMeta = value.meta || value._meta;
+
+      this.jsValue = this.props.core.clj__GT_js(value);
+      try{ this.hasGrid = ReplCommon.candidateForGrid(this.jsValue); }
+      catch(e) { this.hasGrid = false; }
       //todo
-      this.hasGrid = false;
       this.hasChart = false;
     }
     this.hasExtra = this.hasMeta || this.hasGrid || this.hasChart;
@@ -32,6 +37,14 @@ export default class ReplOutputCljsWrapper extends React.Component {
     : null);
   }
 
+  getGrid() {
+    return ((!this.state.collapse && this.hasGrid)
+      ? <div className='repl-cljs-grid-annotate'>
+          <ReplOutputGridViewer grid={this.jsValue} gridViewable="true"/>
+        </div>
+    : null);
+  }
+
   render() {
     const clazz = `fa fa-${this.state.collapse ? 'plus' : 'minus'}-square-o`;
     return (
@@ -42,6 +55,7 @@ export default class ReplOutputCljsWrapper extends React.Component {
                 <i className={clazz} onClick={this.onToggleCollapse}></i>
                 {this.props.view}
                 {this.getMeta()}
+                {this.getGrid()}
               </span>
             : this.props.view
         }
