@@ -18,6 +18,7 @@ export default class ReplEntryMessage extends React.Component {
     }
     return (
       <div className='repl-entry-message'>
+        <div className='repl-entry-command-container'>
         {
           this.props.commandCollapse && shortEntry
             ? <div key="short" className='repl-entry-message-command ellipsis'
@@ -27,6 +28,8 @@ export default class ReplEntryMessage extends React.Component {
                 dangerouslySetInnerHTML={{__html:this.props.message.command.trim()}}>
               </div>
         }
+        { this.props.message.ns ? <span className='tag' title='Namespace'>{this.props.message.ns}</span> : null }
+        </div>
         { this.props.collapse ?
             null :
             <div className='repl-entry-message-output'>

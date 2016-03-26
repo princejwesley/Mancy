@@ -21,8 +21,8 @@
     }
 
     .tag {
-      background-color: if($theme == $dark-theme, $dark-app-cljs-tag-bg-color, $lt-app-cljs-tag-bg-color);
-      color: if($theme == $dark-theme, $dark-app-cljs-tag-color, $lt-app-cljs-tag-color);
+      background-color: if($theme == $dark-theme, $dark-app-tag-bg-color, $lt-app-tag-bg-color);
+      color: if($theme == $dark-theme, $dark-app-tag-color, $lt-app-tag-color);
       border-radius: 4px;
       padding-left: 5px;
       padding-right: 5px;

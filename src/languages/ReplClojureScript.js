@@ -99,15 +99,16 @@ const updateNS = (ns) => {
   }, context);
 };
 
+const getNamespace = () => compiler.clj2js(compiler.current_ns())
+
 const prelude = () => {
   if(!contextInitialized) {
     let context = ReplContext.getContext();
     context.global.goog = goog;
     context.global.goog.global = context;
     context.global.cljs = cljs;
-    let ns = compiler.clj2js(compiler.current_ns());
+    let ns = getNamespace();
     namespaces[ns] = true;
-    ns = cljs.core.munge(ns);
     updateNS(ns);
     // much like ;;  (enable-console-print!)
     cljs.core[cljs.core.munge("*print-newline*")] = false;
@@ -129,9 +130,8 @@ const postConditions = () => {
   cljs.core[cljs.core.munge("*print-fn*")] = context.console.log;
   cljs.core[cljs.core.munge("*print-err-fn*")] = error;
 
-  let ns = compiler.clj2js(compiler.current_ns());
+  let ns = getNamespace();
   namespaces[ns] = true;
-  ns = cljs.core.munge(ns);
   updateNS(ns);
 }
 
@@ -317,6 +317,7 @@ export default {
     repl.transpile = transpile;
     repl.updateCompilerOptions = warnings;
     repl.setLookupPath = setLookupPath;
+    repl.getNamespace = getNamespace;
     repl.defineCommand('load', loadAction);
     return repl;
   }

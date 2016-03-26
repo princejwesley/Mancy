@@ -14,18 +14,38 @@
         padding: 5px 25px 5px 25px;
       }
     }
+    .repl-entry-command-container {
+      display: flex;
+      .tag {
+        background-color: if($theme == $dark-theme, $dark-app-tag-bg-color, $lt-app-tag-bg-color);
+        color: if($theme == $dark-theme, $dark-app-tag-color, $lt-app-tag-color);
+        border-radius: 4px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        font-size: 0.75em;
+        height: 80%;
+        position: relative;
+        top: 3px;
+        font-weight: 900;
+        margin-left: 6px;
+        cursor: default;
+      }
 
-    .repl-entry-message-command {
-      min-height: $app-font-size;
-      word-wrap: break-word;
-      word-break: break-word;
-      white-space: pre-wrap;
-    }
+      .repl-entry-message-command {
+        flex: 1;
+        min-height: $app-font-size;
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: pre-wrap;
+      }
 
-    .ellipsis {
-      &:after {
-        content: '\2026';
-        color: if($theme == $dark-theme, $dark-app-entry-ellipsis-color, $lt-app-entry-ellipsis-color);
+      .ellipsis {
+        &:after {
+          content: '\2026';
+          color: if($theme == $dark-theme, $dark-app-entry-ellipsis-color, $lt-app-entry-ellipsis-color);
+        }
       }
     }
 

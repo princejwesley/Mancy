@@ -36,6 +36,14 @@ const setREPL = (name) => {
   return langREPL;
 }
 
+const getNamespace = () => {
+  const langREPL = getREPL();
+  if(typeof langREPL.getNamespace === 'function') {
+    return langREPL.getNamespace();
+  }
+  return '';
+}
+
 const aliases = {
   js: 'js', json: 'js', node: 'js',
   coffee: 'coffee', litcoffee: 'coffee', 'coffee.md': 'coffee',
@@ -57,6 +65,7 @@ export default {
   getREPL,
   setREPL,
   getREPLProvider,
+  getNamespace,
   getLangName: (ext) => aliases[ext],
   getLangQualifiedName: (ext) => qualifiedNames[ext],
   setLookupPath: (paths) => langs.forEach(l => l.setLookupPath && l.setLookupPath(paths))

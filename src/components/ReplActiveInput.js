@@ -319,7 +319,7 @@ export default class ReplActiveInput extends React.Component {
     let addReplEntry = (output, formatted = false) => {
       this.element.className = 'repl-active-input';
       formattedOutput = formatted ? output : ReplOutput.some(output).highlight().formattedOutput;
-      const entry = _.extend({}, action, { formattedOutput });
+      const entry = _.extend({}, action, { formattedOutput, ns:  ReplLanguages.getNamespace()});
       if(this.isREPLMode() || this.history.idx === -1) {
         ReplActions.addEntry(entry);
       } else {
