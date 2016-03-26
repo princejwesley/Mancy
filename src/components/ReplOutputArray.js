@@ -36,7 +36,8 @@ export default class ReplOutputArray extends React.Component {
   }
 
   getKeysButLength() {
-    let keys = Object.getOwnPropertyNames(this.props.array);
+    // cljs won't return length property since I enumerate the original container
+    let keys = Object.getOwnPropertyNames(this.props.array).filter( x => x !== 'length');
     return keys.slice(0, keys.length);
   }
 
