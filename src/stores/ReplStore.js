@@ -68,6 +68,7 @@ const ReplStore = Reflux.createStore({
     this.trigger();
   },
   onReloadPromptByIndex(idx, reverse = false) {
+    idx = cache.persistentHistorySize + idx;
     let length = cache.history.length;
     let pos = reverse ? length - idx : idx;
     if(pos >= 0 && pos < length) {
