@@ -183,5 +183,7 @@ let builtIns = () => {
   return systemVariables;
 };
 
-const alphaNames = Object.getOwnPropertyNames(createContext());
+// hiding cljs objects exposed
+const alphaNames = Object.getOwnPropertyNames(createContext())
+  .concat(['goog', 'cljs']);
 export default { createContext, getContext, builtIns, hookContext, alphaNames };
