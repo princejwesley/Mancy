@@ -39,8 +39,8 @@ const addons = [
 	'fold/foldcode', 'fold/foldgutter',
 	'fold/brace-fold', 'fold/comment-fold',
 	'fold/indent-fold', 'fold/markdown-fold',
-	'comment/comment', 'comment/continueComment',
-  'scroll/annotateScrollbar'
+	'comment/comment', 'comment/continuecomment',
+  'scroll/annotatescrollbar'
 ]
 addons.forEach( addon => require(`../node_modules/codemirror/addon/${addon}.js`))
 
