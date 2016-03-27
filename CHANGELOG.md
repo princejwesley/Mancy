@@ -1,3 +1,17 @@
+## <img src="icons/mancy.png" width="25">&nbsp;[v3.0.0](http://mancy-re.pl)  (Mar 28, 2016)
+
+- Code Mirror Integration
+- ClojureScript Support
+- History Navigation & Auto Complete Support
+- Key Map Support using Code Mirror keymap
+- Parinfer mode Support for ClojureScript
+- Enable/Disable Compiler Warnings for TypeScript & ClojureScript.
+- Displaying active Process handle [count](https://github.com/princejwesley/Mancy/commit/ea5e08022ab087eb1d5847f6d1d2c9c6502d88cb#commitcomment-16378756)
+- More command line [options](https://github.com/princejwesley/Mancy/issues/105#issuecomment-191876902)
+- Upgrade electron -> 0.37.x (Chrome 49)
+
+and bug fixes.
+
 ## <img src="icons/mancy.png" width="25">&nbsp;[v2.2.2](http://mancy-re.pl)  (Feb 27, 2016)
 
 - Upgrade typescript -> 1.8.2 & electron -> 0.36.9
