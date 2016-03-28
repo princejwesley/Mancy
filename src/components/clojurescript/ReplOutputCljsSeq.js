@@ -80,6 +80,7 @@ export default class ReplOutputCljsSeq extends React.Component {
               let idx = parseInt(key, 10);
               return (
                 <div className='array-entry' key={idx} title={type + ": " + (this.props.start + idx)}>
+                  { len === -1 ? <span className='array-idx'> {this.props.start + idx}: </span> : null}
                   { value && value._isReactElement ? {value} : ReplOutput.clojure(value).view() }
                 </div>
               )
