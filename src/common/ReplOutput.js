@@ -12,6 +12,7 @@ import ReplOutputArray from '../components/ReplOutputArray';
 import ReplOutputObject from '../components/ReplOutputObject';
 import ReplOutputInteger from '../components/ReplOutputInteger';
 import ReplOutputPromise from '../components/ReplOutputPromise';
+import ReplOutputReactElement from '../components/ReplOutputReactElement';
 import ReplOutputRegex from '../components/ReplOutputRegex';
 import ReplOutputString from '../components/ReplOutputString';
 import ReplOutputColor from '../components/ReplOutputColor';
@@ -37,10 +38,6 @@ let makeMirror = (o) => Debug.MakeMirror(o, true);
 let BabelCoreJS = require("babel-runtime/core-js");
 
 let getObjectLabels = (o) => {
-  if(o._isReactElement) {
-    return ' ReactElement {}';
-  }
-
   if(o instanceof Error) {
     return ` ${o.name} {}`;
   }
@@ -121,6 +118,10 @@ let ReplOutputType = {
     return <ReplOutputDate date={d} />
   },
   object: (o) => {
+
+    if(o._isReactElement) {
+        return <ReplOutputReactElement element={o} />;
+    }
 
     if(_.isError(o)) {
       let [first, ...rest] = o.stack.split(EOL);
