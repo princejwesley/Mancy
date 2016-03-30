@@ -721,9 +721,8 @@ export default class ReplActiveInput extends React.Component {
     idx = idx + direction;
 
     let navigateHistory = (up, cmd, pos) => {
-      let code = cmd.trim();
       let cursor = !up ? {line:0} : null;
-      this.reloadPrompt(code, cursor, pos,(pos === -1 ? '' : this.history.staged));
+      this.reloadPrompt(cmd, cursor, pos,(pos === -1 ? '' : this.history.staged));
     };
 
     (len <= idx || idx < 0)
