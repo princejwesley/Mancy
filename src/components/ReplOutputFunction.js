@@ -82,7 +82,7 @@ export default class ReplOutputFunction extends React.Component {
                       }
                       {
                         value && value._isReactElement
-                          ? { value }
+                          ? value
                           : ReplOutput.transformObject(value)
                       }
                     </div>
