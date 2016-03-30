@@ -2,6 +2,8 @@ import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
 import ReplCommon from '../common/ReplCommon';
 import {EOL} from 'os';
+import ReplOutputHTML from '../components/ReplOutputHTML';
+import React from 'react';
 
 // Not very generic but sufficient to handle our usecase
 let ReplDOM = {
@@ -155,6 +157,19 @@ let ReplDOM = {
       [topBottom]: y + 'px',
       [leftRight]: x + 'px'
     };
+  },
+  reactToHTMLView: (o) => {
+    if(!o || !o._isReactElement || !o.type ) { return null; }
+    let body = document.createElement('body');
+    try {
+      React.render(o, body);
+    } catch(e) {
+      return null;
+    }
+    return <ReplOutputHTML body={body}/>;
+  },
+  renderHTMLView: (o) => {
+    return ReplDOM.reactToHTMLView(o);
   }
 }
 
