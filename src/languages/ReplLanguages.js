@@ -9,6 +9,8 @@ const langs = {
   cljs,
 };
 
+const repls = Object.keys(langs).map(l => langs[l].getREPL());
+
 let repl = langs.js;
 repl.setREPL();
 
@@ -68,5 +70,5 @@ export default {
   getNamespace,
   getLangName: (ext) => aliases[ext],
   getLangQualifiedName: (ext) => qualifiedNames[ext],
-  setLookupPath: (paths) => langs.forEach(l => l.setLookupPath && l.setLookupPath(paths))
+  setLookupPath: (paths) => repls.forEach(repl => repl.setLookupPath && repl.setLookupPath(paths))
 };
