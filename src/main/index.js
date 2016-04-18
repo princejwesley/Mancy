@@ -24,7 +24,7 @@ Allowed values:
                 .alias('j', 'js-flags')
                 .nargs('j', 1)
                 .describe('j', `js flags for nodejs.`)
-                .example('$0 --js-flags="--harmony_destructuring"', 'Enable destructuring harmony falg')
+                .example('$0 --js-flags="--harmony_destructuring"', 'Enable destructuring harmony flag')
                 .alias('l', 'lang')
                 .nargs('l', 1)
                 .describe('l', `Scripting language.
