@@ -69,6 +69,12 @@ const ReplPreferencesStore = Reflux.createStore({
       preferences.asyncWrap = flag;
     });
   },
+  onToggleExecutionTime(flag) {
+    this.updatePreference((preferences) => {
+      preferences.executionTime = flag;
+      ReplActions.reloadPrompt();
+    });
+  },
   toggleShiftEnter(flag) {
     this.updatePreference((preferences) => {
       preferences.toggleShiftEnter = flag;

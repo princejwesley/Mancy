@@ -490,7 +490,7 @@ export default class ReplActiveInput extends React.Component {
         });
       }
     } else {
-      const transpileCallback = (err, output) => {
+      const transpileCallback = (err, output, time) => {
         if(err && this.canRetry(err)) { this.execute(true); }
         else {
           let transformedOutput = transform(err, output);
@@ -502,7 +502,8 @@ export default class ReplActiveInput extends React.Component {
             command: ReplCommon.highlight(text),
             plainCode: text,
             transpiledOutput,
-            js: typeof result === 'string' ? result : "*Unavailable*"
+            js: typeof result === 'string' ? result : "*Unavailable*",
+            time
           });
         }
       };

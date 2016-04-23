@@ -294,15 +294,17 @@ let ReplCommon = {
   isTypedArray: (o) => ReplCommon.isTypedArrayInstance(o) || ReplCommon.isTypedArrayLike(o),
   isUint8Array: (o) => o instanceof Uint8Array || ReplCommon.type(o) === 'Uint8Array',
   runInContext: (js, cb) => {
+    let {timeout} = global.Mancy.preferences;
+    let start = process.hrtime();
     try {
-      let {timeout} = global.Mancy.preferences;
       let script = vm.createScript(js, {
         filename: 'mancy-repl',
         displayErrors: false,
       });
-      cb(null, script.runInContext(ReplContext.getContext(), { displayErrors: false, timeout }));
+      let output = script.runInContext(ReplContext.getContext(), { displayErrors: false, timeout });
+      cb(null, output, process.hrtime(start));
     } catch(e) {
-      cb(e);
+      cb(e, null, process.hrtime(start));
     }
   },
   getTempVarName: () => `temp${++tempCounter}`,

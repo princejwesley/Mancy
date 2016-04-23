@@ -8,6 +8,28 @@ export default class ReplEntryMessage extends React.Component {
     super(props);
   }
 
+  getTimeStr(v, u) {
+    return v ? `${v}${u}` : null;
+  }
+
+  showExecutionTime() {
+    if(!this.props.message.time || !global.Mancy.preferences.executionTime) {
+      return null;
+    }
+
+    let [s, n] = this.props.message.time;
+    let m = parseInt(n / 1e6);
+    let mi = parseInt((n - m * 1e6) / 1e3);
+    n = n % 1e3;
+    let time = [
+      this.getTimeStr(s, 's'), this.getTimeStr(m, 'ms'),
+      this.getTimeStr(mi,'µs'), this.getTimeStr(n, 'ns')
+    ].filter(x => x !== null).join(':');
+
+    let clazz = `fa fa-clock-o execution-time ${s > 10 ? 'red' : (s > 5 ? 'orange' : 'green')}`
+    return <i className={clazz} title={time}></i>
+  }
+
   render() {
     let shortEntry;
     if(this.props.commandCollapse) {
@@ -29,6 +51,7 @@ export default class ReplEntryMessage extends React.Component {
               </div>
         }
         { this.props.message.ns ? <span className='tag' title='Namespace'>{this.props.message.ns}</span> : null }
+        { this.showExecutionTime() }
         </div>
         { this.props.collapse ?
             null :

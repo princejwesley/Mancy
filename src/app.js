@@ -59,6 +59,7 @@ const addNewPreferences = (defaults, preferences) => {
     "npmPaths": [],
     "historySize": ReplConstants.REPL_HISTORY_SIZE,
     "historyAggressive": false,
+    "executionTime": false,
     "typescript": {
       "noImplicitAny": false,
       "ignoreSemanticError" : true,

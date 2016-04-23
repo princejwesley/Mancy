@@ -28,7 +28,7 @@ export default class ReplPreferences extends React.Component {
       'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange', 'onChangeHistorySize',
       'onToggleHistoryAggressive', 'showTypeScriptPreferences', 'onSetTypeScriptOptions',
       'showClojureScriptPreferences', 'showLangPreferences', 'onSetClojureScriptOptions',
-      'onParinferModeChange', 'onParinferPreviewChange',
+      'onParinferModeChange', 'onParinferPreviewChange', 'onToggleExecutionTime'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -102,6 +102,10 @@ export default class ReplPreferences extends React.Component {
 
   onChangeTimeout(e) {
     ReplPreferencesStore.onSetExeTimeout(e.target.value);
+  }
+
+  onToggleExecutionTime(e) {
+    ReplPreferencesStore.onToggleExecutionTime(e.target.checked);
   }
 
   onChangeSuggestionDelay(e) {
@@ -430,6 +434,16 @@ export default class ReplPreferences extends React.Component {
           {
             this.showLangPreferences()
           }
+          <div className='preference' title='Time taken for execution'>
+            <div className='preference-name'>
+              Show Execution Time
+            </div>
+            <div className='preference-value'>
+              <span className='checkbox-group'>
+                <input type="checkbox" name="execution-time" checked={this.state.executionTime} value="" onClick={this.onToggleExecutionTime} />
+              </span>
+            </div>
+          </div>
           <div className='preference' title='(0 for no timeout)'>
             <div className='preference-name'>
               Execution Timeout(ms)
