@@ -60,7 +60,12 @@ export default class Repl extends React.Component {
 
     window.addEventListener('contextmenu', this.onContextMenu, false);
     window.addEventListener('keydown', this.onKeydown, false);
-    window.onfocus = () => ReplActiveInputActions.focus();
+    window.onfocus = () => {
+      if(document.activeElement.tagName !== 'TEXTAREA' &&
+        document.activeElement.contentEditable !== 'true') {
+        ReplActiveInputActions.focus();
+      }
+    }
 
     // hooks
     ReplStreamHook.on('stdout', this.onStdout);
