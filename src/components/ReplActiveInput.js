@@ -80,7 +80,6 @@ export default class ReplActiveInput extends React.Component {
     // retry on error for sloppy mode
     this.retried = false;
     this.setDebouncedComplete();
-    this.id = `prompt-${(Math.random() * Math.pow(10, 9)) | 0}`;
   }
 
   componentDidMount() {
@@ -134,7 +133,7 @@ export default class ReplActiveInput extends React.Component {
       "Shift-Ctrl-Q": this.onUnFoldAll,
     });
 
-    if(this.isREPLMode()) { this.focus(); }
+    this.focus();
 
     let cli = ReplLanguages.getREPL();
     //set desired repl mode
@@ -319,7 +318,7 @@ export default class ReplActiveInput extends React.Component {
     let addReplEntry = (output, formatted = false) => {
       this.element.className = 'repl-active-input';
       formattedOutput = formatted ? output : ReplOutput.some(output).highlight().formattedOutput;
-      const entry = _.extend({}, action, { formattedOutput, ns:  ReplLanguages.getNamespace()});
+      const entry = _.extend({}, action, { formattedOutput, ns:  ReplLanguages.getNamespace(), id: this.props.tag});
       if(this.isREPLMode() || this.history.idx === -1) {
         ReplActions.addEntry(entry);
       } else {
@@ -781,7 +780,7 @@ export default class ReplActiveInput extends React.Component {
 
   render() {
     return (
-      <div className='repl-active-input' id={this.id}>
+      <div className='repl-active-input' id={this.props.tag} key={this.props.tag}>
       </div>
     );
   }

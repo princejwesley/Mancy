@@ -476,13 +476,14 @@ export default class Repl extends React.Component {
   }
 
   render() {
+    let promptKey = this.getPromptKey();
     // force to recreate ReplPrompt
     return (
       <div className="repl-container">
         <div className='repl-container-left'>
           <div className='repl-header' key='header-left'></div>
           <ReplEntries entries={this.state.entries} />
-          <ReplPrompt key={this.getPromptKey()}
+          <ReplPrompt key={promptKey} tag={promptKey}
             history={this.state.history}
             historyIndex={this.state.historyIndex}
             historyStaged={this.state.historyStaged}

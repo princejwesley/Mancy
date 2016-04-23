@@ -51,6 +51,7 @@ const ReplStore = Reflux.createStore({
     const idx = _.findIndex(cache.history, h => h.tag === tag);
     // overwrite history! :(
     if(idx !== -1) { cache.history[idx].plainCode = entry.plainCode }
+    cache.reloadPrompt = false;
     this.trigger();
   },
   onAddEntry(entry) {
