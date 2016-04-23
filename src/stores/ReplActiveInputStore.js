@@ -72,7 +72,9 @@ const ReplActiveInputStore = Reflux.createStore({
     this.trigger({action: 'selectAll'});
   },
   onFocus() {
-    this.trigger({action: 'focus'});
+    if(global.Mancy.session.editor === 'REPL') {
+      this.trigger({action: 'focus'});
+    }
   },
   getStore() {
     return {
