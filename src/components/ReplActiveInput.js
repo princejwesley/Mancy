@@ -306,7 +306,7 @@ export default class ReplActiveInput extends React.Component {
       return;
     }
 
-    if(now && activeSuggestion && activeSuggestion.id === this.id) {
+    if(now && activeSuggestion && activeSuggestion.id === this.props.tag) {
       let {suggestion} = activeSuggestion;
       this.onSelectTabCompletion(suggestion.input, suggestion.expect);
       return;
@@ -410,7 +410,7 @@ export default class ReplActiveInput extends React.Component {
           completeOn: ""
         });
       }
-      ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code, id: this.id});
+      ReplSuggestionActions.addSuggestion({suggestions: suggestions, input: code, id: this.props.tag});
     } else {
       this.removeSuggestion();
     }
@@ -678,7 +678,7 @@ export default class ReplActiveInput extends React.Component {
 
   onKeyTab(cm) {
     let {activeSuggestion} = ReplActiveInputStore.getStore();
-    if(activeSuggestion && activeSuggestion.id === this.id) {
+    if(activeSuggestion && activeSuggestion.id === this.props.tag) {
       let {suggestion} = activeSuggestion;
       this.onSelectTabCompletion(suggestion.input, suggestion.expect);
       return;
