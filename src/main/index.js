@@ -75,6 +75,7 @@ let promptOnClose = false;
 let history = [];
 let historySize = 0;
 let noAccessToHistory = false;
+let appReady = false;
 
 // set application root path as current working directory
 process.chdir(app.getAppPath());
@@ -278,11 +279,12 @@ const processParamHandler = (browser) => {
 };
 
 app.on('ready', (label) => {
+  appReady = true;
   onReady(label !== 'new-window' ? processParamHandler : null);
 });
-app.on('ready-action', onReady);
+app.on('ready-action', () => appReady ? onReady() : null);
 app.on('activate', (event, hasVisibleWindows) => {
-  if(!hasVisibleWindows) {
+  if(!hasVisibleWindows && appReady) {
     onReady();
   }
 });
@@ -337,7 +339,7 @@ ipc.on('application:dock-message-notification', function(event, id) {
 });
 
 function onReady(fun) {
-  let {width, height} = require('screen').getPrimaryDisplay().workAreaSize;
+  let {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
   let options = {
     width: width * 0.75,
     height: height * 0.75,
