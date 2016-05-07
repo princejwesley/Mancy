@@ -58,6 +58,11 @@ Allowed values:
   dark', 'light'
                 `)
                 .example('$0 -t dark', 'Set dark theme')
+                .alias('i', 'import')
+                .alias('i', 'session')
+                .nargs('i', 1)
+                .describe('i', `Import session`)
+                .example('$0 -i session-file', 'Import session-file')
                 .help('h')
                 .alias('h', 'help')
                 .epilog(`Made with ♥︎ by toolitup.com
@@ -271,6 +276,12 @@ const processParamHandler = (browser) => {
     browser.webContents.send('application:sync-session');
   }
 
+  // import session
+  const session = argv.i || argv.import || argv.session;
+  if(session) {
+    browser.webContents.send('application:import-file', session);
+  }
+
   // add path
   const p = argv.p || argv.path;
   if(p) {
@@ -393,7 +404,7 @@ function onReady(fun) {
     }
 
     if(typeof fun === 'function') {
-      fun(mainWindow);
+      setTimeout(() => fun(mainWindow), 200);
     }
   });
 }
