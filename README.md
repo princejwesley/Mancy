@@ -88,6 +88,9 @@ For more detailed documentation, [read here](https://github.com/princejwesley/Ma
 
 [Fork](https://github.com/princejwesley/Mancy/) and run `npm run debug` or `gulp debug` to debug this application.
 
+## <img src="icons/mancy.png" width="25">&nbsp;Notification
+Subscribe [this thread](https://github.com/princejwesley/Mancy/issues/126) for new features and release notification. 
+
 ## <img src="icons/mancy.png" width="25">&nbsp;Ideas & Suggestions
  Find consolidated ideas and suggestions [here](https://github.com/princejwesley/Mancy/wiki/Ideas-&-Suggestions).
 
