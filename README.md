@@ -1,8 +1,10 @@
-# <img src="icons/mancy.png" width="30">&nbsp;Mancy
+# <img src="icons/mancy.png" width="30">&nbsp;Mancy 
 
 A cross platform NodeJS REPL application based on electron and react frameworks.
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/princejwesley/Mancy)
+
+[<kbd>🔊<code>Subscribe</code></kbd>](https://github.com/princejwesley/Mancy/issues/126) 
 
 ## <img src="icons/mancy.png" width="25">&nbsp;[Language Support](http://mancy-re.pl)
 
