@@ -3,8 +3,7 @@
 A cross platform NodeJS REPL application based on electron and react frameworks.
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/princejwesley/Mancy)
-
-[<kbd>🔊<code>Subscribe</code></kbd>](https://github.com/princejwesley/Mancy/issues/126) 
+[![Subscribe](https://img.shields.io/badge/subscribe-%F0%9F%94%8A-f5f5f5.svg?style=flat&maxAge=2592000)](https://github.com/princejwesley/Mancy/issues/126) 
 
 ## <img src="icons/mancy.png" width="25">&nbsp;[Language Support](http://mancy-re.pl)
 
