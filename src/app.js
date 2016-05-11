@@ -5,9 +5,7 @@ import Repl from './components/Repl';
 import ReplConstants from './constants/ReplConstants';
 import ReplFonts from './common/ReplFonts';
 import _ from 'lodash';
-import remote from 'remote';
-import webFrame from 'web-frame';
-import {ipcRenderer} from 'electron';
+import {ipcRenderer, remote, webFrame} from 'electron';
 
 (() => {
   // Temporary fix for node bug : https://github.com/nodejs/node/issues/3158
@@ -110,7 +108,7 @@ const addNewPreferences = (defaults, preferences) => {
   global.Mancy = { preferences: preferences };
   localStorage.setItem('preferences', JSON.stringify(preferences));
 
-  global.Mancy.userData = remote.require('app').getPath('userData');
+  global.Mancy.userData = remote.app.getPath('userData');
   global.Mancy.session = _.clone(preferences);
 })();
 

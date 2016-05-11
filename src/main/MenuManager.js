@@ -1,16 +1,9 @@
-
-import app from 'app';
-import Menu from 'menu';
-import dialog from 'dialog';
-import MenuItem from 'menu-item';
 import _ from 'lodash';
 import EventEmitter from 'events';
 import Config from '../package.json';
 import {join} from 'path';
-import {ipcMain} from 'electron';
-import BrowserWindow from 'browser-window';
+import {Menu, app, MenuItem, dialog, BrowserWindow, shell, ipcMain} from 'electron';
 import {readFileSync} from 'fs';
-import shell from 'shell';
 import GitHubApi from 'github';
 
 let platformMenu = require(`../menus/${process.platform}.json`);

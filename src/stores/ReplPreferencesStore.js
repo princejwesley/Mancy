@@ -6,12 +6,10 @@ import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import ReplFonts from '../common/ReplFonts';
 import Reflux from 'reflux';
 import _ from 'lodash';
-import {ipcRenderer} from 'electron';
-import webFrame from 'web-frame';
+import {ipcRenderer, webFrame, remote} from 'electron';
 import ReplConstants from '../constants/ReplConstants';
 import ReplContext from '../common/ReplContext';
 import ReplCommon from '../common/ReplCommon';
-import remote from 'remote';
 
 let open = false;
 const ReplPreferencesStore = Reflux.createStore({

@@ -1,13 +1,10 @@
-const app = require('app');
-const path = require('path');
 const electron = require('electron');
-const BrowserWindow = electron.BrowserWindow;
+const {app, BrowserWindow, ipcMain, dialog} = electron;
+const path = require('path');
 const {MenuManager} = require('./MenuManager');
 const Config = require('../package.json');
 const _ = require('lodash');
-const ipc = electron.ipcMain;
 const fs = require('fs');
-const dialog = require('dialog');
 const globalShortcut = electron.globalShortcut;
 const {argv} = require('yargs')
                 .usage('Usage: $0 [options]')
@@ -180,10 +177,10 @@ function updateHistorySize(event, size) {
   }
 }
 
-ipc.on('application:history-size', updateHistorySize);
+ipcMain.on('application:history-size', updateHistorySize);
 
-ipc.on('application:history', (event) => event.returnValue = history);
-ipc.on('application:history-append', (event, cmd = '') => {
+ipcMain.on('application:history', (event) => event.returnValue = history);
+ipcMain.on('application:history-append', (event, cmd = '') => {
   if(!cmd) { return; }
   let {id} = BrowserWindow.getFocusedWindow();
   let cache = windowCache[id];
@@ -191,7 +188,7 @@ ipc.on('application:history-append', (event, cmd = '') => {
   cache.history.push(cmd);
 });
 
-ipc.on('application:history-aggressive', (event, flag) => {
+ipcMain.on('application:history-aggressive', (event, flag) => {
   if(!flag) { return; }
   let {id} = BrowserWindow.getFocusedWindow();
   let cache = windowCache[id];
@@ -220,10 +217,10 @@ function saveHistory(event, cmds = []) {
   });
 }
 
-ipc.on('application:history-save', saveHistory);
+ipcMain.on('application:history-save', saveHistory);
 
 
-ipc.on('application:prompt-on-close', (event, flag) => promptOnClose = flag);
+ipcMain.on('application:prompt-on-close', (event, flag) => promptOnClose = flag);
 
 const langs =  {
   'js' : 'js', 'javascript' : 'js', 'babel': 'js',
@@ -300,19 +297,19 @@ app.on('activate', (event, hasVisibleWindows) => {
   }
 });
 
-ipc.on('application:global-context-names', (event, options) => {
+ipcMain.on('application:global-context-names', (event, options) => {
   event.returnValue = globalNames;
 });
 
-ipc.on('application:open-sync-resource', (event, options) => {
+ipcMain.on('application:open-sync-resource', (event, options) => {
   event.returnValue = dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), options) || [];
 });
 
-ipc.on('application:message-box', function(event, options) {
+ipcMain.on('application:message-box', function(event, options) {
   dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
 });
 
-ipc.on('application:download', function(event, buffer) {
+ipcMain.on('application:download', function(event, buffer) {
   let filename = dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), {
     title: 'Download to File…',
     filters: [
@@ -341,7 +338,7 @@ ipc.on('application:download', function(event, buffer) {
   }
 });
 
-ipc.on('application:dock-message-notification', function(event, id) {
+ipcMain.on('application:dock-message-notification', function(event, id) {
   dockNotificationCache[id] = dockNotificationCache[id] + 1;
   if (process.platform === 'darwin') {
     app.dock.setBadge(`${dockNotificationCache[id]}`);
@@ -362,7 +359,8 @@ function onReady(fun) {
       plugins: true,
       experimentalFeatures: true,
       experimentalCanvasFeatures: true,
-      webgl: true
+      webgl: true,
+      scrollBounce: true
 		},
     show: false,
   }

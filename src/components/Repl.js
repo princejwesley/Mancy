@@ -12,10 +12,9 @@ import ReplConsoleActions from '../actions/ReplConsoleActions';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import Reflux from 'reflux';
-import {ipcRenderer} from 'electron';
+import {ipcRenderer, remote} from 'electron';
 import {writeFile, readFile} from 'fs';
 import {EOL} from 'os';
-import remote from 'remote';
 import ReplStreamHook from '../common/ReplStreamHook';
 import ReplConsoleHook from '../common/ReplConsoleHook';
 import ReplConsole from './ReplConsole';
@@ -186,7 +185,7 @@ export default class Repl extends React.Component {
   }
 
   setupContextMenu() {
-    const Menu = remote.require('menu');
+    const Menu = remote.Menu;
     let contextMenu = _.cloneDeep(ContextMenu);
     const actionTemplates = [
       {

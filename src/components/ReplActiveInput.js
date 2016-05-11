@@ -3,7 +3,6 @@ import _ from 'lodash';
 import util from 'util';
 import ReplContext from '../common/ReplContext';
 import {EOL} from 'os';
-import shell from 'shell';
 import ReplSuggestionActions from '../actions/ReplSuggestionActions';
 import ReplStatusBarActions from '../actions/ReplStatusBarActions';
 import ReplActions from '../actions/ReplActions';

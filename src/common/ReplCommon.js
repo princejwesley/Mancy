@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import ReplConstants from '../constants/ReplConstants';
-import shell from 'shell';
+import {shell} from 'electron';
 import fs from 'fs';
 import vm from 'vm';
 import {resolve} from 'path';

@@ -4,7 +4,6 @@ import ReplEntryMessage from './ReplEntryMessage';
 import ReplEntryStatus from './ReplEntryStatus';
 import ReplActions from '../actions/ReplActions';
 import ReplNotebook from './ReplNotebook';
-import clipboard from 'clipboard';
 import _ from 'lodash';
 
 export default class ReplEntry extends React.Component {

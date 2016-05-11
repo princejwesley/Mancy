@@ -1,5 +1,5 @@
 import React from 'react';
-import shell from 'shell';
+import {shell} from 'electron';
 import ReplPreferencesActions from '../actions/ReplPreferencesActions';
 import ReplStatusBarStore from '../stores/ReplStatusBarStore';
 import ReplCommon from '../common/ReplCommon';

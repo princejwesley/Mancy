@@ -1,5 +1,5 @@
 import React from 'react';
-import shell from 'shell';
+import {shell} from 'electron';
 import ReplCommon from '../common/ReplCommon';
 import url from 'url';
 import _ from 'lodash';
