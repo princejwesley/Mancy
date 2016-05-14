@@ -111,36 +111,13 @@ function onFocusWindow(e) {
   e.sender.webContents.send('application:focus');
 }
 
-function initHistory() {
-  fs.readFile(HISTORY_FILE, (err, data) => {
-    if(err) {
-      if(err.code === 'ENOENT') {
-        history = [];
-        fs.writeFile(HISTORY_FILE, "[]", (err) => {
-          if(err) {
-            noAccessToHistory = true;
-            console.error(`Failed to write history file ${err.message}`);
-          }
-        });
-      } else { console.error(`Failed to read history file ${err.message}`); }
-    } else {
-      try {
-        history = JSON.parse(data.toString());
-      } catch(e) {
-        // corrupted history
-        history = []
-      }
-    }
-  });
-}
-
-process.on('uncaughtException', (err) => {
+const uncaughtExceptionHandler = (err, title = 'Application Error', type = 'error') => {
   const window = BrowserWindow.getFocusedWindow();
   if(window || BrowserWindow.getAllWindows().length) {
     let action = dialog.showMessageBox(window, {
-      title: 'Application Error',
+      title: title,
       buttons: ['Copy & Report', 'Ignore'],
-      type: 'question',
+      type: type,
       message: err.message,
       detail: err.stack,
     });
@@ -168,7 +145,46 @@ ${err.message}
     dialog.showErrorBox('Application Error',`${err.stack}
 Please report it to https://github.com/princejwesley/Mancy/issues/new`);
   }
-});
+};
+
+function onUnresponsiveWindow(e) {
+  const window = BrowserWindow.getFocusedWindow();
+  dialog.showMessageBox(window, {
+    title: 'Application is not responding',
+    buttons: ['Dismiss'],
+    type: 'warning',
+    message: 'Application is not responding…',
+  });
+}
+
+function onCrashedWindow(e) {
+  uncaughtExceptionHandler(e, 'Mancy Window is crashed');
+}
+
+function initHistory() {
+  fs.readFile(HISTORY_FILE, (err, data) => {
+    if(err) {
+      if(err.code === 'ENOENT') {
+        history = [];
+        fs.writeFile(HISTORY_FILE, "[]", (err) => {
+          if(err) {
+            noAccessToHistory = true;
+            console.error(`Failed to write history file ${err.message}`);
+          }
+        });
+      } else { console.error(`Failed to read history file ${err.message}`); }
+    } else {
+      try {
+        history = JSON.parse(data.toString());
+      } catch(e) {
+        // corrupted history
+        history = []
+      }
+    }
+  });
+}
+
+process.on('uncaughtException', uncaughtExceptionHandler);
 
 app.on('window-all-closed', () => {
   promptOnClose = false;
@@ -416,6 +432,7 @@ function onReady(fun) {
   mainWindow.on('closed',() => windowCache[id] = menuManagerCache[id] = null);
   mainWindow.on('close', onCloseWindow);
   mainWindow.on('focus', onFocusWindow);
+  mainWindow.on('unresponsive', onUnresponsiveWindow)
   mainWindow.flashFrame(true);
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -441,6 +458,7 @@ function onReady(fun) {
       setTimeout(() => fun(mainWindow), 200);
     }
   });
+  mainWindow.webContents.on('crashed', onCrashedWindow);  
 }
 
 initHistory();
