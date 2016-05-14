@@ -1,5 +1,5 @@
 const electron = require('electron');
-const {app, BrowserWindow, ipcMain, dialog} = electron;
+const {app, BrowserWindow, ipcMain, dialog, shell, clipboard} = electron;
 const path = require('path');
 const {MenuManager} = require('./MenuManager');
 const Config = require('../package.json');
@@ -133,6 +133,42 @@ function initHistory() {
     }
   });
 }
+
+process.on('uncaughtException', (err) => {
+  const window = BrowserWindow.getFocusedWindow();
+  if(window || BrowserWindow.getAllWindows().length) {
+    let action = dialog.showMessageBox(window, {
+      title: 'Application Error',
+      buttons: ['Copy & Report', 'Ignore'],
+      type: 'question',
+      message: err.message,
+      detail: err.stack,
+    });
+    // Report it
+    if(action === 0) {
+      clipboard.writeText(`
+#### Application Error
+##### Message
+${err.message}
+##### Stack Trace
+`+ "```js\n" + err.stack + "\n```\n" + `
+#### System Details
+ | …
+------------ | -------------
+**Platform** | ${process.platform}
+**Arch** | ${process.arch}
+**Electron Version** | ${process.versions.electron}
+**Mancy Version** | ${Config.version}
+
+`
+      );
+      shell.openExternal(Config.bugs.url);
+    }
+  } else {
+    dialog.showErrorBox('Application Error',`${err.stack}
+Please report it to https://github.com/princejwesley/Mancy/issues/new`);
+  }
+});
 
 app.on('window-all-closed', () => {
   promptOnClose = false;
