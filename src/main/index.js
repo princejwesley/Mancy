@@ -415,6 +415,7 @@ function onReady(fun) {
       scrollBounce: true
 		},
     show: false,
+    backgroundColor: '#F5F5F5'
   }
   if(process.platform === 'linux') {
     options.icon = path.resolve(__dirname, '..', 'icons', 'mancy.png');
