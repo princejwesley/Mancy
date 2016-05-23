@@ -425,7 +425,6 @@ function onReady(fun) {
   let menuManager = menuManagerCache[id] = new MenuManager(argv);
 
   mainWindow.loadURL(`file://${__dirname}/../index.html`);
-  mainWindow.flashFrame(true);
   mainWindow.setTitle(`${_.capitalize(Config.name)} - REPL(${windowCount})`);
   windowCount += 1;
 
@@ -458,7 +457,7 @@ function onReady(fun) {
       setTimeout(() => fun(mainWindow), 200);
     }
   });
-  mainWindow.webContents.on('crashed', onCrashedWindow);  
+  mainWindow.webContents.on('crashed', onCrashedWindow);
 }
 
 initHistory();
