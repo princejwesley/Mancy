@@ -117,6 +117,7 @@ export class MenuManager extends EventEmitter {
       'window:close': this.closeWindow,
       'window:reload': this.windowReload,
       'window:toggle-full-screen': this.toggleFullScreen,
+      'window:toggle-always-on-top': this.toggleAlwaysOnTop,
       'application:minimize': this.minimizeWindow,
       'application:maximize': this.maximizeWindow,
       'application:open-license': this.showLicense,
@@ -222,6 +223,11 @@ export class MenuManager extends EventEmitter {
   toggleFullScreen(item, focusedWindow) {
     let isFullScreen = focusedWindow.isFullScreen();
     focusedWindow.setFullScreen(!isFullScreen);
+  }
+
+  toggleAlwaysOnTop(item, focusedWindow) {
+    let flag = focusedWindow.isAlwaysOnTop();
+    focusedWindow.setAlwaysOnTop(!flag);
   }
 
   quitApplication() {

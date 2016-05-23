@@ -55,6 +55,7 @@
     "submenu": [
       { "label": "Reload Mancy", "accelerator": "Shift+CmdOrCtrl+R", "command": "window:reload" },
       { "label": "Toggle Full Screen", "command": "window:toggle-full-screen" },
+      { "label": "Toggle Always On Top", "command": "window:toggle-always-on-top" },
       { "type": "separator" },
       {
         "label": "Theme",
