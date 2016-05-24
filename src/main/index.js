@@ -143,7 +143,7 @@ ${err.message}
     }
   } else {
     dialog.showErrorBox('Application Error',`${err.stack}
-Please report it to https://github.com/princejwesley/Mancy/issues/new`);
+Please report it to ${Config.bugs.url}`);
   }
 };
 
