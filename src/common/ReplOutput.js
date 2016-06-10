@@ -161,15 +161,9 @@ let ReplOutputType = {
     }
 
     if(o instanceof Promise || o.then) {
-      if(o instanceof BabelCoreJS.default.Promise) {
-        let obj = o[Object.getOwnPropertyNames(o)[0]];
-        let status = obj.s === 0 ? 'pending' : (obj.s === 1 ? 'resolved' : 'rejected');
-        return ReplOutputType['promise'](status, obj.v, o);
-      } else {
-        let m = makeMirror(o);
-        if(m.isPromise()) {
-          return ReplOutputType['promise'](m.status(), m.promiseValue().value(), o);
-        }
+      let m = makeMirror(o);
+      if(m.isPromise()) {
+        return ReplOutputType['promise'](m.status(), m.promiseValue().value(), o);
       }
     }
 

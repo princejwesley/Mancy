@@ -56,7 +56,7 @@ export default class ReplOutputPromise extends React.Component {
   }
 
   render() {
-    let label = 'Promise {}';
+    let label = '<span class="cm-variable"> Promise</span> {}';
 
     return (
       <span className='repl-entry-message-output-object-folds promise-object'>
