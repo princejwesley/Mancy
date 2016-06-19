@@ -179,7 +179,7 @@ export class MenuManager extends EventEmitter {
   openDirectoryAction(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let path = dialog.showOpenDialog(focusedWindow, {
-      title: item,
+      title: item.label,
       properties: [
         'openDirectory'
       ]
@@ -193,7 +193,7 @@ export class MenuManager extends EventEmitter {
   saveFileAction(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let filename = dialog.showSaveDialog(focusedWindow, {
-      title: item,
+      title: item.label,
       filters: [{ name: 'All Files', extensions: ['*'] }]
     });
     if(filename) {
@@ -204,7 +204,7 @@ export class MenuManager extends EventEmitter {
   openFileAction(item, focusedWindow) {
     if(!focusedWindow) { return; }
     let filename = dialog.showOpenDialog(focusedWindow, {
-      title: item,
+      title: item.label,
       filters: [{ name: 'All Files', extensions: ['*'] }],
       properties: [
         'openFile'

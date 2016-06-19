@@ -50,6 +50,7 @@ export default class ReplPreferences extends React.Component {
     let result = ipcRenderer.sendSync('application:open-sync-resource', {
       filters: [{ name: 'Scripts', extensions }],
       title: 'Select startup script',
+      buttonLabel: 'Load',
       properties: ['openFile']
     });
     if(result.length) {
@@ -165,6 +166,7 @@ export default class ReplPreferences extends React.Component {
   addNPMPath(e) {
     let result = ipcRenderer.sendSync('application:open-sync-resource', {
       title: 'Add node modules path',
+      buttonLabel: 'Add',
       properties: ['openDirectory']
     });
     if(result.length) {
