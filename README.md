@@ -1,9 +1,9 @@
-# <img src="icons/mancy.png" width="30">&nbsp;Mancy 
+# <img src="icons/mancy.png" width="30">&nbsp;Mancy
 
 A cross platform NodeJS REPL application based on electron and react frameworks.
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/princejwesley/Mancy)
-[![Subscribe](https://img.shields.io/badge/subscribe-%F0%9F%94%8A-f5f5f5.svg?style=flat&maxAge=2592000)](https://github.com/princejwesley/Mancy/issues/126) 
+[![Subscribe](https://img.shields.io/badge/subscribe-%F0%9F%94%8A-f5f5f5.svg?style=flat&maxAge=2592000)](https://github.com/princejwesley/Mancy/issues/126)
 
 ## <img src="icons/mancy.png" width="25">&nbsp;[Language Support](http://mancy-re.pl)
 
@@ -82,7 +82,7 @@ For more detailed documentation, [read here](https://github.com/princejwesley/Ma
 -  `npm install -g mancy` (or)
 - Download from [latest release](https://github.com/princejwesley/Mancy/releases/latest) (or)
 - [Clone](https://github.com/princejwesley/Mancy/) and run `npm install` & `npm run package`. Executable file will be created inside `./dist/` directory.
-- To build native modules, make sure `node` >=4.x and `npm` >= 2.x installed.
+- To build native modules, make sure `node` >=4.x and `npm` >= 3.x installed.
 - Refer [node-gyp](https://github.com/nodejs/node-gyp#installation) for native module build failure.
 
 ## <img src="icons/mancy.png" width="25">&nbsp;Developers
@@ -90,7 +90,7 @@ For more detailed documentation, [read here](https://github.com/princejwesley/Ma
 [Fork](https://github.com/princejwesley/Mancy/) and run `npm run debug` or `gulp debug` to debug this application.
 
 ## <img src="icons/mancy.png" width="25">&nbsp;Notification
-Subscribe [this thread](https://github.com/princejwesley/Mancy/issues/126) for new features and release notification. 
+Subscribe [this thread](https://github.com/princejwesley/Mancy/issues/126) for new features and release notification.
 
 ## <img src="icons/mancy.png" width="25">&nbsp;Ideas & Suggestions
  Find consolidated ideas and suggestions [here](https://github.com/princejwesley/Mancy/wiki/Ideas-&-Suggestions).
