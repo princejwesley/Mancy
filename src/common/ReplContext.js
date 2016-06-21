@@ -115,12 +115,13 @@ let createContext = () => {
     context.process.env.PATH += ':/usr/local/bin';
   }
 
-  let {ipcRenderer} = require('electron');
-  const globalNames = ipcRenderer.sendSync('application:global-context-names');
-
-  globalNames.forEach(n => {
-    if(!context[n]) { context[n] = global[n]; }
-  })
+  // #136
+  // let {ipcRenderer} = require('electron');
+  // const globalNames = ipcRenderer.sendSync('application:global-context-names');
+  //
+  // globalNames.forEach(n => {
+  //   if(!context[n]) { context[n] = global[n]; }
+  // })
 
   // TODO: revisit
   // commented because of #101 issue
