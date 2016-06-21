@@ -377,11 +377,16 @@ export default class ReplActiveInput extends React.Component {
     }
   }
 
+  fixAutoComplete(completeOn) {
+    return ReplContext.missingBuiltIns().filter(g => g.startsWith(completeOn));
+  }
+
   autoComplete(__, completion, kinds) {
     let completeEntry = (suggestions, text) => {
       return suggestions.length != 1 || !text.endsWith(suggestions[0].text);
     };
     let [list, completeOn] = completion;
+    list = list.concat(this.fixAutoComplete(completeOn))
     let suggestions = _.chain(_.zip(ReplCommon.sortTabCompletion(ReplLanguages.getREPL().context, list, completeOn), kinds))
       .filter((zipped) => {
         return zipped[0] && zipped[0].length !== 0;

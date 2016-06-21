@@ -12,6 +12,7 @@ let execSync = require('child_process').execSync;
 let cxt = null;
 let systemVariables = [];
 let npmExe = resolve(__dirname, 'node_modules', '.bin', 'npm');
+let missingGlobals = [];
 
 let getPreferences = () => global.Mancy.preferences;
 let noop = () => {};
@@ -115,13 +116,12 @@ let createContext = () => {
     context.process.env.PATH += ':/usr/local/bin';
   }
 
-  // #136
-  // let {ipcRenderer} = require('electron');
-  // const globalNames = ipcRenderer.sendSync('application:global-context-names');
-  //
-  // globalNames.forEach(n => {
-  //   if(!context[n]) { context[n] = global[n]; }
-  // })
+  // Auto complete issue because when useGlobal is set to false
+  let {ipcRenderer} = require('electron');
+  const globalNames = ipcRenderer.sendSync('application:global-context-names');
+  missingGlobals = globalNames.filter(n => !context[n]);
+
+  systemVariables = systemVariables.concat(missingGlobals);
 
   // TODO: revisit
   // commented because of #101 issue
@@ -184,7 +184,12 @@ let builtIns = () => {
   return systemVariables;
 };
 
+let missingBuiltIns = () => {
+  return missingGlobals;
+}
+
 // hiding cljs objects exposed
 const alphaNames = Object.getOwnPropertyNames(createContext())
   .concat(['goog', 'cljs']);
-export default { createContext, getContext, builtIns, hookContext, alphaNames };
+export default { createContext, getContext, builtIns, hookContext, alphaNames,
+  missingBuiltIns };
