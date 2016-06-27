@@ -79,9 +79,6 @@ let historySize = 0;
 let noAccessToHistory = false;
 let appReady = false;
 
-// set application root path as current working directory
-process.chdir(app.getAppPath());
-
 app.commandLine.appendSwitch('js-flags', argv.jsFlags || argv.j);
 
 function onCloseWindow(e, title, detail) {

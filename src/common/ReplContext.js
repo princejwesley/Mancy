@@ -173,6 +173,15 @@ let createContext = () => {
     }
   };
 
+  const _findPath = module._findPath;
+  const relativeRegex = /^\./;
+  const isRelativePath = p => relativeRegex.test(p);
+  module._findPath = (request, paths, isMain) => {
+    return _findPath(request, paths, isMain) ||
+      (isRelativePath(request) &&
+        request._findPath(request, [process.cwd()].concat(module.paths), isMain));
+  };
+
   return (cxt = context);
 };
 
