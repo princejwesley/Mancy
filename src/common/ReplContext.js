@@ -7,11 +7,10 @@ import {dirname, resolve} from 'path';
 import timers from 'timers';
 import module from 'module';
 import util from 'util';
-
+const remote = require('electron').remote;
 let execSync = require('child_process').execSync;
 let cxt = null;
 let systemVariables = [];
-let npmExe = resolve(__dirname, 'node_modules', '.bin', 'npm');
 let missingGlobals = [];
 
 let getPreferences = () => global.Mancy.preferences;
@@ -88,6 +87,7 @@ let createContext = () => {
           { cwd: `${path}`, stdio:[], timeout: global.Mancy.preferences.timeout });
         return _load(request, parent, isMain);
       } catch(ex) {
+        e.message = `${e.message} + (${ex.message.split('\n')[0]})`;
         throw e;
       }
     }
