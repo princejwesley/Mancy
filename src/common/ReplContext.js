@@ -179,7 +179,7 @@ let createContext = () => {
   module._findPath = (request, paths, isMain) => {
     return _findPath(request, paths, isMain) ||
       (isRelativePath(request) &&
-        request._findPath(request, [process.cwd()].concat(module.paths), isMain));
+        module._findPath(request, [process.cwd()].concat(module.paths), isMain));
   };
 
   return (cxt = context);
