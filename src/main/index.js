@@ -210,8 +210,10 @@ app.on('browser-window-blur', (event, window) => window.$focus = false);
 app.on('browser-window-focus', (event, window) => {
   window.$focus = true;
   dockNotificationCache[window.id] = 0;
-  if (process.platform === 'darwin') {
-    app.dock.setBadge('');
+  if (process.platform === 'darwin' ||
+      (process.platform === 'linux' &&
+        app.isUnityRunning())) {
+    app.setBadgeCount(0);
   }
 });
 
@@ -389,8 +391,12 @@ ipcMain.on('application:download', function(event, buffer) {
 
 ipcMain.on('application:dock-message-notification', function(event, id) {
   dockNotificationCache[id] = dockNotificationCache[id] + 1;
+  if (process.platform === 'darwin' ||
+      (process.platform === 'linux' &&
+        app.isUnityRunning())) {
+    app.setBadgeCount(dockNotificationCache[id]);
+  }
   if (process.platform === 'darwin') {
-    app.dock.setBadge(`${dockNotificationCache[id]}`);
     app.dock.bounce();
   }
 });

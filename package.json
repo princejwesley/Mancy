@@ -44,7 +44,7 @@
     "del": "^2.0.2",
     "devtron": "^1.0.0",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "^1.1.0",
+    "electron-prebuilt": "^1.2.6",
     "electron-rebuild": "https://github.com/princejwesley/electron-rebuild.git",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",

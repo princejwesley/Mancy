@@ -464,7 +464,7 @@ export default class Repl extends React.Component {
 
   onConsoleChange(type) {
     let currentWindow = remote.getCurrentWindow();
-    if(!currentWindow.isFocused() && process.platform === 'darwin') {
+    if(!currentWindow.isFocused()) {
       ipcRenderer.send('application:dock-message-notification', currentWindow.id);
     }
     if(this.state.showConsole) { return; }
