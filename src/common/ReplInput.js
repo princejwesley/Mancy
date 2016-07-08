@@ -4,6 +4,7 @@ import ReplCommon from './ReplCommon';
 import ReplOutput from '../common/ReplOutput';
 let babel = require('babel-core');
 
+const functionMatcher = /^\s*\bfunction\s+(..*?)\(/;
 const awaitMatcher = /^(?:\s*(?:(?:let|var|const)\s)?\s*([^=]+)=\s*|^\s*)(await\s.*)/;
 const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
 const importMatcher = /\bimport\s+(?:(?:{(.+?)})|(.+?))\s+from\s+(['"])(.+?)\3/g;
@@ -11,6 +12,9 @@ const bindAsMatcher = /(.*)\s+as\s+(.*)/;
 const asDefaultMatcher = /(?:\*|default)\s+as/;
 const USE_STRICT_LENGTH = "'user strict;'".length;
 
+
+let funTransformer = (source, find, replace) =>
+  `var ${replace} = function ${replace}(${source.substring(find.length)}`;
 let asyncWrapper = (code, binder) => {
   let assign = binder ? `root.${binder} = result;` : '';
   return `(async function() { let result = (${code}); ${assign} return result; }())`;
@@ -48,9 +52,13 @@ let cook = (plain) => {
   let output = plain, force = false;
 
   if(global.Mancy.session.lang === 'js') {
+    let funMatch = output.match(functionMatcher);
+    if(funMatch) {
+      output = `${funTransformer(output, funMatch[0], funMatch[1])}`;
+    }
     if(global.Mancy.preferences.asyncWrap) {
       // bare await
-      let match = plain.match(awaitMatcher);
+      let match = output.match(awaitMatcher);
       if(match) {
         output = `${asyncWrapper(match[2], match[1])}`;
         force = true;
