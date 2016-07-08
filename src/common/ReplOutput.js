@@ -123,8 +123,15 @@ let ReplOutputType = {
   object: (o) => {
 
     if(_.isError(o)) {
-      let [first, ...rest] = o.stack.split(EOL);
-      return <ReplEntryOutputError message={first} trace={rest}></ReplEntryOutputError>;
+      let errorLine, errorFile, errorPosition, first, rest, syntaxError;
+      if (o instanceof SyntaxError && !o.stack.match(/^SyntaxError:/)) {
+        [errorFile, errorLine, errorPosition, first, ...rest] = o.stack.split(EOL);
+        syntaxError = {error:errorLine, caret: errorPosition, file: errorFile};
+      } else {
+        [first, ...rest] = o.stack.split(EOL);
+      }
+      return (<ReplEntryOutputError message={first} trace={rest} syntaxError={syntaxError}>
+      </ReplEntryOutputError>);
     }
 
     if(Array.isArray(o)){

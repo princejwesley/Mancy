@@ -299,9 +299,9 @@ let ReplCommon = {
     try {
       let script = vm.createScript(js, {
         filename: 'mancy-repl',
-        displayErrors: false,
+        displayErrors: true,
       });
-      let output = script.runInContext(ReplContext.getContext(), { displayErrors: false, timeout });
+      let output = script.runInContext(ReplContext.getContext(), { displayErrors: true, timeout });
       cb(null, output, process.hrtime(start));
     } catch(e) {
       cb(e, null, process.hrtime(start));

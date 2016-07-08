@@ -16,7 +16,27 @@ export default class ReplEntryOutputError extends React.Component {
     this.onToggleCollapse = this.onToggleCollapse.bind(this);
 
     this.message = this.highlightMessage(this.props.message);
-    this.stacktrace = this.highlightException(this.props.trace);
+
+    if (this.props.syntaxError) {
+      let {error, caret, file} = this.props.syntaxError;
+      let caretPosition = caret.indexOf('^');
+      let [start, mid, end] = [
+        error.substring(0, caretPosition),
+        error.substring(caretPosition, caret.length),
+        error.substring(caret.length)
+      ];
+      let errorFile = this.highlightMessage(/mancy-repl:/.test(file) ? '' : file.trim());
+      this.syntaxError = <div className="syntax-error">
+        <span className="err-filename">{errorFile}</span>
+        <span dangerouslySetInnerHTML={{__html:ReplCommon.highlight(start)}}></span>
+        <span className="err-underline">{mid}</span>
+        <span dangerouslySetInnerHTML={{__html:ReplCommon.highlight(end)}}></span>
+        <div>{this.message}</div>
+      </div>
+      this.stacktrace = [];
+    } else {
+      this.stacktrace = this.highlightException(this.props.trace);
+    }
   }
 
   onToggleCollapse() {
@@ -31,7 +51,7 @@ export default class ReplEntryOutputError extends React.Component {
       if(p1 && p2) {
         output =
           <span className='repl-entry-output-error-message-heading'>
-            <span className='error-name'>{p1}</span>: <span className='error-description'>{p2}</span>
+            <span className='error-name'>{p1}</span>:<span className='error-description'>{p2}</span>
           </span>
       }
     };
@@ -79,7 +99,7 @@ export default class ReplEntryOutputError extends React.Component {
         {
           !this.stacktrace.length
             ? <span className='repl-entry-output-error-message'>
-                {this.message}
+                {this.syntaxError}
               </span>
             : this.state.collapse
               ? <span className='repl-entry-output-error-message'>
