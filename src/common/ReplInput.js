@@ -5,7 +5,7 @@ import ReplOutput from '../common/ReplOutput';
 let babel = require('babel-core');
 
 const functionMatcher = /^\s*\bfunction\s+(..*?)\(/;
-const awaitMatcher = /^(?:\s*(?:(?:let|var|const)\s)?\s*([^=]+)=\s*|^\s*)(await\s.*)/;
+const awaitMatcher = /^(?:\s*(?:(?:let|var|const)\s)?\s*([^=]+)=\s*|^\s*)(await\s[\s\S]*)/;
 const sourceMatcher = /^\s*(\.source)\s+([^\s]+)\s*$/;
 const importMatcher = /\bimport\s+(?:(?:{(.+?)})|(.+?))\s+from\s+(['"])(.+?)\3/g;
 const bindAsMatcher = /(.*)\s+as\s+(.*)/;
