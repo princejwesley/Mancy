@@ -103,10 +103,13 @@ export default class ReplActiveInput extends React.Component {
       autoCloseBrackets: true,
       resetSelectionOnContextMenu: false,
       autoFocus: true,
+      smartIndent: true,
       foldGutter: preferences.toggleFoldGutter,
       foldOptions: {
         widget: '…'
       },
+      indentUnit: preferences.indentUnit,
+      tabSize: preferences.tabSize,
       electricChars: true,
       cursorBlinkRate: 530
     });

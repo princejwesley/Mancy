@@ -106,6 +106,18 @@ const ReplPreferencesStore = Reflux.createStore({
       ipcRenderer.send('application:history-size', size);
     });
   },
+  onSetIndentUnit(indent) {
+    this.updatePreference((preferences) => {
+      preferences.indentUnit = indent;
+      ReplActiveInputActions.setEditorOption({name: 'indentUnit', value: indent});
+    });
+  },
+  onSetTabSize(size) {
+    this.updatePreference((preferences) => {
+      preferences.tabSize = size;
+      ReplActiveInputActions.setEditorOption({name: 'tabSize', value: size});
+    });
+  },
   onSetTheme(name) {
     this.updatePreference((preferences) => {
       preferences.theme = name;

@@ -58,6 +58,8 @@ const addNewPreferences = (defaults, preferences) => {
     "historySize": ReplConstants.REPL_HISTORY_SIZE,
     "historyAggressive": false,
     "executionTime": false,
+    "indentUnit": 2,
+    "tabSize": 4,
     "typescript": {
       "noImplicitAny": false,
       "ignoreSemanticError" : true,

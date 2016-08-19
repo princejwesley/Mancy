@@ -41,9 +41,12 @@ let ReplCommon = {
   },
   indent: (code, lang = global.Mancy.session.lang) => {
     code = (code || '').replace(/([;{])(?!\n)/g, '$1\n');
+    const preferences = global.Mancy.preferences;
     let cm = CodeMirror(document.createElement('span'), {
       value: code,
-      mode: `text/${ReplLanguages.getLangQualifiedName(lang)}`
+      mode: `text/${ReplLanguages.getLangQualifiedName(lang)}`,
+      tabSize: preferences.tabSize,
+      indentUnit: preferences.indentUnit,
     });
     const start = cm.firstLine();
     const end = cm.lastLine();
@@ -55,11 +58,16 @@ let ReplCommon = {
   highlight: (code, lang = global.Mancy.session.lang, indent = false) => {
     if(indent) { code = ReplCommon.indent(code || '', lang) }
     const element = document.createElement('span');
+    const preferences = global.Mancy.preferences;
     // format
 
     CodeMirror.runMode(code || '',
       `text/${ReplLanguages.getLangQualifiedName(lang)}`,
-      element
+      element,
+      {
+        tabSize: preferences.tabSize,
+        indentUnit: preferences.indentUnit,
+      }
     );
     return element.innerHTML;
   },

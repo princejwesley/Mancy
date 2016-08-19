@@ -28,7 +28,8 @@ export default class ReplPreferences extends React.Component {
       'onToggleLineNumberGutter', 'onToggleFoldGutter', 'onKeyMapChange', 'onChangeHistorySize',
       'onToggleHistoryAggressive', 'showTypeScriptPreferences', 'onSetTypeScriptOptions',
       'showClojureScriptPreferences', 'showLangPreferences', 'onSetClojureScriptOptions',
-      'onParinferModeChange', 'onParinferPreviewChange', 'onToggleExecutionTime'
+      'onParinferModeChange', 'onParinferPreviewChange', 'onToggleExecutionTime',
+      'onSetIndentUnit', 'onSetTabSize'
     ], (field) => {
       this[field] = this[field].bind(this);
     });
@@ -148,6 +149,14 @@ export default class ReplPreferences extends React.Component {
 
   onChangeHistorySize(e) {
     ReplPreferencesStore.onSetHistorySize(e.target.value);
+  }
+
+  onSetIndentUnit(e) {
+    ReplPreferencesStore.onSetIndentUnit(Math.max(2, Math.min(12, e.target.value >>> 0)));
+  }
+
+  onSetTabSize(e) {
+    ReplPreferencesStore.onSetTabSize(Math.max(2, Math.min(12, e.target.value >>> 0)));
   }
 
   onToggleHistoryAggressive(e) {
@@ -494,6 +503,28 @@ export default class ReplPreferences extends React.Component {
             <div className='preference-value'>
               <span className='checkbox-group'>
                 <input type="checkbox" name="fold" checked={this.state.toggleFoldGutter} value="" onClick={this.onToggleFoldGutter} />
+              </span>
+            </div>
+          </div>
+          <div className='preference' title='How many spaces a block should be indented'>
+            <div className='preference-name'>
+              Code Indentation
+            </div>
+            <div className='preference-value'>
+              <span className='textbox'>
+                <input type="number" name="indentation-size" value={this.state.indentUnit}
+                  min="2" max="12" onChange={this.onSetIndentUnit} />
+              </span>
+            </div>
+          </div>
+          <div className='preference' title='Tab size'>
+            <div className='preference-name'>
+              Tab Size
+            </div>
+            <div className='preference-value'>
+              <span className='textbox'>
+                <input type="number" name="tab-size" value={this.state.tabSize}
+                  min="2" max="12" onChange={this.onSetTabSize} />
               </span>
             </div>
           </div>
