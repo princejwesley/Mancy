@@ -782,7 +782,8 @@ export default class ReplActiveInput extends React.Component {
       }
       cli.complete(beforeCursor, callback);
     } catch(e) {
-      console.log('on autoComplete', e)
+      // ignore
+      // console.log('on autoComplete', e)
     }
   }
 
