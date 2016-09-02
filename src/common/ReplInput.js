@@ -16,8 +16,11 @@ const USE_STRICT_LENGTH = "'user strict;'".length;
 let funTransformer = (source, find, replace) =>
   `var ${replace} = function ${replace}(${source.substring(find.length)}`;
 let asyncWrapper = (code, binder) => {
-  let assign = binder ? `root.${binder} = result;` : '';
-  return `(async function() { let result = (${code}); ${assign} return result; }())`;
+  // Babel is not happy, ensure that async is not top level
+  // let assign = binder ? `root.${binder} = result;` : '';
+  // return `(async function() { let result = (${code}); ${assign} return result; }())`;
+  let assign = binder ? `root.${binder} = ` : '';
+  return `(function(){ async function _wrap() { return ${assign}${code} } return _wrap();})()`;
 };
 
 let importToRequire = (prefix, bindings, asBinding, __, modname) => {
