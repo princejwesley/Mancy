@@ -40,7 +40,7 @@ const ReplConstants = {
       "transform-runtime"
     ],
     "highlightCode": false,
-    "filename": __filename,
+    "filename": 'mancy-repl',
     "env": process.env,
     "retainLines": true,
     "ast": false,
