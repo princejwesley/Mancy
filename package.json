@@ -43,7 +43,7 @@
     "babel-polyfill": "^6.3.14",
     "del": "^2.0.2",
     "devtron": "^1.0.0",
-    "electron-packager": "5.1.0",
+    "electron-packager": "^8.0.0",
     "electron-prebuilt": "^1.2.6",
     "electron-rebuild": "https://github.com/princejwesley/electron-rebuild.git",
     "gulp": "^3.9.0",
