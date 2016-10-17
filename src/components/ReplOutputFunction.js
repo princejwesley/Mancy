@@ -71,7 +71,8 @@ export default class ReplOutputFunction extends React.Component {
               {
                 _.map(this.getAllProps(), (key) => {
                   let value = ReplOutput.readProperty(this.props.fun, key);
-                  let keyClass = this.props.fun.propertyIsEnumerable(key) ? 'object-key' : 'object-key dull';
+                  let keyClass = typeof this.props.fun.propertyIsEnumerable === 'function' &&
+                                 this.props.fun.propertyIsEnumerable(key) ? 'object-key' : 'object-key dull';
                   return (
                     <div className='object-entry' key={key.toString()}>
                       {

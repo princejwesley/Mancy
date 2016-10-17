@@ -21,7 +21,8 @@ export default class ReplConsoleEnvironmentWatcher extends React.Component {
     let context = ReplContext.getContext();
     return _.map(names, (key) => {
       let value = ReplOutput.readProperty(context, key);
-      let keyClass = context.propertyIsEnumerable(key) ? 'env-key' : 'env-key dull';
+      let keyClass = typeof context.propertyIsEnumerable === 'function' &&
+                     context.propertyIsEnumerable(key) ? 'env-key' : 'env-key dull';
       return (
         <div className='env-entry' key={key.toString()}>
           {
