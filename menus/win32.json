@@ -37,7 +37,7 @@
     "label": "&View",
     "submenu": [
       { "label": "&Reload Mancy", "accelerator": "Shift+CmdOrCtrl+R", "command": "window:reload" },
-      { "label": "Toggle &Full Screen", "command": "window:toggle-full-screen" },
+      { "label": "Toggle &Full Screen", "accelerator": "F11", "command": "window:toggle-full-screen" },
       { "label": "Toggle Always On Top", "command": "window:toggle-always-on-top" },
       { "type": "separator" },
       {
