@@ -13,6 +13,20 @@
     <div id="node-repl-prompt-suggestions"></div>
     <div id="node-repl-preferences"></div>
 
-    <script src="Startup.js"></script>
+    <script>
+	    window.onerror = function(messageOrEvent, source, lineno, colno, error) {
+	    	console.error('win error',messageOrEvent, source, lineno, colno, error)
+      }
+
+	    process.on('uncaughtException', err => {
+		    console.error(`uncaught exception`,err)
+	    });
+
+      try {
+      	require('./Startup')
+      } catch (err) {
+      	console.error(`Failed to load startup`,err)
+      }
+    </script>
   </body>
 </html>

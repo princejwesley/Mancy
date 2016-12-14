@@ -1,5 +1,6 @@
 {
   "presets": ["es2015", "react", "stage-0"],
+  "sourceMaps": "both",
   "plugins": ["add-module-exports", [
     "transform-runtime", {
       "polyfill": false,

@@ -16,7 +16,7 @@ let execSync = require('child_process').execSync;
 import BabelPolyfill from "babel-polyfill";
 
 const $ = plugins();
-const electronVersion = require(resolve('node_modules', 'electron-prebuilt', 'package.json')).version;
+const electronVersion = require(resolve('node_modules', 'electron', 'package.json')).version;
 
 const nodeResources = (() => {
   let result = execSync('npm list --prod --parseable');
@@ -197,6 +197,7 @@ const options = {
     source: ['src/**/*.js'],
     target: 'build',
     config: {
+      "sourceMaps": "both",
       "presets": ["es2015", "react", "stage-0"],
       "plugins": ["add-module-exports"]
     }
@@ -212,6 +213,23 @@ const options = {
     }
   }
 };
+
+gulp.task('post-install',() => {
+	
+	
+  
+	const
+    sh = require('shelljs'),
+		fs = require('fs'),
+		path = require('path'),
+		pkg = require('./package.json'),
+		electronVersion = pkg.devDependencies['electron']
+	
+	sh.cd('node_modules/font-manager')
+	sh.exec(`node-gyp rebuild --target=${electronVersion} --arch=x64 --dist-url=https://atom.io/download/atom-shell`)
+	sh.cd('../..')
+	
+})
 
 gulp.task('sass', () =>
   gulp.src(options.sass.source)
