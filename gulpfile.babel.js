@@ -105,8 +105,8 @@ let executable = async function(platform = 'all', arch = 'all', version = electr
       name: `${_.capitalize(Config.name)}`,
       platform,
       arch,
-      version: electronVersion,
-      'app-version': `v${Config.version}`,
+      electronVersion: electronVersion,
+      appVersion: `v${Config.version}`,
       'version-string': {
         'ProductVersion': `v${Config.version}`,
         'ProductName': `${_.capitalize(Config.name)}`,
