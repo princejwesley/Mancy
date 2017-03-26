@@ -27,11 +27,14 @@ const widths = {
 const systemFonts = (() => {
   try {
     const settings = require('./../../package.json').settings;
-    return _.chain(settings['disable-font-manager'] ? [] : require('font-manager').getAvailableFontsSync())
+    const locals = [
+      { family: 'Droid Sans Mono' },
+      { family: 'FiraCode' },
+      { family: 'Josefin Sans' }
+    ];
+    return _.chain(settings['disable-font-manager'] ? locals : require('font-manager').getAvailableFontsSync())
       .tap((fonts) => {
-        fonts.push({ family: 'Droid Sans Mono' });
-        fonts.push({ family: 'FiraCode' });
-        fonts.push({ family: 'Josefin Sans' });
+        locals.forEach(f => fonts.push(f));
       })
       .sortBy("family")
       .map((f) => f.family)
