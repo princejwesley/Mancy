@@ -1,4 +1,3 @@
-import FontManager from 'font-manager';
 import _ from 'lodash';
 
 const weights = {
@@ -27,7 +26,8 @@ const widths = {
 
 const systemFonts = (() => {
   try {
-    return _.chain(FontManager.getAvailableFontsSync())
+    const settings = require('./../../package.json').settings;
+    return _.chain(settings['disable-font-manager'] ? [] : require('font-manager').getAvailableFontsSync())
       .tap((fonts) => {
         fonts.push({ family: 'Droid Sans Mono' });
         fonts.push({ family: 'FiraCode' });

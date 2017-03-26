@@ -16,14 +16,14 @@ let execSync = require('child_process').execSync;
 import BabelPolyfill from "babel-polyfill";
 
 const $ = plugins();
-const electronVersion = require(resolve('node_modules', 'electron-prebuilt', 'package.json')).version;
+const electronVersion = require(resolve('node_modules', 'electron', 'package.json')).version;
 
 const nodeResources = (() => {
   let result = execSync('npm list --prod --parseable');
   return _.chain(result.toString().trim().split(/\r?\n/))
     // remove app root path
     .tap((r) => r.shift())
-    .filter((dep) => dep.match(/node_modules/g).length == 1 && !dep.match(/typescript/))
+    .filter((dep) => (dep.match(/node_modules/g) || []).length == 1 && !dep.match(/typescript/))
     .map((dep) => `${dep}/**/*.{js,cljs,css,json,svg,png,gif,woff2,otf,ttf,woff,eot,ts}`)
     .value();
 })();
