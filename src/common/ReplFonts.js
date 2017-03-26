@@ -26,7 +26,7 @@ const widths = {
 
 const systemFonts = (() => {
   try {
-    const settings = require('./../../package.json').settings;
+    const settings = require('./../package.json').settings;
     const locals = [
       { family: 'Droid Sans Mono' },
       { family: 'FiraCode' },
