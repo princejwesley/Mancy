@@ -36,7 +36,7 @@ export default class ReplOutputHTML extends React.Component {
     let height = parseInt(styles.height) + parseInt(styles.marginTop) + parseInt(styles.marginBottom);
     // fix max height
     iframe.height = Math.min(height, ReplConstants.IFRAME_MAX_HEIGHT) + 'px';
-    doc.body.style.color = (document.body.className === 'dark-theme' ? 'whitesmoke' : 'black');
+    doc.body.style.color = (document.body.className.indexOf('dark-theme') !== -1 ? 'whitesmoke' : 'darkslategrey');
   }
 
   render() {
